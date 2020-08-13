@@ -16,6 +16,8 @@
 .env.test.local
 .env.production.local
 
+.vscode
+
 launch.json
 
 npm-debug.log*
