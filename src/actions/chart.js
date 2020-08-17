@@ -1,5 +1,6 @@
 import * as types from '../constants/types'
-
+import _ from 'lodash'
+import { INDICATOR_MAP, AGGREGATE_GETTER } from '../constants/charts'
 
 const fields = [
   'indicator',
@@ -24,28 +25,17 @@ const fields = [
   'modality_category'
 ]
 
-const chartFieldmap = {
-  chart1:  {
-    indicator: 'People living with HIV - people aged 10-19',
-    year: 1990,
-    geographic_scope: 'UNAESA',
-    age: '10-19'
-  },
-  chart2:  {
-    indicator: 'HIV tests conducted',
-    country_name: true // true to replace with active country
-  },
-  chart3:  {
-    indicator: 'HIV positive tests results received',
-    country_name: true
-  },
-  chart4:  {
-    indicator: 'HIV self-tests distributed',
-    country_name: true
-  }
+// TODO: does this prevent cacheing? 
+const myHeaders = new Headers()
+myHeaders.append('pragma', 'no-cache')
+myHeaders.append('cache-control', 'no-cache')
+const myInit = {
+  method: 'GET',
+  headers: myHeaders,
 }
 
-const chartNames = ['chart1', 'chart2', 'chart3', 'chart4']
+// const chartNames = ['population']
+// const chartNames = ['chart1', 'chart2', 'chart3', 'chart4']
 
 const baseUrl = 'https://status.y-x.ch/query?'
 
@@ -54,52 +44,89 @@ export const getChartData = (country) =>
   dispatch => {
     console.log('GETCHARTDATA DISPATCH (shortcircuit here)')
     // until we care about the data, avoid errors
-    return
-    const allChartQueryPs = chartNames.map(chartName => {
-      let url = baseUrl
-      let char = ''
-      fields.forEach(f => {
-        let chartValue = chartFieldmap[chartName][f]
-        if (chartValue) {
-          if (f === 'country_name') {
-            chartValue = country
-          }
-          url += encodeURI(`${char}${f}=${chartValue}`)
-          char = '&'
-        }
-      })
-
-      // TODO: does this prevent cacheing? 
-      var myHeaders = new Headers()
-      myHeaders.append('pragma', 'no-cache')
-      myHeaders.append('cache-control', 'no-cache')
+    // return
+    const allChartQueryPs = _.map(INDICATOR_MAP, (indicators, chartName) => {
       
-      var myInit = {
-        method: 'GET',
-        headers: myHeaders,
+      // return Promise.all
+      const getIndicatorP = indicator => {
+        let url = baseUrl
+        let char = ''
+        fields.forEach(f => {
+          let chartValue = indicator[f]
+          if (chartValue) {
+            if (f === 'country_name') {
+              chartValue = country
+            }
+            url += encodeURI(`${char}${f}=${chartValue}`)
+            char = '&'
+          }
+        })
+        
+        // console.log('GETCHARTDATA FETCH')
+        return fetch(url, myInit)
+        .then(r => {
+          // console.log('now json')
+          return r.json()
+        })
+        .then(data => {
+          // console.log('data for: ', chartName)
+          return ({ chartName, data, id: indicator.id, getter: indicator.getter })
+        })
+        .catch(e => {
+          console.error('DATA FETCH FAILED FOR ', chartName, ' : ', e)
+        })
       }
-      console.log('GETCHARTDATA FETCH')
-      return fetch(url, myInit)
-        .then(r => r.json())
-        .then(data => ({ chartName, data }))
-        .catch(e => console.error('DATA FETCH FAILED FOR ', chartName, ' : ', e))
+
+      return Promise.all(_.map(indicators, getIndicatorP))
     })
 
+    // console.log('all promises...')
     Promise.all(allChartQueryPs)
-    .then(results => {
+    .then(chartsResults => {
+      // console.log('...gave chartsResults')
       const allChartData = {}
-      results.forEach(result => {
-        if (!result) {
-          console.error('RESULT UNDEFINED')
-          return
-        }
-        allChartData[result.chartName] = result.data
+      
+      chartsResults.forEach(chartResults => {
+        // const chartName = _.get(chartResults, '0.chartName')
+        // allChartData[chartName] = { data: {}, errors: {} }
+        
+        chartResults.forEach(indicatorResult => {
+
+          // TODO: remove
+          if (!indicatorResult) {
+            console.error('No indicator for: ', id, chartName)
+            // debugger
+            return
+          }
+          
+          const { chartName, data, id, getter } = indicatorResult
+
+          if (data.error) {
+            console.error('Indicator result error: ', data.error)
+            _.set(allChartData, [chartName, 'errors', id], data.error)
+            return
+          }
+          
+          const chosenData = getter(data)
+          // console.log('adding result for: ', chartName)
+          // console.log('which is: ', chosenData)
+
+          if (id === AGGREGATE_GETTER) {
+            _.set(allChartData, [chartName, 'data'], chosenData)
+          } else {
+            _.set(allChartData, [chartName, 'data', id], chosenData)
+          }
+        })
+        
       })
       
-      console.log('GETCHARTDATA COMPLETE')
+      // console.log('GETCHARTDATA COMPLETE')
       dispatch({
         type: types.FETCH_CHART_DATA,
         payload: allChartData
       })
+    })
+    .catch(e => {
+      console.error('DATA FETCH FAILED.', e)
     })
   }

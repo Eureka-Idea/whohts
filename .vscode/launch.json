@@ -22,8 +22,8 @@
           "name": "Launch localhost",
           "type": "chrome",
           "request": "launch",
-          "url": "http://localhost:3001",
-          "webRoot": "${workspaceFolder}/wwwroot"
+          "url": "http://localhost:3000",
+          "webRoot": "${workspaceFolder}/"
       },
       {
           "name": "Launch index.html",

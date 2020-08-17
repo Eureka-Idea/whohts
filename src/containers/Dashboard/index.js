@@ -13,6 +13,9 @@ import KPTable from '../../components/KPTable'
 import PolicyTable from '../../components/PolicyTable'
 import DemographicsTable from '../../components/DemographicsTable'
 import { TERM_MAP, TERMS } from '../../constants/glossary'
+import { useParams } from 'react-router'
+import { Link } from 'react-router-dom'
+import { CHARTS, FIELD_MAP } from '../../constants/charts'
 const HighchartsMore = require('highcharts/highcharts-more')
 const Highcharts = require('highcharts')
 const ReactHighcharts = require('react-highcharts').withHighcharts(Highcharts)
@@ -21,7 +24,7 @@ HighchartsMore(ReactHighcharts.Highcharts)
 ReactHighcharts.Highcharts.theme = baseStyle
 ReactHighcharts.Highcharts.setOptions(ReactHighcharts.Highcharts.theme)
 
-const DEV = window.location.hostname === 'localhost' && false;
+const DEV = window.location.hostname === 'localhost'
 
 // fix legend markers
 // ReactHighcharts.Highcharts.seriesTypes.area.prototype.drawLegendSymbol = 
@@ -40,26 +43,7 @@ const countryMap = {
 
 const URLBase = 'https://status.y-x.ch/query?'
 
-const fields = ['indicator',
-'indicator_description',
-'contry_iso_code',
-'country_name',
-'area_name',
-'geographic_scope',
-'year',
-'sex',
-'age',
-'population_segment',
-'population_sub_group',
-'value',
-'value_comment',
-'unit_format',
-'source_organization',
-'source_database',
-'source_year',
-'notes',
-'modality',
-'modality_category']
+const fields = _.flatMap(FIELD_MAP)
 
 const chartNames = ['chart1', 'chart2']
 
@@ -92,8 +76,14 @@ class Dashboard extends Component {
     this.submitDQ = this.submitDQ.bind(this)
   }
   componentWillMount() {
-    // console.log('hi', this.props.country)
-    this.props.actions.getChartData(this.props.country)
+    const country = _.get(this, 'props.match.params.country', null)
+    if (!country) {
+      // TODO: check country existence
+      this.props.history.go('/')
+      console.error('no!')
+      return
+    }
+    this.props.actions.getChartData(country)
   }
 
   componentDidMount() {
@@ -159,43 +149,77 @@ class Dashboard extends Component {
   }
 
   getPLHIVAge() {
-    const title = 'PLHIV who know status - by age'
-    // const options = { plotOptions: { series: { pointStart: 2000 }}}
-    const options = {
-      legend: { symbolWidth: 40 },
-      subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-      plotOptions: { series: { pointStart: 2010 } }
+    const { title, id } = CHARTS.PLHIV_AGE
+
+    const data = _.get(this.props.chartData, [id, 'data'])
+    if (!data) {
+      console.warn(`${title} has no data`)
+      return
     }
-    const baseSeries = [
-      2, 3, 6,
-      9,14,17,
-      25,29,36,
-      53,
-    ]
-    const series = [
-      {
-        name: '15 - 24',
-        dashStyle: 'ShortDot',
-        data: baseSeries,
-      },
-      {
-        name: '25 - 34',
-        dashStyle: 'DashDot',
-        data: dataHelper(baseSeries, 8, 5),
-      },
-      {
-        name: '35 - 49',
-        dashStyle: 'LongDash',
-        data: dataHelper(baseSeries, 6, 8),
-      },
-      {
-        name: '50+',
-        color: colors[8],
-        dashStyle: 'Solid',
-        data: dataHelper(baseSeries, 4, 12),
-      },
-    ]
-    return _.merge({}, getLine({title, series, options}))
+
+    try {
+      const options = {
+        legend: { symbolWidth: 40 },
+        subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+        plotOptions: { series: { pointStart: 2010 } }
+      }
+      // const baseSeries = [
+      //   2, 3, 6,
+      //   9,14,17,
+      //   25,29,36,
+      //   53,
+      // ]
+      const d15 = data['15-24'] || Array(10).fill(null)
+      const d15Values = d15.map(d => {
+        const v = _.get(d, 'median.value')
+        return v ? v * 100 : null
+      })
+      const d25 = data['25-34'] || Array(10).fill(null)
+      const d25Values = d25.map(d => {
+        const v = _.get(d, 'median.value')
+        return v ? v * 100 : null
+      })
+      const d35 = data['35-49'] || Array(10).fill(null)
+      const d35Values = d35.map(d => {
+        const v = _.get(d, 'median.value')
+        return v ? v * 100 : null
+      })
+      const d50 = data['50-99'] || Array(10).fill(null)
+      const d50Values = d50.map(d => {
+        const v = _.get(d, 'median.value')
+        return v ? v * 100 : null
+      })
+      const series = [
+        {
+          name: '15 - 24',
+          dashStyle: 'ShortDot',
+          data: d15Values
+        },
+        {
+          name: '25 - 34',
+          dashStyle: 'DashDot',
+          data: d25Values
+        },
+        {
+          name: '35 - 49',
+          dashStyle: 'LongDash',
+          data: d35Values
+        },
+        {
+          name: '50+',
+          color: colors[8],
+          dashStyle: 'Solid',
+          data: d50Values
+        },
+      ]
+      const config = _.merge({}, getLine({title, series, options}))
+      console.log('PLHIVAge made config: ', config)
+      return <ReactHighcharts config={config} />
+
+    } catch (error) {
+      console.error('PLHIVAge failed: ', error)
+      debugger
+    }
   }
 
   getPLHIVSex() {
@@ -573,17 +597,37 @@ class Dashboard extends Component {
     const title = 'HIVST Forecast'
     const options = {
       subtitle: { text: 'WHO model estimates, 2020' },
-      plotOptions: { series: { pointStart: 2019 } }
+      // plotOptions: { series: { pointStart: 2019 } }
     }
     const series = [
       {
-        name: 'HIVST demand',
-        data: [9012, 51023, 114389, 218324, 321092, 425203, 534324]
+        name: 'HIVSTs distributed',
+        data: [ 
+          { x: 2018, y: 8340 }, 
+          { x: 2019, y: 9012 }, 
+        ]
       },
       {
-        name: 'HIVST need',
+        name: 'HIVST forecast demand',
+        data: [ 
+          { x: 2020, y: 51023 }, 
+          { x: 2021, y: 114389 }, 
+          { x: 2022, y: 218324 }, 
+          { x: 2023, y: 321092 }, 
+          { x: 2024, y: 425203 }, 
+          { x: 2025, y: 534324 }
+        ]
+      },
+      {
+        name: 'HIVST forecast need',
         type: 'line',
-        data: [3234932, 3123038, 3023432, 3132423, 3292382, 3323430, 3252329]
+        data: [
+          { x: 2020, y:812303 }, 
+          { x: 2021, y:802343 }, 
+          { x: 2022, y:813242 }, 
+          { x: 2023, y:829238 }, 
+          { x: 2024, y:832343 }, 
+          { x: 2025, y:825232 }]
       }
     ]
     return _.merge({}, getColumnLine({title, series, options}))
@@ -792,12 +836,31 @@ class Dashboard extends Component {
   //   </div>
   //   )
   // }
+  getCountryContext() {
+    console.log('gCC')
+    const { id } = CHARTS.CONTEXT
+    const population = _.get(this.props.chartData, id+'.data.population.value', 'UNKNOWN')
+    const classification = _.get(this.props.chartData, id+'.data.classification.value', 'UNKNOWN')
+    return (
+      <div className='col-xl-4 col-md-6 col-xs-12'>
+
+        <div className='country-name'>
+          <h1> {this.props.match.params.country}</h1>
+        </div>
+        <div className='country-details pb-3'>
+          <div><span>Population:</span><span> {population}</span></div>
+          <div><span>World Bank classification:</span><span> {classification}</span></div>
+
+        </div>
+      </div>
+    )
+  }
   
   render() {
-    const shiny = countryMap[this.props.country].shiny
+    const shiny = countryMap[this.props.match.params.country].shiny
 
     const configCascade = this.getCascade()
-    const configPLHIVAge = this.getPLHIVAge()
+    const PLHIVAge = this.getPLHIVAge()
     const configPLHIVSex = this.getPLHIVSex()
     // const configConducted = this.getConducted()
     const configNegative = this.getNegative()
@@ -814,33 +877,26 @@ class Dashboard extends Component {
     const configFacility = this.getFacility()
     const configIndex = this.getIndex()
 
-    const configSelf = this.getSelf()
+    // const configSelf = this.getSelf()
 
     // const mIcon = this.getModeledIcon()
 
     return (
       <div className='dashboard'>
         <div className='nav'>
-          <a onClick={this.props.setCountry.bind(null, null)} action='#' title='go home'>
+          <Link to='/'>
             <img className='who-logo' src='images/who_logo.png' alt='WHO logo' />
-          </a>
+          </Link>
           <span className='title text-center'>
             HIV Testing Services Dashboard
           </span>
         </div>
 
         <div className='charts container-fluid mt-4 p-0'>
-
           <div className='row no-gutters mb-4'>
-            <div className='col-xl-4 col-md-6 col-xs-12'>
-              <div className='country-name'>
-                <h1> {this.props.country}</h1>
-              </div>
-              <div className='country-details pb-3'>
-                <div><span>Population:</span><span> {countryMap[this.props.country].population}</span></div>
-                <div><span>World Bank classification:</span><span> {countryMap[this.props.country].incomeClass}</span></div>
-              </div>
-            </div>
+
+            {this.getCountryContext()}
+
             <div className='col-xl-4 col-md-6 col-xs-12 prog-95'>
               <div className='content'>
                 <p>Progress towards 95-95-95</p>
@@ -865,7 +921,7 @@ class Dashboard extends Component {
               <ReactHighcharts config={configCascade}/>
             </div>
             {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPLHIVSex}/></div>}
-            {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPLHIVAge}/></div>}
+            {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>{PLHIVAge}</div>}
 
             {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configNegative}/></div>}
             {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>
@@ -890,8 +946,8 @@ class Dashboard extends Component {
             <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configCommunity}/></div>
             <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configFacility}/></div>
             <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configIndex}/></div>
-            <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configSelf}/></div>
-            <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configForecast} /></div>
+            {/* <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configSelf}/></div> */}
+            <div className='col-xl-4 col-lg-6 col-md-6 col-sm-12'><ReactHighcharts config={configForecast} /></div>
           </div>
 
           <div className='row no-gutters mt-5'>
@@ -916,6 +972,9 @@ class Dashboard extends Component {
             </a>
             <a className='col-xl-12' target='_blank' rel='noopener noreferrer' href='https://cfs.hivci.org/'>
               WHO HIV Country Profiles
+            </a>
+            <a className='col-xl-12' target='_blank' rel='noopener noreferrer' href='https://master.dv1i2lva39jkq.amplifyapp.com/'>
+              PROTOTYPE DASHBOARD (fake data)
             </a>
           </div>
           {this.getGlossary()}
@@ -961,7 +1020,7 @@ class Dashboard extends Component {
         {colors.map((c, i) => {
           return <span key={c} style={{background: c, width: '100px', height: '80px', color: 'white', display: 'inline-block'}}>{i}</span>
         })}
-        <h5>Query API, results -> devTools console</h5>
+        <h5>Query API, results in devTools console</h5>
         {inputs}
         <button onClick={this.submit} action='#'>go fetch</button>
         <button onClick={this.submit.bind(this, true)} action='#'>dbug</button>

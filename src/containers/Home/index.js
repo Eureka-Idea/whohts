@@ -7,32 +7,9 @@ import {connect} from 'react-redux'
 import Homepage from '../../components/Homepage'
 
 class Home extends Component {
-  constructor() {
-    super()
-    this.state = { country: 'Kenya' }
-    // this.state = { country: null }
-
-    this.setCountry = this.setCountry.bind(this)
-  }
-
-  componentWillMount() {
-    // this.props.actions.getProducts()
-  }
-
-  setCountry(country) {
-    this.setState({ country })
-  }
-
   render() {
-    // const {products, actions} = this.props
-    // const compareProducts = products.filter(product => product.compare)
-    const contents = this.state.country ? 
-      <Dashboard setCountry={this.setCountry} country={this.state.country} /> : <Homepage setCountry={this.setCountry} />
-
     return (
-      <div>
-        {contents}
-      </div>
+      <Homepage />
     )
   }
 }
