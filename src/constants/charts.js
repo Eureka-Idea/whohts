@@ -5,6 +5,15 @@ const CHARTS = {
     // title: 'context',
     id: 'CONTEXT'
   },
+  P95: {
+    title: 'Progress towards 95-95-95',
+    id: 'P95',
+    indicators: {
+      status: 'Percent of people living with HIV who know their status',
+      art: 'Percent of people who know their status who are on ART',
+      suppression: 'Percent of people on ART who achieve viral suppression',
+    }
+  },
   PLHIV_DIAGNOSIS: {
     title: 'PLHIV by diagnosis and treatment status',
     id: 'PLHIV_DIAGNOSIS'
@@ -111,13 +120,24 @@ const INDICATOR_MAP = {
     },
     {
       id: 'classification',
-      [F.INDICATOR]: 'Country income classification', //TODO: not in DB
+      [F.INDICATOR]: 'Income Group',
       [F.COUNTRY_NAME]: true,
       getter: results => {
         return _.maxBy(results, 'year')
       }
     },
   ],
+  [CHARTS.P95.id]: _.map(CHARTS.P95.indicators, (v, k) =>
+    ({
+      id: k,
+      [F.INDICATOR]: v,
+      [F.COUNTRY_NAME]: true,
+      [F.AGE]: 'all ages',
+      getter: results => {
+        return _.maxBy(results, 'year')
+      }
+    })
+  ),
   [CHARTS.PLHIV_AGE.id]: R_ADULT_AGES.map(ageRange => (
     {
       id: ageRange,

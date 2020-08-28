@@ -105,6 +105,48 @@ class Dashboard extends Component {
     console.log(this.configs)
   }
 
+  getP95() {
+    const { id, title } = CHARTS.P95
+
+    const data = _.get(this.props.chartData, [id, 'data'])
+    if (!data) {
+      console.warn(`${id} has no data`)
+      return
+    }
+
+    console.log(id, ' data: ', data)
+
+    try {
+      const [status, art, suppression] = ['status', 'art', 'suppression'].map(ind => {
+        const indVal = _.get(data, [ind, 'value'])
+        return indVal/100
+      })
+      
+      return (
+        <div className='col-xl-4 col-md-6 col-xs-12 prog-95'>
+          <div className='content'>
+            <p>{title}</p>
+            <NestedBoxes
+              side={110}
+              ratios={[status, art, suppression]}
+              // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
+              colors={['#c38f72', '#85adca', '#999999', colors[0] + '50']}
+              content={[
+                { inner: '85%', below: 'of people living with HIV know their status' },
+                { inner: '79%', below: 'of people living with HIV who know their status are on treatment' },
+                { inner: '87%', below: 'of people on treatment are virally suppressed' },
+              ]}
+            />
+          </div>
+        </div>
+      )
+    } catch (error) {
+      console.error(id, ' failed: ', error)
+      debugger
+      return
+    }
+  }
+
   getCascade() {
     const title = 'PLHIV by diagnosis and treatment status'
     const options = { 
@@ -217,9 +259,9 @@ class Dashboard extends Component {
       return <ReactHighcharts config={config} />
 
     } catch (error) {
-      console.error('PLHIVAge failed: ', error);
-      debugger;
-      return;
+      console.error('PLHIVAge failed: ', error)
+      debugger
+      return
     }
   }
 
@@ -314,9 +356,9 @@ class Dashboard extends Component {
       return <ReactHighcharts config={config} />
 
     } catch (error) {
-      console.error('Negative failed: ', error);
-      debugger;
-      return;
+      console.error('Negative failed: ', error)
+      debugger
+      return
     }
   }
   
@@ -403,9 +445,9 @@ class Dashboard extends Component {
       return <ReactHighcharts config={config}/>
 
     } catch(error) {
-      console.error('positive failed: ', error);
-      debugger;
-      return;
+      console.error('positive failed: ', error)
+      debugger
+      return
     }
   }
 
@@ -866,7 +908,7 @@ class Dashboard extends Component {
     console.log('gCC')
     const { id } = CHARTS.CONTEXT
     const population = _.get(this.props.chartData, id+'.data.population.value', 'UNKNOWN')
-    const classification = _.get(this.props.chartData, id+'.data.classification.value', 'UNKNOWN')
+    const classification = _.get(this.props.chartData, id+'.data.classification.value_comment', 'UNKNOWN')
     return (
       <div className='col-xl-4 col-md-6 col-xs-12'>
 
@@ -922,23 +964,7 @@ class Dashboard extends Component {
           <div className='row no-gutters mb-4'>
 
             {this.getCountryContext()}
-
-            <div className='col-xl-4 col-md-6 col-xs-12 prog-95'>
-              <div className='content'>
-                <p>Progress towards 95-95-95</p>
-                <NestedBoxes
-                  side={110}
-                  ratios={[.85, .79, .87]}
-                  // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
-                  colors={['#c38f72', '#85adca', '#999999', colors[0] + '50']}
-                  content={[
-                    { inner: '85%', below: 'of people living with HIV know their status' },
-                    { inner: '79%', below: 'of people living with HIV who know their status are on treatment' },
-                    { inner: '87%', below: 'of people on treatment are virally suppressed' },
-                  ]}
-                  />
-              </div>
-            </div>
+            {this.getP95()}
           </div>
 
           <div className='row no-gutters'>
@@ -1034,7 +1060,7 @@ class Dashboard extends Component {
   // dev form
 
   getDevSection() {
-    if (!DEV) return;
+    if (!DEV) return
     const inputs = fields.map(f => {
       return <label key={f}>{f}<input data-field={f} onChange={this.updateField}></input></label>
     })
