@@ -161,7 +161,7 @@ class Dashboard extends Component {
       const options = {
         legend: { symbolWidth: 40 },
         subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-        plotOptions: { series: { pointStart: 2010 } }
+        plotOptions: { series: { pointStart: 2015 } }
       }
       // const baseSeries = [
       //   2, 3, 6,
@@ -169,22 +169,22 @@ class Dashboard extends Component {
       //   25,29,36,
       //   53,
       // ]
-      const d15 = data['15-24'] || Array(10).fill(null)
+      const d15 = data['15-24'] || Array(5).fill(null)
       const d15Values = d15.map(d => {
         const v = _.get(d, 'median.value')
         return v ? v * 100 : null
       })
-      const d25 = data['25-34'] || Array(10).fill(null)
+      const d25 = data['25-34'] || Array(5).fill(null)
       const d25Values = d25.map(d => {
         const v = _.get(d, 'median.value')
         return v ? v * 100 : null
       })
-      const d35 = data['35-49'] || Array(10).fill(null)
+      const d35 = data['35-49'] || Array(5).fill(null)
       const d35Values = d35.map(d => {
         const v = _.get(d, 'median.value')
         return v ? v * 100 : null
       })
-      const d50 = data['50-99'] || Array(10).fill(null)
+      const d50 = data['50-99'] || Array(5).fill(null)
       const d50Values = d50.map(d => {
         const v = _.get(d, 'median.value')
         return v ? v * 100 : null
@@ -213,12 +213,13 @@ class Dashboard extends Component {
         },
       ]
       const config = _.merge({}, getLine({title, series, options}))
-      console.log('PLHIVAge made config: ', config)
+      // console.log('PLHIVAge made config: ', config)
       return <ReactHighcharts config={config} />
 
     } catch (error) {
-      console.error('PLHIVAge failed: ', error)
-      debugger
+      console.error('PLHIVAge failed: ', error);
+      debugger;
+      return;
     }
   }
 
@@ -264,40 +265,59 @@ class Dashboard extends Component {
   }
 
   getNegative() {
-    const title = '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
-    const series = [
-      {
-        name: 'Retest',
-        description: TERM_MAP.retest.definition,
-        color: colors[4]+'97',
-        data: [
-          123,132,149,153,163,
-          178,191,199,201,212,
-          // 214,223,231,238,244,
-          // 251,255,257,258,258
-        ].map(n => n*1000),
+    const { id } = CHARTS.HIV_NEGATIVE
 
-      },
-      {
-        name: 'First test',
-        description: TERM_MAP.firstTest.definition,
-        color: colors[9]+'90',
-        data: [
-          // 29,31,31,32,33,
-          // 33,33,34,34,35,
-          36,36,36,37,37,
-          38,38,39,39,39
-        ].map(n => n*1000),
-      },
-    ]
-    const options = {
-      title: { useHTML: true },
-      yAxis: { title: { text: 'HIV Negative Tests (thousands)' } },
-      subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-      plotOptions: { series: { pointStart: 2010 } }
-      // tooltip: { valueSuffix: ' thousand' },
+    const data = _.get(this.props.chartData, [id, 'data'])
+    if (!data) {
+      console.warn(`${id} has no data`)
+      return
     }
-    return _.merge({}, getArea({title, series, options}))
+
+    console.log(id, ' data: ', data)
+
+    try {
+      const title = '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
+
+      const retests = data['retests_total'] || Array(5).fill(null)
+      const retestsValues = retests.map(d => {
+        return _.get(d, 'median.value')
+      })
+      const firsts = data['tests_first'] || Array(5).fill(null)
+      const firstsValues = firsts.map(d => {
+        return _.get(d, 'median.value')
+      })
+      const series = [
+        {
+          name: 'Retest',
+          description: TERM_MAP.retest.definition,
+          color: colors[4]+'97',
+          data: retestsValues
+
+        },
+        {
+          name: 'First test',
+          description: TERM_MAP.firstTest.definition,
+          color: colors[9]+'90',
+          data: firstsValues
+        },
+      ]
+      const options = {
+        title: { useHTML: true },
+        yAxis: { title: { text: 'HIV Negative Tests (thousands)' } },
+        subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+        plotOptions: { series: { pointStart: 2010 } }
+        // tooltip: { valueSuffix: ' thousand' },
+      }
+      const config = _.merge({}, getArea({title, series, options}))
+
+      console.log('NEGATIVE made config: ', config)
+      return <ReactHighcharts config={config} />
+
+    } catch (error) {
+      console.error('Negative failed: ', error);
+      debugger;
+      return;
+    }
   }
   
   // getConducted() {
@@ -331,56 +351,62 @@ class Dashboard extends Component {
   //   return _.merge({}, getArea({title, categories, series, options}))
   // }
 
-  getDistribution() {
-    const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
-    const options = { 
-      title: { useHTML: true },
-      yAxis: { title: { text: 'HIV Positive tests (thousands)' } },
-      subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-      plotOptions: { series: { pointStart: 2010 } }
-      // tooltip: { pointFormat: '{series.name}: <b>{point.y:.0f} million</b>' },
-      // yAxis: { max: 58*2 },
-      // tooltip: { valueSuffix: ',000' },
-     }
-    const series = [
-      {
-        name: 'Retest - know status on ART',
-        description: TERM_MAP.retest.definition,
-        color: colors[0]+'97',
-        data: [
-          // 1,2,4,10,16,
-          // 31,39,46,64,78,
-          84,81,80,89,94,
-          // 84,86,82,83,84,
-          77,72,68,61,54
-        ].map(n => n*1000),
-      },
-      {
-        name: 'Retest - know status not on ART',
-        description: TERM_MAP.retest.definition,
-        color: colors[2]+'97',
-        data: [
-          // 1,2,4,9,15,
-          // 26,37,42,59,69,
-          62,65,64,54,53,
-          // 43,36,33,31,20,
-          18,15,9,11,8,
-        ].map(n => n*1000),
-      },
-      {
-        name: 'New diagnosis',
-        description: TERM_MAP.newDiagnosis.definition,
-        color: colors[1]+'97',
-        data: [
-          // 1,2,4,5,5,
-          // 6,7,7,9,9,
-          12,15,14,14,13,
-          // 13,12,13,11,10,
-          10,11,9,9,8,
-        ].map(n => n*1000),
-      },
-    ]
-    return _.merge({}, getArea({title, series, options}))
+  getPositive() {
+    const { id } = CHARTS.HIV_POSITIVE
+
+    const data = _.get(this.props.chartData, [id, 'data'])
+    if (!data) {
+      console.warn(`${id} has no data`)
+      return
+    }
+
+    console.log(id, ' data: ', data)
+
+    try {
+      const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
+
+      const [art, aware, first] = ['retests_art', 'retests_aware', 'tests_first'].map(ind => {
+        const indData = data[ind] || Array(5).fill(null)
+        return _.map(indData, 'median.value')
+      })
+
+      const options = { 
+        title: { useHTML: true },
+        yAxis: { title: { text: 'HIV Positive tests (thousands)' } },
+        subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+        plotOptions: { series: { pointStart: 2015 } } // TODO no pointstart
+        // tooltip: { pointFormat: '{series.name}: <b>{point.y:.0f} million</b>' },
+        // yAxis: { max: 58*2 },
+        // tooltip: { valueSuffix: ',000' },
+      }
+      const series = [
+        {
+          name: 'Retest - know status on ART',
+          description: TERM_MAP.retest.definition,
+          color: colors[0]+'97',
+          data: art
+        },
+        {
+          name: 'Retest - know status not on ART',
+          description: TERM_MAP.retest.definition,
+          color: colors[2]+'97',
+          data: aware
+        },
+        {
+          name: 'New diagnosis',
+          description: TERM_MAP.newDiagnosis.definition,
+          color: colors[1]+'97',
+          data: first
+        },
+      ]
+      const config = _.merge({}, getArea({title, series, options}))
+      return <ReactHighcharts config={config}/>
+
+    } catch(error) {
+      console.error('positive failed: ', error);
+      debugger;
+      return;
+    }
   }
 
   getPrevalence(shiny) {
@@ -863,8 +889,8 @@ class Dashboard extends Component {
     const PLHIVAge = this.getPLHIVAge()
     const configPLHIVSex = this.getPLHIVSex()
     // const configConducted = this.getConducted()
-    const configNegative = this.getNegative()
-    const configDistribution = this.getDistribution()
+    const negative = this.getNegative()
+    const positive = this.getPositive()
     const configPrevalence = this.getPrevalence(shiny)
     // const configPrep = this.getPrep()
     // const configPrepStacked = this.getPrepStacked()
@@ -923,7 +949,7 @@ class Dashboard extends Component {
             {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPLHIVSex}/></div>}
             {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>{PLHIVAge}</div>}
 
-            {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configNegative}/></div>}
+            {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>{negative}</div>}
             {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>
               <Tooltip> 
                 <div>
@@ -932,7 +958,7 @@ class Dashboard extends Component {
                   <div><b>New Diagnoses:</b><span> Number of positive tests returned that represent a newly identified HIV infection. This [does/does not] include retesting for verification prior to ART initiation as recommended by WHO. </span></div>
                 </div>
               </Tooltip>
-              <ReactHighcharts config={configDistribution}/>
+              {positive}
             </div>}
             <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPrevalence}/></div>
             {/* <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPrep}/></div>

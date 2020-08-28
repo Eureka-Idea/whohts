@@ -94,6 +94,9 @@ const R_2010_2019 = [
   '2010','2011','2012','2013','2014',
   '2015','2016','2017','2018','2019',
 ]
+const R_2015_2019 = [
+  '2015','2016','2017','2018','2019',
+]
 const R_ADULT_AGES = ['15-24', '25-34', '35-49', '50-99']
 
 const INDICATOR_MAP = {
@@ -125,7 +128,7 @@ const INDICATOR_MAP = {
       [F.AREA_NAME]: 'NULL',
       [F.COUNTRY_NAME]: true,
       getter: results => {
-        return R_2010_2019.map(y => {
+        return R_2015_2019.map(y => {
           const fResults = _.filter(results, r => r.year === y)
           const lci = _.find(fResults, r => {
             return r[F.VALUE_COMMENT] === 'lci'
@@ -140,7 +143,59 @@ const INDICATOR_MAP = {
         })
       }
     }
-  ))
+  )),
+  [CHARTS.HIV_NEGATIVE.id]: ['retests_total', 'tests_first'].map(indicator => (
+    {
+      id: indicator,
+      [F.INDICATOR]: indicator,
+      [F.INDICATOR_DESCRIPTION]: 'negative',
+      [F.AGE]: '15-99',
+      [F.SEX]: 'both',
+      [F.AREA_NAME]: 'NULL',
+      [F.COUNTRY_NAME]: true,
+      getter: results => {
+        return R_2015_2019.map(y => {
+          const fResults = _.filter(results, r => r.year === y)
+          const lci = _.find(fResults, r => {
+            return r[F.VALUE_COMMENT] === 'lci'
+          })
+          const uci = _.find(fResults, r => {
+            return r[F.VALUE_COMMENT] === 'uci'
+          })
+          const median = _.find(fResults, r => {
+            return r[F.VALUE_COMMENT] === 'median'
+          })
+          return { lci, uci, median }
+        })
+      }
+    }
+  )),
+  [CHARTS.HIV_POSITIVE.id]: ['retests_art', 'retests_aware', 'tests_first'].map(indicator => (
+    {
+      id: indicator,
+      [F.INDICATOR]: indicator,
+      [F.INDICATOR_DESCRIPTION]: 'positive',
+      [F.AGE]: '15-99',
+      [F.SEX]: 'both',
+      [F.AREA_NAME]: 'NULL',
+      [F.COUNTRY_NAME]: true,
+      getter: results => {
+        return R_2015_2019.map(y => {
+          const fResults = _.filter(results, r => r.year === y)
+          const lci = _.find(fResults, r => {
+            return r[F.VALUE_COMMENT] === 'lci'
+          })
+          const uci = _.find(fResults, r => {
+            return r[F.VALUE_COMMENT] === 'uci'
+          })
+          const median = _.find(fResults, r => {
+            return r[F.VALUE_COMMENT] === 'median'
+          })
+          return { lci, uci, median }
+        })
+      }
+    }
+  )),
 }
 
 export { CHARTS, FIELD_MAP, INDICATOR_MAP, AGGREGATE_GETTER }
