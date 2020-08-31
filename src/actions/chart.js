@@ -1,6 +1,6 @@
 import * as types from '../constants/types'
 import _ from 'lodash'
-import { INDICATOR_MAP, AGGREGATE_GETTER } from '../constants/charts'
+import { getIndicatorMap, AGGREGATE_GETTER } from '../constants/charts'
 
 const fields = [ // todo swap out
   'indicator',
@@ -46,7 +46,8 @@ export const getChartData = (country) =>
     console.log('GETCHARTDATA DISPATCH (shortcircuit here)')
     // until we care about the data, avoid errors
     // return
-    const allChartQueryPs = _.map(INDICATOR_MAP, (indicators, chartName) => {
+    const indicatorMap = getIndicatorMap(isShiny)
+    const allChartQueryPs = _.map(indicatorMap, (indicators, chartName) => {
       
       // return Promise.all
       const getIndicatorP = indicator => {

@@ -286,13 +286,13 @@ class Dashboard extends Component {
         plotOptions: { series: { pointStart: 2015 } }
       }
 
-      const femaleXYValues = data['Females'].map(d => {
+      const femaleXYValues = data['females'].map(d => {
         return ({
           x: Number(d.year),
           y: d.value,
         })
       })
-      const maleXYValues = data['Males'].map(d => {
+      const maleXYValues = data['males'].map(d => {
         return ({
           x: Number(d.year),
           y: d.value,

@@ -25,9 +25,7 @@ const CHARTS = {
     title: 'PLHIV who know status - by sex',
     id: 'PLHIV_SEX',
     indicators: {
-      know: 'People living with HIV who know their status',
-      plhiv_f: 'People living with HIV - females aged 50+',
-      plhiv_m: 'People living with HIV - males aged 50+',
+      know: 'Percent of people living with HIV who know their status',
     }
   },
   PLHIV_AGE: {
@@ -115,134 +113,139 @@ const R_2015_2019 = [
   '2015','2016','2017','2018','2019',
 ]
 const R_ADULT_AGES = ['15-24', '25-34', '35-49', '50-99']
-const R_SEXES = ['Males', 'Females']
+const R_SEXES = ['males', 'females']
 
 // TODO***: make this a MAP_GETTER that takes isShiny and returns appropriately (right charts, and indicators)
-const INDICATOR_MAP = {
-  [CHARTS.CONTEXT.id]: [
-    {
-      id: 'population',
-      [F.INDICATOR]: 'Population',
-      [F.COUNTRY_NAME]: true,
-      getter: results => {
-        return _.maxBy(results, 'year')
+const getIndicatorMap = (isShiny) => {
+
+  const indicatorMap = {
+    [CHARTS.CONTEXT.id]: [
+      {
+        id: 'population',
+        [F.INDICATOR]: 'Population',
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return _.maxBy(results, 'year')
+        }
+      },
+      {
+        id: 'classification',
+        [F.INDICATOR]: 'Income Group',
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return _.maxBy(results, 'year')
+        }
+      },
+    ],
+    [CHARTS.P95.id]: _.map(CHARTS.P95.indicators, (v, k) =>
+      ({
+        id: k,
+        [F.INDICATOR]: v,
+        [F.COUNTRY_NAME]: true,
+        [F.AGE]: 'all ages',
+        getter: results => {
+          return _.maxBy(results, 'year')
+        }
+      })
+    ),
+    [CHARTS.PLHIV_AGE.id]: R_ADULT_AGES.map(ageRange => (
+      {
+        id: ageRange,
+        [F.INDICATOR]: 'aware',
+        [F.AGE]: ageRange,
+        [F.SEX]: 'both',
+        // [F.YEAR]: '2020', // CHECK: do we need to go earlier for some?
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            const fResults = _.filter(results, r => r.year === y)
+            const lci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'lci'
+            })
+            const uci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'uci'
+            })
+            const median = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'median'
+            })
+            return { lci, uci, median }
+          })
+        }
       }
-    },
-    {
-      id: 'classification',
-      [F.INDICATOR]: 'Income Group',
-      [F.COUNTRY_NAME]: true,
-      getter: results => {
-        return _.maxBy(results, 'year')
+    )),
+    [CHARTS.PLHIV_SEX.id]: R_SEXES.map(sex => (
+      {
+        id: sex,
+        [F.INDICATOR]: CHARTS.PLHIV_SEX.indicators.know,
+        // [F.AGE]: '15+',
+        [F.SEX]: sex,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            return _.find(results, r => (r.year === y
+              && (r.age === '15+') // TODO 
+            ))
+          })
+        }
       }
-    },
-  ],
-  [CHARTS.P95.id]: _.map(CHARTS.P95.indicators, (v, k) =>
-    ({
-      id: k,
-      [F.INDICATOR]: v,
-      [F.COUNTRY_NAME]: true,
-      [F.AGE]: 'all ages',
-      getter: results => {
-        return _.maxBy(results, 'year')
+    )),
+    [CHARTS.HIV_NEGATIVE.id]: ['retests_total', 'tests_first'].map(indicator => (
+      {
+        id: indicator,
+        [F.INDICATOR]: indicator,
+        [F.INDICATOR_DESCRIPTION]: 'negative',
+        [F.AGE]: '15-99',
+        [F.SEX]: 'both',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            const fResults = _.filter(results, r => r.year === y)
+            const lci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'lci'
+            })
+            const uci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'uci'
+            })
+            const median = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'median'
+            })
+            return { lci, uci, median }
+          })
+        }
       }
-    })
-  ),
-  [CHARTS.PLHIV_AGE.id]: R_ADULT_AGES.map(ageRange => (
-    {
-      id: ageRange,
-      [F.INDICATOR]: 'aware',
-      [F.AGE]: ageRange,
-      [F.SEX]: 'both',
-      // [F.YEAR]: '2020', // CHECK: do we need to go earlier for some?
-      [F.AREA_NAME]: 'NULL',
-      [F.COUNTRY_NAME]: true,
-      getter: results => {
-        return R_2015_2019.map(y => {
-          const fResults = _.filter(results, r => r.year === y)
-          const lci = _.find(fResults, r => {
-            return r[F.VALUE_COMMENT] === 'lci'
+    )),
+    [CHARTS.HIV_POSITIVE.id]: ['retests_art', 'retests_aware', 'tests_first'].map(indicator => (
+      {
+        id: indicator,
+        [F.INDICATOR]: indicator,
+        [F.INDICATOR_DESCRIPTION]: 'positive',
+        [F.AGE]: '15-99',
+        [F.SEX]: 'both',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            const fResults = _.filter(results, r => r.year === y)
+            const lci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'lci'
+            })
+            const uci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'uci'
+            })
+            const median = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'median'
+            })
+            return { lci, uci, median }
           })
-          const uci = _.find(fResults, r => {
-            return r[F.VALUE_COMMENT] === 'uci'
-          })
-          const median = _.find(fResults, r => {
-            return r[F.VALUE_COMMENT] === 'median'
-          })
-          return { lci, uci, median }
-        })
+        }
       }
-    }
-  )),
-  [CHARTS.PLHIV_SEX.id]: R_SEXES.map(sex => (
-    {
-      id: sex,
-      [F.INDICATOR]: CHARTS.PLHIV_SEX.indicators.know,
-      // [F.AGE]: '15+',
-      // [F.SEX]: sex,
-      [F.AREA_NAME]: 'NULL',
-      [F.COUNTRY_NAME]: true,
-      getter: results => {
-        return R_2015_2019.map(y => {
-          return _.find(results, r => (r.year === y
-            && (r.age === '15+') && (r.sex === sex) // TODO 
-          ))
-        })
-      }
-    }
-  )),
-  [CHARTS.HIV_NEGATIVE.id]: ['retests_total', 'tests_first'].map(indicator => (
-    {
-      id: indicator,
-      [F.INDICATOR]: indicator,
-      [F.INDICATOR_DESCRIPTION]: 'negative',
-      [F.AGE]: '15-99',
-      [F.SEX]: 'both',
-      [F.AREA_NAME]: 'NULL',
-      [F.COUNTRY_NAME]: true,
-      getter: results => {
-        return R_2015_2019.map(y => {
-          const fResults = _.filter(results, r => r.year === y)
-          const lci = _.find(fResults, r => {
-            return r[F.VALUE_COMMENT] === 'lci'
-          })
-          const uci = _.find(fResults, r => {
-            return r[F.VALUE_COMMENT] === 'uci'
-          })
-          const median = _.find(fResults, r => {
-            return r[F.VALUE_COMMENT] === 'median'
-          })
-          return { lci, uci, median }
-        })
-      }
-    }
-  )),
-  [CHARTS.HIV_POSITIVE.id]: ['retests_art', 'retests_aware', 'tests_first'].map(indicator => (
-    {
-      id: indicator,
-      [F.INDICATOR]: indicator,
-      [F.INDICATOR_DESCRIPTION]: 'positive',
-      [F.AGE]: '15-99',
-      [F.SEX]: 'both',
-      [F.AREA_NAME]: 'NULL',
-      [F.COUNTRY_NAME]: true,
-      getter: results => {
-        return R_2015_2019.map(y => {
-          const fResults = _.filter(results, r => r.year === y)
-          const lci = _.find(fResults, r => {
-            return r[F.VALUE_COMMENT] === 'lci'
-          })
-          const uci = _.find(fResults, r => {
-            return r[F.VALUE_COMMENT] === 'uci'
-          })
-          const median = _.find(fResults, r => {
-            return r[F.VALUE_COMMENT] === 'median'
-          })
-          return { lci, uci, median }
-        })
-      }
-    }
-  )),
+    )),
+  }
+
+  return indicatorMap
 }
 
-export { CHARTS, FIELD_MAP, INDICATOR_MAP, AGGREGATE_GETTER }
+export { CHARTS, FIELD_MAP, AGGREGATE_GETTER, getIndicatorMap }

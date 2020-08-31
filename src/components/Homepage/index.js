@@ -11,8 +11,8 @@ const Homepage = withRouter(({ history }) =>
         <h1>HIV Country Intelligence</h1>
         <h2>HIV Testing Services Dashboard</h2>
         <div className='input-group'>
-          <select onChange={e => history.push('/' + e.target.value)} className='custom-select'>
-            <option selected>Select Country</option>
+          <select defaultValue='none' onChange={e => history.push('/' + e.target.value)} className='custom-select'>
+            <option value='none'>Select Country</option>
             <option value='Kenya'>Kenya</option>
             <option value='Thailand'>Thailand</option>
           </select>
