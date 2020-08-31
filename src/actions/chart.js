@@ -2,7 +2,7 @@ import * as types from '../constants/types'
 import _ from 'lodash'
 import { INDICATOR_MAP, AGGREGATE_GETTER } from '../constants/charts'
 
-const fields = [
+const fields = [ // todo swap out
   'indicator',
   'indicator_description',
   'contry_iso_code',
@@ -39,6 +39,7 @@ const myInit = {
 
 const baseUrl = 'https://status.y-x.ch/query?'
 
+const isShiny = true // todo
 
 export const getChartData = (country) =>
   dispatch => {

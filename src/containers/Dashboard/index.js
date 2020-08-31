@@ -199,6 +199,8 @@ class Dashboard extends Component {
       return
     }
 
+    console.log(id, ' data: ', data)
+    
     try {
       const options = {
         legend: { symbolWidth: 40 },
@@ -266,44 +268,68 @@ class Dashboard extends Component {
   }
 
   getPLHIVSex() {
-    const title = 'PLHIV who know status - by sex'
-    const options = {
-      legend: { symbolWidth: 40 },
-      subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-      plotOptions: { series: { pointStart: 2010 } }
+    const { title, id } = CHARTS.PLHIV_SEX
+
+    const data = _.get(this.props.chartData, [id, 'data'])
+    if (!data) {
+      console.warn(`${title} has no data`)
+      return
     }
-    const baseSeries = [
-      2, 3, 6,
-      9,14,17,
-      25,29,36,
-      53,
-    ]
+
+    console.log(id, ' data: ', data)
     
-    const series = [
-      {
-        name: 'Men',
-        color: colors[4],
-        dashStyle: 'solid',
-        data: baseSeries,
-      },
-      // {
-      //   name: '25 - 34',
-      //   dashStyle: 'DashDot',
-      //   data: dataHelper(baseSeries, 8, 5),
-      // },
-      // {
-      //   name: '35 - 49',
-      //   dashStyle: 'LongDash',
-      //   data: dataHelper(baseSeries, 6, 8),
-      // },
-      {
-        name: 'Women',
-        color: colors[1],
-        dashStyle: 'Solid',
-        data: dataHelper(baseSeries, 4, 12),
-      },
-    ]
-    return _.merge({}, getLine({title, series, options}))
+    try {
+
+      const options = {
+        legend: { symbolWidth: 40 },
+        subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+        plotOptions: { series: { pointStart: 2015 } }
+      }
+
+      const femaleXYValues = data['Females'].map(d => {
+        return ({
+          x: Number(d.year),
+          y: d.value,
+        })
+      })
+      const maleXYValues = data['Males'].map(d => {
+        return ({
+          x: Number(d.year),
+          y: d.value,
+        })
+      })
+      
+      const series = [
+        {
+          name: 'Men',
+          color: colors[4],
+          dashStyle: 'solid',
+          data: maleXYValues,
+        },
+        // {
+        //   name: '25 - 34',
+        //   dashStyle: 'DashDot',
+        //   data: dataHelper(baseSeries, 8, 5),
+        // },
+        // {
+        //   name: '35 - 49',
+        //   dashStyle: 'LongDash',
+        //   data: dataHelper(baseSeries, 6, 8),
+        // },
+        {
+          name: 'Women',
+          color: colors[1],
+          dashStyle: 'Solid',
+          data: femaleXYValues,
+        },
+      ]
+      const config = _.merge({}, getLine({title, series, options}))
+      return <ReactHighcharts config={config} />
+    } catch (error) {
+      console.error(title, ' failed: ', error)
+      debugger
+      return
+    }
   }
 
   getNegative() {
@@ -929,7 +955,7 @@ class Dashboard extends Component {
 
     const configCascade = this.getCascade()
     const PLHIVAge = this.getPLHIVAge()
-    const configPLHIVSex = this.getPLHIVSex()
+    const PLHIVSex = this.getPLHIVSex()
     // const configConducted = this.getConducted()
     const negative = this.getNegative()
     const positive = this.getPositive()
@@ -972,7 +998,7 @@ class Dashboard extends Component {
             <div className='col-xl-4 col-md-6 col-sm-12'>
               <ReactHighcharts config={configCascade}/>
             </div>
-            {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPLHIVSex}/></div>}
+            {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>{PLHIVSex}</div>}
             {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>{PLHIVAge}</div>}
 
             {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>{negative}</div>}

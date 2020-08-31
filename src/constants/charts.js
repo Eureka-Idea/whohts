@@ -16,11 +16,19 @@ const CHARTS = {
   },
   PLHIV_DIAGNOSIS: {
     title: 'PLHIV by diagnosis and treatment status',
-    id: 'PLHIV_DIAGNOSIS'
+    id: 'PLHIV_DIAGNOSIS',
+    indicators: {
+      // undiagnosed:
+    }
   },
   PLHIV_SEX: {
     title: 'PLHIV who know status - by sex',
-    id: 'PLHIV_SEX'
+    id: 'PLHIV_SEX',
+    indicators: {
+      know: 'People living with HIV who know their status',
+      plhiv_f: 'People living with HIV - females aged 50+',
+      plhiv_m: 'People living with HIV - males aged 50+',
+    }
   },
   PLHIV_AGE: {
     title: 'PLHIV who know status - by age',
@@ -107,7 +115,9 @@ const R_2015_2019 = [
   '2015','2016','2017','2018','2019',
 ]
 const R_ADULT_AGES = ['15-24', '25-34', '35-49', '50-99']
+const R_SEXES = ['Males', 'Females']
 
+// TODO***: make this a MAP_GETTER that takes isShiny and returns appropriately (right charts, and indicators)
 const INDICATOR_MAP = {
   [CHARTS.CONTEXT.id]: [
     {
@@ -160,6 +170,23 @@ const INDICATOR_MAP = {
             return r[F.VALUE_COMMENT] === 'median'
           })
           return { lci, uci, median }
+        })
+      }
+    }
+  )),
+  [CHARTS.PLHIV_SEX.id]: R_SEXES.map(sex => (
+    {
+      id: sex,
+      [F.INDICATOR]: CHARTS.PLHIV_SEX.indicators.know,
+      // [F.AGE]: '15+',
+      // [F.SEX]: sex,
+      [F.AREA_NAME]: 'NULL',
+      [F.COUNTRY_NAME]: true,
+      getter: results => {
+        return R_2015_2019.map(y => {
+          return _.find(results, r => (r.year === y
+            && (r.age === '15+') && (r.sex === sex) // TODO 
+          ))
         })
       }
     }
