@@ -41,9 +41,10 @@ const baseUrl = 'https://status.y-x.ch/query?'
 
 const isShiny = true // todo
 
+// gets records to cover the indicators relevant to each chart
 export const getChartData = (country) =>
   dispatch => {
-    console.log('GETCHARTDATA DISPATCH (shortcircuit here)')
+    console.log('GETCHARTDATA DISPATCH')
     // until we care about the data, avoid errors
     // return
     const indicatorMap = getIndicatorMap(isShiny)

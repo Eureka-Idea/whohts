@@ -115,7 +115,7 @@ const R_2015_2019 = [
 const R_ADULT_AGES = ['15-24', '25-34', '35-49', '50-99']
 const R_SEXES = ['males', 'females']
 
-// TODO***: make this a MAP_GETTER that takes isShiny and returns appropriately (right charts, and indicators)
+// this map specifies which records need to be pulled to cover the indicators relevant to each chart
 const getIndicatorMap = (isShiny) => {
 
   const indicatorMap = {

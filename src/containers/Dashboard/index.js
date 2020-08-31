@@ -5,7 +5,7 @@ import baseStyle from './baseStyle'
 import {connect} from 'react-redux'
 import _ from 'lodash'
 import './styles.css'
-import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './configs'
+import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
 import colors from './colors'
 import Tooltip from '../../components/Tooltip'
 import NestedBoxes from '../../components/NestedBoxes'
@@ -16,6 +16,7 @@ import { TERM_MAP, TERMS } from '../../constants/glossary'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { CHARTS, FIELD_MAP } from '../../constants/charts'
+import { getConfig } from './chartConfigs'
 const HighchartsMore = require('highcharts/highcharts-more')
 const Highcharts = require('highcharts')
 const ReactHighcharts = require('react-highcharts').withHighcharts(Highcharts)
@@ -108,43 +109,30 @@ class Dashboard extends Component {
   getP95() {
     const { id, title } = CHARTS.P95
 
-    const data = _.get(this.props.chartData, [id, 'data'])
-    if (!data) {
-      console.warn(`${id} has no data`)
+    const config = getConfig(id, this.props.chartData)
+
+    if (!config) {
       return
     }
-
-    console.log(id, ' data: ', data)
-
-    try {
-      const [status, art, suppression] = ['status', 'art', 'suppression'].map(ind => {
-        const indVal = _.get(data, [ind, 'value'])
-        return indVal/100
-      })
-      
-      return (
-        <div className='col-xl-4 col-md-6 col-xs-12 prog-95'>
-          <div className='content'>
-            <p>{title}</p>
-            <NestedBoxes
-              side={110}
-              ratios={[status, art, suppression]}
-              // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
-              colors={['#c38f72', '#85adca', '#999999', colors[0] + '50']}
-              content={[
-                { inner: '85%', below: 'of people living with HIV know their status' },
-                { inner: '79%', below: 'of people living with HIV who know their status are on treatment' },
-                { inner: '87%', below: 'of people on treatment are virally suppressed' },
-              ]}
-            />
-          </div>
+    
+    return (
+      <div className='col-xl-4 col-md-6 col-xs-12 prog-95'>
+        <div className='content'>
+          <p>{title}</p>
+          <NestedBoxes
+            side={110}
+            ratios={config}
+            // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
+            colors={['#c38f72', '#85adca', '#999999', colors[0] + '50']}
+            content={[
+              { inner: '85%', below: 'of people living with HIV know their status' },
+              { inner: '79%', below: 'of people living with HIV who know their status are on treatment' },
+              { inner: '87%', below: 'of people on treatment are virally suppressed' },
+            ]}
+          />
         </div>
-      )
-    } catch (error) {
-      console.error(id, ' failed: ', error)
-      debugger
-      return
-    }
+      </div>
+    )
   }
 
   getCascade() {
@@ -190,291 +178,14 @@ class Dashboard extends Component {
     return _.merge({}, getArea({title, series, options}))
   }
 
-  getPLHIVAge() {
-    const { title, id } = CHARTS.PLHIV_AGE
-
-    const data = _.get(this.props.chartData, [id, 'data'])
-    if (!data) {
-      console.warn(`${title} has no data`)
+  getChart(id) {
+    if (_.isEmpty(this.props.chartData)) {
+      console.log('No chart data (perhaps awaiting API response)')
       return
     }
 
-    console.log(id, ' data: ', data)
-    
-    try {
-      const options = {
-        legend: { symbolWidth: 40 },
-        subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-        plotOptions: { series: { pointStart: 2015 } }
-      }
-      // const baseSeries = [
-      //   2, 3, 6,
-      //   9,14,17,
-      //   25,29,36,
-      //   53,
-      // ]
-      const d15 = data['15-24'] || Array(5).fill(null)
-      const d15Values = d15.map(d => {
-        const v = _.get(d, 'median.value')
-        return v ? v * 100 : null
-      })
-      const d25 = data['25-34'] || Array(5).fill(null)
-      const d25Values = d25.map(d => {
-        const v = _.get(d, 'median.value')
-        return v ? v * 100 : null
-      })
-      const d35 = data['35-49'] || Array(5).fill(null)
-      const d35Values = d35.map(d => {
-        const v = _.get(d, 'median.value')
-        return v ? v * 100 : null
-      })
-      const d50 = data['50-99'] || Array(5).fill(null)
-      const d50Values = d50.map(d => {
-        const v = _.get(d, 'median.value')
-        return v ? v * 100 : null
-      })
-      const series = [
-        {
-          name: '15 - 24',
-          dashStyle: 'ShortDot',
-          data: d15Values
-        },
-        {
-          name: '25 - 34',
-          dashStyle: 'DashDot',
-          data: d25Values
-        },
-        {
-          name: '35 - 49',
-          dashStyle: 'LongDash',
-          data: d35Values
-        },
-        {
-          name: '50+',
-          color: colors[8],
-          dashStyle: 'Solid',
-          data: d50Values
-        },
-      ]
-      const config = _.merge({}, getLine({title, series, options}))
-      // console.log('PLHIVAge made config: ', config)
-      return <ReactHighcharts config={config} />
-
-    } catch (error) {
-      console.error('PLHIVAge failed: ', error)
-      debugger
-      return
-    }
-  }
-
-  getPLHIVSex() {
-    const { title, id } = CHARTS.PLHIV_SEX
-
-    const data = _.get(this.props.chartData, [id, 'data'])
-    if (!data) {
-      console.warn(`${title} has no data`)
-      return
-    }
-
-    console.log(id, ' data: ', data)
-    
-    try {
-
-      const options = {
-        legend: { symbolWidth: 40 },
-        subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-        plotOptions: { series: { pointStart: 2015 } }
-      }
-
-      const femaleXYValues = data['females'].map(d => {
-        return ({
-          x: Number(d.year),
-          y: d.value,
-        })
-      })
-      const maleXYValues = data['males'].map(d => {
-        return ({
-          x: Number(d.year),
-          y: d.value,
-        })
-      })
-      
-      const series = [
-        {
-          name: 'Men',
-          color: colors[4],
-          dashStyle: 'solid',
-          data: maleXYValues,
-        },
-        // {
-        //   name: '25 - 34',
-        //   dashStyle: 'DashDot',
-        //   data: dataHelper(baseSeries, 8, 5),
-        // },
-        // {
-        //   name: '35 - 49',
-        //   dashStyle: 'LongDash',
-        //   data: dataHelper(baseSeries, 6, 8),
-        // },
-        {
-          name: 'Women',
-          color: colors[1],
-          dashStyle: 'Solid',
-          data: femaleXYValues,
-        },
-      ]
-      const config = _.merge({}, getLine({title, series, options}))
-      return <ReactHighcharts config={config} />
-    } catch (error) {
-      console.error(title, ' failed: ', error)
-      debugger
-      return
-    }
-  }
-
-  getNegative() {
-    const { id } = CHARTS.HIV_NEGATIVE
-
-    const data = _.get(this.props.chartData, [id, 'data'])
-    if (!data) {
-      console.warn(`${id} has no data`)
-      return
-    }
-
-    console.log(id, ' data: ', data)
-
-    try {
-      const title = '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
-
-      const retests = data['retests_total'] || Array(5).fill(null)
-      const retestsValues = retests.map(d => {
-        return _.get(d, 'median.value')
-      })
-      const firsts = data['tests_first'] || Array(5).fill(null)
-      const firstsValues = firsts.map(d => {
-        return _.get(d, 'median.value')
-      })
-      const series = [
-        {
-          name: 'Retest',
-          description: TERM_MAP.retest.definition,
-          color: colors[4]+'97',
-          data: retestsValues
-
-        },
-        {
-          name: 'First test',
-          description: TERM_MAP.firstTest.definition,
-          color: colors[9]+'90',
-          data: firstsValues
-        },
-      ]
-      const options = {
-        title: { useHTML: true },
-        yAxis: { title: { text: 'HIV Negative Tests (thousands)' } },
-        subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-        plotOptions: { series: { pointStart: 2010 } }
-        // tooltip: { valueSuffix: ' thousand' },
-      }
-      const config = _.merge({}, getArea({title, series, options}))
-
-      console.log('NEGATIVE made config: ', config)
-      return <ReactHighcharts config={config} />
-
-    } catch (error) {
-      console.error('Negative failed: ', error)
-      debugger
-      return
-    }
-  }
-  
-  // getConducted() {
-  //   const title = 'HIV Tests Conducted'
-  //   const categories = _.range(2000,2020)
-  //   const series = [
-  //     {
-  //       name: 'HIV Negative',
-  //       color: colors[4]+'97',
-  //       data: [
-  //         123,132,149,153,163,
-  //         178,191,199,201,212,
-  //         214,223,231,238,244,
-  //         251,255,257,258,258
-  //       ],
-  //     },
-  //     {
-  //       name: 'HIV Positive',
-  //       color: colors[9]+'90',
-  //       data: [
-  //         29,31,31,32,33,
-  //         33,33,34,34,35,
-  //         36,36,36,37,37,
-  //         38,38,39,39,39
-  //       ],
-  //     },
-  //   ]
-  //   const options = {
-  //     yAxis: { title: { text: 'Adults 15+ (millions)' } },
-  //   }
-  //   return _.merge({}, getArea({title, categories, series, options}))
-  // }
-
-  getPositive() {
-    const { id } = CHARTS.HIV_POSITIVE
-
-    const data = _.get(this.props.chartData, [id, 'data'])
-    if (!data) {
-      console.warn(`${id} has no data`)
-      return
-    }
-
-    console.log(id, ' data: ', data)
-
-    try {
-      const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
-
-      const [art, aware, first] = ['retests_art', 'retests_aware', 'tests_first'].map(ind => {
-        const indData = data[ind] || Array(5).fill(null)
-        return _.map(indData, 'median.value')
-      })
-
-      const options = { 
-        title: { useHTML: true },
-        yAxis: { title: { text: 'HIV Positive tests (thousands)' } },
-        subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-        plotOptions: { series: { pointStart: 2015 } } // TODO no pointstart
-        // tooltip: { pointFormat: '{series.name}: <b>{point.y:.0f} million</b>' },
-        // yAxis: { max: 58*2 },
-        // tooltip: { valueSuffix: ',000' },
-      }
-      const series = [
-        {
-          name: 'Retest - know status on ART',
-          description: TERM_MAP.retest.definition,
-          color: colors[0]+'97',
-          data: art
-        },
-        {
-          name: 'Retest - know status not on ART',
-          description: TERM_MAP.retest.definition,
-          color: colors[2]+'97',
-          data: aware
-        },
-        {
-          name: 'New diagnosis',
-          description: TERM_MAP.newDiagnosis.definition,
-          color: colors[1]+'97',
-          data: first
-        },
-      ]
-      const config = _.merge({}, getArea({title, series, options}))
-      return <ReactHighcharts config={config}/>
-
-    } catch(error) {
-      console.error('positive failed: ', error)
-      debugger
-      return
-    }
+    const config = getConfig(id, this.props.chartData)
+    return <ReactHighcharts config={config} />
   }
 
   getPrevalence(shiny) {
@@ -954,11 +665,13 @@ class Dashboard extends Component {
     const shiny = countryMap[this.props.match.params.country].shiny
 
     const configCascade = this.getCascade()
-    const PLHIVAge = this.getPLHIVAge()
-    const PLHIVSex = this.getPLHIVSex()
     // const configConducted = this.getConducted()
-    const negative = this.getNegative()
-    const positive = this.getPositive()
+    
+    const PLHIVAge = this.getChart(CHARTS.PLHIV_AGE.id)
+    const PLHIVSex = this.getChart(CHARTS.PLHIV_SEX.id)
+    const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
+    const positive = this.getChart(CHARTS.HIV_POSITIVE.id)
+
     const configPrevalence = this.getPrevalence(shiny)
     // const configPrep = this.getPrep()
     // const configPrepStacked = this.getPrepStacked()
