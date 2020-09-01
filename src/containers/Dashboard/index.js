@@ -46,8 +46,6 @@ const URLBase = 'https://status.y-x.ch/query?'
 
 const fields = _.flatMap(FIELD_MAP)
 
-const chartNames = ['chart1', 'chart2']
-
 const uncertaintyTooltipFormat = `<span style="color:{point.color}">●</span>
   {series.name}: <b>{point.y}</b><br/>
   Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
@@ -81,29 +79,21 @@ class Dashboard extends Component {
     if (!country) {
       // TODO: check country existence
       this.props.history.go('/')
-      console.error('no!')
+      console.error('no country!')
       return
     }
     this.props.actions.getChartData(country)
   }
 
   componentDidMount() {
-    console.log('mtd', this.props)
+    console.log('MOUNTED. ', this.props)
   }
 
   componentWillReceiveProps(newProps) {
-    // TODO lodash / deep equal
-    if (newProps.chartData === this.props.chartData) {
+    if (_.isEqual(newProps.chartData, this.props.chartData)) {
       console.error('what changed?')
       return
     }
-    console.log('Configuring charts: ')
-    this.configs = {}
-    chartNames.forEach(c => {
-      const rows = newProps.chartData[c]
-      this.configs[c] = rows
-    })
-    console.log(this.configs)
   }
 
   getP95() {
@@ -178,14 +168,23 @@ class Dashboard extends Component {
     return _.merge({}, getArea({title, series, options}))
   }
 
-  getChart(id) {
+  getChart(id, tt) {
     if (_.isEmpty(this.props.chartData)) {
       console.log('No chart data (perhaps awaiting API response)')
       return
     }
 
+    // if (!shiny) return
+
     const config = getConfig(id, this.props.chartData)
-    return <ReactHighcharts config={config} />
+    const chart = <ReactHighcharts config={config} />
+
+    return (
+      <div className='chart-container col-xl-4 col-lg-6 col-sm-12'>
+        {tt}
+        {chart}
+      </div>
+    )
   }
 
   getPrevalence(shiny) {
@@ -582,19 +581,6 @@ class Dashboard extends Component {
   }
 
   getIndex() {
-    // TODO: delete? probably not worth conditionally adjusting render position of dataLabel...
-    // const x = null
-    // const dataLabels = { 
-    //   nullFormat: '{point.category}',
-    //   nullFormatter: function(e) {
-    //     console.log(e)
-    //     debugger
-    //   }
-    // }
-    // if (!x) {
-    //   dataLabels.align = 'left'
-    //   dataLabels.inside = false
-    // }
     const title = 'Index'
     const series = [
       {
@@ -632,15 +618,6 @@ class Dashboard extends Component {
     return _.merge({}, getColumn({title, series, options, categories}))
   }
 
-  // getModeledIcon() {
-
-  //   return (
-  //     <div className="modeled-icon" title="this chart uses modeled data">
-  //       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" enable-background="new 0 0 64 64">
-  //       <path d="m32 2c-16.568 0-30 13.432-30 30s13.432 30 30 30 30-13.432 30-30-13.432-30-30-30m14.035 44.508h-5.65v-19.626c0-.564.008-1.355.02-2.372.014-1.018.02-1.802.02-2.353l-5.498 24.351h-5.893l-5.459-24.351c0 .551.006 1.335.02 2.353.014 1.017.02 1.808.02 2.372v19.626h-5.65v-29.016h8.824l5.281 22.814 5.242-22.814h8.725v29.016z" fill={colors[0]}/></svg>
-  //   </div>
-  //   )
-  // }
   getCountryContext() {
     console.log('gCC')
     const { id } = CHARTS.CONTEXT
@@ -666,11 +643,21 @@ class Dashboard extends Component {
 
     const configCascade = this.getCascade()
     // const configConducted = this.getConducted()
+
+    const ptt = (
+      <Tooltip>
+        <div>
+          <div><b>Retests - PLHIV on ART:</b><span> Number of positive tests conducted in PLHIV already on ART. This is calculated by… Potential reasons for this type of testing include…</span></div>
+          <div><b>Retests - Aware but not on ART:</b><span> Number of positive tests conducted in PLHIV aware of their HIV infection but not on ART. This is calculated by… Potential reasons for this type of testing include…</span></div>
+          <div><b>New Diagnoses:</b><span> Number of positive tests returned that represent a newly identified HIV infection. This [does/does not] include retesting for verification prior to ART initiation as recommended by WHO. </span></div>
+        </div>
+      </Tooltip>
+    )
     
     const PLHIVAge = this.getChart(CHARTS.PLHIV_AGE.id)
     const PLHIVSex = this.getChart(CHARTS.PLHIV_SEX.id)
     const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
-    const positive = this.getChart(CHARTS.HIV_POSITIVE.id)
+    const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
 
     const configPrevalence = this.getPrevalence(shiny)
     // const configPrep = this.getPrep()
@@ -708,44 +695,30 @@ class Dashboard extends Component {
 
           <div className='row no-gutters'>
 
-            <div className='col-xl-4 col-md-6 col-sm-12'>
+            {/* <div className='col-xl-4 col-md-6 col-sm-12'>
               <ReactHighcharts config={configCascade}/>
-            </div>
-            {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>{PLHIVSex}</div>}
-            {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>{PLHIVAge}</div>}
-
-            {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>{negative}</div>}
-            {!shiny ? null : <div className='col-xl-4 col-md-6 col-sm-12'>
-              <Tooltip> 
-                <div>
-                  <div><b>Retests - PLHIV on ART:</b><span> Number of positive tests conducted in PLHIV already on ART. This is calculated by… Potential reasons for this type of testing include…</span></div>
-                  <div><b>Retests - Aware but not on ART:</b><span> Number of positive tests conducted in PLHIV aware of their HIV infection but not on ART. This is calculated by… Potential reasons for this type of testing include…</span></div>
-                  <div><b>New Diagnoses:</b><span> Number of positive tests returned that represent a newly identified HIV infection. This [does/does not] include retesting for verification prior to ART initiation as recommended by WHO. </span></div>
-                </div>
-              </Tooltip>
-              {positive}
-            </div>}
-            <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPrevalence}/></div>
-            {/* <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPrep}/></div>
-            <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPrepStacked}/></div> */}
-            {/* {!shiny ? null : <div className='col-xl-6 col-md-6 col-sm-12'><ReactHighcharts config={configComp}/></div>} */}
+            </div> */}
+            {PLHIVSex}
+            {PLHIVAge}
+            {negative}
+            {positive}
+            {/* <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPrevalence}/></div> */}
           </div>
 
-          <div className='row no-gutters'>
+          {/* <div className='row no-gutters'>
             <h5 className='col-12 text-center mt-4 mb-2'>HIV tests conducted and positivity in the past year</h5>
             <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configAdults}/></div>
             <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configCommunity}/></div>
             <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configFacility}/></div>
             <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configIndex}/></div>
-            {/* <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configSelf}/></div> */}
             <div className='col-xl-4 col-lg-6 col-md-6 col-sm-12'><ReactHighcharts config={configForecast} /></div>
-          </div>
+          </div> */}
 
-          <div className='row no-gutters mt-5'>
+          {/* <div className='row no-gutters mt-5'>
             <KPTable classes='col-sm-12 col-md-7 p-3' />
             <PolicyTable classes='col-sm-12 col-md-5 p-3' />
             <DemographicsTable shiny={shiny} classes='p-3' />
-          </div>
+          </div> */}
 
           <div className='row no-gutters mt-5'>
             <h3>Links to other sources</h3>

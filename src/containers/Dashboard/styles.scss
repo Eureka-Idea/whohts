@@ -84,6 +84,23 @@ $nav-height: 70px;
     .table-tooltip {
       width: 270px;
     }
+
+    .chart-container > div {
+      // height: 400px;
+      // position: relative;
+      // width: 100%;
+      // overflow: hidden;
+    }
+    .chart-container .highcharts-container {
+      // // height: 400px !important;
+      // position: relative !important;
+      // // width: 100% !important;
+      // overflow: hidden !important;
+    }
+    .highcharts-container, .highcharts-container svg { 
+      // https://github.com/highcharts/highcharts/issues/1157#issuecomment-137740569
+      width: 100% !important; 
+    }
     
     // todo: move 
     .tooltip-container {
