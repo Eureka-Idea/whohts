@@ -85,22 +85,29 @@ $nav-height: 70px;
       width: 270px;
     }
 
-    .chart-container > div {
-      // height: 400px;
-      // position: relative;
-      // width: 100%;
-      // overflow: hidden;
+    // FIXES: chart width doesn't resize inside flex container
+    // SOLUTION 1 (https://github.com/highcharts/highcharts/issues/4649#issuecomment-425375098)
+    .chart-container div[data-highcharts-chart] {
+      height: 400px;
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      // flex-grow: 1;
     }
     .chart-container .highcharts-container {
-      // // height: 400px !important;
-      // position: relative !important;
-      // // width: 100% !important;
-      // overflow: hidden !important;
+      position: absolute !important;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      overflow: hidden !important;
+      // height: 400px !important;
+      // width: 100% !important;
     }
-    .highcharts-container, .highcharts-container svg { 
-      // https://github.com/highcharts/highcharts/issues/1157#issuecomment-137740569
-      width: 100% !important; 
-    }
+    // SOLUTION 2 (https://github.com/highcharts/highcharts/issues/1157#issuecomment-137740569
+    // .highcharts-container, .highcharts-container svg { 
+    //   width: 100% !important; 
+    // }
     
     // todo: move 
     .tooltip-container {

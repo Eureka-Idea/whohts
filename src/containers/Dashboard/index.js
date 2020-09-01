@@ -181,8 +181,8 @@ class Dashboard extends Component {
 
     return (
       <div className='chart-container col-xl-4 col-lg-6 col-sm-12'>
-        {tt}
         {chart}
+        {tt}
       </div>
     )
   }

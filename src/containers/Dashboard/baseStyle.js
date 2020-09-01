@@ -13,6 +13,7 @@ export default {
     // "series": { "yAxis": { "stackLabels": { enabled: true } } },
   },
   "chart": {
+    // "className": "charty-mcchartface",
     "alignTicks": true,
     // "height": 400,
     "backgroundColor": "#FFFFFF",
