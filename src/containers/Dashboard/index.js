@@ -126,46 +126,7 @@ class Dashboard extends Component {
   }
 
   getCascade() {
-    const title = 'PLHIV by diagnosis and treatment status'
-    const options = { 
-      // yAxis: { labels: { format: '{value}%' } },
-      subtitle: { text: 'Spectrum model estimates (UNAIDS, 2020)' },
-      tooltip: { valueSuffix: ' million' },
-      yAxis: { title: { text: 'Adults 15+ (millions)' } },
-      plotOptions: { series: { pointStart: 2010 } }
-      // tooltip: { pointFormat: '{series.name}: <b>{point.y:.0f} million</b>' },
-      // yAxis: { max: 58*2 },
-     }
-    const series = [
-      {
-        name: 'Undiagnosed PLHIV',
-        description: TERM_MAP.undiagnosedPlhiv.definition,
-        color: colors[1]+'97',
-        data: [
-          14,13,13,12,12,
-          12,11,10, 9, 9
-        ],
-      },
-      {
-        name: 'PLHIV know status not on ART',
-        description: TERM_MAP.plhivWhoKnowStatusNotOnArt.definition,
-        color: colors[2]+'97',
-        data: [
-          38,40,41,44,45,
-          45,48,50,53,55
-        ].map(n => n-10),
-      },
-      {
-        name: 'PLHIV know status on ART',
-        description: TERM_MAP.plhivKnowStatusOnArt.definition,
-        color: colors[0]+'97',
-        data: [
-          16,19,22,24,27,
-          32,35,39,42,44
-        ].map(n => n-6),
-      },
-    ]
-    return _.merge({}, getArea({title, series, options}))
+    
   }
 
   getChart(id, tt) {
@@ -654,6 +615,7 @@ class Dashboard extends Component {
       </Tooltip>
     )
     
+    const diagnosis = this.getChart(CHARTS.PLHIV_DIAGNOSIS.id)
     const PLHIVAge = this.getChart(CHARTS.PLHIV_AGE.id)
     const PLHIVSex = this.getChart(CHARTS.PLHIV_SEX.id)
     const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
@@ -698,6 +660,7 @@ class Dashboard extends Component {
             {/* <div className='col-xl-4 col-md-6 col-sm-12'>
               <ReactHighcharts config={configCascade}/>
             </div> */}
+            {diagnosis}
             {PLHIVSex}
             {PLHIVAge}
             {negative}

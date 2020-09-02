@@ -18,14 +18,16 @@ const CHARTS = {
     title: 'PLHIV by diagnosis and treatment status',
     id: 'PLHIV_DIAGNOSIS',
     indicators: {
-      // undiagnosed:
+      plhiv: 'People living with HIV - all ages', // TODO: - adults (aged 15+)
+      know: 'People living with HIV who know their status',
+      onArt: 'People receiving antiretroviral therapy',
     }
   },
   PLHIV_SEX: {
     title: 'PLHIV who know status - by sex',
     id: 'PLHIV_SEX',
     indicators: {
-      know: 'Percent of people living with HIV who know their status',
+      status: 'Percent of people living with HIV who know their status',
     }
   },
   PLHIV_AGE: {
@@ -77,6 +79,7 @@ const CHARTS = {
     id: 'GROUPS_TABLE'
   },
 }
+const C = CHARTS
 
 const FIELD_MAP = {
   INDICATOR: 'indicator',
@@ -105,10 +108,10 @@ const F = FIELD_MAP
 // indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
 const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
 
-const R_2010_2019 = [
-  '2010','2011','2012','2013','2014',
-  '2015','2016','2017','2018','2019',
-]
+// const R_2010_2019 = [
+//   '2010','2011','2012','2013','2014',
+//   '2015','2016','2017','2018','2019',
+// ]
 const R_2015_2019 = [
   '2015','2016','2017','2018','2019',
 ]
@@ -119,7 +122,7 @@ const R_SEXES = ['males', 'females']
 const getIndicatorMap = (isShiny) => {
 
   const indicatorMap = {
-    [CHARTS.CONTEXT.id]: [
+    [C.CONTEXT.id]: [
       {
         id: 'population',
         [F.INDICATOR]: 'Population',
@@ -137,7 +140,7 @@ const getIndicatorMap = (isShiny) => {
         }
       },
     ],
-    [CHARTS.P95.id]: _.map(CHARTS.P95.indicators, (v, k) =>
+    [C.P95.id]: _.map(C.P95.indicators, (v, k) =>
       ({
         id: k,
         [F.INDICATOR]: v,
@@ -148,7 +151,35 @@ const getIndicatorMap = (isShiny) => {
         }
       })
     ),
-    [CHARTS.PLHIV_AGE.id]: R_ADULT_AGES.map(ageRange => (
+    [C.PLHIV_DIAGNOSIS.id]: _.map(C.PLHIV_DIAGNOSIS.indicators, (v, k) => (
+      {
+        id: k,
+        [F.INDICATOR]: v,
+        // [F.AGE]: '15+',
+        [F.SEX]: 'NULL',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            const fResults = _.filter(results, r => r.year === y)
+            // const lci = _.find(fResults, r => {
+            //   return r[F.VALUE_COMMENT] === 'lci'
+            // })
+            // const uci = _.find(fResults, r => {
+            //   return r[F.VALUE_COMMENT] === 'uci'
+            // })
+            // const median = _.find(fResults, r => {
+            //   return r[F.VALUE_COMMENT] === 'median'
+            // })
+            // return { lci, uci, median }
+            const age = k === 'plhiv' ? 'all ages' : '15+' // TODO remove
+            const median = _.find(fResults, r => r.age === age)
+            return { median }
+          })
+        }
+      }
+    )),
+    [C.PLHIV_AGE.id]: R_ADULT_AGES.map(ageRange => (
       {
         id: ageRange,
         [F.INDICATOR]: 'aware',
@@ -174,10 +205,10 @@ const getIndicatorMap = (isShiny) => {
         }
       }
     )),
-    [CHARTS.PLHIV_SEX.id]: R_SEXES.map(sex => (
+    [C.PLHIV_SEX.id]: R_SEXES.map(sex => (
       {
         id: sex,
-        [F.INDICATOR]: CHARTS.PLHIV_SEX.indicators.know,
+        [F.INDICATOR]: C.PLHIV_SEX.indicators.status,
         // [F.AGE]: '15+',
         [F.SEX]: sex,
         [F.AREA_NAME]: 'NULL',
@@ -191,7 +222,7 @@ const getIndicatorMap = (isShiny) => {
         }
       }
     )),
-    [CHARTS.HIV_NEGATIVE.id]: ['retests_total', 'tests_first'].map(indicator => (
+    [C.HIV_NEGATIVE.id]: ['retests_total', 'tests_first'].map(indicator => (
       {
         id: indicator,
         [F.INDICATOR]: indicator,
@@ -217,7 +248,7 @@ const getIndicatorMap = (isShiny) => {
         }
       }
     )),
-    [CHARTS.HIV_POSITIVE.id]: ['retests_art', 'retests_aware', 'tests_first'].map(indicator => (
+    [C.HIV_POSITIVE.id]: ['retests_art', 'retests_aware', 'tests_first'].map(indicator => (
       {
         id: indicator,
         [F.INDICATOR]: indicator,

@@ -60,7 +60,62 @@ const getP95 = data => {
 }
 
 const getPlhivDiagnosis = data => {
+  const { title } = CHARTS.PLHIV_DIAGNOSIS
+
+  const options = {
+    // yAxis: { labels: { format: '{value}%' } },
+    subtitle: { text: 'Spectrum model estimates (UNAIDS, 2020)' },
+    tooltip: { valueSuffix: ' million' },
+    yAxis: { title: { text: 'Adults 15+ (millions)' } },
+    plotOptions: { series: { pointStart: 2015 } }
+    // tooltip: { pointFormat: '{series.name}: <b>{point.y:.0f} million</b>' },
+    // yAxis: { max: 58*2 },
+  }
+
+  const undiagnosedData = []
+  const notArtData = []
+  const onArtData = []
   
+  data.onArt.forEach((yearRecord, i) => {
+    // TODO: calc uci/lci
+    const onArtValue = _.get(yearRecord, 'median.value')
+    const plhivValue = _.get(data, ['plhiv', i, 'median', 'value'])
+    const knowValue = _.get(data, ['know', i, 'median', 'value'])
+
+    const undiagnosedValue = plhivValue - knowValue
+    const notArtValue = plhivValue - onArtValue
+    
+    onArtData.push(onArtValue)
+    notArtData.push(notArtValue)
+    undiagnosedData.push(undiagnosedValue)
+  })
+  
+  // const [plhiv, know, onArt] = ['plhiv', 'know', 'onArt'].map(ind => {
+  //   const indData = data[ind] || Array(5).fill(null)
+  //   return _.map(indData, 'median.value')
+  // })
+  
+  const series = [
+    {
+      name: 'Undiagnosed PLHIV',
+      description: TERM_MAP.undiagnosedPlhiv.definition,
+      // color: colors[1] + '97',
+      data: undiagnosedData,
+    },
+    {
+      name: 'PLHIV know status not on ART',
+      description: TERM_MAP.plhivWhoKnowStatusNotOnArt.definition,
+      // color: colors[2] + '97',
+      data: notArtData,
+    },
+    {
+      name: 'PLHIV know status on ART',
+      description: TERM_MAP.plhivKnowStatusOnArt.definition,
+      // color: colors[0] + '97',
+      data: onArtData,
+    },
+  ]
+  return _.merge({}, getArea({ title, series, options }))
 }
 
 const getPlhivSex = data => {
