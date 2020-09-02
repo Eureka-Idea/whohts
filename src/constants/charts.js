@@ -18,7 +18,8 @@ const CHARTS = {
     title: 'PLHIV by diagnosis and treatment status',
     id: 'PLHIV_DIAGNOSIS',
     indicators: {
-      plhiv: 'People living with HIV - all ages', // TODO: - adults (aged 15+)
+      plhiv: 'People living with HIV - adults (aged 15+)',
+      // plhiv: 'People living with HIV - all ages', // TODO: - adults (aged 15+)
       know: 'People living with HIV who know their status',
       onArt: 'People receiving antiretroviral therapy',
     }
@@ -155,26 +156,22 @@ const getIndicatorMap = (isShiny) => {
       {
         id: k,
         [F.INDICATOR]: v,
-        // [F.AGE]: '15+',
+        [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_NAME]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
-            // const lci = _.find(fResults, r => {
-            //   return r[F.VALUE_COMMENT] === 'lci'
-            // })
-            // const uci = _.find(fResults, r => {
-            //   return r[F.VALUE_COMMENT] === 'uci'
-            // })
-            // const median = _.find(fResults, r => {
-            //   return r[F.VALUE_COMMENT] === 'median'
-            // })
-            // return { lci, uci, median }
-            const age = k === 'plhiv' ? 'all ages' : '15+' // TODO remove
-            const median = _.find(fResults, r => r.age === age)
-            return { median }
+
+            const median = _.find(fResults, r => 
+              !r.population_segment.includes('lower') &&
+              !r.population_segment.includes('upper')
+            )
+            const lci = _.find(fResults, r => r.population_segment.includes('lower'))
+            const uci = _.find(fResults, r => r.population_segment.includes('upper'))
+            
+            return { median, lci, uci }
           })
         }
       }

@@ -60,7 +60,12 @@ export const getChartData = (country) =>
             if (f === 'country_name') {
               chartValue = country
             }
-            url += encodeURI(`${char}${f}=${chartValue}`)
+            let chunk = `${char}${f}=${chartValue}`
+            chunk = encodeURI(chunk)
+            chunk = chunk.replace('+', '%2B') // TODO - figure out why not encoded properly
+            console.log('f: ', f, ' val: ', chartValue)
+            console.log('chunk: ', chunk)
+            url += chunk
             char = '&'
           }
         })
