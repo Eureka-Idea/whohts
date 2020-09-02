@@ -1,4 +1,4 @@
-import colors from "./colors"
+import colors, {femaleColor, maleColor } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
 import { CHARTS } from "../../constants/charts";
@@ -87,13 +87,13 @@ const getPlhivSex = data => {
   const series = [
     {
       name: 'Men',
-      color: colors[4],
+      color: maleColor,
       dashStyle: 'solid',
       data: maleXYValues,
     },
     {
       name: 'Women',
-      color: colors[1],
+      color: femaleColor,
       dashStyle: 'Solid',
       data: femaleXYValues,
     },
@@ -149,7 +149,7 @@ const getPlhivAge = data => {
     },
     {
       name: '50+',
-      color: colors[8],
+      // color: colors[8],
       dashStyle: 'Solid',
       data: d50Values
     },
@@ -173,14 +173,14 @@ const getHivNegative = data => {
     {
       name: 'Retest',
       description: TERM_MAP.retest.definition,
-      color: colors[4] + '97',
+      // color: colors[4] + '97',
       data: retestsValues
 
     },
     {
       name: 'First test',
       description: TERM_MAP.firstTest.definition,
-      color: colors[9] + '90',
+      // color: colors[9] + '90',
       data: firstsValues
     },
   ]
@@ -215,19 +215,19 @@ const getHivPositive = data => {
     {
       name: 'Retest - know status on ART',
       description: TERM_MAP.retest.definition,
-      color: colors[0] + '97',
+      // color: colors[0] + '97',
       data: art
     },
     {
       name: 'Retest - know status not on ART',
       description: TERM_MAP.retest.definition,
-      color: colors[2] + '97',
+      // color: colors[2] + '97',
       data: aware
     },
     {
       name: 'New diagnosis',
       description: TERM_MAP.newDiagnosis.definition,
-      color: colors[1] + '97',
+      // color: colors[1] + '97',
       data: first
     },
   ]

@@ -14,42 +14,77 @@ const cerulean = '#00B0F6'
 const heliotrope = '#E76BF3' // pink
 const purple = '#995cb8'
 
-// #084D3E deepSeaGreen
+// background:
+// $vista-white: #FCFAF7;
+// $pampas: #F9F8F6;
 
-// #424746 capeCod
-// #7E8382 gunSmoke
-// #545A59 nandor
+const deepSeaGreen = '#084D3E'
 
-// #F0F4F1 snowDrift
-// #F2B04D casablanca
-// #C98300 pirateGold
-// #7F6A93 rum
-// #4997AE steelBlue
-// #4D7469 cuttySark
-// #30A86E jungleGreen
-// #DE869B charm
+const capeCod = '#424746'
+const gunSmoke = '#7E8382'
+const nandor = '#545A59'
 
-// #.9 opacity
-// #BBD4D8 jungleMist
-// #676471 midGray
-// #6D7383 stormGray
-// #9FBCC0 opal
-// #C5DDE2 botticelli
-// #B2793D copper
+const snowDrift = '#F0F4F1'
+const casablanca = '#F2B04D'
+const pirateGold = '#C98300'
+const rum = '#7F6A93'
+const steelBlue = '#4997AE'
+const cuttySark = '#4D7469'
+const jungleGreen = '#30A86E'
+const charm = '#DE869B'
 
+// .9
+const jungleMist = '#BBD4D8DD'
+const midGray = '#676471DD'
+const stormGray = '#6D7383DD'
+const opal = '#9FBCC0DD'
+const botticelli = '#C5DDE2DD'
+const copper = '#B2793DDD'
 
-export default [scorpion, whoBrown, whoBlu, accentBlue, accentBlueDark, accentBlueXDark, cerulean, torquoise, olive, froly, heliotrope, subtleWheat, purple]
+const femaleColor = cuttySark
+const maleColor = pirateGold
+
+export default [
+  stormGray,
+  botticelli,
+  copper,
+  jungleGreen,
+  casablanca,
+  rum,
+  steelBlue,
+  charm,
+  jungleMist,
+  deepSeaGreen,
+  midGray,
+  opal,
+  gunSmoke,
+  nandor,
+  snowDrift,
+  
+  capeCod,
+  cuttySark,
+  pirateGold,
+]
 export {
-  scorpion,
-  froly,
-  olive,
-  torquoise,
-  cerulean,
-  heliotrope,
-  whoBlu,
-  whoBrown,
-  accentBlue,
-  accentBlueDark,
-  accentBlueXDark,
-  subtleWheat,
+  deepSeaGreen,
+  capeCod,
+  gunSmoke,
+  nandor,
+  snowDrift,
+  casablanca,
+  pirateGold,
+  rum,
+  steelBlue,
+  cuttySark,
+  jungleGreen,
+  charm,
+  jungleMist,
+  midGray,
+  stormGray,
+  opal,
+  botticelli,
+  copper,
+
+  femaleColor,
+  maleColor,
 }

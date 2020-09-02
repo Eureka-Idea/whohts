@@ -85,29 +85,38 @@ $nav-height: 70px;
       width: 270px;
     }
 
-    // FIXES: chart width doesn't resize inside flex container
-    // SOLUTION 1 (https://github.com/highcharts/highcharts/issues/4649#issuecomment-425375098)
-    .chart-container div[data-highcharts-chart] {
-      height: 400px;
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      // flex-grow: 1;
+    .chart-container {
+
+      background: white;
+      border: $vista-white 10px solid;
+      // box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+      // padding: 30px;
+      // margin: 20px;
+      box-sizing: border-box;
+      // FIXES: chart width doesn't resize inside flex container
+      // SOLUTION 1 (https://github.com/highcharts/highcharts/issues/4649#issuecomment-425375098)
+      div[data-highcharts-chart] {
+        height: 400px;
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        // flex-grow: 1;
+      }
+      .highcharts-container {
+        position: absolute !important;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        overflow: hidden !important;
+        // height: 400px !important;
+        // width: 100% !important;
+      }
+      // SOLUTION 2 (https://github.com/highcharts/highcharts/issues/1157#issuecomment-137740569
+      // .highcharts-container, .highcharts-container svg { 
+        //   width: 100% !important; 
+        // }
     }
-    .chart-container .highcharts-container {
-      position: absolute !important;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      overflow: hidden !important;
-      // height: 400px !important;
-      // width: 100% !important;
-    }
-    // SOLUTION 2 (https://github.com/highcharts/highcharts/issues/1157#issuecomment-137740569
-    // .highcharts-container, .highcharts-container svg { 
-    //   width: 100% !important; 
-    // }
     
     // todo: move 
     .tooltip-container {

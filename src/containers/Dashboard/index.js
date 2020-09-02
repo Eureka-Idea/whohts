@@ -6,7 +6,7 @@ import {connect} from 'react-redux'
 import _ from 'lodash'
 import './styles.css'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import colors from './colors'
+import colors, { rum, casablanca, jungleMist, stormGray } from './colors'
 import Tooltip from '../../components/Tooltip'
 import NestedBoxes from '../../components/NestedBoxes'
 import KPTable from '../../components/KPTable'
@@ -113,7 +113,7 @@ class Dashboard extends Component {
             side={110}
             ratios={config}
             // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
-            colors={['#c38f72', '#85adca', '#999999', colors[0] + '50']}
+            colors={[rum, casablanca, jungleMist, stormGray]}
             content={[
               { inner: '85%', below: 'of people living with HIV know their status' },
               { inner: '79%', below: 'of people living with HIV who know their status are on treatment' },

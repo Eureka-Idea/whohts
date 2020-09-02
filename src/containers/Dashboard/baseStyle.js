@@ -1,4 +1,4 @@
-import colors, { subtleWheat } from "./colors";
+import colors from "./colors";
 
 export default {
   "plotOptions": { 
@@ -22,7 +22,9 @@ export default {
       "color": "#000000",
       "fontFamily": "Arial, sans-serif"
       // "fontFamily": "Verdana, sans-serif"
-    }
+    },
+    // "margin": [100, 100, 100, 100],
+    "spacing": [40, 40, 45, 40],
   },
   "title": { "align": "left", "x": 40 },
   "subtitle": { "align": "left", "x": 40 },
