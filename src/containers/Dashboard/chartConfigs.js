@@ -477,23 +477,168 @@ const getPrevalence = data => {
 }
 
 const getAdults = data => {
-  
+  const title = 'Adults'
+  const series = [
+    {
+      name: 'Number of tests conducted (thousands)',
+      data: [234, 203]
+    },
+    {
+      name: 'Positivity (%)',
+      type: 'line',
+      data: [2, 30]
+    }
+  ]
+  const categories = ['Women', 'Men', 'TOTAL']
+
+  // TODO should be weighted avg of %
+  const options = {
+    subtitle: { text: `Total tests: ${_.mean([234, 203])}k, Average positivity: ${_.mean([2, 30])}%` }
+  }
+  return _.merge({}, getColumnScat({ title, series, options, categories }))
 }
 
 const getCommunity = data => {
-  
+  const title = 'Community Testing Modalities'
+  const series = [
+    {
+      name: 'Number of tests conducted (thousands)',
+      data: [234, 238, 245]
+    },
+    {
+      name: 'Positivity (%)',
+      type: 'line',
+      data: [12, 24, 30]
+    }
+  ]
+
+  const options = {
+    subtitle: { text: `Total tests: ${_.mean([234, 238, 245])}k, Average positivity: ${_.mean([12, 24, 30])}%` }
+  }
+  const categories = ['Mobile Testing', 'VCT', 'Other', 'TOTAL']
+  return _.merge({}, getColumnScat({ title, series, options, categories }))
 }
 
 const getFacility = data => {
-  
+  const title = 'Facility Testing Modalities'
+  const series = [
+    {
+      name: 'Number of tests conducted (thousands)',
+      tooltip: {
+        // todo: delete if can be handled below (or in legend hover)
+        // pointFormat:`<span style="color:{point.color}">●</span>
+        //   {series.name}: <b>{point.y}</b><br/>
+        //   Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
+        //   Source: UNAIDS`,
+      },
+      data: [
+        { y: 234 },
+        { y: 238 },
+        { y: 223 },
+        { y: 243 },
+        { y: 132 }
+      ],
+    },
+    {
+      name: 'Positivity (%)',
+      tooltip: {
+        pointFormat: `<span style="color:{point.color}">●</span>
+          {series.name}: <b>{point.y}</b><br/>
+          {point.tooltipAddition}`
+      },
+      type: 'line',
+      data: [
+        { y: 22 },
+        { y: 30 },
+        { y: 35 },
+        { y: 19 },
+        { y: 11, tooltipAddition: 'Description: something you should know about Other' }
+      ],
+    }
+  ]
+
+
+  const options = {
+    subtitle: {
+      text: `Total tests: ${_.meanBy([
+        { y: 234 },
+        { y: 238 },
+        { y: 223 },
+        { y: 243 },
+        { y: 132 }
+      ], 'y')}k, Average positivity: ${_.meanBy([
+        { y: 22 },
+        { y: 30 },
+        { y: 35 },
+        { y: 19 },
+        { y: 11, tooltipAddition: 'Description: something you should know about Other' }
+      ], 'y')}%`
+    }
+  }
+  const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other', 'TOTAL']
+  // const options = { xAxis: { categories: ['Community', 'Facility']} }
+  return _.merge({}, getColumnScat({ title, options, categories, series }))
 }
 
 const getIndex = data => {
-  
+  const title = 'Index'
+  const series = [
+    {
+      name: 'Number of tests conducted (thousands)',
+      data: [132, 232]
+      // dataLabels,
+    },
+    {
+      name: 'Positivity (%)',
+      type: 'line',
+      data: [21, 30]
+    }
+  ]
+  const options = {
+    subtitle: { text: `Total tests: ${_.mean([132, 232])}k, Average positivity: ${_.mean([21, 30])}%` }
+  }
+  const categories = ['Community', 'Facility', 'TOTAL']
+  return _.merge({}, getColumnScat({ title, options, categories, series }))
 }
 
 const getForecast = data => {
-  
+  const title = 'HIVST Forecast'
+  const options = {
+    subtitle: { text: 'WHO model estimates, 2020' },
+    // plotOptions: { series: { pointStart: 2019 } }
+  }
+  const series = [
+    {
+      name: 'HIVSTs distributed',
+      data: [
+        { x: 2018, y: 8340 },
+        { x: 2019, y: 9012 },
+      ]
+    },
+    {
+      name: 'HIVST forecast demand',
+      data: [
+        { x: 2020, y: 51023 },
+        { x: 2021, y: 114389 },
+        { x: 2022, y: 218324 },
+        { x: 2023, y: 321092 },
+        { x: 2024, y: 425203 },
+        { x: 2025, y: 534324 }
+      ]
+    },
+    {
+      name: 'HIVST forecast need',
+      type: 'line',
+      data: [
+        { x: 2020, y: 812303 },
+        { x: 2021, y: 802343 },
+        { x: 2022, y: 813242 },
+        { x: 2023, y: 829238 },
+        { x: 2024, y: 832343 },
+        { x: 2025, y: 825232 }]
+    }
+  ]
+  return _.merge({}, getColumnLine({ title, series, options }))
 }
 
 const getKpTable = data => {

@@ -37,11 +37,6 @@ const DEV = window.location.hostname === 'localhost'
 // percentage marks on axis instead of yaxis label
 // women men gap?
 
-// const countryMap = {
-//   Kenya: { population: '51.4 million', incomeClass: 'Low income', shiny: true },
-//   Thailand: { population: '69.4 million', incomeClass: 'Upper-middle income', shiny: false },
-// }
-
 const URLBase = 'https://status.y-x.ch/query?'
 
 const fields = _.flatMap(FIELD_MAP)
@@ -50,18 +45,6 @@ const fields = _.flatMap(FIELD_MAP)
 //   {series.name}: <b>{point.y}</b><br/>
 //   Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
 //   Source: UNAIDS` // todo: fill in actual source on point
-
-const addAvg = arr => {
-  if (_.isNumber(arr[0])) {
-    return [...arr, _.mean(arr)]
-  }
-
-  return [...arr, { y: _.mean(_.map(arr, 'y')) }]
-}
-
-const dataHelper = (baseArray, variance=10, shift=0) => {
-  return baseArray.map(n => n + shift + Math.floor(Math.random()*variance)-5)
-}
 
 class Dashboard extends Component {
   constructor() {
@@ -129,10 +112,6 @@ class Dashboard extends Component {
     )
   }
 
-  getCascade() {
-    
-  }
-
   getChart(id, tt) {
     if (_.isEmpty(this.props.chartData)) {
       console.log('No chart data (perhaps awaiting API response)')
@@ -150,274 +129,6 @@ class Dashboard extends Component {
         {tt}
       </div>
     )
-  }
-
-  getPrevalence(shiny) {
-    
-  }
-
-  getPrep() {
-    const title = 'People Receiving Pre-Exposure Prophylaxis (PrEP)'
-    const series = [
-      {
-        name: 'Women',
-        color: colors[1],
-        data: [11000, 13000, 25000],
-      },
-      {
-        name: 'Men',
-        color: colors[4],
-        data: [14000, 15000, 29000],
-      },
-      {
-        name: 'Trans',
-        color: colors[8],
-        data: [1200, 2100, 3900],
-      },
-      {
-        name: 'TOTAL',
-        color: colors[0],
-        data: [26200, 30100, 57900]
-      },
-    ]
-    const categories = ['2017', '2018', '2019']
-    const options = {
-      // plotOptions: { column: { stacking: 'normal' } }
-    }
-    return _.merge({}, getColumn({title, series, options, categories}))
-  }
-
-  getPrepStacked() {
-    const title = 'People Receiving Pre-Exposure Prophylaxis (PrEP) [STACKED]'
-    const series = [
-      {
-        name: 'Women',
-        color: colors[1],
-        data: [11000, 13000, 25000],
-        stack: 'total'
-      },
-      {
-        name: 'Men',
-        color: colors[4],
-        data: [14000, 15000, 29000],
-        stack: 'total'
-      },
-      {
-        name: 'Trans',
-        color: colors[8],
-        data: [1200, 2100, 3900],
-        stack: 'total'
-      },
-    ]
-    const categories = ['2017', '2018', '2019']
-    const options = {
-      plotOptions: { column: { stacking: 'normal' } }
-    }
-    return _.merge({}, getColumn({title, series, options, categories}))
-  }
-
-  getForecast() {
-    const title = 'HIVST Forecast'
-    const options = {
-      subtitle: { text: 'WHO model estimates, 2020' },
-      // plotOptions: { series: { pointStart: 2019 } }
-    }
-    const series = [
-      {
-        name: 'HIVSTs distributed',
-        data: [ 
-          { x: 2018, y: 8340 }, 
-          { x: 2019, y: 9012 }, 
-        ]
-      },
-      {
-        name: 'HIVST forecast demand',
-        data: [ 
-          { x: 2020, y: 51023 }, 
-          { x: 2021, y: 114389 }, 
-          { x: 2022, y: 218324 }, 
-          { x: 2023, y: 321092 }, 
-          { x: 2024, y: 425203 }, 
-          { x: 2025, y: 534324 }
-        ]
-      },
-      {
-        name: 'HIVST forecast need',
-        type: 'line',
-        data: [
-          { x: 2020, y:812303 }, 
-          { x: 2021, y:802343 }, 
-          { x: 2022, y:813242 }, 
-          { x: 2023, y:829238 }, 
-          { x: 2024, y:832343 }, 
-          { x: 2025, y:825232 }]
-      }
-    ]
-    return _.merge({}, getColumnLine({title, series, options}))
-  }
-
-  getComp() {
-    const title = 'Custom Comparison'
-    const color = colors[8]
-    const series = [
-      {
-        name: 'Indicator One (millions)',
-        data: [
-          { pointPlacement: -.5, y: 1, color: colors[4]+'20' }, 
-          { pointPlacement: -.4, y: 2, color: colors[4]+'40' }, 
-          { pointPlacement: -.3, y: 4, color: colors[4]+'80' }, 
-          { pointPlacement: -.2, y: 8, color: colors[4] },  
-          { pointPlacement: .2, y: 4, color: colors[1]+'20' }, 
-          { pointPlacement: .3, y: 2, color: colors[1]+'40' }, 
-          { pointPlacement: .4, y: 2, color: colors[1]+'80' }, 
-          { pointPlacement: .5, y: 3, color: colors[1] }
-        ],
-        // color: ['red','red','red','red','blue','blue','blue','blue',]
-      },
-      {
-        name: 'Indicator Two (%)',
-        type: 'line',
-        data: [21, 30, 43, 11,  41, 12, 15, 22],
-        color
-      }
-    ]
-    const options = {
-      plotOptions: { column: { grouping: false }},
-      yAxis: [
-        {}, 
-        {
-          title: { style: { color } },
-          labels: { style: { color } },
-      }]
-    }
-    const categories = [
-      '15 - 24','25 - 34','35 - 49','50+',
-      '15 - 24','25 - 34','35 - 49','50+',
-    ]
-    return _.merge({}, getColumnScat({title, categories, series, options}))
-  }  
-
-  getAdults() {
-    const title = 'Adults'
-    const series = [
-      {
-        name: 'Number of tests conducted (thousands)',
-        data: [234, 203]
-      },
-      {
-        name: 'Positivity (%)',
-        type: 'line',
-        data: [2, 30]
-      }
-    ]
-    const categories = ['Women', 'Men', 'TOTAL']
-
-    // TODO should be weighted avg of %
-    const options = {
-      subtitle: { text: `Total tests: ${_.mean([234, 203])}k, Average positivity: ${_.mean([2, 30])}%` }
-    }
-    return _.merge({}, getColumnScat({title, series, options, categories}))
-  }
-
-  getCommunity() {
-    const title = 'Community Testing Modalities'
-    const series = [
-      {
-        name: 'Number of tests conducted (thousands)',
-        data: [234, 238, 245]
-      },
-      {
-        name: 'Positivity (%)',
-        type: 'line',
-        data: [12, 24, 30]
-      }
-    ]
-
-    const options = {
-      subtitle: { text: `Total tests: ${_.mean([234, 238, 245])}k, Average positivity: ${_.mean([12, 24, 30])}%` }
-    } 
-    const categories = ['Mobile Testing', 'VCT', 'Other', 'TOTAL']
-    return _.merge({}, getColumnScat({title, series, options, categories}))
-  }
-
-  getFacility() {
-    const title = 'Facility Testing Modalities'
-    const series = [
-      {
-        name: 'Number of tests conducted (thousands)',
-        tooltip: {
-          // todo: delete if can be handled below (or in legend hover)
-          // pointFormat:`<span style="color:{point.color}">●</span>
-          //   {series.name}: <b>{point.y}</b><br/>
-          //   Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
-          //   Source: UNAIDS`,
-        },
-        data: [
-          { y: 234 },
-          { y: 238 },
-          { y: 223 },
-          { y: 243 },
-          { y: 132 }
-        ],
-      },
-      {
-        name: 'Positivity (%)',
-        tooltip: {
-          pointFormat:`<span style="color:{point.color}">●</span>
-          {series.name}: <b>{point.y}</b><br/>
-          {point.tooltipAddition}`
-        },
-        type: 'line',
-        data: [
-          { y: 22 },
-          { y: 30 },
-          { y: 35 },
-          { y: 19 },
-          { y: 11, tooltipAddition: 'Description: something you should know about Other' }
-        ],
-      }
-    ]
-
-
-    const options = {
-      subtitle: { text: `Total tests: ${_.meanBy([
-          { y: 234 },
-          { y: 238 },
-          { y: 223 },
-          { y: 243 },
-          { y: 132 }
-        ], 'y')}k, Average positivity: ${_.meanBy([
-          { y: 22 },
-          { y: 30 },
-          { y: 35 },
-          { y: 19 },
-          { y: 11, tooltipAddition: 'Description: something you should know about Other' }
-        ], 'y')}%` }
-    }
-    const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other', 'TOTAL']
-    // const options = { xAxis: { categories: ['Community', 'Facility']} }
-    return _.merge({}, getColumnScat({title, options, categories, series}))
-  }
-
-  getIndex() {
-    const title = 'Index'
-    const series = [
-      {
-        name: 'Number of tests conducted (thousands)',
-        data: [132, 232]
-        // dataLabels,
-      },
-      {
-        name: 'Positivity (%)',
-        type: 'line',
-        data: [21, 30]
-      }
-    ]
-    const options = {
-      subtitle: { text: `Total tests: ${_.mean([132, 232])}k, Average positivity: ${_.mean([21, 30])}%` }
-    }
-    const categories = ['Community', 'Facility', 'TOTAL']
-    return _.merge({}, getColumnScat({title, options, categories, series}))
   }
 
   getSelf() {
@@ -479,22 +190,6 @@ class Dashboard extends Component {
     const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
     const prevalence = this.getChart(CHARTS.PREVALENCE.id)
 
-    // const configPrevalence = this.getPrevalence(shiny)
-    // const configPrep = this.getPrep()
-    // const configPrepStacked = this.getPrepStacked()
-    // const configForecast = this.getForecast()
-    
-    // const configComp = this.getComp()
-
-    // const configAdults = this.getAdults()
-    // const configCommunity = this.getCommunity()
-    // const configFacility = this.getFacility()
-    // const configIndex = this.getIndex()
-
-    // const configSelf = this.getSelf()
-
-    // const mIcon = this.getModeledIcon()
-
     return (
       <div className='dashboard'>
         <div className='nav'>
@@ -514,17 +209,12 @@ class Dashboard extends Component {
           </div>
 
           <div className='row no-gutters'>
-
-            {/* <div className='col-xl-4 col-md-6 col-sm-12'>
-              <ReactHighcharts config={configCascade}/>
-            </div> */}
             {diagnosis}
             {PLHIVSex}
             {PLHIVAge}
             {negative}
             {positive}
             {prevalence}
-            {/* <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPrevalence}/></div> */}
           </div>
 
           {/* <div className='row no-gutters'>
