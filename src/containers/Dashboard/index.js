@@ -46,10 +46,10 @@ const URLBase = 'https://status.y-x.ch/query?'
 
 const fields = _.flatMap(FIELD_MAP)
 
-const uncertaintyTooltipFormat = `<span style="color:{point.color}">●</span>
-  {series.name}: <b>{point.y}</b><br/>
-  Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
-  Source: UNAIDS` // todo: fill in actual source on point
+// const uncertaintyTooltipFormat = `<span style="color:{point.color}">●</span>
+//   {series.name}: <b>{point.y}</b><br/>
+//   Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
+//   Source: UNAIDS` // todo: fill in actual source on point
 
 const addAvg = arr => {
   if (_.isNumber(arr[0])) {
@@ -149,153 +149,7 @@ class Dashboard extends Component {
   }
 
   getPrevalence(shiny) {
-    const title = 'Prevalence and positivity'
-    const options = {
-      plotOptions: { series: { marker: { radius: 3 }}},
-      subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-      plotOptions: { series: { pointStart: 2010 } }
-      // legend: {
-      //   useHTML: true,
-      //   labelFormatter: function() {
-      //     console.log(this.name, this)
-      //     return `<span title='${this.userOptions.description}'>${this.name}</span>`
-      //   }
-      // },
-    }
-
-    // TODOxx
-    const dyDataArr = dataHelper([
-      2, 3, 3, 5, 6,
-      9, 11, 14, 17, 21,
-    ], 4, 6).reverse()
-
-    const dyRange = dyDataArr.map(v => {
-      const u = v + Math.floor(Math.random()*2.5)
-      const l = v - Math.floor(Math.random()*2.5)
-      return [l,u]
-    })
-
-    const dyDataObj = dyRange.map(([l,u], i) => {
-      const y = dyDataArr[i]
-      return { y, l, u }
-    })
-
     
-    const tapDataArr = dataHelper([
-      2, 3, 3, 5, 6,
-      9, 11, 14, 17, 21,
-    ], 6, 8).reverse()
-
-    const tapRange = tapDataArr.map(v => {
-      const u = v + Math.floor(Math.random()*2.5)
-      const l = v - Math.floor(Math.random()*2.5)
-      return [l,u]
-    })
-
-    const tapDataObj = tapRange.map(([l,u], i) => {
-      const y = tapDataArr[i]
-      return { y, l, u }
-    })
-
-
-    
-    let series = [
-      {
-        name: 'HIV prevalence',
-        shinyInclude: true,
-        description: TERM_MAP.hivPrevalence.definition,
-        zIndex: 1,
-        tooltip: { pointFormat: uncertaintyTooltipFormat },
-        dashStyle: 'ShortDot',
-        marker: { radius: 1 },
-        lineType: 'line',
-        data: [
-          {y:43, l:39, u: 46},{y:43, l:39, u: 44},{y:42, l:38, u:43},{y:42, l:38, u:43},{y:42, l:37, u:42},
-          {y:41, l:37, u:42},{y:41, l:37, u:42},{y:41, l:37, u:42},{y:41, l:36, u:42},{y:40, l:36, u:41},
-        ].map(o => _.each(o, (v,k) => o[k]*=.4)),
-      }, {
-        name: 'Prevalence range',
-        shinyInclude: true,
-        data: [
-          [39, 46],[39, 44],[38,43],[38,43],[37,42],
-          [37,42],[37,42],[37,42],[36,42],[36,41],
-        ].map(p => p.map(n => n*.4)),
-        type: 'arearange',
-        enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
-        lineWidth: 0,
-        linkedTo: ':previous',
-        color: colors[0],
-        fillOpacity: 0.2,
-        zIndex: 0,
-        marker: { enabled: false }
-      },
-      {
-        name: 'Positivity',
-        description: TERM_MAP.positivity.definition,
-        // dashStyle: 'ShortDot',
-        zIndex: 1,
-        tooltip: { pointFormat: uncertaintyTooltipFormat },
-        data: [ // todo: on import, format l&u into string (as to deal with missing data pre-pointFormat)
-          {y: 2, l:1, u: 4}, {y: 3, l:2, u:6}, {y: 3, l:2, u:5}, {y: 5, l:3, u:7}, {y: 6, l:5, u:8},
-          {y: 9, l:8, u:9}, {y: 11, l:8, u:12}, {y: 14, l:13, u:15}, {y: 17, l:14, u:19}, {y: 21, l:16, u:23},
-        ].reverse(),
-      }, {
-        name: 'Positivity range',
-        data: [
-          [1,4],[2,6],[2,5],[3,7],[5,8],
-          [8,9],[8,12],[13,15],[14,19],[16,23],
-        ].reverse(),
-        type: 'arearange',
-        enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
-        lineWidth: 0,
-        linkedTo: ':previous',
-        color: colors[1],
-        fillOpacity: 0.2,
-        zIndex: 0,
-        marker: { enabled: false }
-      }, {
-        name: 'Diagnostic yield',
-        description: TERM_MAP.diagnosticYield.definition,
-        zIndex: 1,
-        tooltip: { pointFormat: uncertaintyTooltipFormat },
-        // dashStyle: 'DashDot',
-        data: dyDataObj
-      }, {
-        name: 'Diagnostic yield range',
-        data: dyRange,
-        type: 'arearange',
-        enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
-        lineWidth: 0,
-        linkedTo: ':previous',
-        color: colors[2],
-        fillOpacity: 0.2,
-        zIndex: 0,
-        marker: { enabled: false }
-      }, {
-        name: 'Treatment adjusted prevalence',
-        description: TERM_MAP.treatmentAdjustedPrevalence.definition,
-        zIndex: 1,
-        color: colors[9],
-        // dashStyle: 'LongDash',
-        tooltip: { pointFormat: uncertaintyTooltipFormat },
-        data: tapDataObj
-      }, {
-      name: 'Treatment adjusted prevalence range',
-      data: tapRange,
-      type: 'arearange',
-      enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
-      lineWidth: 0,
-      linkedTo: ':previous',
-      color: colors[9],
-      fillOpacity: 0.2,
-      zIndex: 0,
-      marker: { enabled: false }
-    },
-    ]
-    if (!shiny) {
-      series = series.filter(s => s.shinyInclude)
-    }
-    return _.merge({}, getLine({series, options, title, spline:false}))
   }
 
   getPrep() {
@@ -620,6 +474,7 @@ class Dashboard extends Component {
     const PLHIVSex = this.getChart(CHARTS.PLHIV_SEX.id)
     const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
     const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
+    const prevalence = this.getChart(CHARTS.PREVALENCE.id)
 
     const configPrevalence = this.getPrevalence(shiny)
     // const configPrep = this.getPrep()
@@ -665,6 +520,7 @@ class Dashboard extends Component {
             {PLHIVAge}
             {negative}
             {positive}
+            {prevalence}
             {/* <div className='col-xl-4 col-md-6 col-sm-12'><ReactHighcharts config={configPrevalence}/></div> */}
           </div>
 

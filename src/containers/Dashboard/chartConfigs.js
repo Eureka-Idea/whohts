@@ -4,6 +4,11 @@ import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './gen
 import { CHARTS } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
+const uncertaintyTooltipFormat = `<span style="color:{point.color}">●</span>
+  {series.name}: <b>{point.y}</b><br/>
+  Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
+  Source: UNAIDS` // todo: fill in actual source on point
+
 const getConfig = (chartId, chartData) => {
   if (_.isEmpty(chartData)) {
     console.log('No chart data (perhaps awaiting API response)')
@@ -216,11 +221,11 @@ const getPlhivAge = data => {
 const getHivNegative = data => {
   const title = '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
 
-  const retests = data['retests_total'] || Array(5).fill(null)
+  const retests = data.retests || Array(5).fill(null)
   const retestsValues = retests.map(d => {
     return _.get(d, 'median.value')
   })
-  const firsts = data['tests_first'] || Array(5).fill(null)
+  const firsts = data.firsts || Array(5).fill(null)
   const firstsValues = firsts.map(d => {
     return _.get(d, 'median.value')
   })
@@ -252,7 +257,7 @@ const getHivNegative = data => {
 const getHivPositive = data => {
   const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
 
-  const [art, aware, first] = ['retests_art', 'retests_aware', 'tests_first'].map(ind => {
+  const [art, aware, first] = ['arts', 'awares', 'firsts'].map(ind => {
     const indData = data[ind] || Array(5).fill(null)
     return _.map(indData, 'median.value')
   })
@@ -290,7 +295,185 @@ const getHivPositive = data => {
 }
 
 const getPrevalence = data => {
+  const isShiny = true // TODO
   
+  const { title } = CHARTS.PREVALENCE
+
+  const options = {
+    plotOptions: { series: { marker: { radius: 3 } } },
+    subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+    plotOptions: { series: { pointStart: 2015 } }
+    // legend: {
+    //   useHTML: true,
+    //   labelFormatter: function() {
+    //     console.log(this.name, this)
+    //     return `<span title='${this.userOptions.description}'>${this.name}</span>`
+    //   }
+    // },
+  }
+
+  const prevalenceData = []
+  const positivityData = [] // for shiny
+  const dYieldData = [] // for shiny
+  const adjPrevData = []
+  data.prevalence.forEach((yearRecord, i) => {
+    // TODO: calc uci/lci
+    const prevalenceValue = _.get(yearRecord, 'median.value')
+    prevalenceData.push(prevalenceValue)
+
+    const populationValue = _.get(data, ['population', i, 'value'])
+    const onArtValue = _.get(data, ['onArt', i, 'value'])
+    const plhivValue = _.get(data, ['plhiv', i, 'median', 'value'])
+
+    const adjPrevValue = (
+      (plhivValue - onArtValue) /
+      (populationValue - onArtValue)
+    )
+    adjPrevData.push(adjPrevValue)
+    
+    if (isShiny) {
+      const positivityValue = _.get(data, ['positivity', i, 'median', 'value'])
+      const dYieldValue = _.get(data, ['dYield', i, 'median', 'value'])
+      positivityData.push(positivityValue)
+      dYieldData.push(dYieldValue)
+    }
+  })
+  
+  // // TODOxx
+  // const dyDataArr = [
+  //   2, 3, 3, 5, 6,
+  //   9, 11, 14, 17, 21,
+  // ]
+
+  // const dyRange = dyDataArr.map(v => {
+  //   const u = v + Math.floor(Math.random() * 2.5)
+  //   const l = v - Math.floor(Math.random() * 2.5)
+  //   return [l, u]
+  // })
+
+  // const dyDataObj = dyRange.map(([l, u], i) => {
+  //   const y = dyDataArr[i]
+  //   return { y, l, u }
+  // })
+
+
+  // const tapDataArr = [
+  //   2, 3, 3, 5, 6,
+  //   9, 11, 14, 17, 21,
+  // ]
+
+  // const tapRange = tapDataArr.map(v => {
+  //   const u = v + Math.floor(Math.random() * 2.5)
+  //   const l = v - Math.floor(Math.random() * 2.5)
+  //   return [l, u]
+  // })
+
+  // const tapDataObj = tapRange.map(([l, u], i) => {
+  //   const y = tapDataArr[i]
+  //   return { y, l, u }
+  // })
+
+
+
+  let series = [
+    {
+      name: 'HIV prevalence',
+      shinyInclude: true,
+      description: TERM_MAP.hivPrevalence.definition,
+      zIndex: 1,
+      tooltip: { pointFormat: uncertaintyTooltipFormat },
+      dashStyle: 'ShortDot',
+      marker: { radius: 1 },
+      lineType: 'line',
+      data: prevalenceData,
+      // data: [
+      //   { y: 43, l: 39, u: 46 }, { y: 43, l: 39, u: 44 }, { y: 42, l: 38, u: 43 }, { y: 42, l: 38, u: 43 }, { y: 42, l: 37, u: 42 },
+      //   { y: 41, l: 37, u: 42 }, { y: 41, l: 37, u: 42 }, { y: 41, l: 37, u: 42 }, { y: 41, l: 36, u: 42 }, { y: 40, l: 36, u: 41 },
+      // ].map(o => _.each(o, (v, k) => o[k] *= .4)),
+    }, {
+      // name: 'Prevalence range',
+      // shinyInclude: true,
+      // data: [
+      //   [39, 46], [39, 44], [38, 43], [38, 43], [37, 42],
+      //   [37, 42], [37, 42], [37, 42], [36, 42], [36, 41],
+      // ].map(p => p.map(n => n * .4)),
+      // type: 'arearange',
+      // enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
+      // lineWidth: 0,
+      // linkedTo: ':previous',
+      // color: colors[0],
+      // fillOpacity: 0.2,
+      // zIndex: 0,
+      // marker: { enabled: false }
+    },
+    {
+      name: 'Positivity',
+      description: TERM_MAP.positivity.definition,
+      // dashStyle: 'ShortDot',
+      zIndex: 1,
+      tooltip: { pointFormat: uncertaintyTooltipFormat },
+      data: positivityData
+      // data: [ // todo: on import, format l&u into string (as to deal with missing data pre-pointFormat)
+      //   { y: 2, l: 1, u: 4 }, { y: 3, l: 2, u: 6 }, { y: 3, l: 2, u: 5 }, { y: 5, l: 3, u: 7 }, { y: 6, l: 5, u: 8 },
+      //   { y: 9, l: 8, u: 9 }, { y: 11, l: 8, u: 12 }, { y: 14, l: 13, u: 15 }, { y: 17, l: 14, u: 19 }, { y: 21, l: 16, u: 23 },
+      // ].reverse(),
+    }, {
+      // name: 'Positivity range',
+      // data: [
+      //   [1, 4], [2, 6], [2, 5], [3, 7], [5, 8],
+      //   [8, 9], [8, 12], [13, 15], [14, 19], [16, 23],
+      // ].reverse(),
+      // type: 'arearange',
+      // enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
+      // lineWidth: 0,
+      // linkedTo: ':previous',
+      // color: colors[1],
+      // fillOpacity: 0.2,
+      // zIndex: 0,
+      // marker: { enabled: false }
+    }, {
+      name: 'Diagnostic yield',
+      description: TERM_MAP.diagnosticYield.definition,
+      zIndex: 1,
+      tooltip: { pointFormat: uncertaintyTooltipFormat },
+      // dashStyle: 'DashDot',
+      data: dYieldData
+    }, {
+      // name: 'Diagnostic yield range',
+      // data: dyRange,
+      // type: 'arearange',
+      // enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
+      // lineWidth: 0,
+      // linkedTo: ':previous',
+      // color: colors[2],
+      // fillOpacity: 0.2,
+      // zIndex: 0,
+      // marker: { enabled: false }
+    }, {
+      name: 'Treatment adjusted prevalence',
+      description: TERM_MAP.treatmentAdjustedPrevalence.definition,
+      zIndex: 1,
+      color: colors[9],
+      // dashStyle: 'LongDash',
+      tooltip: { pointFormat: uncertaintyTooltipFormat },
+      data: adjPrevData
+    }, {
+      // name: 'Treatment adjusted prevalence range',
+      // data: tapRange,
+      // type: 'arearange',
+      // enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
+      // lineWidth: 0,
+      // linkedTo: ':previous',
+      // color: colors[9],
+      // fillOpacity: 0.2,
+      // zIndex: 0,
+      // marker: { enabled: false }
+    },
+  ]
+  // if (!shiny) {
+  //   series = series.filter(s => s.shinyInclude)
+  // }
+  return _.merge({}, getLine({ series, options, title, spline: false }))
 }
 
 const getAdults = data => {

@@ -19,7 +19,6 @@ const CHARTS = {
     id: 'PLHIV_DIAGNOSIS',
     indicators: {
       plhiv: 'People living with HIV - adults (aged 15+)',
-      // plhiv: 'People living with HIV - all ages', // TODO: - adults (aged 15+)
       know: 'People living with HIV who know their status',
       onArt: 'People receiving antiretroviral therapy',
     }
@@ -33,19 +32,44 @@ const CHARTS = {
   },
   PLHIV_AGE: {
     title: 'PLHIV who know status - by age',
-    id: 'PLHIV_AGE'
+    id: 'PLHIV_AGE',
+    indicators: {
+      aware: 'aware',
+    }
   },
   HIV_NEGATIVE: {
     title: 'HIV-negative tests - first-time testers and repeat testers',
-    id: 'HIV_NEGATIVE'
+    id: 'HIV_NEGATIVE',
+    indicators: {
+      retests: 'retests_total',
+      firsts: 'tests_first'
+    }
   },
   HIV_POSITIVE: {
     title: 'HIV-positive tests - new diagnoses and retests',
-    id: 'HIV_POSITIVE'
+    id: 'HIV_POSITIVE',
+    indicators: {
+      arts: 'retests_art',
+      awares: 'retests_aware',
+      firsts: 'tests_first',
+    }
   },
   PREVALENCE: {
     title: 'Prevalence and positivity',
-    id: 'PREVALENCE'
+    id: 'PREVALENCE',
+    shinyOnlyIndicators: {
+      // 15-99, confidence intervals on value_comment
+      positivity: 'positivity',
+      dYield: 'yldnew',
+    },
+    indicators: {
+      prevalence: 'prev',
+
+      // 15+
+      plhiv: 'People living with HIV - adults (aged 15+)', // ci on population_segment
+      onArt: 'People receiving antiretroviral therapy',
+      population: 'Population', // TODO: 15+
+    }
   },
   ADULTS: {
     title: 'Adults',
@@ -127,6 +151,7 @@ const getIndicatorMap = (isShiny) => {
       {
         id: 'population',
         [F.INDICATOR]: 'Population',
+        [F.UNIT_FORMAT]: 'NUMBER',
         [F.COUNTRY_NAME]: true,
         getter: results => {
           return _.maxBy(results, 'year')
@@ -179,10 +204,9 @@ const getIndicatorMap = (isShiny) => {
     [C.PLHIV_AGE.id]: R_ADULT_AGES.map(ageRange => (
       {
         id: ageRange,
-        [F.INDICATOR]: 'aware',
+        [F.INDICATOR]: C.PLHIV_AGE.indicators.aware,
         [F.AGE]: ageRange,
         [F.SEX]: 'both',
-        // [F.YEAR]: '2020', // CHECK: do we need to go earlier for some?
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_NAME]: true,
         getter: results => {
@@ -206,23 +230,21 @@ const getIndicatorMap = (isShiny) => {
       {
         id: sex,
         [F.INDICATOR]: C.PLHIV_SEX.indicators.status,
-        // [F.AGE]: '15+',
+        [F.AGE]: '15+',
         [F.SEX]: sex,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_NAME]: true,
         getter: results => {
           return R_2015_2019.map(y => {
-            return _.find(results, r => (r.year === y
-              && (r.age === '15+') // TODO 
-            ))
+            return _.find(results, r => (r.year === y))
           })
         }
       }
     )),
-    [C.HIV_NEGATIVE.id]: ['retests_total', 'tests_first'].map(indicator => (
+    [C.HIV_NEGATIVE.id]: _.map(C.HIV_NEGATIVE.indicators, (v, k) => (
       {
-        id: indicator,
-        [F.INDICATOR]: indicator,
+        id: k,
+        [F.INDICATOR]: v,
         [F.INDICATOR_DESCRIPTION]: 'negative',
         [F.AGE]: '15-99',
         [F.SEX]: 'both',
@@ -245,10 +267,10 @@ const getIndicatorMap = (isShiny) => {
         }
       }
     )),
-    [C.HIV_POSITIVE.id]: ['retests_art', 'retests_aware', 'tests_first'].map(indicator => (
+    [C.HIV_POSITIVE.id]: _.map(C.HIV_POSITIVE.indicators, (v, k) => (
       {
-        id: indicator,
-        [F.INDICATOR]: indicator,
+        id: k,
+        [F.INDICATOR]: v,
         [F.INDICATOR_DESCRIPTION]: 'positive',
         [F.AGE]: '15-99',
         [F.SEX]: 'both',
@@ -271,6 +293,109 @@ const getIndicatorMap = (isShiny) => {
         }
       }
     )),
+    [C.PREVALENCE.id]: [
+      {
+        id: 'prevalence',
+        [F.INDICATOR]: C.PREVALENCE.indicators.prevalence,
+        [F.AGE]: '15-99',
+        [F.SEX]: 'both',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            const fResults = _.filter(results, r => r.year === y)
+            const lci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'lci'
+            })
+            const uci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'uci'
+            })
+            const median = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'median'
+            })
+            return { lci, uci, median }
+          })
+        }
+      },
+      {
+        id: 'plhiv',
+        [F.INDICATOR]: C.PREVALENCE.indicators.plhiv,
+        [F.AGE]: '15+',
+        [F.SEX]: 'NULL',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            const fResults = _.filter(results, r => r.year === y)
+            
+            const median = _.find(fResults, r =>
+              !r.population_segment.includes('lower') &&
+              !r.population_segment.includes('upper')
+            )
+            const lci = _.find(fResults, r => r.population_segment.includes('lower'))
+            const uci = _.find(fResults, r => r.population_segment.includes('upper'))
+
+            return { median, lci, uci }
+          })
+        }
+      },
+      {
+        id: 'onArt',
+        [F.INDICATOR]: C.PREVALENCE.indicators.onArt,
+        [F.AGE]: '15+',
+        [F.SEX]: 'NULL',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            return _.find(results, r => (r.year === y))
+          })
+        }
+      },
+      {
+        id: 'population',
+        [F.INDICATOR]: C.PREVALENCE.indicators.population,
+        // [F.AGE]: '15+', TODO
+        // [F.SEX]: 'both',
+        [F.AREA_NAME]: 'NULL',
+        [F.UNIT_FORMAT]: 'NUMBER', // otherwise may get another unit, e.g. 51.4 for Kenya row 3991911
+        [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            return _.find(results, r => (r.year === y))
+          })
+        }
+      },
+    ]
+  }
+
+  if (isShiny) {
+    const shinyPrevInds = _.map(C.PREVALENCE.shinyOnlyIndicators, (v, k) => ({
+      id: k,
+      [F.INDICATOR]: v,
+      [F.AGE]: '15-99',
+      [F.SEX]: 'both',
+      [F.AREA_NAME]: 'NULL',
+      [F.COUNTRY_NAME]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            const fResults = _.filter(results, r => r.year === y)
+            const lci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'lci'
+            })
+            const uci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'uci'
+            })
+            const median = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'median'
+            })
+            return { lci, uci, median }
+          })
+        }
+      })
+    )
+
+    indicatorMap[C.PREVALENCE.id].push(...shinyPrevInds)
   }
 
   return indicatorMap
