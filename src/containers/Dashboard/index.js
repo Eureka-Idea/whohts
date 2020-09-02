@@ -37,10 +37,10 @@ const DEV = window.location.hostname === 'localhost'
 // percentage marks on axis instead of yaxis label
 // women men gap?
 
-const countryMap = {
-  Kenya: { population: '51.4 million', incomeClass: 'Low income', shiny: true },
-  Thailand: { population: '69.4 million', incomeClass: 'Upper-middle income', shiny: false },
-}
+// const countryMap = {
+//   Kenya: { population: '51.4 million', incomeClass: 'Low income', shiny: true },
+//   Thailand: { population: '69.4 million', incomeClass: 'Upper-middle income', shiny: false },
+// }
 
 const URLBase = 'https://status.y-x.ch/query?'
 
@@ -104,6 +104,10 @@ class Dashboard extends Component {
     if (!config) {
       return
     }
+
+    const [status, art, suppression] = config.map(n => 
+      Math.round((n)*100)+'%'
+    )
     
     return (
       <div className='col-xl-4 col-md-6 col-xs-12 prog-95'>
@@ -115,9 +119,9 @@ class Dashboard extends Component {
             // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
             colors={[rum, casablanca, jungleMist, stormGray]}
             content={[
-              { inner: '85%', below: 'of people living with HIV know their status' },
-              { inner: '79%', below: 'of people living with HIV who know their status are on treatment' },
-              { inner: '87%', below: 'of people on treatment are virally suppressed' },
+              { inner: status, below: 'of people living with HIV know their status' },
+              { inner: art, below: 'of people living with HIV who know their status are on treatment' },
+              { inner: suppression, below: 'of people on treatment are virally suppressed' },
             ]}
           />
         </div>
@@ -454,9 +458,8 @@ class Dashboard extends Component {
   }
   
   render() {
-    const shiny = countryMap[this.props.match.params.country].shiny
 
-    const configCascade = this.getCascade()
+    // const configCascade = this.getCascade()
     // const configConducted = this.getConducted()
 
     const ptt = (
@@ -476,17 +479,17 @@ class Dashboard extends Component {
     const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
     const prevalence = this.getChart(CHARTS.PREVALENCE.id)
 
-    const configPrevalence = this.getPrevalence(shiny)
+    // const configPrevalence = this.getPrevalence(shiny)
     // const configPrep = this.getPrep()
     // const configPrepStacked = this.getPrepStacked()
-    const configForecast = this.getForecast()
+    // const configForecast = this.getForecast()
     
     // const configComp = this.getComp()
 
-    const configAdults = this.getAdults()
-    const configCommunity = this.getCommunity()
-    const configFacility = this.getFacility()
-    const configIndex = this.getIndex()
+    // const configAdults = this.getAdults()
+    // const configCommunity = this.getCommunity()
+    // const configFacility = this.getFacility()
+    // const configIndex = this.getIndex()
 
     // const configSelf = this.getSelf()
 
