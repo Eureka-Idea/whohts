@@ -17,6 +17,7 @@ import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { CHARTS, FIELD_MAP } from '../../constants/charts'
 import { getConfig } from './chartConfigs'
+import { COUNTRY_MAP } from '../../components/Homepage/countries'
 const HighchartsMore = require('highcharts/highcharts-more')
 const Highcharts = require('highcharts')
 const ReactHighcharts = require('react-highcharts').withHighcharts(Highcharts)
@@ -58,14 +59,14 @@ class Dashboard extends Component {
     this.submitDQ = this.submitDQ.bind(this)
   }
   componentWillMount() {
-    const country = _.get(this, 'props.match.params.country', null)
-    if (!country) {
+    const countryCode = _.get(this, 'props.match.params.countryCode', null)
+    if (!countryCode) {
       // TODO: check country existence
       this.props.history.go('/')
       console.error('no country!')
       return
     }
-    this.props.actions.getChartData(country)
+    this.props.actions.getChartData(countryCode)
   }
 
   componentDidMount() {
@@ -97,6 +98,7 @@ class Dashboard extends Component {
         <div className='content'>
           <p>{title}</p>
           <NestedBoxes
+            circle={true}
             side={110}
             ratios={config}
             // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
@@ -153,11 +155,14 @@ class Dashboard extends Component {
     const { id } = CHARTS.CONTEXT
     const population = _.get(this.props.chartData, id+'.data.population.value', 'UNKNOWN')
     const classification = _.get(this.props.chartData, id+'.data.classification.value_comment', 'UNKNOWN')
+
+    const countryCode = _.get(this, 'props.match.params.countryCode', null)  
+    const name = _.get(COUNTRY_MAP, [countryCode, 'name'])
     return (
       <div className='col-xl-4 col-md-6 col-xs-12'>
 
         <div className='country-name'>
-          <h1> {this.props.match.params.country}</h1>
+          <h1>{name}</h1>
         </div>
         <div className='country-details pb-3'>
           <div><span>Population:</span><span> {population}</span></div>

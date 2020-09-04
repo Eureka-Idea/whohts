@@ -10,7 +10,7 @@ class App extends Component {
       <div className="app container-fluid">
         <Switch>
           <Route exact path="/" component={Home}/>
-          <Route exact path="/:country" component={Dashboard}/>
+          <Route exact path="/:countryCode" component={Dashboard}/>
           <Route component={NotFound}/>
         </Switch>
       </div>

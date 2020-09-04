@@ -109,7 +109,7 @@ const C = CHARTS
 const FIELD_MAP = {
   INDICATOR: 'indicator',
   INDICATOR_DESCRIPTION: 'indicator_description',
-  CONTRY_ISO_CODE: 'contry_iso_code',
+  COUNTRY_ISO_CODE: 'country_iso_code',
   COUNTRY_NAME: 'country_name',
   AREA_NAME: 'area_name',
   GEOGRAPHIC_SCOPE: 'geographic_scope',
@@ -152,7 +152,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'population',
         [F.INDICATOR]: 'Population',
         [F.UNIT_FORMAT]: 'NUMBER',
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return _.maxBy(results, 'year')
         }
@@ -160,7 +160,7 @@ const getIndicatorMap = (isShiny) => {
       {
         id: 'classification',
         [F.INDICATOR]: 'Income Group',
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return _.maxBy(results, 'year')
         }
@@ -170,7 +170,7 @@ const getIndicatorMap = (isShiny) => {
       ({
         id: k,
         [F.INDICATOR]: v,
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         [F.AGE]: 'all ages',
         getter: results => {
           return _.maxBy(results, 'year')
@@ -184,7 +184,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
@@ -208,7 +208,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: ageRange,
         [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
@@ -233,7 +233,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: sex,
         [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             return _.find(results, r => (r.year === y))
@@ -249,7 +249,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15-99',
         [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
@@ -275,7 +275,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15-99',
         [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
@@ -300,7 +300,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15-99',
         [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
@@ -323,7 +323,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
@@ -345,7 +345,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             return _.find(results, r => (r.year === y))
@@ -359,7 +359,7 @@ const getIndicatorMap = (isShiny) => {
         // [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
         [F.UNIT_FORMAT]: 'NUMBER', // otherwise may get another unit, e.g. 51.4 for Kenya row 3991911
-        [F.COUNTRY_NAME]: true,
+        [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             return _.find(results, r => (r.year === y))
@@ -376,7 +376,7 @@ const getIndicatorMap = (isShiny) => {
       [F.AGE]: '15-99',
       [F.SEX]: 'both',
       [F.AREA_NAME]: 'NULL',
-      [F.COUNTRY_NAME]: true,
+      [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)

@@ -1,29 +1,7 @@
 import * as types from '../constants/types'
 import _ from 'lodash'
-import { getIndicatorMap, AGGREGATE_GETTER } from '../constants/charts'
-
-const fields = [ // todo swap out
-  'indicator',
-  'indicator_description',
-  'contry_iso_code',
-  'country_name',
-  'area_name',
-  'geographic_scope',
-  'year',
-  'sex',
-  'age',
-  'population_segment',
-  'population_sub_group',
-  'value',
-  'value_comment',
-  'unit_format',
-  'source_organization',
-  'source_database',
-  'source_year',
-  'notes',
-  'modality',
-  'modality_category'
-]
+import { getIndicatorMap, AGGREGATE_GETTER, FIELD_MAP } from '../constants/charts'
+import { COUNTRY_MAP } from '../components/Homepage/countries'
 
 // TODO: does this prevent cacheing? 
 const myHeaders = new Headers()
@@ -34,31 +12,24 @@ const myInit = {
   headers: myHeaders,
 }
 
-// const chartNames = ['population']
-// const chartNames = ['chart1', 'chart2', 'chart3', 'chart4']
-
 const baseUrl = 'https://status.y-x.ch/query?'
 
-const isShiny = true // todo
-
 // gets records to cover the indicators relevant to each chart
-export const getChartData = (country) =>
+export const getChartData = (countryCode) =>
   dispatch => {
     console.log('GETCHARTDATA DISPATCH')
-    // until we care about the data, avoid errors
-    // return
+    const isShiny = _.get(COUNTRY_MAP, [countryCode, 'shiny'], false)
     const indicatorMap = getIndicatorMap(isShiny)
     const allChartQueryPs = _.map(indicatorMap, (indicators, chartName) => {
-      
-      // return Promise.all
+    
       const getIndicatorP = indicator => {
         let url = baseUrl
         let char = ''
-        fields.forEach(f => {
+        _.each(FIELD_MAP, f => {
           let chartValue = indicator[f]
           if (chartValue) {
-            if (f === 'country_name') {
-              chartValue = country
+            if (f === FIELD_MAP.COUNTRY_ISO_CODE) {
+              chartValue = countryCode
             }
             let chunk = `${char}${f}=${chartValue}`
             chunk = encodeURI(chunk)
