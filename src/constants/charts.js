@@ -1,5 +1,38 @@
 import _ from 'lodash'
 
+// indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
+const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
+
+const R_2015_2019 = [
+  '2015', '2016', '2017', '2018', '2019',
+]
+const R_ADULT_AGES = ['15-24', '25-34', '35-49', '50-99']
+const R_SEXES = ['males', 'females']
+
+const FIELD_MAP = {
+  INDICATOR: 'indicator',
+  INDICATOR_DESCRIPTION: 'indicator_description',
+  COUNTRY_ISO_CODE: 'country_iso_code',
+  COUNTRY_NAME: 'country_name',
+  AREA_NAME: 'area_name',
+  GEOGRAPHIC_SCOPE: 'geographic_scope',
+  YEAR: 'year',
+  SEX: 'sex',
+  AGE: 'age',
+  POPULATION_SEGMENT: 'population_segment',
+  POPULATION_SUB_GROUP: 'population_sub_group',
+  VALUE: 'value',
+  VALUE_COMMENT: 'value_comment',
+  UNIT_FORMAT: 'unit_format',
+  SOURCE_ORGANIZATION: 'source_organization',
+  SOURCE_DATABASE: 'source_database',
+  SOURCE_YEAR: 'source_year',
+  NOTES: 'notes',
+  MODALITY: 'modality',
+  MODALITY_CATEGORY: 'modality_category'
+}
+const F = FIELD_MAP
+
 const CHARTS = {
   CONTEXT: {
     // title: 'context',
@@ -33,6 +66,7 @@ const CHARTS = {
   PLHIV_AGE: {
     title: 'PLHIV who know status - by age',
     id: 'PLHIV_AGE',
+    shinyOnly: true,
     indicators: {
       aware: 'aware',
     }
@@ -40,6 +74,7 @@ const CHARTS = {
   HIV_NEGATIVE: {
     title: 'HIV-negative tests - first-time testers and repeat testers',
     id: 'HIV_NEGATIVE',
+    shinyOnly: true,
     indicators: {
       retests: 'retests_total',
       firsts: 'tests_first'
@@ -48,6 +83,7 @@ const CHARTS = {
   HIV_POSITIVE: {
     title: 'HIV-positive tests - new diagnoses and retests',
     id: 'HIV_POSITIVE',
+    shinyOnly: true,
     indicators: {
       arts: 'retests_art',
       awares: 'retests_aware',
@@ -63,85 +99,164 @@ const CHARTS = {
       dYield: 'yldnew',
     },
     indicators: {
-      prevalence: 'prev',
+      prevalence: 'HIV Prevalence - adults (15-49)',
 
       // 15+
       plhiv: 'People living with HIV - adults (aged 15+)', // ci on population_segment
       onArt: 'People receiving antiretroviral therapy',
-      population: 'Population', // TODO: 15+
+      population: 'Population by age and sex', // TODO: 15+
     }
   },
+
+// 'Women (15+) - Number of tests'
+// 'Women (15+) - Positivity' // or 'Positivity - Women (15+)' ?
+// 'Men (15+) - Number of tests'
+// 'Men (15+) - Positivity' // or 'Positivity - Men (15+)' ?
+// 'Mobile testing - Number of tests - Community'
+// 'VCT - Number of tests - Community'
+// 'Other - Number of tests - Community'
+
+// 'PITC - Number of tests - Facility'
+// 'ANC - Number of tests - Facility'
+// 'VCT - Number of tests - Facility'
+// // family planning clinic?
+// 'Other - Number of tests - Facility'
+
+// // index?
+
+
+  // Global AIDS Monitoring
+  // NUMBER of TESTS
+
+  // ANC - Number of tests - Facility
+  // Men(15+) - Number of tests
+  // Mobile  testing - Number of tests - Community
+  // Other - Number of tests - Community
+  // Other - Number of tests - Facility
+  // PITC - Number of tests - Facility
+  // VCT - Number of tests - Community
+  // VCT - Number of tests - Facility
+  // Women(15 +) - Number of tests
+  
+  // POSITIVITY
+
+  // Women (15+) -  Positivity
+  // Men(15+) -  Positivity
+  // Mobile  testing - Positivity - Community
+  // VCT - Positivity - Community
+  // Other - Positivity - Community
+  // PITC - Positivity - Facility
+  // ANC - Positivity - Facility
+  // VCT - Positivity - Facility
+  // Other - Positivity - Facility
+
+
+
+// PEPFAR System Extract
+  // NUMBER of TESTS
+  // POSITIVITY
+// Positivity - Total Tests Adults (15+)
+// Positivity - Women (15+)
+// Positivity - Men (15+)
+// Positivity - Community Modalities Total
+// Positivity - Community Mobile Testing
+// Positivity - Community VCT Testing
+// Positivity - Community Other Testing
+// Positivity - Facility Modalities Total
+// Positivity - Facility PITC Testing
+// Positivity - Facility ANC Testing
+// Positivity - Facility VCT Testing
+// Positivity - Facility Other Testing
+
+// PEPFAR COP/ROP
+
+
   ADULTS: {
     title: 'Adults',
-    id: 'ADULTS'
+    id: 'ADULTS',
+    indicators: {
+      number1: 'Positive tests in past year - community mobile testing',
+      positivity2: 'Positivity - Community Mobile Testing'
+    },
+    indicatorFilters: {
+      number1: {
+        [F.SOURCE_DATABASE]: 'Global AIDS Monitoring'
+      },
+      number2: {
+        [F.SOURCE_DATABASE]: 'PEPFAR System Data Extract'
+      },
+      number3: {
+        [F.SOURCE_DATABASE]: 'PEPFAR COP/ROP'
+      },
+      positivity1: {
+        [F.SOURCE_DATABASE]: 'Global AIDS Monitoring'
+      },
+      positivity2: {
+        [F.SOURCE_DATABASE]: 'PEPFAR System Data Extract'
+      },
+      positivity3: {
+        [F.SOURCE_DATABASE]: 'PEPFAR COP/ROP'
+      },
+    }
   },
   COMMUNITY: {
     title: 'Community Testing Modalities',
-    id: 'COMMUNITY'
+    id: 'COMMUNITY',
+    indicators: {
+      number: 'Number of tests conducted',
+      positivity: 'Positivity (%)'
+    }
   },
   FACILITY: {
     title: 'Facility Testing Modalities',
-    id: 'FACILITY'
+    id: 'FACILITY',
+    indicators: {
+      number: 'Number of tests conducted',
+      positivity: 'Positivity (%)'
+    }
   },
   INDEX: {
     title: 'Index',
-    id: 'INDEX'
+    id: 'INDEX',
+    indicators: {
+      number: 'Number of tests conducted',
+      positivity: 'Positivity (%)'
+    }
   },
   FORECAST: {
     title: 'HIVST Forecast',
-    id: 'FORECAST'
+    id: 'FORECAST',
+    indicators: {
+      number: 'Number of tests conducted',
+      positivity: 'Positivity (%)'
+    }
   },
   KP_TABLE: {
     title: 'Key Populations',
-    id: 'KP_TABLE'
+    id: 'KP_TABLE',
+    indicators: {
+      number: 'Number of tests conducted',
+      positivity: 'Positivity (%)'
+    }
   },
   POLICY_TABLE: {
     title: 'WHO HIV Testing Policy Compliance',
-    id: 'POLICY_TABLE'
+    id: 'POLICY_TABLE',
+    indicators: {
+      number: 'Number of tests conducted',
+      positivity: 'Positivity (%)'
+    }
   },
   GROUPS_TABLE: {
     title: 'Population Groups',
-    id: 'GROUPS_TABLE'
+    id: 'GROUPS_TABLE',
+    indicators: {
+      number: 'Number of tests conducted',
+      positivity: 'Positivity (%)'
+    }
   },
 }
 const C = CHARTS
-
-const FIELD_MAP = {
-  INDICATOR: 'indicator',
-  INDICATOR_DESCRIPTION: 'indicator_description',
-  COUNTRY_ISO_CODE: 'country_iso_code',
-  COUNTRY_NAME: 'country_name',
-  AREA_NAME: 'area_name',
-  GEOGRAPHIC_SCOPE: 'geographic_scope',
-  YEAR: 'year',
-  SEX: 'sex',
-  AGE: 'age',
-  POPULATION_SEGMENT: 'population_segment',
-  POPULATION_SUB_GROUP: 'population_sub_group',
-  VALUE: 'value',
-  VALUE_COMMENT: 'value_comment',
-  UNIT_FORMAT: 'unit_format',
-  SOURCE_ORGANIZATION: 'source_organization',
-  SOURCE_DATABASE: 'source_database',
-  SOURCE_YEAR: 'source_year',
-  NOTES: 'notes',
-  MODALITY: 'modality',
-  MODALITY_CATEGORY: 'modality_category'
-}
-const F = FIELD_MAP
-
-// indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
-const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
-
-// const R_2010_2019 = [
-//   '2010','2011','2012','2013','2014',
-//   '2015','2016','2017','2018','2019',
-// ]
-const R_2015_2019 = [
-  '2015','2016','2017','2018','2019',
-]
-const R_ADULT_AGES = ['15-24', '25-34', '35-49', '50-99']
-const R_SEXES = ['males', 'females']
 
 // this map specifies which records need to be pulled to cover the indicators relevant to each chart
 const getIndicatorMap = (isShiny) => {
@@ -201,31 +316,6 @@ const getIndicatorMap = (isShiny) => {
         }
       }
     )),
-    [C.PLHIV_AGE.id]: R_ADULT_AGES.map(ageRange => (
-      {
-        id: ageRange,
-        [F.INDICATOR]: C.PLHIV_AGE.indicators.aware,
-        [F.AGE]: ageRange,
-        [F.SEX]: 'both',
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return R_2015_2019.map(y => {
-            const fResults = _.filter(results, r => r.year === y)
-            const lci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'lci'
-            })
-            const uci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'uci'
-            })
-            const median = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'median'
-            })
-            return { lci, uci, median }
-          })
-        }
-      }
-    )),
     [C.PLHIV_SEX.id]: R_SEXES.map(sex => (
       {
         id: sex,
@@ -237,58 +327,6 @@ const getIndicatorMap = (isShiny) => {
         getter: results => {
           return R_2015_2019.map(y => {
             return _.find(results, r => (r.year === y))
-          })
-        }
-      }
-    )),
-    [C.HIV_NEGATIVE.id]: _.map(C.HIV_NEGATIVE.indicators, (v, k) => (
-      {
-        id: k,
-        [F.INDICATOR]: v,
-        [F.INDICATOR_DESCRIPTION]: 'negative',
-        [F.AGE]: '15-99',
-        [F.SEX]: 'both',
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return R_2015_2019.map(y => {
-            const fResults = _.filter(results, r => r.year === y)
-            const lci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'lci'
-            })
-            const uci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'uci'
-            })
-            const median = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'median'
-            })
-            return { lci, uci, median }
-          })
-        }
-      }
-    )),
-    [C.HIV_POSITIVE.id]: _.map(C.HIV_POSITIVE.indicators, (v, k) => (
-      {
-        id: k,
-        [F.INDICATOR]: v,
-        [F.INDICATOR_DESCRIPTION]: 'positive',
-        [F.AGE]: '15-99',
-        [F.SEX]: 'both',
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return R_2015_2019.map(y => {
-            const fResults = _.filter(results, r => r.year === y)
-            const lci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'lci'
-            })
-            const uci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'uci'
-            })
-            const median = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'median'
-            })
-            return { lci, uci, median }
           })
         }
       }
@@ -370,6 +408,86 @@ const getIndicatorMap = (isShiny) => {
   }
 
   if (isShiny) {
+    // add shiny90-only charts
+    indicatorMap[C.PLHIV_AGE.id] = R_ADULT_AGES.map(ageRange => (
+      {
+        id: ageRange,
+        [F.INDICATOR]: C.PLHIV_AGE.indicators.aware,
+        [F.AGE]: ageRange,
+        [F.SEX]: 'both',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            const fResults = _.filter(results, r => r.year === y)
+            const lci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'lci'
+            })
+            const uci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'uci'
+            })
+            const median = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'median'
+            })
+            return { lci, uci, median }
+          })
+        }
+      }
+    ))
+    indicatorMap[C.HIV_NEGATIVE.id] = _.map(C.HIV_NEGATIVE.indicators, (v, k) => (
+      {
+        id: k,
+        [F.INDICATOR]: v,
+        [F.INDICATOR_DESCRIPTION]: 'negative',
+        [F.AGE]: '15-99',
+        [F.SEX]: 'both',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            const fResults = _.filter(results, r => r.year === y)
+            const lci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'lci'
+            })
+            const uci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'uci'
+            })
+            const median = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'median'
+            })
+            return { lci, uci, median }
+          })
+        }
+      }
+    ))
+    indicatorMap[C.HIV_POSITIVE.id] =  _.map(C.HIV_POSITIVE.indicators, (v, k) => (
+      {
+        id: k,
+        [F.INDICATOR]: v,
+        [F.INDICATOR_DESCRIPTION]: 'positive',
+        [F.AGE]: '15-99',
+        [F.SEX]: 'both',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          return R_2015_2019.map(y => {
+            const fResults = _.filter(results, r => r.year === y)
+            const lci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'lci'
+            })
+            const uci = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'uci'
+            })
+            const median = _.find(fResults, r => {
+              return r[F.VALUE_COMMENT] === 'median'
+            })
+            return { lci, uci, median }
+          })
+        }
+      }
+    ))
+
+    // add shiny90-only fields for PREVALENCE
     const shinyPrevInds = _.map(C.PREVALENCE.shinyOnlyIndicators, (v, k) => ({
       id: k,
       [F.INDICATOR]: v,
@@ -401,4 +519,4 @@ const getIndicatorMap = (isShiny) => {
   return indicatorMap
 }
 
-export { CHARTS, FIELD_MAP, AGGREGATE_GETTER, getIndicatorMap }
+export { CHARTS, FIELD_MAP, AGGREGATE_GETTER, R_2015_2019, getIndicatorMap }

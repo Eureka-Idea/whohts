@@ -120,9 +120,16 @@ class Dashboard extends Component {
       return
     }
 
-    // if (!shiny) return
+    const countryCode = _.get(this, 'props.match.params.countryCode')
+    const shinyCountry = _.get(COUNTRY_MAP, [countryCode, 'shiny'])
+    const shinyChart = _.get(CHARTS, [id, 'shinyOnly'])
 
-    const config = getConfig(id, this.props.chartData)
+    if (shinyChart && !shinyCountry) {
+      console.log(`${countryCode} is not shiny, skipping ${id} chart.`)
+      return;
+    }
+
+    const config = getConfig(id, this.props.chartData, shinyCountry)
     const chart = <ReactHighcharts config={config} />
 
     return (

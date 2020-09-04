@@ -1,7 +1,7 @@
 import colors, {femaleColor, maleColor } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import { CHARTS } from "../../constants/charts";
+import { CHARTS, R_2015_2019 } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
 const uncertaintyTooltipFormat = `<span style="color:{point.color}">●</span>
@@ -9,7 +9,7 @@ const uncertaintyTooltipFormat = `<span style="color:{point.color}">●</span>
   Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
   Source: UNAIDS` // todo: fill in actual source on point
 
-const getConfig = (chartId, chartData) => {
+const getConfig = (chartId, chartData, shinyCountry) => {
   if (_.isEmpty(chartData)) {
     console.log('No chart data (perhaps awaiting API response)')
     return
@@ -47,7 +47,7 @@ const getConfig = (chartId, chartData) => {
   console.log(chartId, ' data: ', data)
 
   try {
-    return getter(data)
+    return getter(data, shinyCountry)
   } catch (error) {
     console.error(chartId, ' unable to generate config: ', error)
     debugger
@@ -294,9 +294,7 @@ const getHivPositive = data => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getPrevalence = data => {
-  const isShiny = true // TODO
-  
+const getPrevalence = (data, shinyCountry) => {
   const { title } = CHARTS.PREVALENCE
 
   const options = {
@@ -316,9 +314,9 @@ const getPrevalence = data => {
   const positivityData = [] // for shiny
   const dYieldData = [] // for shiny
   const adjPrevData = []
-  data.prevalence.forEach((yearRecord, i) => {
+  R_2015_2019.forEach((y, i) => {
     // TODO: calc uci/lci
-    const prevalenceValue = _.get(yearRecord, 'median.value')
+    const prevalenceValue = _.get(data, ['prevalence', i, 'median', 'value'])
     prevalenceData.push(prevalenceValue)
 
     const populationValue = _.get(data, ['population', i, 'value'])
@@ -331,7 +329,7 @@ const getPrevalence = data => {
     )
     adjPrevData.push(adjPrevValue)
     
-    if (isShiny) {
+    if (shinyCountry) {
       const positivityValue = _.get(data, ['positivity', i, 'median', 'value'])
       const dYieldValue = _.get(data, ['dYield', i, 'median', 'value'])
       positivityData.push(positivityValue)
