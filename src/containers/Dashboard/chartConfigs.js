@@ -55,6 +55,24 @@ const getConfig = (chartId, chartData, shinyCountry) => {
   }  
 }
 
+const extractPrioritizedData = (data, indicatorIds, sourceCount) => {
+  const result = {}
+  _.each(indicatorIds, ind => {
+    for (let i = 1; i <= sourceCount; i++) {
+      const indicatorResult = _.get(data, ind+i, null)
+      if (indicatorResult) {
+        result[ind] = indicatorResult
+        break
+      } else if (i === sourceCount) {
+        result[ind] = null
+        result.INCOMPLETE_RESULTS = true
+      }
+    }
+  })
+
+  return result
+}
+
 const getP95 = data => {
   const config = ['status', 'art', 'suppression'].map(ind => {
     const indVal = _.get(data, [ind, 'value'])
@@ -475,23 +493,32 @@ const getPrevalence = (data, shinyCountry) => {
 }
 
 const getAdults = data => {
-  const title = 'Adults'
+  const { title, indicatorIds, sources } = CHARTS.ADULTS
+
+  const { 
+    total, men, women,
+    pTotal, pMen, pWomen, INCOMPLETE_RESULTS
+  } = extractPrioritizedData(data, indicatorIds, sources.length)
+
+  const numberData = [women.value, men.value]
+  const positivityData = [pWomen.value, pMen.value]
+
   const series = [
     {
       name: 'Number of tests conducted (thousands)',
-      data: [234, 203]
+      data: numberData
     },
     {
       name: 'Positivity (%)',
       type: 'line',
-      data: [2, 30]
+      data: positivityData
     }
   ]
-  const categories = ['Women', 'Men', 'TOTAL']
+  const categories = ['Women', 'Men']
 
   // TODO should be weighted avg of %
   const options = {
-    subtitle: { text: `Total tests: ${_.mean([234, 203])}k, Average positivity: ${_.mean([2, 30])}%` }
+    subtitle: { text: `Total tests: ${_.mean(numberData)}k, Average positivity: ${_.mean(positivityData)}%` }
   }
   return _.merge({}, getColumnScat({ title, series, options, categories }))
 }

@@ -201,6 +201,7 @@ class Dashboard extends Component {
     const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
     const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
     const prevalence = this.getChart(CHARTS.PREVALENCE.id)
+    const adults = this.getChart(CHARTS.ADULTS.id)
 
     return (
       <div className='dashboard'>
@@ -227,6 +228,7 @@ class Dashboard extends Component {
             {negative}
             {positive}
             {prevalence}
+            {adults}
           </div>
 
           {/* <div className='row no-gutters'>
@@ -347,7 +349,9 @@ class Dashboard extends Component {
     let char = ''
     fields.forEach(f => {
       if (this.state[f]) {
-        url += encodeURI(`${char}${f}=${this.state[f]}`)
+        let chunk = encodeURI(`${char}${f}=${this.state[f]}`)
+        chunk = chunk.replace('+', '%2B') // TODO - figure out why not encoded properly
+        url += chunk
         char = '&'
       }
     })

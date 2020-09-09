@@ -33,6 +33,73 @@ const FIELD_MAP = {
 }
 const F = FIELD_MAP
 
+const adultsGam20 = {
+  id: 'GAM20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: 'Global AIDS Monitoring 2020',
+      [F.VALUE_COMMENT]: 'validated',
+    }
+  },
+  indicators: {
+    total1: 'Den Age-All',
+    men1: 'Den Age-Male Gte 15',
+    women1: 'Den Age-Female Gte 15',
+    pTotal1: 'Per Age-All',
+    pMen1: 'Per Age-Male Gte 15',
+    pWomen1: 'Per Age-Female Gte 15',
+  }
+}
+const adultsGam = {
+  id: 'GAM',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: 'Global AIDS Monitoring',
+    }
+  },
+  indicators: {
+    total2: 'Total volume of tests conducted in past year',
+    men2: 'Men (15+) - Number of tests',
+    women2: 'Women (15+) - Number of tests',
+    pTotal2: 'Total aggregate positivity',
+    pMen2: 'Men (15+) - Positivity',
+    pWomen2: 'Women (15+) - Positivity',
+  }
+}
+const adultsNPD = {
+  id: 'GAM',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: 'National Programme Data',
+    }
+  },
+  indicators: { // NOTE: same as GAM
+    total3: 'Total volume of tests conducted in past year',
+    men3: 'Men (15+) - Number of tests',
+    women3: 'Women (15+) - Number of tests',
+    pTotal3: 'Total aggregate positivity',
+    pMen3: 'Men (15+) - Positivity',
+    pWomen3: 'Women (15+) - Positivity',
+  }
+}
+const adultsPepfar = {
+  id: 'PEPFAR',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: 'PEPFAR System Data Extract',
+    }
+  },
+  indicators: {
+    total4: 'People Tested in Past Year',
+    men4: 'Men (15+) Tested in Past Year',
+    women4: 'Women (15+) Tested in Past Year',
+    pTotal3a: 'Total positive tests in past year', // TODO pre-calc
+    pTotal3b: 'People Tested in Past Year',
+    pMen4: 'Positivity - Men (15+)',
+    pWomen4: 'Positivity - Women (15+)',
+  }
+}
+
 const CHARTS = {
   CONTEXT: {
     // title: 'context',
@@ -108,97 +175,14 @@ const CHARTS = {
     }
   },
 
-// 'Women (15+) - Number of tests'
-// 'Women (15+) - Positivity' // or 'Positivity - Women (15+)' ?
-// 'Men (15+) - Number of tests'
-// 'Men (15+) - Positivity' // or 'Positivity - Men (15+)' ?
-// 'Mobile testing - Number of tests - Community'
-// 'VCT - Number of tests - Community'
-// 'Other - Number of tests - Community'
-
-// 'PITC - Number of tests - Facility'
-// 'ANC - Number of tests - Facility'
-// 'VCT - Number of tests - Facility'
-// // family planning clinic?
-// 'Other - Number of tests - Facility'
-
-// // index?
-
-
-  // Global AIDS Monitoring
-  // NUMBER of TESTS
-
-  // ANC - Number of tests - Facility
-  // Men(15+) - Number of tests
-  // Mobile  testing - Number of tests - Community
-  // Other - Number of tests - Community
-  // Other - Number of tests - Facility
-  // PITC - Number of tests - Facility
-  // VCT - Number of tests - Community
-  // VCT - Number of tests - Facility
-  // Women(15 +) - Number of tests
-  
-  // POSITIVITY
-
-  // Women (15+) -  Positivity
-  // Men(15+) -  Positivity
-  // Mobile  testing - Positivity - Community
-  // VCT - Positivity - Community
-  // Other - Positivity - Community
-  // PITC - Positivity - Facility
-  // ANC - Positivity - Facility
-  // VCT - Positivity - Facility
-  // Other - Positivity - Facility
-
-
-
-// PEPFAR System Extract
-  // NUMBER of TESTS
-  // POSITIVITY
-// Positivity - Total Tests Adults (15+)
-// Positivity - Women (15+)
-// Positivity - Men (15+)
-// Positivity - Community Modalities Total
-// Positivity - Community Mobile Testing
-// Positivity - Community VCT Testing
-// Positivity - Community Other Testing
-// Positivity - Facility Modalities Total
-// Positivity - Facility PITC Testing
-// Positivity - Facility ANC Testing
-// Positivity - Facility VCT Testing
-// Positivity - Facility Other Testing
-
-// PEPFAR COP/ROP
-
-
   ADULTS: {
     title: 'Adults',
     id: 'ADULTS',
-    indicators: {
-      number1: 'Positive tests in past year - community mobile testing',
-      positivity2: 'Positivity - Community Mobile Testing'
-    },
-    indicatorFilters: {
-      number1: {
-        [F.SOURCE_DATABASE]: 'Global AIDS Monitoring'
-      },
-      number2: {
-        [F.SOURCE_DATABASE]: 'PEPFAR System Data Extract'
-      },
-      number3: {
-        [F.SOURCE_DATABASE]: 'PEPFAR COP/ROP'
-      },
-      positivity1: {
-        [F.SOURCE_DATABASE]: 'Global AIDS Monitoring'
-      },
-      positivity2: {
-        [F.SOURCE_DATABASE]: 'PEPFAR System Data Extract'
-      },
-      positivity3: {
-        [F.SOURCE_DATABASE]: 'PEPFAR COP/ROP'
-      },
-    }
+    sourceHierarchy: true,
+    sources: [adultsGam20, adultsGam, adultsNPD, adultsPepfar],
+    indicatorIds: ['total', 'men', 'women', 'pTotal', 'pMen', 'pWomen']
   },
+  
   COMMUNITY: {
     title: 'Community Testing Modalities',
     id: 'COMMUNITY',
@@ -404,7 +388,25 @@ const getIndicatorMap = (isShiny) => {
           })
         }
       },
-    ]
+    ],
+    [C.ADULTS.id]: _.flatMap(C.ADULTS.sources, s => {
+      return _.map(s.indicators, (indVal, indId) => {
+        
+        return _.extend({}, s.filters.ALL, s.filters[indId], {
+          id: indId,
+          [F.INDICATOR]: indVal,
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            console.log('r for ', indId, ' ', results)
+            if (results.length > 1) {
+              console.error('**LOOKOUT! Taking first result.**')
+            }
+            return results[0]
+          }
+        })
+      })
+    })
   }
 
   if (isShiny) {

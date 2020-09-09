@@ -81,7 +81,7 @@ export const getChartData = (countryCode) =>
           const { chartName, data, id, getter } = indicatorResult
 
           if (data.error) {
-            console.error('Indicator result error: ', data.error)
+            console.error(`Indicator result error for [${id}] of chart [${chartName}]: ${data.error}`)
             _.set(allChartData, [chartName, 'errors', id], data.error)
             return
           }
