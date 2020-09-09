@@ -33,7 +33,7 @@ const FIELD_MAP = {
 }
 const F = FIELD_MAP
 
-const adultsGam20 = {
+const adultsGAM20 = {
   id: 'GAM20',
   filters: {
     ALL: {
@@ -50,11 +50,11 @@ const adultsGam20 = {
     pWomen1: 'Per Age-Female Gte 15',
   }
 }
-const adultsGam = {
-  id: 'GAM',
+const adultsGAM19 = {
+  id: 'GAM19',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: 'Global AIDS Monitoring',
+      [F.SOURCE_DATABASE]: 'Global AIDS Monitoring 2019',
     }
   },
   indicators: {
@@ -67,7 +67,7 @@ const adultsGam = {
   }
 }
 const adultsNPD = {
-  id: 'GAM',
+  id: 'NPD',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: 'National Programme Data',
@@ -179,7 +179,7 @@ const CHARTS = {
     title: 'Adults',
     id: 'ADULTS',
     sourceHierarchy: true,
-    sources: [adultsGam20, adultsGam, adultsNPD, adultsPepfar],
+    sources: [adultsGAM20, adultsGAM19, adultsNPD, adultsPepfar],
     indicatorIds: ['total', 'men', 'women', 'pTotal', 'pMen', 'pWomen']
   },
   

@@ -126,10 +126,14 @@ class Dashboard extends Component {
 
     if (shinyChart && !shinyCountry) {
       console.log(`${countryCode} is not shiny, skipping ${id} chart.`)
-      return;
+      return
     }
 
     const config = getConfig(id, this.props.chartData, shinyCountry)
+    if (!config) {
+      console.error(`${id} failed to produce a config.`)
+      return
+    }
     const chart = <ReactHighcharts config={config} />
 
     return (

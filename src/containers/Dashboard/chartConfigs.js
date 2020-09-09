@@ -1,7 +1,7 @@
 import colors, {femaleColor, maleColor } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import { CHARTS, R_2015_2019 } from "../../constants/charts";
+import { CHARTS, R_2015_2019, FIELD_MAP } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
 const uncertaintyTooltipFormat = `<span style="color:{point.color}">●</span>
@@ -499,26 +499,60 @@ const getAdults = data => {
     total, men, women,
     pTotal, pMen, pWomen, INCOMPLETE_RESULTS
   } = extractPrioritizedData(data, indicatorIds, sources.length)
+  
+  console.log('total: ',total, 'men: ',men, 'women: ',women, 'pTotal: ',pTotal, 'pMen: ',pMen, 'pWomen: ',pWomen, 'INCOMPLETE_RESULTS: ',INCOMPLETE_RESULTS)
 
-  const numberData = [women.value, men.value]
-  const positivityData = [pWomen.value, pMen.value]
+  if (INCOMPLETE_RESULTS) {
+    console.error('**INCOMPLETE RESULTS**')
+    return
+  }
+  
+  const wNumData = {
+    y: women.value,
+    source: women[FIELD_MAP.SOURCE_DATABASE]
+  }
+  const mNumData = {
+    y: men.value,
+    source: men[FIELD_MAP.SOURCE_DATABASE]
+  }
+
+  const wPosData = {
+    y: pWomen.value,
+    source: pWomen[FIELD_MAP.SOURCE_DATABASE]
+  }
+  const mPosData = {
+    y: pMen.value,
+    source: pMen[FIELD_MAP.SOURCE_DATABASE]
+  }
+
+  if (
+    men[FIELD_MAP.SOURCE_DATABASE] !== pMen[FIELD_MAP.SOURCE_DATABASE] ||
+    women[FIELD_MAP.SOURCE_DATABASE] !== pWomen[FIELD_MAP.SOURCE_DATABASE]
+    ) {
+      console.error('**SOURCE MISMATCH**')
+    }
 
   const series = [
     {
       name: 'Number of tests conducted (thousands)',
-      data: numberData
+      data: [wNumData, mNumData]
     },
     {
       name: 'Positivity (%)',
       type: 'line',
-      data: positivityData
+      tooltip: {
+        pointFormat: `<span style="color:{point.color}">●</span>
+          {series.name}: <b>{point.y}</b><br/>
+          Source: {point.source}`
+      },
+      data: [wPosData, mPosData]
     }
   ]
   const categories = ['Women', 'Men']
 
   // TODO should be weighted avg of %
   const options = {
-    subtitle: { text: `Total tests: ${_.mean(numberData)}k, Average positivity: ${_.mean(positivityData)}%` }
+    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${pTotal.value}%` }
   }
   return _.merge({}, getColumnScat({ title, series, options, categories }))
 }
