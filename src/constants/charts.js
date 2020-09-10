@@ -181,6 +181,96 @@ const communityPepfar = {
   }
 }
 
+const facilityGAM20 = {
+  id: 'GAM20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+      [F.VALUE_COMMENT]: 'validated',
+    }
+  },
+  indicators: {
+    total1: 'Den Facility-Facility All',
+    PITC1: 'Den Facility-Facility Provider Init',
+    ANC1: 'Den Facility-Facility Anc',
+    VCT1: 'Den Facility-Facility Vct',
+    family1: 'Den Facility-Facility Fp Clinic',
+    other1: 'Den Facility-Facility Other',
+    pTotal1: 'Per Facility-Facility All',
+    pPITC1: 'Per Facility-Facility Provider Init',
+    pANC1: 'Per Facility-Facility Anc',
+    pVCT1: 'Per Facility-Facility Vct',
+    pFamily1: 'Per Facility-Facility Fp Clinic',
+    pOther1: 'Per Facility-Facility Other',
+  }
+}
+const facilityGAM19 = {
+  id: 'GAM19',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM19,
+    }
+  },
+  indicators: {
+    total2: 'Total Volume - Tests conducted and positivity at facility level',
+    PITC2: 'PITC - Number of tests - Facility',
+    ANC2: 'ANC - Number of tests - Facility',
+    VCT2: 'VCT - Number of tests - Facility',
+    family2: 'n/a',
+    other2: 'Other - Number of tests - Facility',
+    pTotal2: 'Aggregate Positivity - Tests conducted and positivity at facility level',
+    pPITC2: 'PITC - Positivity - Facility',
+    pANC2: 'ANC - Positivity - Facility',
+    pVCT2: 'VCT - Positivity - Facility',
+    pFamily2: 'n/a',
+    pOther2: 'Other - Positivity - Facility',
+  }
+}
+const facilityNPD = {
+  id: 'NPD',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD,
+    }
+  },
+  indicators: { // same as GAM19
+    total3: 'Total Volume - Tests conducted and positivity at facility level',
+    PITC3: 'PITC - Number of tests - Facility',
+    ANC3: 'ANC - Number of tests - Facility',
+    VCT3: 'VCT - Number of tests - Facility',
+    family3: 'n/a',
+    other3: 'Other - Number of tests - Facility',
+    pTotal3: 'Aggregate Positivity - Tests conducted and positivity at facility level',
+    pPITC3: 'PITC - Positivity - Facility',
+    pANC3: 'ANC - Positivity - Facility',
+    pVCT3: 'VCT - Positivity - Facility',
+    pFamily3: 'n/a',
+    pOther3: 'Other - Positivity - Facility',
+  }
+}
+const facilityPepfar = {
+  id: 'PEPFAR',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+    }
+  },
+  indicators: { // TODO: fix calculated values
+    total4: 'Total Facility Tests',
+    PITC4: 'HIV tests conducted (sum of modality_category like facility provider initiated)',
+    ANC4: 'HIV tests conducted (sum of modality_category like facility ANC clinics)',
+    VCT4: 'HIV tests conducted (sum of modality_category like facility VCT)',
+    family4: 'n/a',
+    other4: 'HIV tests conducted (sum of modality_category like facility other)',
+    pTotal4: 'Positivity - Facility Modalities Total',
+    pPITC4: 'Positivity - Facility PITC Testing',
+    pANC4: 'Positivity - Facility ANC Testing',
+    pVCT4: 'Positivity - Facility VCT Testing',
+    pFamily4: 'n/a',
+    pOther4: 'Positivity - Facility Other Testing',
+  }
+}
+
 const CHARTS = {
   CONTEXT: {
     // title: 'context',
@@ -274,10 +364,8 @@ const CHARTS = {
   FACILITY: {
     title: 'Facility Testing Modalities',
     id: 'FACILITY',
-    indicators: {
-      number: 'Number of tests conducted',
-      positivity: 'Positivity (%)'
-    }
+    sources: [facilityGAM20, facilityGAM19, facilityNPD, facilityPepfar],
+    indicatorIds: ['total', 'PITC', 'ANC', 'VCT', 'family', 'other', 'pTotal', 'pPITC', 'pANC', 'pVCT', 'pFamily', 'pOther']
   },
   INDEX: {
     title: 'Index',
@@ -488,6 +576,24 @@ const getIndicatorMap = (isShiny) => {
       })
     }),
     [C.COMMUNITY.id]: _.flatMap(C.COMMUNITY.sources, s => {
+      return _.map(s.indicators, (indVal, indId) => {
+        
+        return _.extend({}, s.filters.ALL, s.filters[indId], {
+          id: indId,
+          [F.INDICATOR]: indVal,
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            console.log('r for ', indId, ' ', results)
+            if (results.length > 1) {
+              console.error('**LOOKOUT! Taking first result.**')
+            }
+            return results[0]
+          }
+        })
+      })
+    }),
+    [C.FACILITY.id]: _.flatMap(C.FACILITY.sources, s => {
       return _.map(s.indicators, (indVal, indId) => {
         
         return _.extend({}, s.filters.ALL, s.filters[indId], {

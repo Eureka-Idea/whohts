@@ -4,10 +4,16 @@ import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './gen
 import { CHARTS, R_2015_2019, FIELD_MAP } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
-const uncertaintyTooltipFormat = `<span style="color:{point.color}">●</span>
+const uncertaintyTooltipFormat = `
+  <span style="color:{point.color}">●</span>
   {series.name}: <b>{point.y}</b><br/>
   Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
   Source: UNAIDS` // todo: fill in actual source on point
+
+const sourceTooltipFormat = `
+  <span style="color:{point.color}">●</span>
+  {series.name}: <b>{point.y}</b><br/>
+  Source: {point.source}`
 
 const getConfig = (chartId, chartData, shinyCountry) => {
   if (_.isEmpty(chartData)) {
@@ -50,13 +56,12 @@ const getConfig = (chartId, chartData, shinyCountry) => {
     return getter(data, shinyCountry)
   } catch (error) {
     console.error(chartId, ' unable to generate config: ', error)
-    debugger
     return
   }  
 }
 
 const extractPrioritizedData = (data, indicatorIds, sourceCount) => {
-  const result = {}
+  const result = { missingIndicators: [] }
   _.each(indicatorIds, ind => {
     for (let i = 1; i <= sourceCount; i++) {
       const indicatorResult = _.get(data, ind+i, null)
@@ -64,8 +69,8 @@ const extractPrioritizedData = (data, indicatorIds, sourceCount) => {
         result[ind] = indicatorResult
         break
       } else if (i === sourceCount) {
-        result[ind] = null
-        result.INCOMPLETE_RESULTS = true
+        result[ind] = { value: 0, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
+        result.missingIndicators.push(ind)
       }
     }
   })
@@ -497,14 +502,13 @@ const getAdults = data => {
 
   const { 
     total, men, women,
-    pTotal, pMen, pWomen, INCOMPLETE_RESULTS
+    pTotal, pMen, pWomen, missingIndicators
   } = extractPrioritizedData(data, indicatorIds, sources.length)
   
-  console.log('total: ',total, 'men: ',men, 'women: ',women, 'pTotal: ',pTotal, 'pMen: ',pMen, 'pWomen: ',pWomen, 'INCOMPLETE_RESULTS: ',INCOMPLETE_RESULTS)
+  console.log('total: ',total, 'men: ',men, 'women: ',women, 'pTotal: ',pTotal, 'pMen: ',pMen, 'pWomen: ',pWomen, 'missingIndicators: ',missingIndicators)
 
-  if (INCOMPLETE_RESULTS) {
-    console.error('**INCOMPLETE RESULTS**')
-    return
+  if (missingIndicators.length) {
+    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
   
   const wNumData = {
@@ -541,9 +545,7 @@ const getAdults = data => {
       name: 'Positivity (%)',
       type: 'line',
       tooltip: {
-        pointFormat: `<span style="color:{point.color}">●</span>
-          {series.name}: <b>{point.y}</b><br/>
-          Source: {point.source}`
+        pointFormat: sourceTooltipFormat
       },
       data: [wPosData, mPosData]
     }
@@ -562,14 +564,13 @@ const getCommunity = data => {
 
   const {
     total, mobile, VCT, other,
-    pTotal, pMobile, pVCT, pOther, INCOMPLETE_RESULTS
+    pTotal, pMobile, pVCT, pOther, missingIndicators
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
-  console.log('total: ', total, 'mobile: ', mobile, 'VCT: ', VCT, 'other: ', other, 'pTotal: ', pTotal, 'pMobile: ', pMobile, 'pVCT: ', pVCT, 'pOther: ', pOther, 'INCOMPLETE_RESULTS: ', INCOMPLETE_RESULTS)
+  console.log('total: ', total, 'mobile: ', mobile, 'VCT: ', VCT, 'other: ', other, 'pTotal: ', pTotal, 'pMobile: ', pMobile, 'pVCT: ', pVCT, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
   
-  if (INCOMPLETE_RESULTS) {
-    console.error('**INCOMPLETE RESULTS**')
-    return
+  if (missingIndicators.length) {
+    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
 
   const mobileNumData = {
@@ -612,9 +613,7 @@ const getCommunity = data => {
       name: 'Positivity (%)',
       type: 'line',
       tooltip: {
-        pointFormat: `<span style="color:{point.color}">●</span>
-          {series.name}: <b>{point.y}</b><br/>
-          Source: {point.source}`
+        pointFormat: sourceTooltipFormat
       },
       data: [mobilePosData, vctPosData, otherPosData]
     }
@@ -628,7 +627,67 @@ const getCommunity = data => {
 }
 
 const getFacility = data => {
-  const title = 'Facility Testing Modalities'
+  const { title, indicatorIds, sources } = CHARTS.FACILITY
+
+  const {
+    total, PITC, ANC, VCT, family, other,
+    pTotal, pPITC, pANC, pVCT, pFamily, pOther, missingIndicators
+  } = extractPrioritizedData(data, indicatorIds, sources.length)
+
+  console.log('total: ', total, 'PITC: ', PITC, 'ANC: ', ANC, 'VCT: ', VCT, 'family: ', family, 'other: ', other,
+    'pTotal: ', pTotal, 'pPITC: ', pPITC, 'pANC: ', pANC, 'pVCT: ', pVCT, 'pFamily: ', pFamily, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
+
+  if (missingIndicators.length) {
+    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+  }
+
+  const pitcNumData = {
+    y: PITC.value,
+  }
+  const ancNumData = {
+    y: ANC.value,
+  }
+  const vctNumData = {
+    y: VCT.value,
+  }
+  const familyNumData = {
+    y: family.value,
+  }
+  const otherNumData = {
+    y: other.value,
+  }
+
+  const pitcPosData = {
+    y: pPITC.value,
+    source: pPITC[FIELD_MAP.SOURCE_DATABASE],
+  }
+  const ancPosData = {
+    y: pANC.value,
+    source: pANC[FIELD_MAP.SOURCE_DATABASE],
+  }
+  const vctPosData = {
+    y: pVCT.value,
+    source: pVCT[FIELD_MAP.SOURCE_DATABASE],
+  }
+  const familyPosData = {
+    y: pFamily.value,
+    source: pFamily[FIELD_MAP.SOURCE_DATABASE],
+  }
+  const otherPosData = {
+    y: pOther.value,
+    source: pOther[FIELD_MAP.SOURCE_DATABASE],
+  }
+
+  if (
+    PITC[FIELD_MAP.SOURCE_DATABASE] !== pPITC[FIELD_MAP.SOURCE_DATABASE] ||
+    ANC[FIELD_MAP.SOURCE_DATABASE] !== pANC[FIELD_MAP.SOURCE_DATABASE] ||
+    VCT[FIELD_MAP.SOURCE_DATABASE] !== pVCT[FIELD_MAP.SOURCE_DATABASE] ||
+    family[FIELD_MAP.SOURCE_DATABASE] !== pFamily[FIELD_MAP.SOURCE_DATABASE] ||
+    other[FIELD_MAP.SOURCE_DATABASE] !== pOther[FIELD_MAP.SOURCE_DATABASE]
+  ) {
+    console.error('**SOURCE MISMATCH**')
+  }
+  
   const series = [
     {
       name: 'Number of tests conducted (thousands)',
@@ -640,11 +699,11 @@ const getFacility = data => {
         //   Source: UNAIDS`,
       },
       data: [
-        { y: 234 },
-        { y: 238 },
-        { y: 223 },
-        { y: 243 },
-        { y: 132 }
+        pitcNumData,
+        ancNumData,
+        vctNumData,
+        familyNumData,
+        otherNumData,
       ],
     },
     {
@@ -655,12 +714,16 @@ const getFacility = data => {
           {point.tooltipAddition}`
       },
       type: 'line',
+      tooltip: {
+        pointFormat: sourceTooltipFormat
+      },
       data: [
-        { y: 22 },
-        { y: 30 },
-        { y: 35 },
-        { y: 19 },
-        { y: 11, tooltipAddition: 'Description: something you should know about Other' }
+        pitcPosData,
+        ancPosData,
+        vctPosData,
+        familyPosData,
+        otherPosData,
+        // { y: 11, tooltipAddition: 'Description: something you should know about Other' }
       ],
     }
   ]
@@ -668,22 +731,10 @@ const getFacility = data => {
 
   const options = {
     subtitle: {
-      text: `Total tests: ${_.meanBy([
-        { y: 234 },
-        { y: 238 },
-        { y: 223 },
-        { y: 243 },
-        { y: 132 }
-      ], 'y')}k, Average positivity: ${_.meanBy([
-        { y: 22 },
-        { y: 30 },
-        { y: 35 },
-        { y: 19 },
-        { y: 11, tooltipAddition: 'Description: something you should know about Other' }
-      ], 'y')}%`
+      text: `Total tests: ${total.value}k, Average positivity: ${pTotal.value}%`
     }
   }
-  const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other', 'TOTAL']
+  const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other']
   // const options = { xAxis: { categories: ['Community', 'Facility']} }
   return _.merge({}, getColumnScat({ title, options, categories, series }))
 }
