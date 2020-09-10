@@ -9,6 +9,13 @@ const R_2015_2019 = [
 const R_ADULT_AGES = ['15-24', '25-34', '35-49', '50-99']
 const R_SEXES = ['males', 'females']
 
+const SOURCE_DB_MAP = {
+  GAM20: 'Global AIDS Monitoring 2020',
+  GAM19: 'Global AIDS Monitoring 2019',
+  NPD: 'National Programme Data 2019',
+  PEPFAR: 'PEPFAR System Data Extract',
+}
+
 const FIELD_MAP = {
   INDICATOR: 'indicator',
   INDICATOR_DESCRIPTION: 'indicator_description',
@@ -37,7 +44,7 @@ const adultsGAM20 = {
   id: 'GAM20',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: 'Global AIDS Monitoring 2020',
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
       [F.VALUE_COMMENT]: 'validated',
     }
   },
@@ -54,7 +61,7 @@ const adultsGAM19 = {
   id: 'GAM19',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: 'Global AIDS Monitoring 2019',
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM19,
     }
   },
   indicators: {
@@ -70,7 +77,7 @@ const adultsNPD = {
   id: 'NPD',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: 'National Programme Data',
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD,
     }
   },
   indicators: { // NOTE: same as GAM
@@ -86,7 +93,7 @@ const adultsPepfar = {
   id: 'PEPFAR',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: 'PEPFAR System Data Extract',
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
     }
   },
   indicators: {
@@ -97,6 +104,80 @@ const adultsPepfar = {
     pTotal3b: 'People Tested in Past Year',
     pMen4: 'Positivity - Men (15+)',
     pWomen4: 'Positivity - Women (15+)',
+  }
+}
+
+const communityGAM20 = {
+  id: 'GAM20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+      [F.VALUE_COMMENT]: 'validated',
+    }
+  },
+  indicators: {
+    total1: 'Den Community-Community All',
+    mobile1: 'Den Community-Community Mobile',
+    VCT1: 'Den Community-Community Vct',
+    other1: 'Den Community-Community Other',
+    pTotal1: 'Per Community-Community All',
+    pMobile1: 'Per Community-Community Mobile',
+    pVCT1: 'Per Community-Community Vct',
+    pOther1: 'Per Community-Community Other',
+  }
+}
+const communityGAM19 = {
+  id: 'GAM19',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM19,
+    }
+  },
+  indicators: {
+    total2: 'Total Volume - Tests conducted and positivity at community level',
+    mobile2: 'Mobile testing - Number of tests - Community',
+    VCT2: 'VCT - Number of tests - Community',
+    other2: 'Other - Number of tests - Community',
+    pTotal2: 'Aggregate Positivity - Tests conducted and positivity at community level',
+    pMobile2: 'Mobile testing - Positivity - Community',
+    pVCT2: 'VCT - Positivity - Community',
+    pOther2: 'Other - Positivity - Community',
+  }
+}
+const communityNPD = {
+  id: 'NPD',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD,
+    }
+  },
+  indicators: { // same as GAM19
+    total3: 'Total Volume - Tests conducted and positivity at community level',
+    mobile3: 'Mobile testing - Number of tests - Community',
+    VCT3: 'VCT - Number of tests - Community',
+    other3: 'Other - Number of tests - Community',
+    pTotal3: 'Aggregate Positivity - Tests conducted and positivity at community level',
+    pMobile3: 'Mobile testing - Positivity - Community',
+    pVCT3: 'VCT - Positivity - Community',
+    pOther3: 'Other - Positivity - Community',
+  }
+}
+const communityPepfar = {
+  id: 'PEPFAR',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+    }
+  },
+  indicators: { // TODO: fix calculated values
+    total4: 'Total Community Tests',
+    mobile4: 'HIV tests conducted(sum of modality_category like community mobile testing)',
+    VCT4: 'HIV tests conducted(sum of modality_category like community VCT centres)',
+    other4: 'HIV tests conducted(sum of modality_category like community other)',
+    pTotal4: 'Positivity - Community Modalities Total',
+    pMobile4: 'Positivity - Community Mobile Testing',
+    pVCT4: 'Positivity - Community VCT Testing',
+    pOther4: 'Positivity - Community Other Testing',
   }
 }
 
@@ -186,10 +267,9 @@ const CHARTS = {
   COMMUNITY: {
     title: 'Community Testing Modalities',
     id: 'COMMUNITY',
-    indicators: {
-      number: 'Number of tests conducted',
-      positivity: 'Positivity (%)'
-    }
+    sourceHierarchy: true,
+    sources: [communityGAM20, communityGAM19, communityNPD, communityPepfar],
+    indicatorIds: ['total', 'mobile', 'VCT', 'other', 'pTotal', 'pMobile', 'pVCT', 'pOther']
   },
   FACILITY: {
     title: 'Facility Testing Modalities',
@@ -390,6 +470,24 @@ const getIndicatorMap = (isShiny) => {
       },
     ],
     [C.ADULTS.id]: _.flatMap(C.ADULTS.sources, s => {
+      return _.map(s.indicators, (indVal, indId) => {
+        
+        return _.extend({}, s.filters.ALL, s.filters[indId], {
+          id: indId,
+          [F.INDICATOR]: indVal,
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            console.log('r for ', indId, ' ', results)
+            if (results.length > 1) {
+              console.error('**LOOKOUT! Taking first result.**')
+            }
+            return results[0]
+          }
+        })
+      })
+    }),
+    [C.COMMUNITY.id]: _.flatMap(C.COMMUNITY.sources, s => {
       return _.map(s.indicators, (indVal, indId) => {
         
         return _.extend({}, s.filters.ALL, s.filters[indId], {

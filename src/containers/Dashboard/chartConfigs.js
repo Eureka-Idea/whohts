@@ -149,13 +149,13 @@ const getPlhivSex = data => {
     plotOptions: { series: { pointStart: 2015 } }
   }
 
-  const femaleXYValues = data['females'].map(d => {
+  const femaleXYValues = _.compact(data.females).map(d => {
     return ({
       x: Number(d.year),
       y: d.value,
     })
   })
-  const maleXYValues = data['males'].map(d => {
+  const maleXYValues = _.compact(data.males).map(d => {
     return ({
       x: Number(d.year),
       y: d.value,
@@ -528,9 +528,9 @@ const getAdults = data => {
   if (
     men[FIELD_MAP.SOURCE_DATABASE] !== pMen[FIELD_MAP.SOURCE_DATABASE] ||
     women[FIELD_MAP.SOURCE_DATABASE] !== pWomen[FIELD_MAP.SOURCE_DATABASE]
-    ) {
-      console.error('**SOURCE MISMATCH**')
-    }
+  ) {
+    console.error('**SOURCE MISMATCH**')
+  }
 
   const series = [
     {
@@ -558,23 +558,72 @@ const getAdults = data => {
 }
 
 const getCommunity = data => {
-  const title = 'Community Testing Modalities'
+  const { title, indicatorIds, sources } = CHARTS.COMMUNITY
+
+  const {
+    total, mobile, VCT, other,
+    pTotal, pMobile, pVCT, pOther, INCOMPLETE_RESULTS
+  } = extractPrioritizedData(data, indicatorIds, sources.length)
+
+  console.log('total: ', total, 'mobile: ', mobile, 'VCT: ', VCT, 'other: ', other, 'pTotal: ', pTotal, 'pMobile: ', pMobile, 'pVCT: ', pVCT, 'pOther: ', pOther, 'INCOMPLETE_RESULTS: ', INCOMPLETE_RESULTS)
+  
+  if (INCOMPLETE_RESULTS) {
+    console.error('**INCOMPLETE RESULTS**')
+    return
+  }
+
+  const mobileNumData = {
+    y: mobile.value,
+  }
+  const vctNumData = {
+    y: VCT.value,
+  }
+  const otherNumData = {
+    y: other.value,
+  }
+
+  const mobilePosData = {
+    y: pMobile.value,
+    source: pMobile[FIELD_MAP.SOURCE_DATABASE],
+  }
+  const vctPosData = {
+    y: pVCT.value,
+    source: pVCT[FIELD_MAP.SOURCE_DATABASE],
+  }
+  const otherPosData = {
+    y: pOther.value,
+    source: pOther[FIELD_MAP.SOURCE_DATABASE],
+  }
+
+  if (
+    mobile[FIELD_MAP.SOURCE_DATABASE] !== pMobile[FIELD_MAP.SOURCE_DATABASE] ||
+    VCT[FIELD_MAP.SOURCE_DATABASE] !== pVCT[FIELD_MAP.SOURCE_DATABASE] || 
+    other[FIELD_MAP.SOURCE_DATABASE] !== pOther[FIELD_MAP.SOURCE_DATABASE]
+  ) {
+    console.error('**SOURCE MISMATCH**')
+  }
+  
   const series = [
     {
       name: 'Number of tests conducted (thousands)',
-      data: [234, 238, 245]
+      data: [mobileNumData, vctNumData, otherNumData]
     },
     {
       name: 'Positivity (%)',
       type: 'line',
-      data: [12, 24, 30]
+      tooltip: {
+        pointFormat: `<span style="color:{point.color}">●</span>
+          {series.name}: <b>{point.y}</b><br/>
+          Source: {point.source}`
+      },
+      data: [mobilePosData, vctPosData, otherPosData]
     }
   ]
 
   const options = {
-    subtitle: { text: `Total tests: ${_.mean([234, 238, 245])}k, Average positivity: ${_.mean([12, 24, 30])}%` }
+    subtitle: { text: `Total tests: ${total.value}k, Average positivity: ${pTotal.value}%` }
   }
-  const categories = ['Mobile Testing', 'VCT', 'Other', 'TOTAL']
+  const categories = ['Mobile Testing', 'VCT', 'Other']
   return _.merge({}, getColumnScat({ title, series, options, categories }))
 }
 
