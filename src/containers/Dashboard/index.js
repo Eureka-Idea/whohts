@@ -208,6 +208,7 @@ class Dashboard extends Component {
     const adults = this.getChart(CHARTS.ADULTS.id)
     const community = this.getChart(CHARTS.COMMUNITY.id)
     const facility = this.getChart(CHARTS.FACILITY.id)
+    const forecast = this.getChart(CHARTS.FORECAST.id)
 
     return (
       <div className='dashboard'>
@@ -237,6 +238,7 @@ class Dashboard extends Component {
             {adults}
             {community}
             {facility}
+            {forecast}
           </div>
 
           {/* <div className='row no-gutters'>

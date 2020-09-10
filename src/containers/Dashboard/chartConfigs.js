@@ -63,16 +63,47 @@ const getConfig = (chartId, chartData, shinyCountry) => {
 const extractPrioritizedData = (data, indicatorIds, sourceCount) => {
   const result = { missingIndicators: [] }
   _.each(indicatorIds, ind => {
+
     for (let i = 1; i <= sourceCount; i++) {
       const indicatorResult = _.get(data, ind+i, null)
       if (indicatorResult) {
         result[ind] = indicatorResult
         break
       } else if (i === sourceCount) {
-        result[ind] = { value: 0, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
+        result[ind] = { value: 0, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
         result.missingIndicators.push(ind)
       }
     }
+    
+  })
+
+  return result
+}
+
+const extractPrioritizedRangeData = (data, indicatorIds, sourceCount, indicatorYears) => {
+  const result = { missingIndicatorMap: {} }
+  _.each(indicatorIds, ind => {
+
+    const range = indicatorYears[ind]
+    if (!range) {
+      console.error('No range provided for indicator: ', ind)
+      return
+    }
+
+    result[ind] = _.map(range, (y, ri) => {
+
+      for (let i = 1; i <= sourceCount; i++) {
+        const indicatorResult = _.get(data, [ind+i, ri], null) // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
+        if (indicatorResult) {
+          return indicatorResult
+        } else if (i === sourceCount) {
+          _.set(result.missingIndicatorMap, [ind, y], true)
+          return { value: 0, year: y, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
+        }
+      }
+
+    })
+
   })
 
   return result
@@ -728,7 +759,6 @@ const getFacility = data => {
     }
   ]
 
-
   const options = {
     subtitle: {
       text: `Total tests: ${total.value}k, Average positivity: ${pTotal.value}%`
@@ -740,6 +770,7 @@ const getFacility = data => {
 }
 
 const getIndex = data => {
+  // TODO
   const title = 'Index'
   const series = [
     {
@@ -761,7 +792,37 @@ const getIndex = data => {
 }
 
 const getForecast = data => {
-  const title = 'HIVST Forecast'
+  const { title, indicatorIds, indicatorYears, sources } = CHARTS.FORECAST
+
+  const {
+    distributed, demand, need, missingIndicatorMap
+  } = extractPrioritizedRangeData(data, indicatorIds, sources.length, indicatorYears)
+  const missingIndicators = Object.keys(missingIndicatorMap)
+
+  console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
+
+  if (missingIndicators.length) {
+    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+  }
+
+  const distributedNumData = _.compact(distributed).map(d => ({
+    x: Number(d.year),
+    y: d.value,
+    source: d[FIELD_MAP.SOURCE_DATABASE]
+  }))
+
+  const demandNumData = _.compact(demand).map(d => ({
+    x: Number(d.year),
+    y: d.value,
+  }))
+
+  const needNumData = _.compact(need).map(d => ({
+    x: Number(d.year),
+    y: d.value,
+    source: d[FIELD_MAP.SOURCE_DATABASE]
+  }))
+
+
   const options = {
     subtitle: { text: 'WHO model estimates, 2020' },
     // plotOptions: { series: { pointStart: 2019 } }
@@ -769,34 +830,25 @@ const getForecast = data => {
   const series = [
     {
       name: 'HIVSTs distributed',
-      data: [
-        { x: 2018, y: 8340 },
-        { x: 2019, y: 9012 },
-      ]
+      data: distributedNumData,
+      tooltip: {
+        pointFormat: sourceTooltipFormat
+      },
     },
     {
       name: 'HIVST forecast demand',
-      data: [
-        { x: 2020, y: 51023 },
-        { x: 2021, y: 114389 },
-        { x: 2022, y: 218324 },
-        { x: 2023, y: 321092 },
-        { x: 2024, y: 425203 },
-        { x: 2025, y: 534324 }
-      ]
+      data: demandNumData,
     },
     {
       name: 'HIVST forecast need',
       type: 'line',
-      data: [
-        { x: 2020, y: 812303 },
-        { x: 2021, y: 802343 },
-        { x: 2022, y: 813242 },
-        { x: 2023, y: 829238 },
-        { x: 2024, y: 832343 },
-        { x: 2025, y: 825232 }]
+      data: needNumData,
+      tooltip: {
+        pointFormat: sourceTooltipFormat
+      },
     }
   ]
+
   return _.merge({}, getColumnLine({ title, series, options }))
 }
 

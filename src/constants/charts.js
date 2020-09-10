@@ -3,8 +3,18 @@ import _ from 'lodash'
 // indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
 const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
 
+const getGenericIndId = indId => {
+  return indId.replace(/\d+$/, '')
+}
+
 const R_2015_2019 = [
   '2015', '2016', '2017', '2018', '2019',
+]
+const R_2018_2019 = [
+  '2018', '2019',
+]
+const R_2020_2025 = [
+  '2020', '2021', '2022', '2023', '2024', '2025',
 ]
 const R_ADULT_AGES = ['15-24', '25-34', '35-49', '50-99']
 const R_SEXES = ['males', 'females']
@@ -14,6 +24,8 @@ const SOURCE_DB_MAP = {
   GAM19: 'Global AIDS Monitoring 2019',
   NPD: 'National Programme Data 2019',
   PEPFAR: 'PEPFAR System Data Extract',
+
+  WME: 'WHO model estimates',
 }
 
 const FIELD_MAP = {
@@ -89,7 +101,7 @@ const adultsNPD = {
     pWomen3: 'Women (15+) - Positivity',
   }
 }
-const adultsPepfar = {
+const adultsPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
@@ -162,7 +174,7 @@ const communityNPD = {
     pOther3: 'Other - Positivity - Community',
   }
 }
-const communityPepfar = {
+const communityPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
@@ -248,7 +260,7 @@ const facilityNPD = {
     pOther3: 'Other - Positivity - Facility',
   }
 }
-const facilityPepfar = {
+const facilityPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
@@ -268,6 +280,64 @@ const facilityPepfar = {
     pVCT4: 'Positivity - Facility VCT Testing',
     pFamily4: 'n/a',
     pOther4: 'Positivity - Facility Other Testing',
+  }
+}
+
+const forecastGAM20 = {
+  id: 'GAM20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+      [F.VALUE_COMMENT]: 'validated',
+    }
+  },
+  indicators: {
+    distributed1: 'Self Test Distributed-Data Value'
+  }
+}
+const forecastGAM19 = {
+  id: 'GAM19',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM19,
+    }
+  },
+  indicators: {
+    distributed2: 'HIVSTs distributed'
+  }
+}
+const forecastNPD = {
+  id: 'NPD',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD,
+    }
+  },
+  indicators: { // same as GAM19
+    distributed3: 'HIVSTs distributed'
+  }
+}
+const forecastPEPFAR = {
+  id: 'PEPFAR',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+    }
+  },
+  indicators: {
+    distributed4: 'HIV self-tests distributed'
+  }
+}
+const forecastWME = {
+  id: 'WME',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WME,
+    }
+  },
+  indicators: {
+    demand1: 'HIVST forecast demand',
+    need1: 'HIVST forecast need',
   }
 }
 
@@ -350,7 +420,7 @@ const CHARTS = {
     title: 'Adults',
     id: 'ADULTS',
     sourceHierarchy: true,
-    sources: [adultsGAM20, adultsGAM19, adultsNPD, adultsPepfar],
+    sources: [adultsGAM20, adultsGAM19, adultsNPD, adultsPEPFAR],
     indicatorIds: ['total', 'men', 'women', 'pTotal', 'pMen', 'pWomen']
   },
   
@@ -358,16 +428,16 @@ const CHARTS = {
     title: 'Community Testing Modalities',
     id: 'COMMUNITY',
     sourceHierarchy: true,
-    sources: [communityGAM20, communityGAM19, communityNPD, communityPepfar],
+    sources: [communityGAM20, communityGAM19, communityNPD, communityPEPFAR],
     indicatorIds: ['total', 'mobile', 'VCT', 'other', 'pTotal', 'pMobile', 'pVCT', 'pOther']
   },
   FACILITY: {
     title: 'Facility Testing Modalities',
     id: 'FACILITY',
-    sources: [facilityGAM20, facilityGAM19, facilityNPD, facilityPepfar],
+    sources: [facilityGAM20, facilityGAM19, facilityNPD, facilityPEPFAR],
     indicatorIds: ['total', 'PITC', 'ANC', 'VCT', 'family', 'other', 'pTotal', 'pPITC', 'pANC', 'pVCT', 'pFamily', 'pOther']
   },
-  INDEX: {
+  INDEX: { // TODO
     title: 'Index',
     id: 'INDEX',
     indicators: {
@@ -378,9 +448,12 @@ const CHARTS = {
   FORECAST: {
     title: 'HIVST Forecast',
     id: 'FORECAST',
-    indicators: {
-      number: 'Number of tests conducted',
-      positivity: 'Positivity (%)'
+    sources: [forecastGAM20, forecastGAM19, forecastNPD, forecastPEPFAR, forecastWME],
+    indicatorIds: ['distributed', 'demand', 'need'],
+    indicatorYears: {
+      distributed: R_2018_2019,
+      demand: R_2020_2025,
+      need: R_2020_2025,
     }
   },
   KP_TABLE: {
@@ -610,7 +683,31 @@ const getIndicatorMap = (isShiny) => {
           }
         })
       })
-    })
+    }),
+    [C.FORECAST.id]: _.flatMap(C.FORECAST.sources, s => {
+      return _.map(s.indicators, (indVal, indId) => {
+        
+        return _.extend({}, s.filters.ALL, s.filters[indId], {
+          id: indId,
+          [F.INDICATOR]: indVal,
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            console.log('r for ', indId, ' ', results)
+
+            const genericIndId = getGenericIndId(indId)
+            return C.FORECAST.indicatorYears[genericIndId].map(y => {
+              const fResults = _.filter(results, r => r.year === y)
+              if (results.length > 1) {
+                console.error('**LOOKOUT! Taking first result.**')
+              }
+
+              return fResults[0]
+            })
+          }
+        })
+      })
+    }),
   }
 
   if (isShiny) {
