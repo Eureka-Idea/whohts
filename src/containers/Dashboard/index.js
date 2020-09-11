@@ -129,10 +129,13 @@ class Dashboard extends Component {
       return
     }
 
-    const config = getConfig(id, this.props.chartData, shinyCountry)
+    let config = getConfig(id, this.props.chartData, shinyCountry)
     if (!config) {
       console.error(`${id} failed to produce a config.`)
-      return
+
+      // show empty chart
+      const { title } = CHARTS[id]
+      config = _.merge({}, getLine({ title, series: [] }))
     }
     const chart = <ReactHighcharts config={config} />
 

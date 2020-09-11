@@ -1,6 +1,6 @@
 import * as types from '../constants/types'
 import _ from 'lodash'
-import { getIndicatorMap, AGGREGATE_GETTER, FIELD_MAP } from '../constants/charts'
+import { getIndicatorMap, AGGREGATE_GETTER, FIELD_MAP, CHARTS } from '../constants/charts'
 import { COUNTRY_MAP } from '../components/Homepage/countries'
 
 // TODO: does this prevent cacheing? 
@@ -14,12 +14,30 @@ const myInit = {
 
 const baseUrl = 'https://status.y-x.ch/query?'
 
+const debugList = {
+  // [CHARTS.CONTEXT.id]: true,
+  // [CHARTS.PREVALENCE.id]: true,
+  // [CHARTS.COMMUNITY.id]: true,
+}
+const debugSkipList = {
+  // [CHARTS.ADULTS.id]: true,
+  // [CHARTS.COMMUNITY.id]: true,
+  // [CHARTS.FORECAST.id]: true,
+}
+
 // gets records to cover the indicators relevant to each chart
 export const getChartData = (countryCode) =>
   dispatch => {
     console.log('GETCHARTDATA DISPATCH')
     const isShiny = _.get(COUNTRY_MAP, [countryCode, 'shiny'], false)
-    const indicatorMap = getIndicatorMap(isShiny)
+    let indicatorMap = getIndicatorMap(isShiny)
+
+    if (!_.isEmpty(debugList)) {
+      indicatorMap = _.pickBy(indicatorMap, (v, k) => debugList[k])
+    } else if (!_.isEmpty(debugSkipList)) {
+      indicatorMap = _.pickBy(indicatorMap, (v, k) => !debugList[k])
+    }
+    
     const allChartQueryPs = _.map(indicatorMap, (indicators, chartName) => {
     
       const getIndicatorP = indicator => {

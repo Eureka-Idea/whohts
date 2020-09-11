@@ -129,7 +129,7 @@ const getPlhivDiagnosis = data => {
     subtitle: { text: 'Spectrum model estimates (UNAIDS, 2020)' },
     tooltip: { valueSuffix: ' million' },
     yAxis: { title: { text: 'Adults 15+ (millions)' } },
-    plotOptions: { series: { pointStart: 2015 } }
+    // plotOptions: { series: { pointStart: 2015 } }
     // tooltip: { pointFormat: '{series.name}: <b>{point.y:.0f} million</b>' },
     // yAxis: { max: 58*2 },
   }
@@ -138,18 +138,19 @@ const getPlhivDiagnosis = data => {
   const notArtData = []
   const onArtData = []
   
-  data.onArt.forEach((yearRecord, i) => {
+  R_2015_2019.forEach((y, i) => {
     // TODO: calc uci/lci
-    const onArtValue = _.get(yearRecord, 'median.value')
+    // const onArtValue = _.get(yearRecord, 'median.value')
+    const onArtValue = _.get(data, ['onArt', i, 'median', 'value'], null)
     const plhivValue = _.get(data, ['plhiv', i, 'median', 'value'])
     const knowValue = _.get(data, ['know', i, 'median', 'value'])
 
-    const undiagnosedValue = plhivValue - knowValue
-    const notArtValue = plhivValue - onArtValue
+    const undiagnosedValue = (plhivValue - knowValue) || null
+    const notArtValue = (plhivValue - onArtValue) || null
     
-    onArtData.push(onArtValue)
-    notArtData.push(notArtValue)
-    undiagnosedData.push(undiagnosedValue)
+    onArtData.push({ x: Number(y), y: onArtValue })
+    notArtData.push({ x: Number(y), y: notArtValue })
+    undiagnosedData.push({ x: Number(y), y: undiagnosedValue })
   })
   
   // const [plhiv, know, onArt] = ['plhiv', 'know', 'onArt'].map(ind => {
