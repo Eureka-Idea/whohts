@@ -18,6 +18,9 @@ const sourceTooltipFormat = `
   Source year: <b>{point.sourceYear}</b><br/>
   `
 
+const barChartsTestsName = 'Number of tests conducted'
+const barChartsPositivityName = 'Positivity (%)'
+
 const getConfig = (chartId, chartData, shinyCountry) => {
   if (_.isEmpty(chartData)) {
     console.log('No chart data (perhaps awaiting API response)')
@@ -577,7 +580,7 @@ const getAdults = data => {
 
   const series = [
     {
-      name: 'Number of tests conducted (thousands)',
+      name: barChartsTestsName,
       // color: barChartColorDark,
       data: [wNumData, mNumData]
     },
@@ -653,12 +656,12 @@ const getCommunity = data => {
   
   const series = [
     {
-      name: 'Number of tests conducted (thousands)',
+      name: barChartsTestsName,
       // color: barChartColorDark,
       data: [mobileNumData, vctNumData, otherNumData]
     },
     {
-      name: 'Positivity (%)',
+      name: barChartsPositivityName,
       // color: barChartAccent,
       type: 'line',
       tooltip: {
@@ -669,7 +672,7 @@ const getCommunity = data => {
   ]
 
   const options = {
-    subtitle: { text: `Total tests: ${total.value}k, Average positivity: ${pTotal.value}%` }
+    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${pTotal.value}%` }
   }
   const categories = ['Mobile Testing', 'VCT', 'Other']
   return _.merge({}, getColumnScat({ title, series, options, categories }))
@@ -749,7 +752,7 @@ const getFacility = data => {
   
   const series = [
     {
-      name: 'Number of tests conducted (thousands)',
+      name: barChartsTestsName,
       // color: barChartColorDark,
       tooltip: {
         // todo: delete if can be handled below (or in legend hover)
@@ -767,7 +770,7 @@ const getFacility = data => {
       ],
     },
     {
-      name: 'Positivity (%)',
+      name: barChartsPositivityName,
       // color: barChartAccent,
       tooltip: {
         pointFormat: `<span style="color:{point.color}">●</span>
@@ -791,7 +794,7 @@ const getFacility = data => {
 
   const options = {
     subtitle: {
-      text: `Total tests: ${total.value}k, Average positivity: ${pTotal.value}%`
+      text: `Total tests: ${total.value}, Average positivity: ${pTotal.value}%`
     }
   }
   const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other']
@@ -804,20 +807,20 @@ const getIndex = data => {
   const title = 'Index'
   const series = [
     {
-      name: 'Number of tests conducted (thousands)',
+      name: barChartsTestsName,
       // color: barChartColorDark,
       data: [132, 232]
       // dataLabels,
     },
     {
-      name: 'Positivity (%)',
+      name: barChartsPositivityName,
       // color: barChartAccent,
       type: 'line',
       data: [21, 30]
     }
   ]
   const options = {
-    subtitle: { text: `Total tests: ${_.mean([132, 232])}k, Average positivity: ${_.mean([21, 30])}%` }
+    subtitle: { text: `Total tests: ${_.mean([132, 232])}, Average positivity: ${_.mean([21, 30])}%` }
   }
   const categories = ['Community', 'Facility', 'TOTAL']
   return _.merge({}, getColumnScat({ title, options, categories, series }))
