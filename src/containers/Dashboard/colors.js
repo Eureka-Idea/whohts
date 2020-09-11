@@ -34,15 +34,28 @@ const jungleGreen = '#30A86E'
 const charm = '#DE869B'
 
 // .9
-const jungleMist = '#BBD4D8DD'
-const midGray = '#676471DD'
-const stormGray = '#6D7383DD'
-const opal = '#9FBCC0DD'
-const botticelli = '#C5DDE2DD'
-const copper = '#B2793DDD'
+const jungleMist = '#BBD4D8'
+// const jungleMist = '#BBD4D8DD'
+const midGray = '#676471'
+// const midGray = '#676471DD'
+const stormGray = '#6D7383'
+// const stormGray = '#6D7383DD'
+const opal = '#9FBCC0'
+// const opal = '#9FBCC0DD'
+const botticelli = '#C5DDE2'
+// const botticelli = '#C5DDE2DD'
+const copper = '#B2793D'
+// const copper = '#B2793DDD'
 
 const femaleColor = cuttySark
 const maleColor = pirateGold
+
+// not in css
+const barChartColor = opal
+const nutmeg = '#794325'
+const barChartAccent = nutmeg
+const nevada = '#5F707C'
+const barChartColorDark = nevada
 
 export default [
   stormGray,
@@ -64,6 +77,7 @@ export default [
   capeCod,
   cuttySark,
   pirateGold,
+  nutmeg,
 ]
 export {
   deepSeaGreen,
@@ -85,6 +99,11 @@ export {
   botticelli,
   copper,
 
+  nutmeg,
+
   femaleColor,
   maleColor,
+  barChartColor,
+  barChartColorDark,
+  barChartAccent,
 }

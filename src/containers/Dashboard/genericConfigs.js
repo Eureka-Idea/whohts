@@ -1,4 +1,4 @@
-import colors from "./colors"
+import colors, { barChartColorDark, barChartAccent, barChartColor } from "./colors"
 import _ from 'lodash'
 
 // custom label https://jsfiddle.net/BlackLabel/37h8kqdL/
@@ -54,22 +54,24 @@ const columnScat = {
     {
       min: 0,
       tickAmount: 5,
+      title: { style: { color: barChartColorDark } },
+      labels: { style: { color: barChartColorDark } },
     },
     {
       min: 0,
       tickAmount: 5,
-      title: { style: { color: colors[1] } },
-      labels: { style: { color: colors[1] } },
+      title: { style: { color: barChartAccent } },
+      labels: { style: { color: barChartAccent } },
       opposite: true
     }
   ],
 
   series: [
     {
-      color: colors[0]+'98',
+      color: barChartColor,
     },
     {
-      color: colors[1],
+      color: barChartAccent,
       zIndex: 10,
       yAxis: 1
     },

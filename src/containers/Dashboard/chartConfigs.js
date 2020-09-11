@@ -1,4 +1,4 @@
-import colors, {femaleColor, maleColor } from "./colors"
+import colors, {femaleColor, maleColor, barChartAccent, barChartColorDark } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
 import { CHARTS, R_2015_2019, FIELD_MAP } from "../../constants/charts";
@@ -8,12 +8,15 @@ const uncertaintyTooltipFormat = `
   <span style="color:{point.color}">●</span>
   {series.name}: <b>{point.y}</b><br/>
   Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
-  Source: UNAIDS` // todo: fill in actual source on point
+  Source: ******` // todo: fill in actual source on point
 
 const sourceTooltipFormat = `
   <span style="color:{point.color}">●</span>
   {series.name}: <b>{point.y}</b><br/>
-  Source: {point.source}`
+  Year: <b>{point.year}</b><br/>
+  Source: <b>{point.source}</b><br/>
+  Source year: <b>{point.sourceYear}</b><br/>
+  `
 
 const getConfig = (chartId, chartData, shinyCountry) => {
   if (_.isEmpty(chartData)) {
@@ -544,20 +547,24 @@ const getAdults = data => {
   
   const wNumData = {
     y: women.value,
-    source: women[FIELD_MAP.SOURCE_DATABASE]
+    // source: women[FIELD_MAP.SOURCE_DATABASE]
   }
   const mNumData = {
     y: men.value,
-    source: men[FIELD_MAP.SOURCE_DATABASE]
+    // source: men[FIELD_MAP.SOURCE_DATABASE]
   }
 
   const wPosData = {
     y: pWomen.value,
-    source: pWomen[FIELD_MAP.SOURCE_DATABASE]
+    source: pWomen[FIELD_MAP.SOURCE_DATABASE],
+    year: pWomen[FIELD_MAP.YEAR],
+    sourceYear: pWomen[FIELD_MAP.SOURCE_YEAR],
   }
   const mPosData = {
     y: pMen.value,
-    source: pMen[FIELD_MAP.SOURCE_DATABASE]
+    source: pMen[FIELD_MAP.SOURCE_DATABASE],
+    year: pMen[FIELD_MAP.YEAR],
+    sourceYear: pMen[FIELD_MAP.SOURCE_YEAR],
   }
 
   if (
@@ -570,10 +577,12 @@ const getAdults = data => {
   const series = [
     {
       name: 'Number of tests conducted (thousands)',
+      // color: barChartColorDark,
       data: [wNumData, mNumData]
     },
     {
       name: 'Positivity (%)',
+      // color: barChartAccent,
       type: 'line',
       tooltip: {
         pointFormat: sourceTooltipFormat
@@ -617,14 +626,20 @@ const getCommunity = data => {
   const mobilePosData = {
     y: pMobile.value,
     source: pMobile[FIELD_MAP.SOURCE_DATABASE],
+    year: pMobile[FIELD_MAP.YEAR],
+    sourceYear: pMobile[FIELD_MAP.SOURCE_YEAR],
   }
   const vctPosData = {
     y: pVCT.value,
     source: pVCT[FIELD_MAP.SOURCE_DATABASE],
+    year: pVCT[FIELD_MAP.YEAR],
+    sourceYear: pVCT[FIELD_MAP.SOURCE_YEAR],
   }
   const otherPosData = {
     y: pOther.value,
     source: pOther[FIELD_MAP.SOURCE_DATABASE],
+    year: pOther[FIELD_MAP.YEAR],
+    sourceYear: pOther[FIELD_MAP.SOURCE_YEAR],
   }
 
   if (
@@ -638,10 +653,12 @@ const getCommunity = data => {
   const series = [
     {
       name: 'Number of tests conducted (thousands)',
+      // color: barChartColorDark,
       data: [mobileNumData, vctNumData, otherNumData]
     },
     {
       name: 'Positivity (%)',
+      // color: barChartAccent,
       type: 'line',
       tooltip: {
         pointFormat: sourceTooltipFormat
@@ -691,22 +708,32 @@ const getFacility = data => {
   const pitcPosData = {
     y: pPITC.value,
     source: pPITC[FIELD_MAP.SOURCE_DATABASE],
+    year: pPITC[FIELD_MAP.YEAR],
+    sourceYear: pPITC[FIELD_MAP.SOURCE_YEAR],
   }
   const ancPosData = {
     y: pANC.value,
     source: pANC[FIELD_MAP.SOURCE_DATABASE],
+    year: pANC[FIELD_MAP.YEAR],
+    sourceYear: pANC[FIELD_MAP.SOURCE_YEAR],
   }
   const vctPosData = {
     y: pVCT.value,
     source: pVCT[FIELD_MAP.SOURCE_DATABASE],
+    year: pVCT[FIELD_MAP.YEAR],
+    sourceYear: pVCT[FIELD_MAP.SOURCE_YEAR],
   }
   const familyPosData = {
     y: pFamily.value,
     source: pFamily[FIELD_MAP.SOURCE_DATABASE],
+    year: pFamily[FIELD_MAP.YEAR],
+    sourceYear: pFamily[FIELD_MAP.SOURCE_YEAR],
   }
   const otherPosData = {
     y: pOther.value,
     source: pOther[FIELD_MAP.SOURCE_DATABASE],
+    year: pOther[FIELD_MAP.YEAR],
+    sourceYear: pOther[FIELD_MAP.SOURCE_YEAR],
   }
 
   if (
@@ -722,6 +749,7 @@ const getFacility = data => {
   const series = [
     {
       name: 'Number of tests conducted (thousands)',
+      // color: barChartColorDark,
       tooltip: {
         // todo: delete if can be handled below (or in legend hover)
         // pointFormat:`<span style="color:{point.color}">●</span>
@@ -739,6 +767,7 @@ const getFacility = data => {
     },
     {
       name: 'Positivity (%)',
+      // color: barChartAccent,
       tooltip: {
         pointFormat: `<span style="color:{point.color}">●</span>
           {series.name}: <b>{point.y}</b><br/>
@@ -775,11 +804,13 @@ const getIndex = data => {
   const series = [
     {
       name: 'Number of tests conducted (thousands)',
+      // color: barChartColorDark,
       data: [132, 232]
       // dataLabels,
     },
     {
       name: 'Positivity (%)',
+      // color: barChartAccent,
       type: 'line',
       data: [21, 30]
     }
