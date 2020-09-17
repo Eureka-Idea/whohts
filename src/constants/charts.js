@@ -48,7 +48,9 @@ const FIELD_MAP = {
   SOURCE_YEAR: 'source_year',
   NOTES: 'notes',
   MODALITY: 'modality',
-  MODALITY_CATEGORY: 'modality_category'
+  MODALITY_CATEGORY: 'modality_category',
+  VALUE_UPPER: 'value_upper',
+  VALUE_LOWER: 'value_lower',
 }
 const F = FIELD_MAP
 
@@ -560,21 +562,22 @@ const getIndicatorMap = (isShiny) => {
       {
         id: 'prevalence',
         [F.INDICATOR]: C.PREVALENCE.indicators.prevalence,
-        [F.AGE]: '15-99',
-        [F.SEX]: 'both',
+        // [F.AGE]: '15-99', // TODO: 15-49 ok?
+        // [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
+            // TODO: will be on one row
             const lci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'lci'
+              return r[F.VALUE_LOWER]
             })
             const uci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'uci'
+              return r[F.VALUE_UPPER]
             })
             const median = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'median'
+              return r[F.VALUE]
             })
             return { lci, uci, median }
           })
@@ -802,13 +805,13 @@ const getIndicatorMap = (isShiny) => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
             const lci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'lci'
+              return r[F.VALUE_LOWER]
             })
             const uci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'uci'
+              return r[F.VALUE_UPPER]
             })
             const median = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'median'
+              return r[F.VALUE]
             })
             return { lci, uci, median }
           })

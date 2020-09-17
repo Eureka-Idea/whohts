@@ -20,7 +20,8 @@ const columnScat = {
     column: {
       states: { hover: { 
         borderColor: 'black'
-      } },
+        }
+      },
       dataLabels: {
         // enabled: true,
         inside: true,
@@ -216,6 +217,8 @@ const getArea = ({title, series, options={}}) => {
     // xAxis: { categories },
     series
   }
+
+  console.log('****', _.merge({}, area, specifics, options))
   return _.merge({}, area, specifics, options)
 }
 

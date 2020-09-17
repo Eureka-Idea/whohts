@@ -62,6 +62,7 @@ export default {
     "minorGridLineWidth": 0.5
   },
   "yAxis": {
+    "min": 0,
     "stackLabels": { "enabled": true, "style": { "fontWeight": "bold", "color": "gray" } },
     "labels": {
       "style": {
