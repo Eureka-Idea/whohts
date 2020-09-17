@@ -121,7 +121,7 @@ class Dashboard extends Component {
     }
 
     const countryCode = _.get(this, 'props.match.params.countryCode')
-    const shinyCountry = _.get(COUNTRY_MAP, [countryCode, 'shiny'])
+    const shinyCountry = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'])
     const shinyChart = _.get(CHARTS, [id, 'shinyOnly'])
 
     if (shinyChart && !shinyCountry) {
@@ -171,7 +171,7 @@ class Dashboard extends Component {
     const classification = _.get(this.props.chartData, id+'.data.classification.value_comment', 'UNKNOWN')
 
     const countryCode = _.get(this, 'props.match.params.countryCode', null)  
-    const name = _.get(COUNTRY_MAP, [countryCode, 'name'])
+    const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
     return (
       <div className='col-xl-4 col-md-6 col-xs-12'>
 

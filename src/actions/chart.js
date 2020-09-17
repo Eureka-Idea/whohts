@@ -29,7 +29,7 @@ const debugSkipList = {
 export const getChartData = (countryCode) =>
   dispatch => {
     console.log('GETCHARTDATA DISPATCH')
-    const isShiny = _.get(COUNTRY_MAP, [countryCode, 'shiny'], false)
+    const isShiny = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'], false)
     let indicatorMap = getIndicatorMap(isShiny)
 
     if (!_.isEmpty(debugList)) {
@@ -47,7 +47,7 @@ export const getChartData = (countryCode) =>
           let chartValue = indicator[f]
           if (chartValue) {
             if (f === FIELD_MAP.COUNTRY_ISO_CODE) {
-              chartValue = countryCode
+              chartValue = countryCode.toUpperCase()
             }
             let chunk = `${char}${f}=${chartValue}`
             chunk = encodeURI(chunk)

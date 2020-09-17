@@ -23,6 +23,14 @@ const SOURCE_DB_MAP = {
   GAM20: 'Global AIDS Monitoring 2020',
   GAM19: 'Global AIDS Monitoring 2019',
   NPD: 'National Programme Data 2019',
+  PCOP20: 'PEPFAR COP 2020',
+  PROP20: 'PEPFAR ROP 2020',
+  PCOP19: 'PEPFAR COP 2019',
+  PROP19: 'PEPFAR ROP 2019',
+  PCOP18: 'PEPFAR COP 2018',
+  PROP18: 'PEPFAR ROP 2018',
+  PCOP17: 'PEPFAR COP 2017',
+  PROP17: 'PEPFAR ROP 2017',
   PEPFAR: 'PEPFAR System Data Extract',
 
   WME: 'WHO model estimates',
@@ -103,6 +111,134 @@ const adultsNPD = {
     pWomen3: 'Women (15+) - Positivity',
   }
 }
+const adultsPCOP20 = {
+  id: 'PCOP20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+    }
+  },
+  indicators: {
+    total4: 'Den Age-All',
+    men4: 'Den Age-Male Gte 15',
+    women4: 'Den Age-Female Gte 15',
+    pTotal4: 'Per Age-All',
+    pMen4: 'Per Age-Male Gte 15',
+    pWomen4: 'Per Age-Female Gte 15',
+  }
+}
+const adultsPROP20 = {
+  id: 'PROP20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP20,
+    }
+  },
+  indicators: {
+    total5: 'Den Age-All',
+    men5: 'Den Age-Male Gte 15',
+    women5: 'Den Age-Female Gte 15',
+    pTotal5: 'Per Age-All',
+    pMen5: 'Per Age-Male Gte 15',
+    pWomen5: 'Per Age-Female Gte 15',
+  }
+}
+const adultsPCOP19 = {
+  id: 'PCOP19',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP19,
+    }
+  },
+  indicators: {
+    total6: 'People Tested in Past Year',
+    men6: 'Men (Tested in past year)',
+    women6: 'Women (Tested in past year)',
+    pTotal6: 'Aggregate Positivity - Tests conducted and positivity, by sex',
+    pMen6: 'Men - Positivity',
+    pWomen6: 'Women - Positivity',
+  }
+}
+const adultsPROP19 = {
+  id: 'PROP19',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP19,
+    }
+  },
+  indicators: {
+    total7: 'People Tested in Past Year',
+    men7: 'Men (Tested in past year)',
+    women7: 'Women (Tested in past year)',
+    pTotal7: 'Aggregate Positivity - Tests conducted and positivity, by sex',
+    pMen7: 'Men - Positivity',
+    pWomen7: 'Women - Positivity',
+  }
+}
+const adultsPCOP18 = {
+  id: 'PCOP18',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP18,
+    }
+  },
+  indicators: {
+    total8: 'People Tested in Past Year',
+    men8: 'Men (Tested in past year)',
+    women8: 'Women (Tested in past year)',
+    pTotal8: 'Aggregate Positivity - Tests conducted and positivity, by sex',
+    pMen8: 'Men - Positivity',
+    pWomen8: 'Women - Positivity',
+  }
+}
+const adultsPROP18 = {
+  id: 'PROP18',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP18,
+    }
+  },
+  indicators: {
+    total9: 'People Tested in Past Year',
+    men9: 'Men (Tested in past year)',
+    women9: 'Women (Tested in past year)',
+    pTotal9: 'Aggregate Positivity - Tests conducted and positivity, by sex',
+    pMen9: 'Men - Positivity',
+    pWomen9: 'Women - Positivity',
+  }
+}
+const adultsPCOP17 = {
+  id: 'PCOP17',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP17,
+    }
+  },
+  indicators: {
+    total10: 'People Tested in Past Year',
+    men10: 'Men (Tested in past year)',
+    women10: 'Women (Tested in past year)',
+    pTotal10: 'Aggregate Positivity - Tests conducted and positivity, by sex',
+    pMen10: 'Men - Positivity',
+    pWomen10: 'Women - Positivity',
+  }
+}
+const adultsPROP17 = {
+  id: 'PROP17',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP17,
+    }
+  },
+  indicators: {
+    total11: 'People Tested in Past Year',
+    men11: 'Men (Tested in past year)',
+    women11: 'Women (Tested in past year)',
+    pTotal11: 'Aggregate Positivity - Tests conducted and positivity, by sex',
+    pMen11: 'Men - Positivity',
+    pWomen11: 'Women - Positivity',
+  }
+}
 const adultsPEPFAR = {
   id: 'PEPFAR',
   filters: {
@@ -114,8 +250,7 @@ const adultsPEPFAR = {
     total4: 'People Tested in Past Year',
     men4: 'Men (15+) Tested in Past Year',
     women4: 'Women (15+) Tested in Past Year',
-    pTotal3a: 'Total positive tests in past year', // TODO pre-calc
-    pTotal3b: 'People Tested in Past Year',
+    pTotal4: 'Total positivity',
     pMen4: 'Positivity - Men (15+)',
     pWomen4: 'Positivity - Women (15+)',
   }
@@ -422,7 +557,20 @@ const CHARTS = {
     title: 'Adults',
     id: 'ADULTS',
     sourceHierarchy: true,
-    sources: [adultsGAM20, adultsGAM19, adultsNPD, adultsPEPFAR],
+    sources: [
+      adultsGAM20,
+      adultsGAM19,
+      adultsNPD,
+      adultsPCOP20,
+      adultsPROP20,
+      adultsPCOP19,
+      adultsPROP19,
+      adultsPCOP18,
+      adultsPROP18,
+      adultsPCOP17,
+      adultsPROP17,
+      adultsPEPFAR
+    ],
     indicatorIds: ['total', 'men', 'women', 'pTotal', 'pMen', 'pWomen']
   },
   
@@ -727,13 +875,13 @@ const getIndicatorMap = (isShiny) => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
             const lci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'lci'
+              return r[F.VALUE_LOWER]
             })
             const uci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'uci'
+              return r[F.VALUE_UPPER]
             })
             const median = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'median'
+              return r[F.VALUE]
             })
             return { lci, uci, median }
           })
@@ -753,13 +901,13 @@ const getIndicatorMap = (isShiny) => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
             const lci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'lci'
+              return r[F.VALUE_LOWER]
             })
             const uci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'uci'
+              return r[F.VALUE_UPPER]
             })
             const median = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'median'
+              return r[F.VALUE]
             })
             return { lci, uci, median }
           })
@@ -779,13 +927,13 @@ const getIndicatorMap = (isShiny) => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
             const lci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'lci'
+              return r[F.VALUE_LOWER]
             })
             const uci = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'uci'
+              return r[F.VALUE_UPPER]
             })
             const median = _.find(fResults, r => {
-              return r[F.VALUE_COMMENT] === 'median'
+              return r[F.VALUE]
             })
             return { lci, uci, median }
           })
