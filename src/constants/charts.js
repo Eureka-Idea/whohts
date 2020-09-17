@@ -31,7 +31,8 @@ const SOURCE_DB_MAP = {
   PROP18: 'PEPFAR ROP 2018',
   PCOP17: 'PEPFAR COP 2017',
   PROP17: 'PEPFAR ROP 2017',
-  PEPFAR: 'PEPFAR System Data Extract',
+  PEPFAR_SDE: 'PEPFAR System Data Extract',
+  PEPFAR: 'PEPFAR',
 
   WME: 'WHO model estimates',
 }
@@ -243,7 +244,7 @@ const adultsPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR_SDE,
     }
   },
   indicators: {
@@ -315,7 +316,7 @@ const communityPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR_SDE,
     }
   },
   indicators: { // TODO: fix calculated values
@@ -401,7 +402,7 @@ const facilityPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR_SDE,
     }
   },
   indicators: { // TODO: fix calculated values
@@ -419,7 +420,22 @@ const facilityPEPFAR = {
     pOther4: 'Positivity - Facility Other Testing',
   }
 }
-
+const indexPEPFAR = {
+  id: 'PEPFAR',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+    }
+  },
+  indicators: {
+    total1: 'Total Index Tests',
+    community1: 'Index - Number of tests - Community',
+    facility1: 'Index - Number of tests - Facility',
+    pTotal1: 'Positivity- Index Testing Total',
+    pCommunity1: 'Positivity - Community Index testing',
+    pFacility1: 'Positivity - Facility Index Testing',
+  }
+}
 const forecastGAM20 = {
   id: 'GAM20',
   filters: {
@@ -587,13 +603,11 @@ const CHARTS = {
     sources: [facilityGAM20, facilityGAM19, facilityNPD, facilityPEPFAR],
     indicatorIds: ['total', 'PITC', 'ANC', 'VCT', 'family', 'other', 'pTotal', 'pPITC', 'pANC', 'pVCT', 'pFamily', 'pOther']
   },
-  INDEX: { // TODO
+  INDEX: {
     title: 'Index',
     id: 'INDEX',
-    indicators: {
-      number: 'Number of tests conducted',
-      positivity: 'Positivity (%)'
-    }
+    sources: [indexPEPFAR],
+    indicatorIds: ['total', 'community', 'facility', 'pTotal', 'pCommunity', 'pFacility']
   },
   FORECAST: {
     title: 'HIVST Forecast',
@@ -818,6 +832,24 @@ const getIndicatorMap = (isShiny) => {
       })
     }),
     [C.FACILITY.id]: _.flatMap(C.FACILITY.sources, s => {
+      return _.map(s.indicators, (indVal, indId) => {
+        
+        return _.extend({}, s.filters.ALL, s.filters[indId], {
+          id: indId,
+          [F.INDICATOR]: indVal,
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            console.log('r for ', indId, ' ', results)
+            if (results.length > 1) {
+              console.error('**LOOKOUT! Taking first result.**')
+            }
+            return results[0]
+          }
+        })
+      })
+    }),
+    [C.INDEX.id]: _.flatMap(C.INDEX.sources, s => {
       return _.map(s.indicators, (indVal, indId) => {
         
         return _.extend({}, s.filters.ALL, s.filters[indId], {

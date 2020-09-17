@@ -211,6 +211,7 @@ class Dashboard extends Component {
     const adults = this.getChart(CHARTS.ADULTS.id)
     const community = this.getChart(CHARTS.COMMUNITY.id)
     const facility = this.getChart(CHARTS.FACILITY.id)
+    const index = this.getChart(CHARTS.INDEX.id)
     const forecast = this.getChart(CHARTS.FORECAST.id)
 
     return (
@@ -241,6 +242,7 @@ class Dashboard extends Component {
             {adults}
             {community}
             {facility}
+            {index}
             {forecast}
           </div>
 

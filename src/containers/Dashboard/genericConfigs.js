@@ -218,7 +218,7 @@ const getArea = ({title, series, options={}}) => {
     series
   }
 
-  console.log('****', _.merge({}, area, specifics, options))
+  // console.log('****', _.merge({}, area, specifics, options))
   return _.merge({}, area, specifics, options)
 }
 

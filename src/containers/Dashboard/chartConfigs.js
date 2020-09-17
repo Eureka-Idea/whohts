@@ -768,11 +768,11 @@ const getFacility = data => {
     {
       name: barChartsPositivityName,
       // color: barChartAccent,
-      tooltip: {
-        pointFormat: `<span style="color:{point.color}">●</span>
-          {series.name}: <b>{point.y}</b><br/>
-          {point.tooltipAddition}`
-      },
+      // tooltip: {
+      //   pointFormat: `<span style="color:{point.color}">●</span>
+      //     {series.name}: <b>{point.y}</b><br/>
+      //     {point.tooltipAddition}`
+      // },
       type: 'line',
       tooltip: {
         pointFormat: sourceTooltipFormat
@@ -799,26 +799,63 @@ const getFacility = data => {
 }
 
 const getIndex = data => {
-  // TODO
-  const title = 'Index'
+
+  const { title, indicatorIds, sources } = CHARTS.INDEX
+
+  const {
+    total, community, facility,
+    pTotal, pCommunity, pFacility, missingIndicators
+  } = extractPrioritizedData(data, indicatorIds, sources.length)
+
+  console.log('total: ', total, 'community', community, 'facility', facility,
+    'ptotal: ', pTotal, 'pcommunity: ', pCommunity, 'pfacility: ', pFacility,
+   'missingIndicators: ', missingIndicators)
+
+  if (missingIndicators.length) {
+    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+  }
+
+  const communityNumData = {
+    y: community.value,
+  }
+  const facilityNumData = {
+    y: facility.value,
+  }
+
+  const communityPosData = {
+    y: pCommunity.value,
+    source: pCommunity[FIELD_MAP.SOURCE_DATABASE],
+    year: pCommunity[FIELD_MAP.YEAR],
+    sourceYear: pCommunity[FIELD_MAP.SOURCE_YEAR],
+  }
+  const facilityPosData = {
+    y: pFacility.value,
+    source: pFacility[FIELD_MAP.SOURCE_DATABASE],
+    year: pFacility[FIELD_MAP.YEAR],
+    sourceYear: pFacility[FIELD_MAP.SOURCE_YEAR],
+  }
+  
   const series = [
     {
       name: barChartsTestsName,
       // color: barChartColorDark,
-      data: [132, 232]
+      data: [communityNumData, facilityNumData]
       // dataLabels,
     },
     {
       name: barChartsPositivityName,
       // color: barChartAccent,
       type: 'line',
-      data: [21, 30]
+      tooltip: {
+        pointFormat: sourceTooltipFormat
+      },
+      data: [communityPosData, facilityPosData]
     }
   ]
   const options = {
-    subtitle: { text: `Total tests: ${_.mean([132, 232])}, Average positivity: ${_.mean([21, 30])}%` }
+    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${pTotal.value}%` }
   }
-  const categories = ['Community', 'Facility', 'TOTAL']
+  const categories = ['Community', 'Facility']
   return _.merge({}, getColumnScat({ title, options, categories, series }))
 }
 
