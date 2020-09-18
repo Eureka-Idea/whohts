@@ -147,6 +147,35 @@ class Dashboard extends Component {
     )
   }
 
+  getTable(id) {
+    if (_.isEmpty(this.props.chartData)) {
+      console.log('No chart data (perhaps awaiting API response)')
+      return
+    }
+
+    let config = getConfig(id, this.props.chartData)
+    if (!config) {
+      console.error(`${id} failed to produce a config.`)
+    }
+
+    const Table = {
+      [CHARTS.KP_TABLE.id]: KPTable,
+      [CHARTS.GROUPS_TABLE.id]: DemographicsTable,
+      [CHARTS.POLICY_TABLE.id]: PolicyTable,
+    }[id]
+
+    if (!Table) {
+      console.error(`${id} is not a valid table type.`)
+      return
+    }
+
+    return (
+      <div className='chart-container col-xl-4 col-lg-6 col-sm-12'>
+        {<Table config={config} />}
+      </div>
+    )
+  }
+
   getSelf() {
     const title = 'HIV self-tests distributed'
     const series = [
@@ -214,6 +243,8 @@ class Dashboard extends Component {
     const index = this.getChart(CHARTS.INDEX.id)
     const forecast = this.getChart(CHARTS.FORECAST.id)
 
+    const policy = this.getTable(CHARTS.POLICY_TABLE.id)
+
     return (
       <div className='dashboard'>
         <div className='nav'>
@@ -244,6 +275,8 @@ class Dashboard extends Component {
             {facility}
             {index}
             {forecast}
+
+            {policy}
           </div>
 
           {/* <div className='row no-gutters'>

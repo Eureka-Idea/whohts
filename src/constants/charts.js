@@ -35,6 +35,9 @@ const SOURCE_DB_MAP = {
   PEPFAR: 'PEPFAR',
 
   WME: 'WHO model estimates',
+  WSR: 'WHO special review',
+  WNCPI: 'WHO NCPI dataset',
+  HIVST20: 'HIVST policy 2020 data set',
 }
 
 const FIELD_MAP = {
@@ -631,9 +634,48 @@ const CHARTS = {
   POLICY_TABLE: {
     title: 'WHO HIV Testing Policy Compliance',
     id: 'POLICY_TABLE',
+    filters: {
+      ALL: {
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+      },
+      age: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+      },
+      provider: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
+      },
+      community: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
+      },
+      lay: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
+      },
+      hivst: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.HIVST20,
+      },
+      assisted: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
+      },
+      social: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
+      },
+      compliance: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+      },
+      verification: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+      },
+    },
     indicators: {
-      number: 'Number of tests conducted',
-      positivity: 'Positivity (%)'
+      age: 'Age of consent for HIV testing',
+      provider: 'Provider-initiated testing',
+      community: 'Community-based testing',
+      lay: 'Lay provider testing',
+      hivst: 'HIVST policy category',
+      assisted: 'Provider-assisted referral / Index testing',
+      social: 'Social network-based testing',
+      compliance: 'Compliance with WHO testing strategy',
+      verification: 'Verification testing before ART',
     }
   },
   GROUPS_TABLE: {
@@ -891,6 +933,21 @@ const getIndicatorMap = (isShiny) => {
         })
       })
     }),
+    [C.POLICY_TABLE.id]: _.map(C.POLICY_TABLE.indicators, (v, k) =>
+      _.extend({}, C.POLICY_TABLE.filters.ALL, C.POLICY_TABLE.filters[k], {
+        id: k,
+        [F.INDICATOR]: v,
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking first result for ', k)
+            console.log(results)
+          }
+
+          return results[0]
+        }
+      }
+    )),
   }
 
   if (isShiny) {

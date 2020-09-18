@@ -925,7 +925,53 @@ const getKpTable = data => {
 }
 
 const getPolicyTable = data => {
+  const { title } = CHARTS.POLICY_TABLE
   
+  const {
+    age,
+    provider,
+    community,
+    lay,
+    hivst,
+    assisted,
+    social,
+    compliance,
+    verification,
+  } = data
+
+  const config = {
+    title,
+    data: [{ 
+        rowName: 'Age of consent for HIV testing',
+        value: age[FIELD_MAP.VALUE_COMMENT]
+      },{ 
+        rowName: 'Provider-initiated testing',
+        value: provider[FIELD_MAP.VALUE_COMMENT]
+      },{ 
+        rowName: 'Community-based testing',
+        value: community[FIELD_MAP.VALUE_COMMENT]
+      },{ 
+        rowName: 'Lay provider testing',
+        value: lay[FIELD_MAP.VALUE_COMMENT]
+      },{ 
+        rowName: 'Self-testing',
+        value: hivst[FIELD_MAP.VALUE_COMMENT]
+      },{ 
+        rowName: 'Provider-assisted referral/index testing',
+        value: assisted[FIELD_MAP.VALUE_COMMENT]
+      },{ 
+        rowName: 'Social network-based testing',
+        value: social[FIELD_MAP.VALUE_COMMENT]
+      },{ 
+        rowName: 'Compliance with WHO testing strategy',
+        value: compliance[FIELD_MAP.VALUE_COMMENT]
+      },{ 
+        rowName: 'Verification testing before ART',
+        value: verification[FIELD_MAP.VALUE_COMMENT]
+      },]
+  }
+
+  return config
 }
 
 const getGroupsTable = data => {
