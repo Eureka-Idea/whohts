@@ -1,12 +1,13 @@
-import React, {Component} from 'react'
+import React from 'react'
 import './styles.css'
 
 const PolicyTable = ({ config }) => {
-  let classes = 'policy-table '
-  // if (this.props.classes) {
-  //   classes += this.props.classes
-  // }
-
+  if (!config) {
+    console.error('Policy Table has no config.')
+    return
+  }
+  
+  const classes = 'policy-table'
   return (
     <div className={classes}>
       <h2>WHO HIV Testing Policy Compliance</h2>

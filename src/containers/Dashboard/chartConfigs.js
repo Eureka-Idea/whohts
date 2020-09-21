@@ -68,7 +68,7 @@ const getConfig = (chartId, chartData, shinyCountry) => {
   }  
 }
 
-const extractPrioritizedData = (data, indicatorIds, sourceCount) => {
+const extractPrioritizedData = (data, indicatorIds, sourceCount, defaultValue=0) => {
   const result = { missingIndicators: [] }
   _.each(indicatorIds, ind => {
 
@@ -78,7 +78,7 @@ const extractPrioritizedData = (data, indicatorIds, sourceCount) => {
         result[ind] = indicatorResult
         break
       } else if (i === sourceCount) {
-        result[ind] = { value: 0, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
+        result[ind] = { value: defaultValue, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
         result.missingIndicators.push(ind)
       }
     }
@@ -539,7 +539,7 @@ const getAdults = data => {
     pTotal, pMen, pWomen, missingIndicators
   } = extractPrioritizedData(data, indicatorIds, sources.length)
   
-  console.log('total: ',total, 'men: ',men, 'women: ',women, 'pTotal: ',pTotal, 'pMen: ',pMen, 'pWomen: ',pWomen, 'missingIndicators: ',missingIndicators)
+  // console.log('total: ',total, 'men: ',men, 'women: ',women, 'pTotal: ',pTotal, 'pMen: ',pMen, 'pWomen: ',pWomen, 'missingIndicators: ',missingIndicators)
 
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
@@ -607,7 +607,7 @@ const getCommunity = data => {
     pTotal, pMobile, pVCT, pOther, missingIndicators
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
-  console.log('total: ', total, 'mobile: ', mobile, 'VCT: ', VCT, 'other: ', other, 'pTotal: ', pTotal, 'pMobile: ', pMobile, 'pVCT: ', pVCT, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
+  // console.log('total: ', total, 'mobile: ', mobile, 'VCT: ', VCT, 'other: ', other, 'pTotal: ', pTotal, 'pMobile: ', pMobile, 'pVCT: ', pVCT, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
   
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
@@ -682,8 +682,8 @@ const getFacility = data => {
     pTotal, pPITC, pANC, pVCT, pFamily, pOther, missingIndicators
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
-  console.log('total: ', total, 'PITC: ', PITC, 'ANC: ', ANC, 'VCT: ', VCT, 'family: ', family, 'other: ', other,
-    'pTotal: ', pTotal, 'pPITC: ', pPITC, 'pANC: ', pANC, 'pVCT: ', pVCT, 'pFamily: ', pFamily, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
+  // console.log('total: ', total, 'PITC: ', PITC, 'ANC: ', ANC, 'VCT: ', VCT, 'family: ', family, 'other: ', other,
+    // 'pTotal: ', pTotal, 'pPITC: ', pPITC, 'pANC: ', pANC, 'pVCT: ', pVCT, 'pFamily: ', pFamily, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
 
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
@@ -807,9 +807,9 @@ const getIndex = data => {
     pTotal, pCommunity, pFacility, missingIndicators
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
-  console.log('total: ', total, 'community', community, 'facility', facility,
-    'ptotal: ', pTotal, 'pcommunity: ', pCommunity, 'pfacility: ', pFacility,
-   'missingIndicators: ', missingIndicators)
+  // console.log('total: ', total, 'community', community, 'facility', facility,
+  //   'ptotal: ', pTotal, 'pcommunity: ', pCommunity, 'pfacility: ', pFacility,
+  //  'missingIndicators: ', missingIndicators)
 
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
@@ -867,7 +867,7 @@ const getForecast = data => {
   } = extractPrioritizedRangeData(data, indicatorIds, sources.length, indicatorYears)
   const missingIndicators = Object.keys(missingIndicatorMap)
 
-  console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
+  // console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
 
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
@@ -921,7 +921,62 @@ const getForecast = data => {
 }
 
 const getKpTable = data => {
+  const { title, indicatorIds, sources } = CHARTS.KP_TABLE
   
+  const {
+    prevMsm, prevPwid, prevPris, prevSw, prevTrans,
+    awareMsm, awarePwid, awarePris, awareSw, awareTrans,
+    yearMsm, yearPwid, yearPris, yearSw, yearTrans,
+    missingIndicators
+  } = extractPrioritizedData(data, indicatorIds, sources.length, 'N/A')
+
+  // console.log(
+  //   'KP DATA | ',
+  //   'prevMsm: ', prevMsm,
+  //   'prevPwid: ', prevPwid,
+  //   'prevPris: ', prevPris,
+  //   'prevSw: ', prevSw,
+  //   'prevTrans: ', prevTrans,
+  //   'awareMsm: ', awareMsm,
+  //   'awarePwid: ', awarePwid,
+  //   'awarePris: ', awarePris,
+  //   'awareSw: ', awareSw,
+  //   'awareTrans: ', awareTrans,
+  //   'yearMsm: ', yearMsm,
+  //   'yearPwid: ', yearPwid,
+  //   'yearPris: ', yearPris,
+  //   'yearSw: ', yearSw,
+  //   'yearTrans: ', yearTrans,
+  // )
+
+  const sw = {
+    prev: prevSw.value, aware: awareSw.value, year: yearSw.value, 
+  }
+  const msm = {
+    prev: prevMsm.value, aware: awareMsm.value, year: yearMsm.value, 
+  }
+  const pwid = {
+    prev: prevPwid.value, aware: awarePwid.value, year: yearPwid.value, 
+  }
+  const trans = {
+    prev: prevTrans.value, aware: awareTrans.value, year: yearTrans.value, 
+  }
+  const pris = {
+    prev: prevPris.value, aware: awarePris.value, year: yearPris.value, 
+  }
+
+  const config = {
+    title,
+    data: {
+      sw,
+      msm,
+      pwid,
+      trans,
+      pris,
+    }
+  }
+
+  return config
 }
 
 const getPolicyTable = data => {

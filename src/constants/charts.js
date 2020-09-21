@@ -23,13 +23,15 @@ const SOURCE_DB_MAP = {
   GAM20: 'Global AIDS Monitoring 2020',
   GAM19: 'Global AIDS Monitoring 2019',
   NPD: 'National Programme Data 2019',
+  
   PCOP20: 'PEPFAR COP 2020',
-  PROP20: 'PEPFAR ROP 2020',
   PCOP19: 'PEPFAR COP 2019',
+  // PCOP18: 'PEPFAR COP 2018',
+  PCOP1718: 'PEPFAR COP 2017 - 2018',
+  // PCOP17: 'PEPFAR COP 2017',
+  PROP20: 'PEPFAR ROP 2020',
   PROP19: 'PEPFAR ROP 2019',
-  PCOP18: 'PEPFAR COP 2018',
-  PROP18: 'PEPFAR ROP 2018',
-  PCOP17: 'PEPFAR COP 2017',
+  // PROP18: 'PEPFAR ROP 2018',
   PROP17: 'PEPFAR ROP 2017',
   PEPFAR_SDE: 'PEPFAR System Data Extract',
   PEPFAR: 'PEPFAR',
@@ -38,6 +40,9 @@ const SOURCE_DB_MAP = {
   WSR: 'WHO special review',
   WNCPI: 'WHO NCPI dataset',
   HIVST20: 'HIVST policy 2020 data set',
+  KP20: 'UNAIDS KP-Atlas 2020',
+  UNGAM20: 'UNAIDS Global AIDS Monitoring 2020',
+  TGF: 'The Global Fund',
 }
 
 const FIELD_MAP = {
@@ -66,6 +71,7 @@ const FIELD_MAP = {
 }
 const F = FIELD_MAP
 
+// SOURCE objects for source prio charts
 const adultsGAM20 = {
   id: 'GAM20',
   filters: {
@@ -179,43 +185,11 @@ const adultsPROP19 = {
     pWomen7: 'Women - Positivity',
   }
 }
-const adultsPCOP18 = {
-  id: 'PCOP18',
+const adultsPCOP1718 = {
+  id: 'PCOP1718',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP18,
-    }
-  },
-  indicators: {
-    total8: 'People Tested in Past Year',
-    men8: 'Men (Tested in past year)',
-    women8: 'Women (Tested in past year)',
-    pTotal8: 'Aggregate Positivity - Tests conducted and positivity, by sex',
-    pMen8: 'Men - Positivity',
-    pWomen8: 'Women - Positivity',
-  }
-}
-const adultsPROP18 = {
-  id: 'PROP18',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP18,
-    }
-  },
-  indicators: {
-    total9: 'People Tested in Past Year',
-    men9: 'Men (Tested in past year)',
-    women9: 'Women (Tested in past year)',
-    pTotal9: 'Aggregate Positivity - Tests conducted and positivity, by sex',
-    pMen9: 'Men - Positivity',
-    pWomen9: 'Women - Positivity',
-  }
-}
-const adultsPCOP17 = {
-  id: 'PCOP17',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP17,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP1718,
     }
   },
   indicators: {
@@ -369,13 +343,11 @@ const facilityGAM19 = {
     PITC2: 'PITC - Number of tests - Facility',
     ANC2: 'ANC - Number of tests - Facility',
     VCT2: 'VCT - Number of tests - Facility',
-    family2: 'n/a',
     other2: 'Other - Number of tests - Facility',
     pTotal2: 'Aggregate Positivity - Tests conducted and positivity at facility level',
     pPITC2: 'PITC - Positivity - Facility',
     pANC2: 'ANC - Positivity - Facility',
     pVCT2: 'VCT - Positivity - Facility',
-    pFamily2: 'n/a',
     pOther2: 'Other - Positivity - Facility',
   }
 }
@@ -391,13 +363,11 @@ const facilityNPD = {
     PITC3: 'PITC - Number of tests - Facility',
     ANC3: 'ANC - Number of tests - Facility',
     VCT3: 'VCT - Number of tests - Facility',
-    family3: 'n/a',
     other3: 'Other - Number of tests - Facility',
     pTotal3: 'Aggregate Positivity - Tests conducted and positivity at facility level',
     pPITC3: 'PITC - Positivity - Facility',
     pANC3: 'ANC - Positivity - Facility',
     pVCT3: 'VCT - Positivity - Facility',
-    pFamily3: 'n/a',
     pOther3: 'Other - Positivity - Facility',
   }
 }
@@ -413,16 +383,15 @@ const facilityPEPFAR = {
     PITC4: 'HIV tests conducted (sum of modality_category like facility provider initiated)',
     ANC4: 'HIV tests conducted (sum of modality_category like facility ANC clinics)',
     VCT4: 'HIV tests conducted (sum of modality_category like facility VCT)',
-    family4: 'n/a',
     other4: 'HIV tests conducted (sum of modality_category like facility other)',
     pTotal4: 'Positivity - Facility Modalities Total',
     pPITC4: 'Positivity - Facility PITC Testing',
     pANC4: 'Positivity - Facility ANC Testing',
     pVCT4: 'Positivity - Facility VCT Testing',
-    pFamily4: 'n/a',
     pOther4: 'Positivity - Facility Other Testing',
   }
 }
+
 const indexPEPFAR = {
   id: 'PEPFAR',
   filters: {
@@ -439,6 +408,7 @@ const indexPEPFAR = {
     pFacility1: 'Positivity - Facility Index Testing',
   }
 }
+
 const forecastGAM20 = {
   id: 'GAM20',
   filters: {
@@ -494,6 +464,160 @@ const forecastWME = {
   indicators: {
     demand1: 'HIVST forecast demand',
     need1: 'HIVST forecast need',
+  }
+}
+
+const kpKP20 = {
+  id: 'KP20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.KP20,
+      [F.AREA_NAME]: 'NULL',
+    }
+  },
+  indicators: {
+    prevMsm1: 'HIV prevalence among men who have sex with men',
+    awareMsm1: 'MSM (PLHIV who know status (%))',
+    prevPwid1: 'HIV prevalence among people who inject drugs',
+    awarePwid1: 'PWID (PLHIV who know status (%))',
+    prevPris1: 'HIV prevalence among prisoners',
+    // awarePris1: '',
+    prevSw1: 'HIV prevalence among sex workers',
+    awareSw1: 'SW (PLHIV who know status (%))',
+    prevTrans1: 'HIV prevalence among transgender people',
+    awareTrans1: 'Transgender (PLHIV who know status (%))',
+  }
+}
+const kpUNGAM20 = {
+  id: 'UNGAM20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNGAM20,
+      [F.AREA_NAME]: 'NULL',
+    }
+  },
+  indicators: { // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
+    prevMsm2: 'HIV prevalence among men who have sex with men',
+    awareMsm2: 'MSM (PLHIV who know status (%))',
+    prevPwid2: 'HIV prevalence among people who inject drugs',
+    awarePwid2: 'PWID (PLHIV who know status (%))',
+    prevPris2: 'HIV prevalence among prisoners',
+    // awarePris2: '',
+    prevSw2: 'HIV prevalence among sex workers',
+    awareSw2: 'SW (PLHIV who know status (%))',
+    prevTrans2: 'HIV prevalence among transgender people',
+    awareTrans2: 'Transgender (PLHIV who know status (%))',
+  }
+}
+const kpPCOP20 = {
+  id: 'PCOP20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+      [F.AREA_NAME]: 'NULL',
+    }
+  },
+  indicators: {
+    yearMsm1: 'MSM (Tested in past year)',
+    yearSw1: 'SW (Tested in past year)',
+    yearPwid1: 'PWID (Tested in past year)',
+    yearPris1: 'People in prisons (Tested in past year)',
+    yearTrans1: 'Transgender (Tested in past year)',
+  }
+}
+const kpPROP20 = {
+  id: 'PROP20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP20,
+      [F.AREA_NAME]: 'NULL',
+    }
+  },
+  indicators: {
+    yearMsm2: 'MSM (Tested in past year)',
+    yearSw2: 'SW (Tested in past year)',
+    yearPwid2: 'PWID (Tested in past year)',
+    yearPris2: 'People in prisons (Tested in past year)',
+    yearTrans2: 'Transgender (Tested in past year)',
+  }
+}
+const kpPCOP19 = {
+  id: 'PCOP19',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP19,
+      [F.AREA_NAME]: 'NULL',
+    }
+  },
+  indicators: {
+    yearMsm3: 'MSM (Tested in past year)',
+    yearSw3: 'SW (Tested in past year)',
+    yearPwid3: 'PWID (Tested in past year)',
+    yearPris3: 'People in prisons (Tested in past year)',
+    yearTrans3: 'Transgender (Tested in past year)',
+  }
+}
+const kpPROP19 = {
+  id: 'PROP19',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP19,
+      [F.AREA_NAME]: 'NULL',
+    }
+  },
+  indicators: {
+    yearMsm4: 'MSM (Tested in past year)',
+    yearSw4: 'SW (Tested in past year)',
+    yearPwid4: 'PWID (Tested in past year)',
+    yearPris4: 'People in prisons (Tested in past year)',
+    yearTrans4: 'Transgender (Tested in past year)',
+  }
+}
+const kpPCOP1718 = {
+  id: 'PCOP1718',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP1718,
+      [F.AREA_NAME]: 'NULL',
+    }
+  },
+  indicators: {
+    yearMsm5: 'MSM (Tested in past year)',
+    yearSw5: 'SW (Tested in past year)',
+    yearPwid5: 'PWID (Tested in past year)',
+    yearPris5: 'People in prisons (Tested in past year)',
+    yearTrans5: 'Transgender (Tested in past year)',
+  }
+}
+const kpPROP17 = {
+  id: 'PROP17',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP17,
+      [F.AREA_NAME]: 'NULL',
+    }
+  },
+  indicators: {
+    yearMsm6: 'MSM (Tested in past year)',
+    yearSw6: 'SW (Tested in past year)',
+    yearPwid6: 'PWID (Tested in past year)',
+    yearPris6: 'People in prisons (Tested in past year)',
+    yearTrans6: 'Transgender (Tested in past year)',
+  }
+}
+const kpTGF = {
+  id: 'TGF',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.TGF,
+      [F.AREA_NAME]: 'NULL',
+    }
+  },
+  indicators: {
+    yearMsm7: 'Number of HIV tests taken among men who have sex with men',
+    yearSw7: 'Number of HIV tests taken among transgender population',
+    yearPwid7: 'Number of HIV tests taken among sex workers',
+    yearTrans7: 'Number of HIV tests taken among people who use drugs',
   }
 }
 
@@ -575,7 +699,6 @@ const CHARTS = {
   ADULTS: {
     title: 'Adults',
     id: 'ADULTS',
-    sourceHierarchy: true,
     sources: [
       adultsGAM20,
       adultsGAM19,
@@ -584,19 +707,15 @@ const CHARTS = {
       adultsPROP20,
       adultsPCOP19,
       adultsPROP19,
-      adultsPCOP18,
-      adultsPROP18,
-      adultsPCOP17,
+      adultsPCOP1718,
       adultsPROP17,
       adultsPEPFAR
     ],
     indicatorIds: ['total', 'men', 'women', 'pTotal', 'pMen', 'pWomen']
   },
-  
   COMMUNITY: {
     title: 'Community Testing Modalities',
     id: 'COMMUNITY',
-    sourceHierarchy: true,
     sources: [communityGAM20, communityGAM19, communityNPD, communityPEPFAR],
     indicatorIds: ['total', 'mobile', 'VCT', 'other', 'pTotal', 'pMobile', 'pVCT', 'pOther']
   },
@@ -623,13 +742,19 @@ const CHARTS = {
       need: R_2020_2025,
     }
   },
+
   KP_TABLE: {
     title: 'Key Populations',
     id: 'KP_TABLE',
-    indicators: {
-      number: 'Number of tests conducted',
-      positivity: 'Positivity (%)'
-    }
+    sources: [
+      kpKP20, kpUNGAM20, kpPCOP20, kpPROP20, kpPCOP19, kpPROP19, kpPCOP1718, kpPROP17, kpTGF
+    ],
+    indicatorIds: [
+      'prevMsm', 'prevPwid', 'prevPris', 'prevSw', 'prevTrans',
+      'awareMsm', 'awarePwid', 'awarePris', 'awareSw', 'awareTrans',
+      'yearMsm', 'yearPwid', 'yearPris', 'yearSw', 'yearTrans',
+
+    ],
   },
   POLICY_TABLE: {
     title: 'WHO HIV Testing Policy Compliance',
@@ -637,6 +762,7 @@ const CHARTS = {
     filters: {
       ALL: {
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+        [F.AREA_NAME]: 'NULL',
       },
       age: {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
@@ -846,7 +972,6 @@ const getIndicatorMap = (isShiny) => {
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
-            console.log('r for ', indId, ' ', results)
             if (results.length > 1) {
               console.error('**LOOKOUT! Taking first result.**')
             }
@@ -864,7 +989,6 @@ const getIndicatorMap = (isShiny) => {
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
-            console.log('r for ', indId, ' ', results)
             if (results.length > 1) {
               console.error('**LOOKOUT! Taking first result.**')
             }
@@ -882,7 +1006,6 @@ const getIndicatorMap = (isShiny) => {
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
-            console.log('r for ', indId, ' ', results)
             if (results.length > 1) {
               console.error('**LOOKOUT! Taking first result.**')
             }
@@ -900,7 +1023,6 @@ const getIndicatorMap = (isShiny) => {
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
-            console.log('r for ', indId, ' ', results)
             if (results.length > 1) {
               console.error('**LOOKOUT! Taking first result.**')
             }
@@ -918,7 +1040,6 @@ const getIndicatorMap = (isShiny) => {
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
-            console.log('r for ', indId, ' ', results)
 
             const genericIndId = getGenericIndId(indId)
             return C.FORECAST.indicatorYears[genericIndId].map(y => {
@@ -929,6 +1050,22 @@ const getIndicatorMap = (isShiny) => {
 
               return fResults[0]
             })
+          }
+        })
+      })
+    }),
+    [C.KP_TABLE.id]: _.flatMap(C.KP_TABLE.sources, s => {
+      return _.map(s.indicators, (indVal, indId) => {
+        
+        return _.extend({}, s.filters.ALL, s.filters[indId], {
+          id: indId,
+          [F.INDICATOR]: indVal,
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            if (results.length > 1) {
+              console.error('**LOOKOUT! Taking first result.**')
+            }
+            return results[0]
           }
         })
       })

@@ -156,6 +156,7 @@ class Dashboard extends Component {
     let config = getConfig(id, this.props.chartData)
     if (!config) {
       console.error(`${id} failed to produce a config.`)
+      return // TODO do we want to produce blank table?
     }
 
     const Table = {
@@ -242,7 +243,8 @@ class Dashboard extends Component {
     const facility = this.getChart(CHARTS.FACILITY.id)
     const index = this.getChart(CHARTS.INDEX.id)
     const forecast = this.getChart(CHARTS.FORECAST.id)
-
+    
+    const kp = this.getTable(CHARTS.KP_TABLE.id)
     const policy = this.getTable(CHARTS.POLICY_TABLE.id)
 
     return (
@@ -276,6 +278,7 @@ class Dashboard extends Component {
             {index}
             {forecast}
 
+            {kp}
             {policy}
           </div>
 
