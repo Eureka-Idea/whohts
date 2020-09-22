@@ -7,6 +7,24 @@ const getGenericIndId = indId => {
   return indId.replace(/\d+$/, '')
 }
 
+const findPrioritizedResult = ({ results, dbHierarchy, resultCriteria={} }) => {
+  let prioritizedResult = null
+
+  return _.find(dbHierarchy, db => {
+    return _.find(results, r => {
+      // r is from db and satisfies all the result criteria
+      r[F.SOURCE_DATABASE] === db && _.every(resultCriteria, ({ value, field }) => 
+        r[field] === value)
+    })
+  //   if (result) {
+  //     prioritizedResult = result
+  //     return false // break out of the each
+  //   }
+  // })
+  // return prioritizedResult
+  })
+}
+
 const R_2015_2019 = [
   '2015', '2016', '2017', '2018', '2019',
 ]
@@ -16,13 +34,25 @@ const R_2018_2019 = [
 const R_2020_2025 = [
   '2020', '2021', '2022', '2023', '2024', '2025',
 ]
-const R_ADULT_AGES = ['15-24', '25-34', '35-49', '50-99']
-const R_SEXES = ['males', 'females']
+// TODO: constify individual ages
+const ADULTS15 = '15-24'
+const ADULTS25 = '25-34'
+const ADULTS35 = '35-49'
+const ADULTS50 = '50-99'
+const R_ADULT_AGES = [ADULTS15, ADULTS25, ADULTS35, ADULTS50]
+const ALL_ADULTS = '15-99'
+// TODO: constify 
+const FEMALE = 'female'
+const MALE = 'male'
+const R_SEXES = [FEMALE, MALE]
 
 const SOURCE_DB_MAP = {
+  S90: 'Shiny90',
   GAM20: 'Global AIDS Monitoring 2020',
   GAM19: 'Global AIDS Monitoring 2019',
-  NPD: 'National Programme Data 2019',
+  GAM: 'Global AIDS Monitoring',
+  NPD19: 'National Programme Data 2019',
+  NPD: 'National Programme Data',
   
   PCOP20: 'PEPFAR COP 2020',
   PCOP19: 'PEPFAR COP 2019',
@@ -33,7 +63,7 @@ const SOURCE_DB_MAP = {
   PROP19: 'PEPFAR ROP 2019',
   // PROP18: 'PEPFAR ROP 2018',
   PROP17: 'PEPFAR ROP 2017',
-  PEPFAR_SDE: 'PEPFAR System Data Extract',
+  PEPFAR_SDE: 'PEPFAR System Data Extract', // TODO: replace with PEPFAR?
   PEPFAR: 'PEPFAR',
 
   WME: 'WHO model estimates',
@@ -105,11 +135,11 @@ const adultsGAM19 = {
     pWomen2: 'Women (15+) - Positivity',
   }
 }
-const adultsNPD = {
-  id: 'NPD',
+const adultsNPD19 = {
+  id: 'NPD19',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD19,
     }
   },
   indicators: { // NOTE: same as GAM
@@ -271,11 +301,11 @@ const communityGAM19 = {
     pOther2: 'Other - Positivity - Community',
   }
 }
-const communityNPD = {
-  id: 'NPD',
+const communityNPD19 = {
+  id: 'NPD19',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD19,
     }
   },
   indicators: { // same as GAM19
@@ -351,11 +381,11 @@ const facilityGAM19 = {
     pOther2: 'Other - Positivity - Facility',
   }
 }
-const facilityNPD = {
-  id: 'NPD',
+const facilityNPD19 = {
+  id: 'NPD19',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD19,
     }
   },
   indicators: { // same as GAM19
@@ -432,11 +462,11 @@ const forecastGAM19 = {
     distributed2: 'HIVSTs distributed'
   }
 }
-const forecastNPD = {
-  id: 'NPD',
+const forecastNPD19 = {
+  id: 'NPD19',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD19,
     }
   },
   indicators: { // same as GAM19
@@ -621,6 +651,47 @@ const kpTGF = {
   }
 }
 
+const groupsGAM20 = {
+  id: 'GAM20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+      [F.VALUE_COMMENT]: 'validated',
+    }
+  },
+  indicators: {
+    year: 'Den Age-Female Gte 15'
+  }
+}
+const groupsS90 = {
+  id: 'S90',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+      [F.YEAR]: '2019',
+    }
+  },
+  indicators: {
+    year: 'tests_total'
+  },
+  indicatorAges: {
+    year: 'ALL'
+  }
+}
+const groupsPCOP20 = {
+  id: 'PCOP20',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+    }
+  },
+  indicators: {
+    year: 'Den Age-Female Gte 15',
+    year: 'Women 15-24 (Tested in past year)',
+  }
+}
+
+
 const CHARTS = {
   CONTEXT: {
     // title: 'context',
@@ -702,7 +773,7 @@ const CHARTS = {
     sources: [
       adultsGAM20,
       adultsGAM19,
-      adultsNPD,
+      adultsNPD19,
       adultsPCOP20,
       adultsPROP20,
       adultsPCOP19,
@@ -716,13 +787,13 @@ const CHARTS = {
   COMMUNITY: {
     title: 'Community Testing Modalities',
     id: 'COMMUNITY',
-    sources: [communityGAM20, communityGAM19, communityNPD, communityPEPFAR],
+    sources: [communityGAM20, communityGAM19, communityNPD19, communityPEPFAR],
     indicatorIds: ['total', 'mobile', 'VCT', 'other', 'pTotal', 'pMobile', 'pVCT', 'pOther']
   },
   FACILITY: {
     title: 'Facility Testing Modalities',
     id: 'FACILITY',
-    sources: [facilityGAM20, facilityGAM19, facilityNPD, facilityPEPFAR],
+    sources: [facilityGAM20, facilityGAM19, facilityNPD19, facilityPEPFAR],
     indicatorIds: ['total', 'PITC', 'ANC', 'VCT', 'family', 'other', 'pTotal', 'pPITC', 'pANC', 'pVCT', 'pFamily', 'pOther']
   },
   INDEX: {
@@ -734,7 +805,7 @@ const CHARTS = {
   FORECAST: {
     title: 'HIVST Forecast',
     id: 'FORECAST',
-    sources: [forecastGAM20, forecastGAM19, forecastNPD, forecastPEPFAR, forecastWME],
+    sources: [forecastGAM20, forecastGAM19, forecastNPD19, forecastPEPFAR, forecastWME],
     indicatorIds: ['distributed', 'demand', 'need'],
     indicatorYears: {
       distributed: R_2018_2019,
@@ -807,9 +878,25 @@ const CHARTS = {
   GROUPS_TABLE: {
     title: 'Population Groups',
     id: 'GROUPS_TABLE',
-    indicators: {
-      number: 'Number of tests conducted',
-      positivity: 'Positivity (%)'
+    sources: [],
+    indicatorIds: [
+      'plhiv', 'undiagnosed', 'aware', 'prev', 'new', 'year', 'ever',
+      // 'w15Plhiv', 'w15Undiagnosed', 'w15Aware', 'w15Prev', 'w15New', 'w15Year', 'w15Ever',
+      // 'w15_24Plhiv', 'w15_24Undiagnosed', 'w15_24Aware', 'w15_24Prev', 'w15_24New', 'w15_24Year', 'w15_24Ever',
+      // 'w25_34Plhiv', 'w25_34Undiagnosed', 'w25_34Aware', 'w25_34Prev', 'w25_34New', 'w25_34Year', 'w25_34Ever',
+      // 'w35_49Plhiv', 'w35_49Undiagnosed', 'w35_49Aware', 'w35_49Prev', 'w35_49New', 'w35_49Year', 'w35_49Ever',
+      // 'w50Plhiv', 'w50Undiagnosed', 'w50Aware', 'w50Prev', 'w50New', 'w50Year', 'w50Ever',
+      // 'm15Plhiv', 'm15Undiagnosed', 'm15Aware', 'm15Prev', 'm15New', 'm15Year', 'm15Ever',
+      // 'm15_24Plhiv', 'm15_24Undiagnosed', 'm15_24Aware', 'm15_24Prev', 'm15_24New', 'm15_24Year', 'm15_24Ever',
+      // 'm25_34Plhiv', 'm25_34Undiagnosed', 'm25_34Aware', 'm25_34Prev', 'm25_34New', 'm25_34Year', 'm25_34Ever',
+      // 'm35_49Plhiv', 'm35_49Undiagnosed', 'm35_49Aware', 'm35_49Prev', 'm35_49New', 'm35_49Year', 'm35_49Ever',
+      // 'm50Plhiv', 'm50Undiagnosed', 'm50Aware', 'm50Prev', 'm50New', 'm50Year', 'm50Ever',
+    ],
+    indicatorSourceDbMap: {
+      // 
+    },
+    indicatorAges: {
+      // all the same
     }
   },
 }
@@ -1085,6 +1172,271 @@ const getIndicatorMap = (isShiny) => {
         }
       }
     )),
+    [C.GROUPS_TABLE.id]: //_.flatMap([
+      // ___ 
+      [
+        {
+          id: 'year1',
+          [F.INDICATOR]: 'Den Age-Female Gte 15',
+          [F.VALUE_COMMENT]: 'validated',
+          [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+          [F.YEAR]: '2019',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            if (results.length > 1) {
+              console.error('**LOOKOUT! Taking highest firstesult.**')
+              console.log(results)
+            }
+
+            return { [`${FEMALE[0]}${ADULTS15}`]: results[0] }
+          }
+        },
+        {
+          id: 'year2',
+          [F.INDICATOR]: 'Den Age-Male Gte 15',
+          [F.VALUE_COMMENT]: 'validated',
+          [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+          [F.YEAR]: '2019',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            if (results.length > 1) {
+              console.error('**LOOKOUT! Taking first result.**')
+              console.log(results)
+            }
+
+            return { [`${MALE[0]}${ADULTS15}`]: results[0] }
+          }
+        },
+        {
+          id: 'year3',
+          [F.INDICATOR]: 'tests_total',
+          [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+          [F.YEAR]: '2019',
+          [F.AREA_NAME]: 'NULL',
+          [F.INDICATOR_DESCRIPTION]: 'all',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const resultMap = {}
+            R_SEXES.forEach(sex => {
+
+              [...R_ADULT_AGES, ALL_ADULTS].forEach(ageRange => {
+                const result = _.find(results, r => 
+                  r[F.SEX] === sex && r[F.AGE] === ageRange)
+                
+                resultMap[`${sex[0]}${ageRange}`] = result
+              })
+            })
+            return resultMap
+          }
+        },
+        {
+          id: 'year4',
+          [F.INDICATOR]: 'Den Age-Female Gte 15',
+          // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+          [F.YEAR]: '2019',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
+            const result = findPrioritizedResult({ results, dbHierarchy })
+            // if (results.length > 1) {
+            //   console.error('**LOOKOUT! Taking highest firstult.**')
+            //   console.log(results)
+            // }
+
+            return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+          }
+        },
+        {
+          id: 'year5',
+          [F.INDICATOR]: 'Den Age-Male Gte 15',
+          // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+          [F.YEAR]: '2019',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
+            const result = findPrioritizedResult({ results, dbHierarchy })
+            // if (results.length > 1) {
+            //   console.error('**LOOKOUT! Taking highest firstesult.**')
+            //   console.log(results)
+            // }
+
+            return { [`${MALE[0]}${ALL_ADULTS}`]: result }
+          }
+        },
+        {
+          id: 'year6',
+          [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
+          // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+          [F.YEAR]: '2019',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
+            const result = findPrioritizedResult({ results, dbHierarchy })
+            // if (results.length > 1) {
+            //   console.error('**LOOKOUT! Taking highest firstesult.**')
+            //   console.log(results)
+            // }
+
+            return { [`${FEMALE[0]}${ADULTS15}`]: result }
+          }
+        },
+        {
+          id: 'year7',
+          [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
+          // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+          [F.YEAR]: '2019',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
+            const result = findPrioritizedResult({ results, dbHierarchy })
+            // if (results.length > 1) {
+            //   console.error('**LOOKOUT! Taking first result.**')
+            //   console.log(results)
+            // }
+
+            return { [`${MALE[0]}${ADULTS15}`]: result }
+          }
+        },
+        {
+          id: 'year8',
+          [F.INDICATOR]: 'Women (15+) - Number of tests',
+          // [F.SOURCE_DATABASE]
+          [F.YEAR]: '2018',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const dbHierarchy = [SOURCE_DB_MAP.GAM, SOURCE_DB_MAP.NPD]
+            const result = findPrioritizedResult({ results, dbHierarchy })
+
+            return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+          }
+        },
+        {
+          id: 'year9',
+          [F.INDICATOR]: 'Men (15+) - Number of tests',
+          // [F.SOURCE_DATABASE]
+          [F.YEAR]: '2018',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const dbHierarchy = [SOURCE_DB_MAP.GAM, SOURCE_DB_MAP.NPD]
+            const result = findPrioritizedResult({ results, dbHierarchy })
+
+            return { [`${MALE[0]}${ALL_ADULTS}`]: result }
+          }
+        },
+        {
+          id: 'year10',
+          [F.INDICATOR]: 'Women (Tested in past year)',
+          // [F.SOURCE_DATABASE]
+          [F.YEAR]: '2018',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const {
+              PCOP19, PROP19, PCOP1718, PROP17,
+            } = SOURCE_DB_MAP
+            const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
+
+            const result = findPrioritizedResult({ results, dbHierarchy })
+
+            return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+          }
+        },
+        {
+          id: 'year11',
+          [F.INDICATOR]: 'Men (Tested in past year)',
+          // [F.SOURCE_DATABASE]
+          [F.YEAR]: '2018',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const {
+              PCOP19, PROP19, PCOP1718, PROP17,
+            } = SOURCE_DB_MAP
+            const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
+
+            const result = findPrioritizedResult({ results, dbHierarchy })
+
+            return { [`${MALE[0]}${ALL_ADULTS}`]: result }
+          }
+        },
+        {
+          id: 'year12',
+          [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
+          // [F.SOURCE_DATABASE]
+          [F.YEAR]: '2018',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const {
+              PCOP19, PROP19, PCOP1718, PROP17,
+            } = SOURCE_DB_MAP
+            const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
+
+            const result = findPrioritizedResult({ results, dbHierarchy })
+
+            return { [`${FEMALE[0]}${ADULTS15}`]: result }
+          }
+        },
+        {
+          id: 'year13',
+          [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
+          // [F.SOURCE_DATABASE]
+          [F.YEAR]: '2018',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            const {
+              PCOP19, PROP19, PCOP1718, PROP17,
+            } = SOURCE_DB_MAP
+            const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
+
+            const result = findPrioritizedResult({ results, dbHierarchy })
+
+            return { [`${MALE[0]}${ADULTS15}`]: result }
+          }
+        },
+        {
+          id: 'year14',
+          [F.INDICATOR]: 'Women (15+) Tested in Past Year',
+          // [F.SOURCE_DATABASE]
+          [F.YEAR]: '2018',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            if (results.length > 1) {
+              console.error('**LOOKOUT! Taking first result.**')
+              console.log(results)
+            }
+
+            return { [`${FEMALE[0]}${ADULTS15}`]: results[0] }
+          }
+        },
+        {
+          id: 'year15',
+          [F.INDICATOR]: 'Men (15+) Tested in Past Year',
+          // [F.SOURCE_DATABASE]
+          [F.YEAR]: '2018',
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+            if (results.length > 1) {
+              console.error('**LOOKOUT! Taking first result.**')
+              console.log(results)
+            }
+
+            return { [`${MALE[0]}${ADULTS15}`]: results[0] }
+          }
+        },
+      ],
+    // ]),
   }
 
   if (isShiny) {
@@ -1199,4 +1551,15 @@ const getIndicatorMap = (isShiny) => {
   return indicatorMap
 }
 
-export { CHARTS, FIELD_MAP, AGGREGATE_GETTER, R_2015_2019, getIndicatorMap }
+export {
+  CHARTS,
+  FIELD_MAP,
+  AGGREGATE_GETTER,
+  R_2015_2019,
+  R_ADULT_AGES,
+  ALL_ADULTS,
+  R_SEXES,
+  FEMALE,
+  MALE,
+  getIndicatorMap
+}

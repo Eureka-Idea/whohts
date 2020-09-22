@@ -1,7 +1,7 @@
 import colors, {femaleColor, maleColor, barChartAccent, barChartColorDark } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import { CHARTS, R_2015_2019, FIELD_MAP } from "../../constants/charts";
+import { CHARTS, R_2015_2019, R_ADULT_AGES, ALL_ADULTS, FIELD_MAP, FEMALE, MALE } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
 const uncertaintyTooltipFormat = `
@@ -88,25 +88,27 @@ const extractPrioritizedData = (data, indicatorIds, sourceCount, defaultValue=0)
   return result
 }
 
-const extractPrioritizedRangeData = (data, indicatorIds, sourceCount, indicatorYears) => {
+const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, indicatorRangeMap, mappedData=false, rangedField='year' }) => {
   const result = { missingIndicatorMap: {} }
   _.each(indicatorIds, ind => {
 
-    const range = indicatorYears[ind]
-    if (!range) {
-      console.error('No range provided for indicator: ', ind)
+    const ranges = indicatorRangeMap[ind]
+    if (!ranges) {
+      console.error('No ranges provided for indicator: ', ind)
       return
     }
 
-    result[ind] = _.map(range, (y, ri) => {
+    result[ind] = _.map(ranges, (range, ri) => {
 
       for (let i = 1; i <= sourceCount; i++) {
-        const indicatorResult = _.get(data, [ind+i, ri], null) // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
+        // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
+        const selector = mappedData ? range : ri
+        const indicatorResult = _.get(data, [ind+i, selector], null)
         if (indicatorResult) {
           return indicatorResult
         } else if (i === sourceCount) {
-          _.set(result.missingIndicatorMap, [ind, y], true)
-          return { value: 0, year: y, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
+          _.set(result.missingIndicatorMap, [ind, range], true)
+          return { value: 0, [rangedField]: range, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
         }
       }
 
@@ -194,13 +196,13 @@ const getPlhivSex = data => {
     plotOptions: { series: { pointStart: 2015 } }
   }
 
-  const femaleXYValues = _.compact(data.females).map(d => {
+  const femaleXYValues = _.compact(data.female).map(d => {
     return ({
       x: Number(d.year),
       y: d.value,
     })
   })
-  const maleXYValues = _.compact(data.males).map(d => {
+  const maleXYValues = _.compact(data.male).map(d => {
     return ({
       x: Number(d.year),
       y: d.value,
@@ -864,7 +866,9 @@ const getForecast = data => {
 
   const {
     distributed, demand, need, missingIndicatorMap
-  } = extractPrioritizedRangeData(data, indicatorIds, sources.length, indicatorYears)
+  } = extractPrioritizedRangeData(
+    { data, indicatorIds, sourceCount: sources.length, indicatorRangeMap: indicatorYears }
+  )
   const missingIndicators = Object.keys(missingIndicatorMap)
 
   // console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
@@ -1030,7 +1034,30 @@ const getPolicyTable = data => {
 }
 
 const getGroupsTable = data => {
-  
+  const { title } = CHARTS.GROUPS_TABLE
+
+  const sourceCount = 15
+  const indicatorRangeMap = {
+    year: _.flatMap([
+      [...R_ADULT_AGES, ALL_ADULTS].map(y => FEMALE[0] + y),
+      [...R_ADULT_AGES, ALL_ADULTS].map(y => MALE[0] + y)
+    ])
+  }
+  const indicatorIds = ['year']
+
+  const {
+    year, missingIndicatorMap
+  } = extractPrioritizedRangeData({ data, indicatorIds, sourceCount, indicatorRangeMap, mappedData: true, rangedField: 'demographic' })
+
+  const missingIndicators = Object.keys(missingIndicatorMap)
+
+  // console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
+  console.log('YEAR || ', year)
+  if (missingIndicators.length) {
+    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+  }
+
+  return {}
 }
 
 

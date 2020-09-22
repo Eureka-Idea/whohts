@@ -246,6 +246,7 @@ class Dashboard extends Component {
     
     const kp = this.getTable(CHARTS.KP_TABLE.id)
     const policy = this.getTable(CHARTS.POLICY_TABLE.id)
+    const groups = this.getTable(CHARTS.GROUPS_TABLE.id)
 
     return (
       <div className='dashboard'>
