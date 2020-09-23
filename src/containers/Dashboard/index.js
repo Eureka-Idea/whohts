@@ -284,6 +284,7 @@ class Dashboard extends Component {
 
             {kp}
             {policy}
+            {groups}
           </div>
 
           {/* <div className='row no-gutters'>

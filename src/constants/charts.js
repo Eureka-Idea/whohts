@@ -41,6 +41,13 @@ const ADULTS35 = '35-49'
 const ADULTS50 = '50-99'
 const R_ADULT_AGES = [ADULTS15, ADULTS25, ADULTS35, ADULTS50]
 const ALL_ADULTS = '15-99'
+const AGE_MAP = {
+  ADULTS15,
+  ADULTS25,
+  ADULTS35,
+  ADULTS50,
+  ALL_ADULTS,
+}
 
 const FEMALE = 'female'
 const MALE = 'male'
@@ -1097,7 +1104,7 @@ const getIndicatorMap = (isShiny) => {
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
             if (results.length > 1) {
-              console.error('**LOOKOUT! Taking first result.**')
+              console.error('**LOOKOUT! Taking first result for: * ', indId)
             }
             return results[0]
           }
@@ -1114,7 +1121,7 @@ const getIndicatorMap = (isShiny) => {
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
             if (results.length > 1) {
-              console.error('**LOOKOUT! Taking first result.**')
+              console.error('**LOOKOUT! Taking first result for: * ', indId)
             }
             return results[0]
           }
@@ -1131,7 +1138,7 @@ const getIndicatorMap = (isShiny) => {
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
             if (results.length > 1) {
-              console.error('**LOOKOUT! Taking first result.**')
+              console.error('**LOOKOUT! Taking first result for: * ', indId)
             }
             return results[0]
           }
@@ -1148,7 +1155,7 @@ const getIndicatorMap = (isShiny) => {
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
             if (results.length > 1) {
-              console.error('**LOOKOUT! Taking first result.**')
+              console.error('**LOOKOUT! Taking first result for: * ', indId)
             }
             return results[0]
           }
@@ -1169,7 +1176,7 @@ const getIndicatorMap = (isShiny) => {
             return C.FORECAST.indicatorYears[genericIndId].map(y => {
               const fResults = _.filter(results, r => r.year === y)
               if (results.length > 1) {
-                console.error('**LOOKOUT! Taking first result.**')
+                console.error('**LOOKOUT! Taking first result for: * ', indId)
               }
 
               return fResults[0]
@@ -1187,7 +1194,7 @@ const getIndicatorMap = (isShiny) => {
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
             if (results.length > 1) {
-              console.error('**LOOKOUT! Taking first result.**')
+              console.error('**LOOKOUT! Taking first result for: * ', indId)
             }
             return results[0]
           }
@@ -1201,7 +1208,7 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking first result for ', k)
+            console.error('**LOOKOUT! Taking first result for: ', k)
             console.log(results)
           }
 
@@ -1220,7 +1227,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1236,7 +1244,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1252,7 +1261,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1268,7 +1278,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1329,7 +1340,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1345,7 +1357,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1361,7 +1374,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1377,7 +1391,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1415,7 +1430,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1431,7 +1447,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1447,7 +1464,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1463,7 +1481,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1503,7 +1522,8 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
-            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.error('**LOOKOUT! Taking highest firstesult for: ')
+            console.log(results[0].indicator)
             console.log(results)
           }
 
@@ -1556,7 +1576,8 @@ const getIndicatorMap = (isShiny) => {
           const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
           const result = findPrioritizedResult({ results, dbHierarchy })
           // if (results.length > 1) {
-          //   console.error('**LOOKOUT! Taking highest firstesult.**')
+          //   console.error('**LOOKOUT! Taking highest firstesult for: ')
+          console.log(results[0].indicator)
           //   console.log(results)
           // }
 
@@ -1574,7 +1595,8 @@ const getIndicatorMap = (isShiny) => {
           const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
           const result = findPrioritizedResult({ results, dbHierarchy })
           // if (results.length > 1) {
-          //   console.error('**LOOKOUT! Taking highest firstesult.**')
+          //   console.error('**LOOKOUT! Taking highest firstesult for: ')
+          console.log(results[0].indicator)
           //   console.log(results)
           // }
 
@@ -1709,6 +1731,7 @@ const getIndicatorMap = (isShiny) => {
         getter: results => {
           if (results.length > 1) {
             console.error('**LOOKOUT! Taking first result.**')
+            console.log(results[0].value)
             console.log(results)
           }
 
@@ -1725,6 +1748,7 @@ const getIndicatorMap = (isShiny) => {
         getter: results => {
           if (results.length > 1) {
             console.error('**LOOKOUT! Taking first result.**')
+            console.log(results[0].value)
             console.log(results)
           }
 
@@ -1874,7 +1898,7 @@ export {
   AGGREGATE_GETTER,
   R_2015_2019,
   R_ADULT_AGES,
-  ALL_ADULTS,
+  AGE_MAP,
   R_SEXES,
   FEMALE,
   MALE,

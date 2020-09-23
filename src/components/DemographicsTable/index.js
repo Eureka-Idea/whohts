@@ -1,63 +1,140 @@
 import React, {Component} from 'react'
+import _ from 'lodash'
 import './styles.css'
 import Tooltip from '../Tooltip'
+import { AGE_MAP } from '../../constants/charts'
 
-const women = { display: 'Women (15+)', id: 'women', group: 'women' }
-const women15 = { display: 'Women (15-24)', id: 'women15', group: 'women' }
-const women25 = { display: 'Women (25-34)', id: 'women25', group: 'women' }
-const women35 = { display: 'Women (35-49)', id: 'women35', group: 'women' }
-const women50 = { display: 'Women (50+)', id: 'women50', group: 'women' }
-const men = { display: 'Men (15+)', id: 'men', group: 'men' }
-const men15 = { display: 'Men (15-24)', id: 'men15', group: 'men' }
-const men25 = { display: 'Men (25-34)', id: 'men25', group: 'men' }
-const men35 = { display: 'Men (35-49)', id: 'men35', group: 'men' }
-const men50 = { display: 'Men (50+)', id: 'men50', group: 'men' }
+const indicators = [
+  { 
+    id: 'plhiv',
+    displayName: 'Estimated number of PLHIV',
+  }, { 
+    id: 'undiagnosed',
+    displayName: 'Undiagnosed PLHIV',
+  }, { 
+    id: 'aware',
+    displayName: 'PLHIV who know status (%)',
+  }, { 
+    id: 'prev',
+    displayName: 'HIV prevalence',
+  }, { 
+    id: 'newly',
+    displayName: 'New HIV infections',
+  }, { 
+    id: 'year',
+    displayName: 'Tested in past year',
+  }, { 
+    id: 'ever',
+    displayName: 'Ever tested (%)'
+  }
+]
 
-const allWomen = [women, women15, women25, women35, women50]
-const allMen = [men, men15, men25, men35, men50]
-const groups = [...allWomen, ...allMen]
+const demos = [
+  {
+    id: `f${AGE_MAP.ALL_ADULTS}`,
+    display: 'Women (15+)',
+    group: 'women'
+  }, {
+    id: `f${AGE_MAP.ADULTS15}`,
+    display: 'Women (15-24)',
+    group: 'women'
+  }, {
+    id: `f${AGE_MAP.ADULTS25}`,
+    display: 'Women (25-34)',
+    group: 'women'
+  }, {
+    id: `f${AGE_MAP.ADULTS35}`,
+    display: 'Women (35-49)',
+    group: 'women'
+  }, {
+    id: `f${AGE_MAP.ADULTS50}`,
+    display: 'Women (50+)',
+    group: 'women'
+  }, {
+    id: `m${AGE_MAP.ALL_ADULTS}`,
+    display: 'Men (15+)',
+    group: 'men'
+  }, {
+    id: `m${AGE_MAP.ADULTS15}`,
+    display: 'Men (15-24)',
+    group: 'men'
+  }, {
+    id: `m${AGE_MAP.ADULTS25}`,
+    display: 'Men (25-34)',
+    group: 'men'
+  }, {
+    id: `m${AGE_MAP.ADULTS35}`,
+    display: 'Men (35-49)',
+    group: 'men'
+  }, {
+    id: `m${AGE_MAP.ADULTS50}`,
+    display: 'Men (50+)',
+    group: 'men'
+  }
+]
+
+const demoMap = _.mapKeys(demos, 'id')
+
+// const allWomen = [women, women15, women25, women35, women50]
+// const allMen = [men, men15, men25, men35, men50]
+// const groups = [...allWomen, ...allMen]
 
 class DemographicsTable extends Component {
   constructor(props) {
     super(props)
     
     console.log('MAD PROPS : ', props)
+    this.allWomen = []
+    this.allMen = []
+    this.everyone = []
+    props.config.includedDemographics.forEach(dem => {
+      const demObj = _.get(demoMap, dem)
+      if (!demObj) {
+        console.error('no demographic found for: ', dem)
+        return
+      }
+      this.everyone.push(demObj)
+      if (demObj.group === 'men') {
+        this.allMen.push(demObj)
+      } else {
+        this.allWomen.push(demObj)
+      }
+    })
     
     this.state = { }
     this.getTable = this.getTable.bind(this)
     this.getHiddenRows = this.getHiddenRows.bind(this)
   }
 
-  hideRow(gid) {
-    this.setState({ [gid]: true })
+  hideRow(demId) {
+    this.setState({ [demId]: true })
   }
-  unhideRow(gid) {
-    this.setState({ [gid]: false })
+  unhideRow(demId) {
+    this.setState({ [demId]: false })
   }
 
   toggleGroup(name) {
     const newState = {}
     if (name === 'hide-all') {
-      groups.forEach(g => newState[g.id] = true)
+      this.everyone.forEach(dem => newState[dem.id] = true)
     }
     if (name === 'show-all') {
-      groups.forEach(g => newState[g.id] = false)
+      this.everyone.forEach(dem => newState[dem.id] = false)
     }
     if (name === 'show-women') {
-      allWomen.forEach(g => newState[g.id] = false)
-      allMen.forEach(g => newState[g.id] = true)
+      this.allWomen.forEach(dem => newState[dem.id] = false)
+      this.allMen.forEach(dem => newState[dem.id] = true)
     }
     if (name === 'show-men') {
-      allMen.forEach(g => newState[g.id] = false)
-      allWomen.forEach(g => newState[g.id] = true)
+      this.allMen.forEach(dem => newState[dem.id] = false)
+      this.allWomen.forEach(dem => newState[dem.id] = true)
     }
 
     this.setState(newState)
   }
 
   getTable() {
-    const relevantGroups = this.props.shiny ? groups : [women, women15, men, men15]
-    const visibleGroups = relevantGroups.filter(g => !this.state[g.id])
+    const visibleGroups = this.everyone.filter(dem => !this.state[dem.id])
     if (!visibleGroups.length) {
       return (
         <div className='empty-table text-center'>
@@ -70,26 +147,25 @@ class DemographicsTable extends Component {
         <thead>
           <tr>
             <th scope='col'></th>
-            <th scope='col'>Estimated number of PLHIV</th>
-            <th scope='col'>Undiagnosed PLHIV</th>
-            <th scope='col'>PLHIV who know status (%)</th>
-            <th scope='col'>HIV prevalence</th>
-            <th scope='col'>New HIV infections</th>
-            <th scope='col'>Tested in past year</th>
-            <th scope='col'>Ever tested (%)</th>
+            {indicators.map(ind => (
+              <th scope='col' key={ind.id}>{ind.displayName}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {visibleGroups.map(g => (
-            <tr key={g.id} onClick={this.hideRow.bind(this, g.id)}>
-              <th scope='row'>{g.display}</th>
-              <td>{g.display.startsWith('Women') ? '910 000' : '530 000'}</td>
-              <td>{g.display.startsWith('Women') ? '54 600' : '63 600'}</td>
-              <td>{g.display.startsWith('Women') ? '94%' : '88%'}</td>
-              <td>{g.display.startsWith('Women') ? '6.1%' : '3.4%'}</td>
-              <td>{g.display.startsWith('Women') ? '24 000' : '14 000'}</td>
-              <td>{g.display.startsWith('Women') ? '7.4 million' : '3.9 million'}</td>
-              <td>{g.display.startsWith('Women') ? '28%' : '19%'}</td>
+          {visibleGroups.map(dem => (
+            <tr key={dem.id} onClick={this.hideRow.bind(this, dem.id)}>
+              <th scope='row'>{dem.display}</th>
+              
+              {indicators.map(({ id }) => {
+                const data = _.get(this.props.config, ['dataMap', dem.id, id], {})
+                const { value, valueUpper, valueLower, source } = data
+                const tooltip = `
+                Upper bound: ${valueUpper}
+                Lower bound: ${valueLower}
+                Source: ${source}`
+                return (<td title={tooltip} key={id}>{value}</td>)
+              })}
             </tr>
           ))}
         </tbody>
@@ -98,8 +174,7 @@ class DemographicsTable extends Component {
   }
 
   getHiddenRows() {
-    const relevantGroups = this.props.shiny ? groups : [women, women15, men, men15]
-    const hiddenGroups = relevantGroups.filter(g => this.state[g.id])
+    const hiddenGroups = this.everyone.filter(dem => this.state[dem.id])
     if (!hiddenGroups.length) {
       // return null
       // return (
@@ -127,12 +202,12 @@ class DemographicsTable extends Component {
       <div className='hidden-rows mt-3'>
         {title}
         <div className='rows'>
-          {hiddenGroups.map(g => (
+          {hiddenGroups.map(dem => (
             <span
-              key={g.id}
-              onClick={this.unhideRow.bind(this, g.id)}
-              className={`token hidden-row ${g.id}`}>
-              {g.display}
+              key={dem.id}
+              onClick={this.unhideRow.bind(this, dem.id)}
+              className={`token hidden-row ${dem.id}`}>
+              {dem.display}
             </span>
         ))}
         </div>

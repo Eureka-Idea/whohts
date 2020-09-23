@@ -1,7 +1,7 @@
 import colors, {femaleColor, maleColor, barChartAccent, barChartColorDark } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import { CHARTS, R_2015_2019, R_ADULT_AGES, ALL_ADULTS, FIELD_MAP, FEMALE, MALE } from "../../constants/charts";
+import { CHARTS, R_2015_2019, FIELD_MAP, AGE_MAP } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
 const uncertaintyTooltipFormat = `
@@ -1063,6 +1063,7 @@ const getGroupsTable = (data, shinyCountry) => {
     }
     return { value: ((1-awareVal) * plhivVal), source: 'calculated' }
   })
+  allData.undiagnosed = undiagnosed
   
   // console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
   console.log(
@@ -1080,14 +1081,15 @@ const getGroupsTable = (data, shinyCountry) => {
 
   const config = {
     title,
-    dataMap: {}
+    includedDemographics: indicatorRangeMap.ALL,
+    dataMap: {},
   }
 
-  _.each(indicatorRangeMap.ALL, dem => {
+  _.each(config.includedDemographics, dem => {
     const rowData = { demographic: dem }
     config.dataMap[dem] = rowData
     
-    indicatorIds.forEach(ind => {
+    _.each([...indicatorIds, 'undiagnosed'], ind => {
       const indDemoData = _.get(allData, [ind, dem], undefined)
       if (!indDemoData) {
         console.log('No group table data for ', ind, ' for ', dem)
