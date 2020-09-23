@@ -21,6 +21,8 @@ class DemographicsTable extends Component {
   constructor(props) {
     super(props)
     
+    console.log('MAD PROPS : ', props)
+    
     this.state = { }
     this.getTable = this.getTable.bind(this)
     this.getHiddenRows = this.getHiddenRows.bind(this)

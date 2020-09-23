@@ -34,17 +34,27 @@ const R_2018_2019 = [
 const R_2020_2025 = [
   '2020', '2021', '2022', '2023', '2024', '2025',
 ]
-// TODO: constify individual ages
+
 const ADULTS15 = '15-24'
 const ADULTS25 = '25-34'
 const ADULTS35 = '35-49'
 const ADULTS50 = '50-99'
 const R_ADULT_AGES = [ADULTS15, ADULTS25, ADULTS35, ADULTS50]
 const ALL_ADULTS = '15-99'
-// TODO: constify 
+
 const FEMALE = 'female'
 const MALE = 'male'
 const R_SEXES = [FEMALE, MALE]
+
+// ['f15-24', 'm15-24', 'f24-34' ... 'm15-99']
+const R_ALL_DEMO_GROUPS = _.flatMap(
+  [...R_ADULT_AGES, ALL_ADULTS].map(y => 
+  [FEMALE[0]+y, MALE[0]+y]
+))
+const R_LIMITED_DEMO_GROUPS = _.flatMap(
+  [ADULTS15, ALL_ADULTS].map(y => 
+  [FEMALE[0]+y, MALE[0]+y]
+))
 
 const SOURCE_DB_MAP = {
   S90: 'Shiny90',
@@ -73,6 +83,8 @@ const SOURCE_DB_MAP = {
   KP20: 'UNAIDS KP-Atlas 2020',
   UNGAM20: 'UNAIDS Global AIDS Monitoring 2020',
   TGF: 'The Global Fund',
+  
+  SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
 }
 
 const FIELD_MAP = {
@@ -651,45 +663,45 @@ const kpTGF = {
   }
 }
 
-const groupsGAM20 = {
-  id: 'GAM20',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
-      [F.VALUE_COMMENT]: 'validated',
-    }
-  },
-  indicators: {
-    year: 'Den Age-Female Gte 15'
-  }
-}
-const groupsS90 = {
-  id: 'S90',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-      [F.YEAR]: '2019',
-    }
-  },
-  indicators: {
-    year: 'tests_total'
-  },
-  indicatorAges: {
-    year: 'ALL'
-  }
-}
-const groupsPCOP20 = {
-  id: 'PCOP20',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-    }
-  },
-  indicators: {
-    year: 'Den Age-Female Gte 15',
-    year: 'Women 15-24 (Tested in past year)',
-  }
-}
+// const groupsGAM20 = {
+//   id: 'GAM20',
+//   filters: {
+//     ALL: {
+//       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+//       [F.VALUE_COMMENT]: 'validated',
+//     }
+//   },
+//   indicators: {
+//     year: 'Den Age-Female Gte 15'
+//   }
+// }
+// const groupsS90 = {
+//   id: 'S90',
+//   filters: {
+//     ALL: {
+//       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+//       [F.YEAR]: '2019',
+//     }
+//   },
+//   indicators: {
+//     year: 'tests_total'
+//   },
+//   indicatorAges: {
+//     year: 'ALL'
+//   }
+// }
+// const groupsPCOP20 = {
+//   id: 'PCOP20',
+//   filters: {
+//     ALL: {
+//       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+//     }
+//   },
+//   indicators: {
+//     year: 'Den Age-Female Gte 15',
+//     year: 'Women 15-24 (Tested in past year)',
+//   }
+// }
 
 
 const CHARTS = {
@@ -878,29 +890,54 @@ const CHARTS = {
   GROUPS_TABLE: {
     title: 'Population Groups',
     id: 'GROUPS_TABLE',
-    sources: [],
+    // sources: [],
     indicatorIds: [
-      'plhiv', 'undiagnosed', 'aware', 'prev', 'new', 'year', 'ever',
-      // 'w15Plhiv', 'w15Undiagnosed', 'w15Aware', 'w15Prev', 'w15New', 'w15Year', 'w15Ever',
-      // 'w15_24Plhiv', 'w15_24Undiagnosed', 'w15_24Aware', 'w15_24Prev', 'w15_24New', 'w15_24Year', 'w15_24Ever',
-      // 'w25_34Plhiv', 'w25_34Undiagnosed', 'w25_34Aware', 'w25_34Prev', 'w25_34New', 'w25_34Year', 'w25_34Ever',
-      // 'w35_49Plhiv', 'w35_49Undiagnosed', 'w35_49Aware', 'w35_49Prev', 'w35_49New', 'w35_49Year', 'w35_49Ever',
-      // 'w50Plhiv', 'w50Undiagnosed', 'w50Aware', 'w50Prev', 'w50New', 'w50Year', 'w50Ever',
-      // 'm15Plhiv', 'm15Undiagnosed', 'm15Aware', 'm15Prev', 'm15New', 'm15Year', 'm15Ever',
-      // 'm15_24Plhiv', 'm15_24Undiagnosed', 'm15_24Aware', 'm15_24Prev', 'm15_24New', 'm15_24Year', 'm15_24Ever',
-      // 'm25_34Plhiv', 'm25_34Undiagnosed', 'm25_34Aware', 'm25_34Prev', 'm25_34New', 'm25_34Year', 'm25_34Ever',
-      // 'm35_49Plhiv', 'm35_49Undiagnosed', 'm35_49Aware', 'm35_49Prev', 'm35_49New', 'm35_49Year', 'm35_49Ever',
-      // 'm50Plhiv', 'm50Undiagnosed', 'm50Aware', 'm50Prev', 'm50New', 'm50Year', 'm50Ever',
+      'plhiv', 'aware', 'prev', 'newly', 'year', 'ever',
     ],
-    indicatorSourceDbMap: {
-      // 
+    sourceCountMap: {
+      plhiv: 4,
+      aware: 2,
+      prev: 5,
+      newly: 4,
+      year: 15,
+      ever: 1,
     },
-    indicatorAges: {
-      // all the same
+    // calculatedIndicatorIds: ['undiagnosed'],
+    indicatorDemographics: {
+      ALL: R_ALL_DEMO_GROUPS
+    },
+    indicatorDemographicsNoShiny: {
+      ALL: R_LIMITED_DEMO_GROUPS
     }
+    // indicator query objects spelled out manually, given their complexity
+    // indicatorSourceDbMap: {
+    // }
   },
 }
 const C = CHARTS
+
+/*
+New HIV Infections - female adults (aged 15+)
+New HIV Infections - females aged 10-19
+New HIV Infections - females aged 15-24
+New HIV Infections - females aged 50+
+New HIV Infections - male adults (aged 15+)
+New HIV Infections - males aged 10-19
+New HIV Infections - males aged 15-24
+New HIV Infections - males aged 50+
+New HIV Infections - people aged 10-19
+New HIV Infections - people aged 15-24
+New HIV Infections - people aged 50+
+
+People living with HIV - female adults (aged 15+)
+People living with HIV - females aged 10-19
+People living with HIV - females aged 15-24
+People living with HIV - females aged 50+
+People living with HIV - male adults (aged 15+)
+People living with HIV - males aged 10-19
+People living with HIV - males aged 15-24
+People living with HIV - males aged 50+
+*/
 
 // this map specifies which records need to be pulled to cover the indicators relevant to each chart
 const getIndicatorMap = (isShiny) => {
@@ -1172,271 +1209,551 @@ const getIndicatorMap = (isShiny) => {
         }
       }
     )),
-    [C.GROUPS_TABLE.id]: //_.flatMap([
-      // ___ 
-      [
-        {
-          id: 'year1',
-          [F.INDICATOR]: 'Den Age-Female Gte 15',
-          [F.VALUE_COMMENT]: 'validated',
-          [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
-          [F.YEAR]: '2019',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            if (results.length > 1) {
-              console.error('**LOOKOUT! Taking highest firstesult.**')
-              console.log(results)
-            }
-
-            return { [`${FEMALE[0]}${ADULTS15}`]: results[0] }
+    [C.GROUPS_TABLE.id]: [
+      // ESTIMATED NUMBER OF PLHIV
+      {
+        id: 'plhiv1',
+        [F.INDICATOR]: 'People living with HIV - female adults (aged 15+)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year2',
-          [F.INDICATOR]: 'Den Age-Male Gte 15',
-          [F.VALUE_COMMENT]: 'validated',
-          [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
-          [F.YEAR]: '2019',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            if (results.length > 1) {
-              console.error('**LOOKOUT! Taking first result.**')
-              console.log(results)
-            }
 
-            return { [`${MALE[0]}${ADULTS15}`]: results[0] }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: results[0] }
+        }
+      },
+      {
+        id: 'plhiv2',
+        [F.INDICATOR]: 'People living with HIV - females aged 15-24',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year3',
-          [F.INDICATOR]: 'tests_total',
-          [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-          [F.YEAR]: '2019',
-          [F.AREA_NAME]: 'NULL',
-          [F.INDICATOR_DESCRIPTION]: 'all',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const resultMap = {}
-            R_SEXES.forEach(sex => {
 
-              [...R_ADULT_AGES, ALL_ADULTS].forEach(ageRange => {
-                const result = _.find(results, r => 
-                  r[F.SEX] === sex && r[F.AGE] === ageRange)
-                
-                resultMap[`${sex[0]}${ageRange}`] = result
-              })
+          return { [`${FEMALE[0]}${ADULTS15}`]: results[0] }
+        }
+      },
+      {
+        id: 'plhiv3',
+        [F.INDICATOR]: 'People living with HIV - male adults (aged 15+)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
+          }
+
+          return { [`${MALE[0]}${ALL_ADULTS}`]: results[0] }
+        }
+      },
+      {
+        id: 'plhiv4',
+        [F.INDICATOR]: 'People living with HIV - males aged 15-24',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
+          }
+
+          return { [`${MALE[0]}${ADULTS15}`]: results[0] }
+        }
+      },
+      // [ UNDIAGNOSED PLHIV = (1 - PLHIV WHO KNOW STATUS) * ESTIMATED # PLHIV]
+      // PLHIV WHO KNOW STATUS (%)
+      {
+        id: 'aware1',
+        [F.INDICATOR]: 'Percent of people living with HIV who know their status',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const resultMap = {}
+
+          _.each(['Females', 'Males'], sex => {
+            const fResults = _.filter(results, r =>
+              r[F.SEX] === sex && r[F.AGE] === '15+')
+
+            resultMap[`${sex[0].toLowerCase()}${ALL_ADULTS}`] = _.maxBy(fResults, 'year')
+          })
+
+          return resultMap
+        }
+      },
+      {
+        id: 'aware2',
+        [F.INDICATOR]: 'aware',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.INDICATOR_DESCRIPTION]: 'positive',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const resultMap = {}
+          R_SEXES.forEach(sex => {
+
+            [...R_ADULT_AGES, ALL_ADULTS].forEach(ageRange => {
+              const result = _.find(results, r =>
+                r[F.SEX] === sex && r[F.AGE] === ageRange)
+
+              resultMap[`${sex[0]}${ageRange}`] = result
             })
-            return resultMap
+          })
+          return resultMap
+        }
+      },
+      // HIV PREVALENCE
+      {
+        id: 'prev1',
+        [F.INDICATOR]: 'HIV Prevalence - young women (15-24)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year4',
-          [F.INDICATOR]: 'Den Age-Female Gte 15',
-          // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-          [F.YEAR]: '2019',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
-            const result = findPrioritizedResult({ results, dbHierarchy })
-            // if (results.length > 1) {
-            //   console.error('**LOOKOUT! Taking highest firstult.**')
-            //   console.log(results)
-            // }
 
-            return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+          return { [`${FEMALE[0]}${ADULTS15}`]: results[0] }
+        }
+      },
+      {
+        id: 'prev2',
+        [F.INDICATOR]: 'HIV Prevalence - young men (15-24)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year5',
-          [F.INDICATOR]: 'Den Age-Male Gte 15',
-          // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-          [F.YEAR]: '2019',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
-            const result = findPrioritizedResult({ results, dbHierarchy })
-            // if (results.length > 1) {
-            //   console.error('**LOOKOUT! Taking highest firstesult.**')
-            //   console.log(results)
-            // }
 
-            return { [`${MALE[0]}${ALL_ADULTS}`]: result }
+          return { [`${MALE[0]}${ADULTS15}`]: results[0] }
+        }
+      },
+      {
+        id: 'prev3',
+        [F.INDICATOR]: 'HIV Prevalence - female adults (15-49)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year6',
-          [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
-          // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-          [F.YEAR]: '2019',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
-            const result = findPrioritizedResult({ results, dbHierarchy })
-            // if (results.length > 1) {
-            //   console.error('**LOOKOUT! Taking highest firstesult.**')
-            //   console.log(results)
-            // }
 
-            return { [`${FEMALE[0]}${ADULTS15}`]: result }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: results[0] }
+        }
+      },
+      {
+        id: 'prev4',
+        [F.INDICATOR]: 'HIV Prevalence - male adults (15-49)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year7',
-          [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
-          // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-          [F.YEAR]: '2019',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
-            const result = findPrioritizedResult({ results, dbHierarchy })
-            // if (results.length > 1) {
-            //   console.error('**LOOKOUT! Taking first result.**')
-            //   console.log(results)
-            // }
 
-            return { [`${MALE[0]}${ADULTS15}`]: result }
+          return { [`${MALE[0]}${ALL_ADULTS}`]: results[0] }
+        }
+      },
+      {
+        id: 'prev5',
+        [F.INDICATOR]: 'prev',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const resultMap = {}
+          R_SEXES.forEach(sex => {
+
+            [...R_ADULT_AGES, ALL_ADULTS].forEach(ageRange => {
+              const result = _.find(results, r =>
+                r[F.SEX] === sex && r[F.AGE] === ageRange)
+
+              resultMap[`${sex[0]}${ageRange}`] = result
+            })
+          })
+          return resultMap
+        }
+      },
+      // NEW HIV INFECTIONS
+      {
+        id: 'newly1',
+        [F.INDICATOR]: 'New HIV Infections - female adults (aged 15+)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year8',
-          [F.INDICATOR]: 'Women (15+) - Number of tests',
-          // [F.SOURCE_DATABASE]
-          [F.YEAR]: '2018',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const dbHierarchy = [SOURCE_DB_MAP.GAM, SOURCE_DB_MAP.NPD]
-            const result = findPrioritizedResult({ results, dbHierarchy })
 
-            return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: results[0] }
+        }
+      },
+      {
+        id: 'newly2',
+        [F.INDICATOR]: 'New HIV Infections - females aged 15-24',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year9',
-          [F.INDICATOR]: 'Men (15+) - Number of tests',
-          // [F.SOURCE_DATABASE]
-          [F.YEAR]: '2018',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const dbHierarchy = [SOURCE_DB_MAP.GAM, SOURCE_DB_MAP.NPD]
-            const result = findPrioritizedResult({ results, dbHierarchy })
 
-            return { [`${MALE[0]}${ALL_ADULTS}`]: result }
+          return { [`${FEMALE[0]}${ADULTS15}`]: results[0] }
+        }
+      },
+      {
+        id: 'newly3',
+        [F.INDICATOR]: 'New HIV Infections - male adults (aged 15+)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year10',
-          [F.INDICATOR]: 'Women (Tested in past year)',
-          // [F.SOURCE_DATABASE]
-          [F.YEAR]: '2018',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const {
-              PCOP19, PROP19, PCOP1718, PROP17,
-            } = SOURCE_DB_MAP
-            const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
 
-            const result = findPrioritizedResult({ results, dbHierarchy })
-
-            return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+          return { [`${MALE[0]}${ALL_ADULTS}`]: results[0] }
+        }
+      },
+      {
+        id: 'newly4',
+        [F.INDICATOR]: 'New HIV Infections - males aged 15-24',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year11',
-          [F.INDICATOR]: 'Men (Tested in past year)',
-          // [F.SOURCE_DATABASE]
-          [F.YEAR]: '2018',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const {
-              PCOP19, PROP19, PCOP1718, PROP17,
-            } = SOURCE_DB_MAP
-            const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
 
-            const result = findPrioritizedResult({ results, dbHierarchy })
+          return { [`${MALE[0]}${ADULTS15}`]: results[0] }
+        }
+      },
+      // TESTED IN PAST YEAR
+      {
+        id: 'year1',
+        [F.INDICATOR]: 'tests_total',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.INDICATOR_DESCRIPTION]: 'all',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const resultMap = {}
+          R_SEXES.forEach(sex => {
 
-            return { [`${MALE[0]}${ALL_ADULTS}`]: result }
+            [...R_ADULT_AGES, ALL_ADULTS].forEach(ageRange => {
+              const result = _.find(results, r =>
+                r[F.SEX] === sex && r[F.AGE] === ageRange)
+
+              resultMap[`${sex[0]}${ageRange}`] = result
+            })
+          })
+          return resultMap
+        }
+      },
+      {
+        id: 'year2',
+        [F.INDICATOR]: 'Den Age-Female Gte 15',
+        [F.VALUE_COMMENT]: 'validated',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+        [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking highest firstesult.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year12',
-          [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
-          // [F.SOURCE_DATABASE]
-          [F.YEAR]: '2018',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const {
-              PCOP19, PROP19, PCOP1718, PROP17,
-            } = SOURCE_DB_MAP
-            const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
 
-            const result = findPrioritizedResult({ results, dbHierarchy })
-
-            return { [`${FEMALE[0]}${ADULTS15}`]: result }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: results[0] }
+        }
+      },
+      {
+        id: 'year3',
+        [F.INDICATOR]: 'Den Age-Male Gte 15',
+        [F.VALUE_COMMENT]: 'validated',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+        [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking first result.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year13',
-          [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
-          // [F.SOURCE_DATABASE]
-          [F.YEAR]: '2018',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            const {
-              PCOP19, PROP19, PCOP1718, PROP17,
-            } = SOURCE_DB_MAP
-            const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
 
-            const result = findPrioritizedResult({ results, dbHierarchy })
+          return { [`${MALE[0]}${ALL_ADULTS}`]: results[0] }
+        }
+      },
+      {
+        id: 'year4',
+        [F.INDICATOR]: 'Den Age-Female Gte 15',
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+        [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
+          const result = findPrioritizedResult({ results, dbHierarchy })
+          // if (results.length > 1) {
+          //   console.error('**LOOKOUT! Taking highest firstult.**')
+          //   console.log(results)
+          // }
 
-            return { [`${MALE[0]}${ADULTS15}`]: result }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+        }
+      },
+      {
+        id: 'year5',
+        [F.INDICATOR]: 'Den Age-Male Gte 15',
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+        [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
+          const result = findPrioritizedResult({ results, dbHierarchy })
+          // if (results.length > 1) {
+          //   console.error('**LOOKOUT! Taking highest firstesult.**')
+          //   console.log(results)
+          // }
+
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
+        }
+      },
+      {
+        id: 'year6',
+        [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+        [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
+          const result = findPrioritizedResult({ results, dbHierarchy })
+          // if (results.length > 1) {
+          //   console.error('**LOOKOUT! Taking highest firstesult.**')
+          //   console.log(results)
+          // }
+
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
+        }
+      },
+      {
+        id: 'year7',
+        [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+        [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
+          const result = findPrioritizedResult({ results, dbHierarchy })
+          // if (results.length > 1) {
+          //   console.error('**LOOKOUT! Taking first result.**')
+          //   console.log(results)
+          // }
+
+          return { [`${MALE[0]}${ADULTS15}`]: result }
+        }
+      },
+      {
+        id: 'year8',
+        [F.INDICATOR]: 'Women (15+) - Number of tests',
+        // [F.SOURCE_DATABASE]
+        [F.YEAR]: '2018',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const dbHierarchy = [SOURCE_DB_MAP.GAM, SOURCE_DB_MAP.NPD]
+          const result = findPrioritizedResult({ results, dbHierarchy })
+
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+        }
+      },
+      {
+        id: 'year9',
+        [F.INDICATOR]: 'Men (15+) - Number of tests',
+        // [F.SOURCE_DATABASE]
+        [F.YEAR]: '2018',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const dbHierarchy = [SOURCE_DB_MAP.GAM, SOURCE_DB_MAP.NPD]
+          const result = findPrioritizedResult({ results, dbHierarchy })
+
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
+        }
+      },
+      {
+        id: 'year10',
+        [F.INDICATOR]: 'Women (Tested in past year)',
+        // [F.SOURCE_DATABASE]
+        [F.YEAR]: '2018',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const {
+            PCOP19, PROP19, PCOP1718, PROP17,
+          } = SOURCE_DB_MAP
+          const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
+
+          const result = findPrioritizedResult({ results, dbHierarchy })
+
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+        }
+      },
+      {
+        id: 'year11',
+        [F.INDICATOR]: 'Men (Tested in past year)',
+        // [F.SOURCE_DATABASE]
+        [F.YEAR]: '2018',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const {
+            PCOP19, PROP19, PCOP1718, PROP17,
+          } = SOURCE_DB_MAP
+          const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
+
+          const result = findPrioritizedResult({ results, dbHierarchy })
+
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
+        }
+      },
+      {
+        id: 'year12',
+        [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
+        // [F.SOURCE_DATABASE]
+        [F.YEAR]: '2018',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const {
+            PCOP19, PROP19, PCOP1718, PROP17,
+          } = SOURCE_DB_MAP
+          const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
+
+          const result = findPrioritizedResult({ results, dbHierarchy })
+
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
+        }
+      },
+      {
+        id: 'year13',
+        [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
+        // [F.SOURCE_DATABASE]
+        [F.YEAR]: '2018',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const {
+            PCOP19, PROP19, PCOP1718, PROP17,
+          } = SOURCE_DB_MAP
+          const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
+
+          const result = findPrioritizedResult({ results, dbHierarchy })
+
+          return { [`${MALE[0]}${ADULTS15}`]: result }
+        }
+      },
+      {
+        id: 'year14',
+        [F.INDICATOR]: 'Women (15+) Tested in Past Year',
+        // [F.SOURCE_DATABASE]
+        [F.YEAR]: '2018',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking first result.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year14',
-          [F.INDICATOR]: 'Women (15+) Tested in Past Year',
-          // [F.SOURCE_DATABASE]
-          [F.YEAR]: '2018',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            if (results.length > 1) {
-              console.error('**LOOKOUT! Taking first result.**')
-              console.log(results)
-            }
 
-            return { [`${FEMALE[0]}${ADULTS15}`]: results[0] }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: results[0] }
+        }
+      },
+      {
+        id: 'year15',
+        [F.INDICATOR]: 'Men (15+) Tested in Past Year',
+        // [F.SOURCE_DATABASE]
+        [F.YEAR]: '2018',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1) {
+            console.error('**LOOKOUT! Taking first result.**')
+            console.log(results)
           }
-        },
-        {
-          id: 'year15',
-          [F.INDICATOR]: 'Men (15+) Tested in Past Year',
-          // [F.SOURCE_DATABASE]
-          [F.YEAR]: '2018',
-          [F.AREA_NAME]: 'NULL',
-          [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-            if (results.length > 1) {
-              console.error('**LOOKOUT! Taking first result.**')
-              console.log(results)
-            }
 
-            return { [`${MALE[0]}${ADULTS15}`]: results[0] }
-          }
-        },
-      ],
-    // ]),
+          return { [`${MALE[0]}${ALL_ADULTS}`]: results[0] }
+        }
+      },
+      // EVER TESTED (%)
+      {
+        id: 'ever1',
+        [F.INDICATOR]: 'evertest',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const resultMap = {}
+          R_SEXES.forEach(sex => {
+
+            [...R_ADULT_AGES, ALL_ADULTS].forEach(ageRange => {
+              const result = _.find(results, r =>
+                r[F.SEX] === sex && r[F.AGE] === ageRange)
+
+              resultMap[`${sex[0]}${ageRange}`] = result
+            })
+          })
+          return resultMap
+        }
+      },
+    ],
   }
 
   if (isShiny) {

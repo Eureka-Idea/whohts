@@ -153,7 +153,10 @@ class Dashboard extends Component {
       return
     }
 
-    let config = getConfig(id, this.props.chartData)
+    const countryCode = _.get(this, 'props.match.params.countryCode')
+    const shinyCountry = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'])
+
+    let config = getConfig(id, this.props.chartData, shinyCountry)
     if (!config) {
       console.error(`${id} failed to produce a config.`)
       return // TODO do we want to produce blank table?

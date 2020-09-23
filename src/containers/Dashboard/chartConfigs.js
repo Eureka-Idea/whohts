@@ -88,25 +88,28 @@ const extractPrioritizedData = (data, indicatorIds, sourceCount, defaultValue=0)
   return result
 }
 
-const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, indicatorRangeMap, mappedData=false, rangedField='year' }) => {
+const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCountMap, indicatorRangeMap, mappedData=false, rangedField='year' }) => {
   const result = { missingIndicatorMap: {} }
   _.each(indicatorIds, ind => {
 
-    const ranges = indicatorRangeMap[ind]
+    let ranges = indicatorRangeMap[ind] || indicatorRangeMap.ALL
     if (!ranges) {
       console.error('No ranges provided for indicator: ', ind)
       return
     }
+    ranges = mappedData ? _.mapKeys(ranges) : ranges
+    const mapper = mappedData ? _.mapValues : _.map
 
-    result[ind] = _.map(ranges, (range, ri) => {
+    result[ind] = mapper(ranges, (range, ri) => {
+      const count = sourceCountMap[ind] || sourceCount
 
-      for (let i = 1; i <= sourceCount; i++) {
+      for (let i = 1; i <= count; i++) {
         // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
         const selector = mappedData ? range : ri
         const indicatorResult = _.get(data, [ind+i, selector], null)
         if (indicatorResult) {
           return indicatorResult
-        } else if (i === sourceCount) {
+        } else if (i === count) {
           _.set(result.missingIndicatorMap, [ind, range], true)
           return { value: 0, [rangedField]: range, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
         }
@@ -1033,31 +1036,78 @@ const getPolicyTable = data => {
   return config
 }
 
-const getGroupsTable = data => {
-  const { title } = CHARTS.GROUPS_TABLE
+const getGroupsTable = (data, shinyCountry) => {
+  const { title, indicatorIds, indicatorDemographics, indicatorDemographicsNoShiny, sourceCountMap } = CHARTS.GROUPS_TABLE
 
-  const sourceCount = 15
-  const indicatorRangeMap = {
-    year: _.flatMap([
-      [...R_ADULT_AGES, ALL_ADULTS].map(y => FEMALE[0] + y),
-      [...R_ADULT_AGES, ALL_ADULTS].map(y => MALE[0] + y)
-    ])
-  }
-  const indicatorIds = ['year']
+  const indicatorRangeMap = shinyCountry ?
+    indicatorDemographics : indicatorDemographicsNoShiny
 
-  const {
-    year, missingIndicatorMap
-  } = extractPrioritizedRangeData({ data, indicatorIds, sourceCount, indicatorRangeMap, mappedData: true, rangedField: 'demographic' })
+  // const indicatorIds = ['year']
 
-  const missingIndicators = Object.keys(missingIndicatorMap)
+  const allData = extractPrioritizedRangeData({
+    data,
+    indicatorIds,
+    sourceCountMap,
+    indicatorRangeMap,
+    mappedData: true,
+    rangedField: 'demo'
+  })
 
+  const missingIndicators = Object.keys(allData.missingIndicatorMap)
+
+  const undiagnosed = _.mapValues(allData.aware, (v, dem) => {
+    const awareVal = _.get(allData, ['aware', dem, 'value'], undefined)
+    const plhivVal = _.get(allData, ['plhiv', dem, 'value'], undefined)
+    if (!awareVal || !plhivVal) {
+      return { value: undefined }
+    }
+    return { value: ((1-awareVal) * plhivVal), source: 'calculated' }
+  })
+  
   // console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
-  console.log('YEAR || ', year)
+  console.log(
+    // '\nPLHIV || ', allData.plhiv,
+    // '\nAWARE || ', allData.aware,
+    // '\nPREV || ', allData.prev,
+    // '\nNEWLY || ', allData.newly,
+    // '\nYEAR || ', allData.year,
+    // '\nEVER || ', allData.ever,
+    )
+
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
 
-  return {}
+  const config = {
+    title,
+    dataMap: {}
+  }
+
+  _.each(indicatorRangeMap.ALL, dem => {
+    const rowData = { demographic: dem }
+    config.dataMap[dem] = rowData
+    
+    indicatorIds.forEach(ind => {
+      const indDemoData = _.get(allData, [ind, dem], undefined)
+      if (!indDemoData) {
+        console.log('No group table data for ', ind, ' for ', dem)
+        return
+      }
+      const {
+        [FIELD_MAP.VALUE]: value,
+        [FIELD_MAP.VALUE_LOWER]: valueLower,
+        [FIELD_MAP.VALUE_UPPER]: valueUpper,
+        [FIELD_MAP.SOURCE_DATABASE]: source
+      } = indDemoData
+
+      rowData[ind] = {
+        value, valueLower, valueUpper, source
+      }
+    })
+  })
+
+  console.log('POP_CONFIG: ', config)
+  return config
 }
 
 
