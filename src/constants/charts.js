@@ -1902,5 +1902,6 @@ export {
   R_SEXES,
   FEMALE,
   MALE,
+  SOURCE_DB_MAP,
   getIndicatorMap
 }

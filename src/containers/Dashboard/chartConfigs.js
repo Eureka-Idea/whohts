@@ -1,7 +1,7 @@
 import colors, {femaleColor, maleColor, barChartAccent, barChartColorDark } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import { CHARTS, R_2015_2019, FIELD_MAP, AGE_MAP } from "../../constants/charts";
+import { CHARTS, R_2015_2019, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
 const uncertaintyTooltipFormat = `
@@ -1056,11 +1056,24 @@ const getGroupsTable = (data, shinyCountry) => {
   const missingIndicators = Object.keys(allData.missingIndicatorMap)
 
   const undiagnosed = _.mapValues(allData.aware, (v, dem) => {
-    const awareVal = _.get(allData, ['aware', dem, 'value'], undefined)
-    const plhivVal = _.get(allData, ['plhiv', dem, 'value'], undefined)
+    let { 
+      value: awareVal,
+      source: awareSource
+    } = _.get(allData, ['aware', dem], {})
+
+    let { 
+      value: plhivVal,
+      source: plhivSource
+    } = _.get(allData, ['plhiv', dem], {})
+
     if (!awareVal || !plhivVal) {
       return { value: undefined }
     }
+
+    if (awareSource === SOURCE_DB_MAP.SPEC20.id) {
+      awareVal/=100
+    }
+    
     return { value: ((1-awareVal) * plhivVal), source: 'calculated' }
   })
   allData.undiagnosed = undiagnosed
@@ -1095,15 +1108,34 @@ const getGroupsTable = (data, shinyCountry) => {
         console.log('No group table data for ', ind, ' for ', dem)
         return
       }
-      const {
+      let {
         [FIELD_MAP.VALUE]: value,
         [FIELD_MAP.VALUE_LOWER]: valueLower,
         [FIELD_MAP.VALUE_UPPER]: valueUpper,
         [FIELD_MAP.SOURCE_DATABASE]: source
       } = indDemoData
+      const vMap = { value, valueLower, valueUpper }
 
+      rowData[ind] = {}
+      _.each(['value', 'valueLower', 'valueUpper'], vId => {
+        let v = vMap[vId]
+        if (_.isNumber(v)) {
+          if (ind === 'aware' && source === SOURCE_DB_MAP.SPEC20.id) {
+            v = v/100
+          }
+          const percentages = ['aware', 'prev', 'ever']
+          if (percentages.includes(ind)) {
+            v = _.round(v * 100)+'%'
+          } else {
+            v = _.round(v)
+          }
+          vMap[vId] = v
+        }
+      })
+
+      
       rowData[ind] = {
-        value, valueLower, valueUpper, source
+        source, ...vMap
       }
     })
   })
