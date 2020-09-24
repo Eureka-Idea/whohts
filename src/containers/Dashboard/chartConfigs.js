@@ -88,7 +88,7 @@ const extractPrioritizedData = (data, indicatorIds, sourceCount, defaultValue=0)
   return result
 }
 
-const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCountMap, indicatorRangeMap, mappedData=false, rangedField='year' }) => {
+const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCountMap={}, indicatorRangeMap, mappedData=false, rangedField='year' }) => {
   const result = { missingIndicatorMap: {} }
   _.each(indicatorIds, ind => {
 
@@ -151,9 +151,9 @@ const getPlhivDiagnosis = data => {
   R_2015_2019.forEach((y, i) => {
     // TODO: calc uci/lci
     // const onArtValue = _.get(yearRecord, 'median.value')
-    const onArtValue = _.get(data, ['onArt', i, 'median', 'value'], null)
-    const plhivValue = _.get(data, ['plhiv', i, 'median', 'value'])
-    const knowValue = _.get(data, ['know', i, 'median', 'value'])
+    const onArtValue = _.get(data, ['onArt', i, 'value'], null)
+    const plhivValue = _.get(data, ['plhiv', i, 'value'])
+    const knowValue = _.get(data, ['know', i, 'value'])
 
     const undiagnosedValue = (plhivValue - knowValue) || null
     const notArtValue = (plhivValue - onArtValue) || null
@@ -199,13 +199,14 @@ const getPlhivSex = data => {
     plotOptions: { series: { pointStart: 2015 } }
   }
 
-  const femaleXYValues = _.compact(data.female).map(d => {
+  // TODO: standardize
+  const femaleXYValues = data.Females.map(d => {
     return ({
       x: Number(d.year),
       y: d.value,
     })
   })
-  const maleXYValues = _.compact(data.male).map(d => {
+  const maleXYValues = data.Males.map(d => {
     return ({
       x: Number(d.year),
       y: d.value,
@@ -240,22 +241,22 @@ const getPlhivAge = data => {
 
   const d15 = data['15-24'] || Array(5).fill(null)
   const d15Values = d15.map(d => {
-    const v = _.get(d, 'median.value')
+    const v = _.get(d, [FIELD_MAP.VALUE])
     return v ? v * 100 : null
   })
   const d25 = data['25-34'] || Array(5).fill(null)
   const d25Values = d25.map(d => {
-    const v = _.get(d, 'median.value')
+    const v = _.get(d, [FIELD_MAP.VALUE])
     return v ? v * 100 : null
   })
   const d35 = data['35-49'] || Array(5).fill(null)
   const d35Values = d35.map(d => {
-    const v = _.get(d, 'median.value')
+    const v = _.get(d, [FIELD_MAP.VALUE])
     return v ? v * 100 : null
   })
   const d50 = data['50-99'] || Array(5).fill(null)
   const d50Values = d50.map(d => {
-    const v = _.get(d, 'median.value')
+    const v = _.get(d, [FIELD_MAP.VALUE])
     return v ? v * 100 : null
   })
 
@@ -291,11 +292,11 @@ const getHivNegative = data => {
 
   const retests = data.retests || Array(5).fill(null)
   const retestsValues = retests.map(d => {
-    return _.get(d, 'median.value')
+    return _.get(d, [FIELD_MAP.VALUE])
   })
   const firsts = data.firsts || Array(5).fill(null)
   const firstsValues = firsts.map(d => {
-    return _.get(d, 'median.value')
+    return _.get(d, [FIELD_MAP.VALUE])
   })
   const series = [
     {
@@ -326,15 +327,22 @@ const getHivPositive = data => {
   const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
 
   const [art, aware, first] = ['arts', 'awares', 'firsts'].map(ind => {
-    const indData = data[ind] || Array(5).fill(null)
-    return _.map(indData, 'median.value')
+    const indData = data[ind]
+    debugger
+    return _.map(indData, d => {
+      return ({
+        x: Number(d[FIELD_MAP.YEAR]),
+        y: d[FIELD_MAP.VALUE],
+        source: d[FIELD_MAP.SOURCE_DATABASE]
+      })
+    })
   })
 
   const options = {
     title: { useHTML: true },
     yAxis: { title: { text: 'HIV Positive tests' } },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-    plotOptions: { series: { pointStart: 2015 } } // TODO no pointstart
+    // plotOptions: { series: { pointStart: 2015 } } // TODO no pointstart
     // tooltip: { pointFormat: '{series.name}: <b>{point.y:.0f} million</b>' },
     // yAxis: { max: 58*2 },
     // tooltip: { valueSuffix: ',000' },
@@ -384,12 +392,12 @@ const getPrevalence = (data, shinyCountry) => {
   const adjPrevData = []
   R_2015_2019.forEach((y, i) => {
     // TODO: calc uci/lci
-    const prevalenceValue = _.get(data, ['prevalence', i, 'median', 'value'])
+    const prevalenceValue = _.get(data, ['prevalence', i, [FIELD_MAP.VALUE]])
     prevalenceData.push({ x: Number(y), y: prevalenceValue })
 
     const populationValue = _.get(data, ['population', i, 'value'])
     const onArtValue = _.get(data, ['onArt', i, 'value'])
-    const plhivValue = _.get(data, ['plhiv', i, 'median', 'value'])
+    const plhivValue = _.get(data, ['plhiv', i, [FIELD_MAP.VALUE]])
 
     const adjPrevValue = (
       (plhivValue - onArtValue) /
@@ -398,8 +406,8 @@ const getPrevalence = (data, shinyCountry) => {
     adjPrevData.push({ x: Number(y), y: adjPrevValue })
     
     if (shinyCountry) {
-      const positivityValue = _.get(data, ['positivity', i, 'median', 'value'])
-      const dYieldValue = _.get(data, ['dYield', i, 'median', 'value'])
+      const positivityValue = _.get(data, ['positivity', i, [FIELD_MAP.VALUE]])
+      const dYieldValue = _.get(data, ['dYield', i, [FIELD_MAP.VALUE]])
       positivityData.push({ x: Number(y), y: positivityValue * 100 })
       dYieldData.push({ x: Number(y), y: dYieldValue * 100 })
     }
@@ -880,6 +888,7 @@ const getForecast = data => {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
 
+  // todo: remove compact
   const distributedNumData = _.compact(distributed).map(d => ({
     x: Number(d.year),
     y: d.value,
@@ -1120,13 +1129,9 @@ const getGroupsTable = (data, shinyCountry) => {
       rowData[ind] = {}
       _.each(vMap, (v, vId) => {
         if (_.isNumber(v)) {
-          console.log('source: ', source)
-          console.log('?=?: ', SOURCE_DB_MAP.SPEC20)
-          console.log('==??: ', SOURCE_DB_MAP)
           if ((ind === 'aware' || ind === 'prev')
             && source === SOURCE_DB_MAP.SPEC20) {
             v = v/100
-            console.log('divided: ', v)
           }
           const percentages = ['aware', 'prev', 'ever']
           if (percentages.includes(ind)) {

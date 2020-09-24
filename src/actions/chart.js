@@ -17,7 +17,7 @@ const baseUrl = 'https://status.y-x.ch/query?'
 const debugList = {
   // [CHARTS.CONTEXT.id]: true,
   // [CHARTS.GROUPS_TABLE.id]: true,
-  // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
+  // [CHARTS.HIV_POSITIVE.id]: true,
 }
 const debugSkipList = {
   // [CHARTS.ADULTS.id]: true,

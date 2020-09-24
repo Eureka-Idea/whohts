@@ -994,19 +994,15 @@ const getIndicatorMap = (isShiny) => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
 
-            const median = _.find(fResults, r => 
-              !r.population_segment.includes('lower') &&
-              !r.population_segment.includes('upper')
-            )
-            const lci = _.find(fResults, r => r.population_segment.includes('lower'))
-            const uci = _.find(fResults, r => r.population_segment.includes('upper'))
-            
-            return { median, lci, uci }
+            if (fResults.length > 1) {
+              console.warn('## should not be multi results##')
+            }
+            return fResults[0]
           })
         }
       }
     )),
-    [C.PLHIV_SEX.id]: R_SEXES.map(sex => (
+    [C.PLHIV_SEX.id]: ['Females', 'Males'].map(sex => ( // TODO: standardize
       {
         id: sex,
         [F.INDICATOR]: C.PLHIV_SEX.indicators.status,
@@ -1032,17 +1028,11 @@ const getIndicatorMap = (isShiny) => {
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
-            // TODO: will be on one row
-            const lci = _.find(fResults, r => {
-              return r[F.VALUE_LOWER]
-            })
-            const uci = _.find(fResults, r => {
-              return r[F.VALUE_UPPER]
-            })
-            const median = _.find(fResults, r => {
-              return r[F.VALUE]
-            })
-            return { lci, uci, median }
+
+            if (fResults.length > 1) {
+              console.warn('## should not be multi results##')
+            }
+            return fResults[0]
           })
         }
       },
@@ -1057,14 +1047,10 @@ const getIndicatorMap = (isShiny) => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
             
-            const median = _.find(fResults, r =>
-              !r.population_segment.includes('lower') &&
-              !r.population_segment.includes('upper')
-            )
-            const lci = _.find(fResults, r => r.population_segment.includes('lower'))
-            const uci = _.find(fResults, r => r.population_segment.includes('upper'))
-
-            return { median, lci, uci }
+            if (fResults.length > 1) {
+              console.warn('## should not be multi results##')
+            }
+            return fResults[0]
           })
         }
       },
@@ -1795,16 +1781,11 @@ const getIndicatorMap = (isShiny) => {
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
-            const lci = _.find(fResults, r => {
-              return r[F.VALUE_LOWER]
-            })
-            const uci = _.find(fResults, r => {
-              return r[F.VALUE_UPPER]
-            })
-            const median = _.find(fResults, r => {
-              return r[F.VALUE]
-            })
-            return { lci, uci, median }
+
+            if (fResults.length > 1) {
+              console.warn('## should not be multi results##')
+            }
+            return fResults[0]
           })
         }
       }
@@ -1821,16 +1802,11 @@ const getIndicatorMap = (isShiny) => {
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
-            const lci = _.find(fResults, r => {
-              return r[F.VALUE_LOWER]
-            })
-            const uci = _.find(fResults, r => {
-              return r[F.VALUE_UPPER]
-            })
-            const median = _.find(fResults, r => {
-              return r[F.VALUE]
-            })
-            return { lci, uci, median }
+
+            if (fResults.length > 1) {
+              console.warn('## should not be multi results##')
+            }
+            return fResults[0]
           })
         }
       }
@@ -1847,16 +1823,11 @@ const getIndicatorMap = (isShiny) => {
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
-            const lci = _.find(fResults, r => {
-              return r[F.VALUE_LOWER]
-            })
-            const uci = _.find(fResults, r => {
-              return r[F.VALUE_UPPER]
-            })
-            const median = _.find(fResults, r => {
-              return r[F.VALUE]
-            })
-            return { lci, uci, median }
+
+            if (fResults.length > 1) {
+              console.warn('## should not be multi results##')
+            }
+            return fResults[0]
           })
         }
       }
@@ -1873,16 +1844,11 @@ const getIndicatorMap = (isShiny) => {
         getter: results => {
           return R_2015_2019.map(y => {
             const fResults = _.filter(results, r => r.year === y)
-            const lci = _.find(fResults, r => {
-              return r[F.VALUE_LOWER]
-            })
-            const uci = _.find(fResults, r => {
-              return r[F.VALUE_UPPER]
-            })
-            const median = _.find(fResults, r => {
-              return r[F.VALUE]
-            })
-            return { lci, uci, median }
+
+            if (fResults.length > 1) {
+              console.warn('## should not be multi results##')
+            }
+            return fResults[0]
           })
         }
       })
