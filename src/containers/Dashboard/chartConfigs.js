@@ -1057,20 +1057,20 @@ const getGroupsTable = (data, shinyCountry) => {
 
   const undiagnosed = _.mapValues(allData.aware, (v, dem) => {
     let { 
-      value: awareVal,
-      source: awareSource
+      [FIELD_MAP.VALUE]: awareVal,
+      [FIELD_MAP.SOURCE_DATABASE]: awareSource
     } = _.get(allData, ['aware', dem], {})
 
     let { 
-      value: plhivVal,
-      source: plhivSource
+      [FIELD_MAP.VALUE]: plhivVal,
+      [FIELD_MAP.SOURCE_DATABASE]: plhivSource
     } = _.get(allData, ['plhiv', dem], {})
 
     if (!awareVal || !plhivVal) {
       return { value: undefined }
     }
 
-    if (awareSource === SOURCE_DB_MAP.SPEC20.id) {
+    if (awareSource === SOURCE_DB_MAP.SPEC20) {
       awareVal/=100
     }
     
@@ -1109,25 +1109,30 @@ const getGroupsTable = (data, shinyCountry) => {
         return
       }
       let {
+        [FIELD_MAP.YEAR]: year,
         [FIELD_MAP.VALUE]: value,
         [FIELD_MAP.VALUE_LOWER]: valueLower,
         [FIELD_MAP.VALUE_UPPER]: valueUpper,
         [FIELD_MAP.SOURCE_DATABASE]: source
       } = indDemoData
+      
       const vMap = { value, valueLower, valueUpper }
-
       rowData[ind] = {}
-      _.each(['value', 'valueLower', 'valueUpper'], vId => {
-        let v = vMap[vId]
+      _.each(vMap, (v, vId) => {
         if (_.isNumber(v)) {
-          if (ind === 'aware' && source === SOURCE_DB_MAP.SPEC20.id) {
+          console.log('source: ', source)
+          console.log('?=?: ', SOURCE_DB_MAP.SPEC20)
+          console.log('==??: ', SOURCE_DB_MAP)
+          if ((ind === 'aware' || ind === 'prev')
+            && source === SOURCE_DB_MAP.SPEC20) {
             v = v/100
+            console.log('divided: ', v)
           }
           const percentages = ['aware', 'prev', 'ever']
           if (percentages.includes(ind)) {
             v = _.round(v * 100)+'%'
           } else {
-            v = _.round(v)
+            v = Number(v.toPrecision(2))
           }
           vMap[vId] = v
         }
@@ -1135,7 +1140,7 @@ const getGroupsTable = (data, shinyCountry) => {
 
       
       rowData[ind] = {
-        source, ...vMap
+        source, year, ...vMap
       }
     })
   })
