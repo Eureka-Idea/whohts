@@ -46,7 +46,17 @@ function adjustPercentage({ row, toDisplay=false }) {
   return v
 }
 function displayNumber({ v }) {
-  return Number(v.toPrecision(2))
+  let str = Number(v.toPrecision(2)).toString()
+  let spaced = ''
+  let slStart
+  while (str.length) {
+    spaced = str.slice(-3) + ' ' + spaced
+    str = str.slice(0, -3)
+  }
+
+  console.log('v: ', v)
+  console.log('sp: ', spaced)
+  return spaced
 }
 function displayPercent({ v, adjust = false }) {
   const val = adjust ? (v * 100) : v
@@ -54,7 +64,7 @@ function displayPercent({ v, adjust = false }) {
   if (val > 100) {
     console.warn('Incorrect %')
   }
-  return _.round(val, val<9.5) + '%'
+  return _.round(val, 1) + '%'
 }
 
 function sourceTooltipFormatter ({ useBarChartsAltName }) {

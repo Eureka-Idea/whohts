@@ -6,6 +6,10 @@
 
   .table {
     max-width: $max-width;
+
+    td {
+      white-space: nowrap;
+    }
   }
 
   h2 {
