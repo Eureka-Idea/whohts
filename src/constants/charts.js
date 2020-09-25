@@ -3,30 +3,6 @@ import _ from 'lodash'
 // indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
 const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
 
-const getGenericIndId = indId => {
-  return indId.replace(/\d+$/, '')
-}
-
-const findPrioritizedResult = ({ results, dbHierarchy, resultCriteria={} }) => {
-  let prioritizedResult = null
-
-  return _.find(dbHierarchy, db => {
-    const fResults = _.filter(results, r => {
-      // r is from db and satisfies all the result criteria
-      r[F.SOURCE_DATABASE] === db && _.every(resultCriteria, ({ value, field }) => 
-        r[field] === value)
-    })
-
-    const latest = _.maxBy(fResults, 'year')
-    if (fResults.length > 1) {
-      console.log('*** multiple results: ***')
-      console.log(fResults)
-      console.log('!: ', latest)
-    }
-    return latest
-  })
-}
-
 const R_2015_2019 = [
   '2015', '2016', '2017', '2018', '2019',
 ]
@@ -666,9 +642,9 @@ const kpTGF = {
   },
   indicators: {
     yearMsm7: 'Number of HIV tests taken among men who have sex with men',
-    yearSw7: 'Number of HIV tests taken among transgender population',
-    yearPwid7: 'Number of HIV tests taken among sex workers',
-    yearTrans7: 'Number of HIV tests taken among people who use drugs',
+    yearSw7: 'Number of HIV tests taken among sex workers',
+    yearPwid7: 'Number of HIV tests taken among people who use drugs',
+    yearTrans7: 'Number of HIV tests taken among transgender population',
   }
 }
 
@@ -841,6 +817,11 @@ const CHARTS = {
     sources: [
       kpKP20, kpUNGAM20, kpPCOP20, kpPROP20, kpPCOP19, kpPROP19, kpPCOP1718, kpPROP17, kpTGF
     ],
+    filters: {
+      prev: {
+        
+      },
+    },
     indicatorIds: [
       'prevMsm', 'prevPwid', 'prevPris', 'prevSw', 'prevTrans',
       'awareMsm', 'awarePwid', 'awarePris', 'awareSw', 'awareTrans',
@@ -925,28 +906,83 @@ const CHARTS = {
 }
 const C = CHARTS
 
-/*
-New HIV Infections - female adults (aged 15+)
-New HIV Infections - females aged 10-19
-New HIV Infections - females aged 15-24
-New HIV Infections - females aged 50+
-New HIV Infections - male adults (aged 15+)
-New HIV Infections - males aged 10-19
-New HIV Infections - males aged 15-24
-New HIV Infections - males aged 50+
-New HIV Infections - people aged 10-19
-New HIV Infections - people aged 15-24
-New HIV Infections - people aged 50+
+const getGenericIndId = indId => {
+  return indId.replace(/\d+$/, '')
+}
 
-People living with HIV - female adults (aged 15+)
-People living with HIV - females aged 10-19
-People living with HIV - females aged 15-24
-People living with HIV - females aged 50+
-People living with HIV - male adults (aged 15+)
-People living with HIV - males aged 10-19
-People living with HIV - males aged 15-24
-People living with HIV - males aged 50+
-*/
+const allSexVariations = ['all sexes', 'both', 'males, females', 'males, females, unknown']
+const isAllSex = r => {
+  const sex = r[FIELD_MAP.SEX]
+
+  const is = !sex || allSexVariations.includes(sex.toLowerCase())
+  if (!is) {
+    console.log('Not considered ALLSEX: ', sex)
+  }
+  return is
+}
+const allAgeVariations = ['all ages', '15+, <15, unknown']
+const isAllAge = r => {
+  const age = r[FIELD_MAP.AGE]
+
+  const is = !age || allAgeVariations.includes(age.toLowerCase())
+  if (!is) {
+    console.log('Not considered ALLAGE: ', age)
+  }
+  return is
+}
+
+// const findPrioritizedResult = ({ results, dbHierarchy, resultCriteria = {} }) => {
+//   let prioritizedResult = null
+
+//   return _.find(dbHierarchy, db => {
+//     const fResults = _.filter(results, r => {
+//       // r is from db and satisfies all the result criteria
+//       r[F.SOURCE_DATABASE] === db && _.every(resultCriteria, ({ value, field }) =>
+//         r[field] === value)
+//     })
+
+//     const latest = _.maxBy(fResults, 'year')
+//     if (fResults.length > 1) {
+//       console.log('*** multiple results: ***')
+//       console.log(fResults)
+//       console.log('!: ', latest)
+//     }
+//     return latest
+//   })
+// }
+
+const findPrioritizedResult = ({ results, dbHierarchy, resultCriteria = {}, allSexCheck, allAgeCheck }) => {
+  return _.find(dbHierarchy, db => {
+    
+    const fResults = _.filter(results, r => {
+      if (r[F.SOURCE_DATABASE] !== db) {
+        return false
+      }
+      const matchesCriteria = _.every(resultCriteria,
+        ({ value, field }) => r[field] === value)
+      if (!matchesCriteria) {
+        return false
+      }
+      if (allSexCheck && !isAllSex(r)) {
+        return false
+      }
+      if (allAgeCheck && !isAllAge(r)) {
+        return false
+      }
+
+      // r is has passed all the filters
+      return true
+    })
+
+    const latest = _.maxBy(fResults, 'year')
+    if (fResults.length > 1) {
+      console.log('*** multiple results: ***')
+      console.log(fResults)
+      console.log('!: ', latest)
+    }
+    return latest
+  })
+}
 
 // this map specifies which records need to be pulled to cover the indicators relevant to each chart
 const getIndicatorMap = (isShiny) => {
@@ -1092,6 +1128,7 @@ const getIndicatorMap = (isShiny) => {
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
             if (results.length > 1) {
+              // debugger
               console.error(`**LOOKOUT! Taking first result for: * ', indI
               `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
               `,'rs:', results)
@@ -1111,6 +1148,7 @@ const getIndicatorMap = (isShiny) => {
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
             if (results.length > 1) {
+              // debugger
               console.error(`**LOOKOUT! Taking first result for: * ', indI
               `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
               `,'rs:', results)
@@ -1130,6 +1168,7 @@ const getIndicatorMap = (isShiny) => {
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
             if (results.length > 1) {
+              // debugger
               console.error(`**LOOKOUT! Taking first result for: * ', indI
               `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
               `,'rs:', results)
@@ -1149,6 +1188,7 @@ const getIndicatorMap = (isShiny) => {
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
             if (results.length > 1) {
+              // debugger
               console.error(`**LOOKOUT! Taking first result for: * ', indI
               `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
               `,'rs:', results)
@@ -1172,6 +1212,7 @@ const getIndicatorMap = (isShiny) => {
             return C.FORECAST.indicatorYears[genericIndId].map(y => {
               const fResults = _.filter(results, r => r.year === y)
               if (results.length > 1) {
+                // debugger
                 console.error(`**LOOKOUT! Taking first result for: * ', indI
                 `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
                 `,'rs:', results)
@@ -1190,12 +1231,26 @@ const getIndicatorMap = (isShiny) => {
           [F.INDICATOR]: indVal,
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
-            if (results.length > 1) {
-              console.error(`**LOOKOUT! Taking first result for: * ', indI
-              `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-              `,'rs:', results)
+            // if (fResults.length > 1) {
+            // debugger
+            //   console.error(`**LOOKOUT! Taking first result for: * ', indI
+            //   `, fResults[0].indicator, 'R:', _.maxBy(fResults, 'year'), `
+            //   `,'rs:', fResults)
+            // }
+            // don't allSexCheck msm results, which are all males
+            const allSexCheck = !indId.toLowerCase().includes('msm')
+            const fResults = results.filter(r => {
+              return isAllAge(r) && (!allSexCheck || isAllSex(r))
+            })
+
+            const result = _.maxBy(fResults, 'year')
+            if (!result && results.length > 1) {
+              console.log('@indicator: ', indId)
+              console.log('@@@@: ', fResults)
+              console.log('!!!!', results)
+
             }
-            return _.maxBy(results, 'year')
+            return result
           }
         })
       })
@@ -1207,6 +1262,7 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           if (results.length > 1) {
+            // debugger
             console.error(`**LOOKOUT! Taking first result for: ', 
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1226,7 +1282,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1243,7 +1300,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1260,7 +1318,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1277,7 +1336,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1339,7 +1399,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1356,7 +1417,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1373,7 +1435,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1390,7 +1453,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1429,7 +1493,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1447,7 +1512,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1464,7 +1530,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1481,7 +1548,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1522,7 +1590,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1540,7 +1609,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking first result.**
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1717,7 +1787,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking first result.**
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)
@@ -1734,7 +1805,8 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          if (results.length > 1) {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
             console.error(`**LOOKOUT! Taking first result.**
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
             `,'rs:', results)

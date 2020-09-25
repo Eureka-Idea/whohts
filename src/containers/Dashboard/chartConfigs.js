@@ -388,7 +388,7 @@ const getHivPositive = data => {
 
   const [art, aware, first] = ['arts', 'awares', 'firsts'].map(ind => {
     const indData = data[ind]
-    debugger
+
     return _.map(indData, d => {
       return ({
         x: Number(d[FIELD_MAP.YEAR]),
