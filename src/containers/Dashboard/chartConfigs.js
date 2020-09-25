@@ -256,7 +256,10 @@ const getPlhivSex = data => {
   const options = {
     legend: { symbolWidth: 40 },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-    plotOptions: { series: { pointStart: 2015 } }
+    yAxis: { max: 100 },
+    plotOptions: { 
+      series: { pointStart: 2015 },
+    }
   }
 
   // TODO: standardize
@@ -296,6 +299,7 @@ const getPlhivAge = data => {
   const options = {
     legend: { symbolWidth: 40 },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+    yAxis: { max: 100 },
     plotOptions: { series: { pointStart: 2015 } }
   }
 
@@ -431,7 +435,8 @@ const getHivPositive = data => {
 }
 
 const getPrevalence = (data, shinyCountry) => {
-  const { title } = CHARTS.PREVALENCE
+  let { title, nonShinyTitle } = CHARTS.PREVALENCE
+  title = shinyCountry ? title : nonShinyTitle
 
   const options = {
     plotOptions: { series: { marker: { radius: 3 } } },
@@ -509,10 +514,9 @@ const getPrevalence = (data, shinyCountry) => {
 
 
 
-  let series = [
+  const series = [
     {
       name: 'HIV prevalence',
-      shinyInclude: true,
       description: TERM_MAP.hivPrevalence.definition,
       zIndex: 1,
       tooltip: { pointFormat: uncertaintyTooltipFormat },
@@ -526,7 +530,6 @@ const getPrevalence = (data, shinyCountry) => {
       // ].map(o => _.each(o, (v, k) => o[k] *= .4)),
     }, {
       name: 'Prevalence range',
-      shinyInclude: true,
       data: [],
       type: 'arearange',
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
@@ -538,6 +541,29 @@ const getPrevalence = (data, shinyCountry) => {
       marker: { enabled: false }
     },
     {
+      name: 'Treatment adjusted prevalence',
+      description: TERM_MAP.treatmentAdjustedPrevalence.definition,
+      zIndex: 1,
+      color: colors[9],
+      // dashStyle: 'LongDash',
+      tooltip: { pointFormat: uncertaintyTooltipFormat },
+      data: adjPrevData
+    }, {
+      name: 'Treatment adjusted prevalence range',
+      data: [],
+      type: 'arearange',
+      enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
+      lineWidth: 0,
+      linkedTo: ':previous',
+      color: colors[9],
+      fillOpacity: 0.2,
+      zIndex: 0,
+      marker: { enabled: false }
+    },
+  ]
+
+  if (shinyCountry) {
+    const shinyAdditions = [{
       name: 'Positivity',
       description: TERM_MAP.positivity.definition,
       // dashStyle: 'ShortDot',
@@ -577,30 +603,10 @@ const getPrevalence = (data, shinyCountry) => {
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
-    }, {
-      name: 'Treatment adjusted prevalence',
-      description: TERM_MAP.treatmentAdjustedPrevalence.definition,
-      zIndex: 1,
-      color: colors[9],
-      // dashStyle: 'LongDash',
-      tooltip: { pointFormat: uncertaintyTooltipFormat },
-      data: adjPrevData
-    }, {
-      name: 'Treatment adjusted prevalence range',
-      data: [],
-      type: 'arearange',
-      enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
-      lineWidth: 0,
-      linkedTo: ':previous',
-      color: colors[9],
-      fillOpacity: 0.2,
-      zIndex: 0,
-      marker: { enabled: false }
-    },
-  ]
-  // if (!shiny) {
-  //   series = series.filter(s => s.shinyInclude)
-  // }
+    }]
+    series.push(...shinyAdditions)
+  }
+
   return _.merge({}, getLine({ series, options, title, spline: false }))
 }
 

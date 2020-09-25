@@ -16,10 +16,10 @@ const myInit = {
 const baseUrl = 'https://status.y-x.ch/query?'
 
 const debugList = {
-  // [CHARTS.CONTEXT.id]: true,
+  [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
 
-  // [CHARTS.KP_TABLE.id]: true,
+  // [CHARTS.PLHIV_AGE.id]: true,
 }
 const debugSkipList = {
   // [CHARTS.ADULTS.id]: true,

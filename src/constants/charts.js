@@ -748,6 +748,7 @@ const CHARTS = {
   },
   PREVALENCE: {
     title: 'Prevalence and positivity',
+    nonShinyTitle: 'Prevalence',
     id: 'PREVALENCE',
     shinyOnlyIndicators: {
       // 15-99, confidence intervals on value_comment
