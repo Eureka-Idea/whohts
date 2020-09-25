@@ -82,7 +82,7 @@ const SOURCE_DB_MAP = {
   PROP19: 'PEPFAR ROP 2019',
   // PROP18: 'PEPFAR ROP 2018',
   PROP17: 'PEPFAR ROP 2017',
-  PEPFAR_SDE: 'PEPFAR System Data Extract', // TODO: replace with PEPFAR?
+  // PEPFAR_SDE: 'PEPFAR System Data Extract',
   PEPFAR: 'PEPFAR',
 
   WME: 'WHO model estimates',
@@ -272,7 +272,7 @@ const adultsPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR_SDE,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
     }
   },
   indicators: {
@@ -344,14 +344,14 @@ const communityPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR_SDE,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
     }
   },
-  indicators: { // TODO: fix calculated values
+  indicators: {
     total4: 'Total Community Tests',
-    mobile4: 'HIV tests conducted(sum of modality_category like community mobile testing)',
-    VCT4: 'HIV tests conducted(sum of modality_category like community VCT centres)',
-    other4: 'HIV tests conducted(sum of modality_category like community other)',
+    mobile4: 'Mobile testing - Number of tests - Community',
+    VCT4: 'VCT - Number of tests - Community',
+    other4: 'Other - Number of tests - Community',
     pTotal4: 'Positivity - Community Modalities Total',
     pMobile4: 'Positivity - Community Mobile Testing',
     pVCT4: 'Positivity - Community VCT Testing',
@@ -426,15 +426,15 @@ const facilityPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR_SDE,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
     }
   },
   indicators: { // TODO: fix calculated values
     total4: 'Total Facility Tests',
-    PITC4: 'HIV tests conducted (sum of modality_category like facility provider initiated)',
-    ANC4: 'HIV tests conducted (sum of modality_category like facility ANC clinics)',
-    VCT4: 'HIV tests conducted (sum of modality_category like facility VCT)',
-    other4: 'HIV tests conducted (sum of modality_category like facility other)',
+    PITC4: 'PITC - Number of tests - Facility',
+    ANC4: 'ANC - Number of tests - Facility',
+    VCT4: 'VCT - Number of tests - Facility',
+    other4: 'Other - Number of tests - Facility',
     pTotal4: 'Positivity - Facility Modalities Total',
     pPITC4: 'Positivity - Facility PITC Testing',
     pANC4: 'Positivity - Facility ANC Testing',

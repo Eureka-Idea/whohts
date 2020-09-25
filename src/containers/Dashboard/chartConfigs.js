@@ -19,9 +19,51 @@ const sourceTooltipFormat = `
   `
 
 const barChartsTestsName = 'Number of tests conducted'
-const barChartsPositivityName = 'Positivity (%)'
+const barChartsPositivityName = 'Positivity' // TODO: acceptable?
+const barChartsPositivityNameTooltip = 'Positivity'
 
-// const pointFactor = ({ value, })
+function adjustPercentage({ row, toDisplay=false }) {
+  if (!row) {
+    console.warn('No % to adjust')
+  }
+  
+  let {
+    [FIELD_MAP.VALUE]: v,
+    [FIELD_MAP.SOURCE_DATABASE]: source,
+  } = row
+
+  if (!v) {
+    console.warn('No % to adjust')
+  }
+  if (source === SOURCE_DB_MAP.PEPFAR) {
+    v *= 100
+  }
+  if (toDisplay) {
+    v = displayPercent({ v })
+  }
+  return v
+}
+function displayNumber({ v }) {
+  return Number(v.toPrecision(2))
+}
+function displayPercent({ v, adjust = false }) {
+  const val = adjust ? (v * 100) : v
+
+  if (val > 100) {
+    console.warn('Incorrect %')
+  }
+  return _.round(val, val<9.5) + '%'
+}
+
+function sourceTooltipFormatter ({ useBarChartsAltName }) {
+  // const seriesName = useBarChartsAltName ? barChartsPositivityNameTooltip : this.series.name
+  return `
+    <span style="color:${this.color}">●</span>
+    ${this.series.name}: <b>${displayPercent({ v: this.options.y })}</b><br/>
+    Year: <b>${this.options.year}</b><br/>
+    Source: <b>${this.options.source}</b><br/>
+  `
+}
 
 const getConfig = (chartId, chartData, shinyCountry) => {
   if (_.isEmpty(chartData)) {
@@ -74,7 +116,7 @@ const extractPrioritizedData = (data, indicatorIds, sourceCount, defaultValue=0)
 
     for (let i = 1; i <= sourceCount; i++) {
       const indicatorResult = _.get(data, ind+i, null)
-      if (indicatorResult) {
+      if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
         result[ind] = indicatorResult
         break
       } else if (i === sourceCount) {
@@ -107,7 +149,7 @@ const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCo
         // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
         const selector = mappedData ? range : ri
         const indicatorResult = _.get(data, [ind+i, selector], null)
-        if (indicatorResult) {
+        if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
           return indicatorResult
         } else if (i === count) {
           _.set(result.missingIndicatorMap, [ind, range], true)
@@ -568,13 +610,13 @@ const getAdults = data => {
   }
 
   const wPosData = {
-    y: pWomen.value,
+    y: adjustPercentage({ row: pWomen }),
     source: pWomen[FIELD_MAP.SOURCE_DATABASE],
     year: pWomen[FIELD_MAP.YEAR],
     sourceYear: pWomen[FIELD_MAP.SOURCE_YEAR],
   }
   const mPosData = {
-    y: pMen.value,
+    y: adjustPercentage({ row: pMen }),
     source: pMen[FIELD_MAP.SOURCE_DATABASE],
     year: pMen[FIELD_MAP.YEAR],
     sourceYear: pMen[FIELD_MAP.SOURCE_YEAR],
@@ -594,11 +636,11 @@ const getAdults = data => {
       data: [wNumData, mNumData]
     },
     {
-      name: 'Positivity (%)',
+      name: barChartsPositivityName,
       // color: barChartAccent,
       type: 'line',
       tooltip: {
-        pointFormat: sourceTooltipFormat
+        pointFormatter: sourceTooltipFormatter
       },
       data: [wPosData, mPosData]
     }
@@ -607,7 +649,7 @@ const getAdults = data => {
 
   // TODO should be weighted avg of %
   const options = {
-    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${pTotal.value}%` }
+    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${adjustPercentage({ row: pTotal, toDisplay: true })}` }
   }
   return _.merge({}, getColumnScat({ title, series, options, categories }))
 }
@@ -637,19 +679,19 @@ const getCommunity = data => {
   }
 
   const mobilePosData = {
-    y: pMobile.value,
+    y: adjustPercentage({ row: pMobile }),
     source: pMobile[FIELD_MAP.SOURCE_DATABASE],
     year: pMobile[FIELD_MAP.YEAR],
     sourceYear: pMobile[FIELD_MAP.SOURCE_YEAR],
   }
   const vctPosData = {
-    y: pVCT.value,
+    y: adjustPercentage({ row: pVCT }),
     source: pVCT[FIELD_MAP.SOURCE_DATABASE],
     year: pVCT[FIELD_MAP.YEAR],
     sourceYear: pVCT[FIELD_MAP.SOURCE_YEAR],
   }
   const otherPosData = {
-    y: pOther.value,
+    y: adjustPercentage({ row: pOther }),
     source: pOther[FIELD_MAP.SOURCE_DATABASE],
     year: pOther[FIELD_MAP.YEAR],
     sourceYear: pOther[FIELD_MAP.SOURCE_YEAR],
@@ -674,14 +716,14 @@ const getCommunity = data => {
       // color: barChartAccent,
       type: 'line',
       tooltip: {
-        pointFormat: sourceTooltipFormat
+        pointFormatter: sourceTooltipFormatter
       },
       data: [mobilePosData, vctPosData, otherPosData]
     }
   ]
 
   const options = {
-    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${pTotal.value}%` }
+    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${adjustPercentage({ row: pTotal, toDisplay: true })}` }
   }
   const categories = ['Mobile Testing', 'VCT', 'Other']
   return _.merge({}, getColumnScat({ title, series, options, categories }))
@@ -719,31 +761,31 @@ const getFacility = data => {
   }
 
   const pitcPosData = {
-    y: pPITC.value,
+    y: adjustPercentage({ row: pPITC }),
     source: pPITC[FIELD_MAP.SOURCE_DATABASE],
     year: pPITC[FIELD_MAP.YEAR],
     sourceYear: pPITC[FIELD_MAP.SOURCE_YEAR],
   }
   const ancPosData = {
-    y: pANC.value,
+    y: adjustPercentage({ row: pANC }),
     source: pANC[FIELD_MAP.SOURCE_DATABASE],
     year: pANC[FIELD_MAP.YEAR],
     sourceYear: pANC[FIELD_MAP.SOURCE_YEAR],
   }
   const vctPosData = {
-    y: pVCT.value,
+    y: adjustPercentage({ row: pVCT }),
     source: pVCT[FIELD_MAP.SOURCE_DATABASE],
     year: pVCT[FIELD_MAP.YEAR],
     sourceYear: pVCT[FIELD_MAP.SOURCE_YEAR],
   }
   const familyPosData = {
-    y: pFamily.value,
+    y: adjustPercentage({ row: pFamily }),
     source: pFamily[FIELD_MAP.SOURCE_DATABASE],
     year: pFamily[FIELD_MAP.YEAR],
     sourceYear: pFamily[FIELD_MAP.SOURCE_YEAR],
   }
   const otherPosData = {
-    y: pOther.value,
+    y: adjustPercentage({ row: pOther }),
     source: pOther[FIELD_MAP.SOURCE_DATABASE],
     year: pOther[FIELD_MAP.YEAR],
     sourceYear: pOther[FIELD_MAP.SOURCE_YEAR],
@@ -788,7 +830,7 @@ const getFacility = data => {
       // },
       type: 'line',
       tooltip: {
-        pointFormat: sourceTooltipFormat
+        pointFormatter: sourceTooltipFormatter
       },
       data: [
         pitcPosData,
@@ -803,7 +845,7 @@ const getFacility = data => {
 
   const options = {
     subtitle: {
-      text: `Total tests: ${total.value}, Average positivity: ${pTotal.value}%`
+      text: `Total tests: ${total.value}, Average positivity: ${adjustPercentage({ row: pTotal, toDisplay: true })}`
     }
   }
   const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other']
@@ -836,13 +878,13 @@ const getIndex = data => {
   }
 
   const communityPosData = {
-    y: pCommunity.value,
+    y: adjustPercentage({ row: pCommunity }),
     source: pCommunity[FIELD_MAP.SOURCE_DATABASE],
     year: pCommunity[FIELD_MAP.YEAR],
     sourceYear: pCommunity[FIELD_MAP.SOURCE_YEAR],
   }
   const facilityPosData = {
-    y: pFacility.value,
+    y: adjustPercentage({ row: pFacility }),
     source: pFacility[FIELD_MAP.SOURCE_DATABASE],
     year: pFacility[FIELD_MAP.YEAR],
     sourceYear: pFacility[FIELD_MAP.SOURCE_YEAR],
@@ -860,13 +902,13 @@ const getIndex = data => {
       // color: barChartAccent,
       type: 'line',
       tooltip: {
-        pointFormat: sourceTooltipFormat
+        pointFormatter: sourceTooltipFormatter
       },
       data: [communityPosData, facilityPosData]
     }
   ]
   const options = {
-    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${pTotal.value}%` }
+    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${adjustPercentage({ row: pTotal, toDisplay: true })}` }
   }
   const categories = ['Community', 'Facility']
   return _.merge({}, getColumnScat({ title, options, categories, series }))
@@ -1135,9 +1177,9 @@ const getGroupsTable = (data, shinyCountry) => {
           }
           const percentages = ['aware', 'prev', 'ever']
           if (percentages.includes(ind)) {
-            v = _.round(v * 100)+'%'
+            v = displayPercent({ v, adjust: true })
           } else {
-            v = Number(v.toPrecision(2))
+            v = displayNumber({ v })
           }
           vMap[vId] = v
         }
@@ -1153,7 +1195,6 @@ const getGroupsTable = (data, shinyCountry) => {
   console.log('POP_CONFIG: ', config)
   return config
 }
-
 
 export {
   getConfig

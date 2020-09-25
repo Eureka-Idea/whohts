@@ -4,19 +4,21 @@ import { getIndicatorMap, AGGREGATE_GETTER, FIELD_MAP, CHARTS } from '../constan
 import { COUNTRY_MAP } from '../components/Homepage/countries'
 
 // TODO: does this prevent cacheing? 
+// ALSO avoid options request https://stackoverflow.com/questions/1256593/why-am-i-getting-an-options-request-instead-of-a-get-request
 const myHeaders = new Headers()
 myHeaders.append('pragma', 'no-cache')
 myHeaders.append('cache-control', 'no-cache')
 const myInit = {
   method: 'GET',
-  headers: myHeaders,
+  // headers: myHeaders,
 }
 
 const baseUrl = 'https://status.y-x.ch/query?'
 
 const debugList = {
   // [CHARTS.CONTEXT.id]: true,
-  // [CHARTS.GROUPS_TABLE.id]: true,
+  // [CHARTS.ADULTS.id]: true,
+
   // [CHARTS.HIV_POSITIVE.id]: true,
 }
 const debugSkipList = {
