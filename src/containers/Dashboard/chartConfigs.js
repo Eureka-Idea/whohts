@@ -4,6 +4,8 @@ import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './gen
 import { CHARTS, R_2015_2019, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
+// __________________________ HELPERS ____________________________________
+
 const uncertaintyTooltipFormat = `
   <span style="color:{point.color}">●</span>
   {series.name}: <b>{point.y}</b><br/>
@@ -64,6 +66,22 @@ function sourceTooltipFormatter ({ useBarChartsAltName }) {
     Source: <b>${this.options.source}</b><br/>
   `
 }
+
+function getColumnPoints(numData, posData) {
+  const numPoint = numData.noData ? null : {
+    y: numData[FIELD_MAP.VALUE]
+  }
+
+  const posPoint = !(numPoint && numPoint.y) ? null : {
+    source: posData[FIELD_MAP.SOURCE_DATABASE],
+    year: posData[FIELD_MAP.YEAR],
+    y: adjustPercentage({ row: posData })
+  }
+
+  return [numPoint, posPoint]
+}
+
+// __________________________________________________________________
 
 const getConfig = (chartId, chartData, shinyCountry) => {
   if (_.isEmpty(chartData)) {
@@ -600,27 +618,8 @@ const getAdults = data => {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
   
-  const wNumData = {
-    y: women.value,
-    // source: women[FIELD_MAP.SOURCE_DATABASE]
-  }
-  const mNumData = {
-    y: men.value,
-    // source: men[FIELD_MAP.SOURCE_DATABASE]
-  }
-
-  const wPosData = {
-    y: adjustPercentage({ row: pWomen }),
-    source: pWomen[FIELD_MAP.SOURCE_DATABASE],
-    year: pWomen[FIELD_MAP.YEAR],
-    sourceYear: pWomen[FIELD_MAP.SOURCE_YEAR],
-  }
-  const mPosData = {
-    y: adjustPercentage({ row: pMen }),
-    source: pMen[FIELD_MAP.SOURCE_DATABASE],
-    year: pMen[FIELD_MAP.YEAR],
-    sourceYear: pMen[FIELD_MAP.SOURCE_YEAR],
-  }
+  const [ wNumData, wPosData ] = getColumnPoints(women, pWomen)
+  const [ mNumData, mPosData ] = getColumnPoints(men, pMen)
 
   if (
     men[FIELD_MAP.SOURCE_DATABASE] !== pMen[FIELD_MAP.SOURCE_DATABASE] ||
@@ -668,34 +667,9 @@ const getCommunity = data => {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
 
-  const mobileNumData = {
-    y: mobile.value,
-  }
-  const vctNumData = {
-    y: VCT.value,
-  }
-  const otherNumData = {
-    y: other.value,
-  }
-
-  const mobilePosData = {
-    y: adjustPercentage({ row: pMobile }),
-    source: pMobile[FIELD_MAP.SOURCE_DATABASE],
-    year: pMobile[FIELD_MAP.YEAR],
-    sourceYear: pMobile[FIELD_MAP.SOURCE_YEAR],
-  }
-  const vctPosData = {
-    y: adjustPercentage({ row: pVCT }),
-    source: pVCT[FIELD_MAP.SOURCE_DATABASE],
-    year: pVCT[FIELD_MAP.YEAR],
-    sourceYear: pVCT[FIELD_MAP.SOURCE_YEAR],
-  }
-  const otherPosData = {
-    y: adjustPercentage({ row: pOther }),
-    source: pOther[FIELD_MAP.SOURCE_DATABASE],
-    year: pOther[FIELD_MAP.YEAR],
-    sourceYear: pOther[FIELD_MAP.SOURCE_YEAR],
-  }
+  const [ mobileNumData, mobilePosData ] = getColumnPoints(mobile, pMobile)
+  const [ vctNumData, vctPosData ] = getColumnPoints(VCT, pVCT)
+  const [ otherNumData, otherPosData ] = getColumnPoints(other, pOther)
 
   if (
     mobile[FIELD_MAP.SOURCE_DATABASE] !== pMobile[FIELD_MAP.SOURCE_DATABASE] ||
@@ -744,52 +718,11 @@ const getFacility = data => {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
 
-  const pitcNumData = {
-    y: PITC.value,
-  }
-  const ancNumData = {
-    y: ANC.value,
-  }
-  const vctNumData = {
-    y: VCT.value,
-  }
-  const familyNumData = {
-    y: family.value,
-  }
-  const otherNumData = {
-    y: other.value,
-  }
-
-  const pitcPosData = {
-    y: adjustPercentage({ row: pPITC }),
-    source: pPITC[FIELD_MAP.SOURCE_DATABASE],
-    year: pPITC[FIELD_MAP.YEAR],
-    sourceYear: pPITC[FIELD_MAP.SOURCE_YEAR],
-  }
-  const ancPosData = {
-    y: adjustPercentage({ row: pANC }),
-    source: pANC[FIELD_MAP.SOURCE_DATABASE],
-    year: pANC[FIELD_MAP.YEAR],
-    sourceYear: pANC[FIELD_MAP.SOURCE_YEAR],
-  }
-  const vctPosData = {
-    y: adjustPercentage({ row: pVCT }),
-    source: pVCT[FIELD_MAP.SOURCE_DATABASE],
-    year: pVCT[FIELD_MAP.YEAR],
-    sourceYear: pVCT[FIELD_MAP.SOURCE_YEAR],
-  }
-  const familyPosData = {
-    y: adjustPercentage({ row: pFamily }),
-    source: pFamily[FIELD_MAP.SOURCE_DATABASE],
-    year: pFamily[FIELD_MAP.YEAR],
-    sourceYear: pFamily[FIELD_MAP.SOURCE_YEAR],
-  }
-  const otherPosData = {
-    y: adjustPercentage({ row: pOther }),
-    source: pOther[FIELD_MAP.SOURCE_DATABASE],
-    year: pOther[FIELD_MAP.YEAR],
-    sourceYear: pOther[FIELD_MAP.SOURCE_YEAR],
-  }
+  const [ pitcNumData, pitcPosData ] = getColumnPoints(PITC, pPITC)
+  const [ ancNumData, ancPosData ] = getColumnPoints(ANC, pANC)
+  const [ vctNumData, vctPosData ] = getColumnPoints(VCT, pVCT)
+  const [ familyNumData, familyPosData ] = getColumnPoints(family, pFamily)
+  const [ otherNumData, otherPosData ] = getColumnPoints(other, pOther)
 
   if (
     PITC[FIELD_MAP.SOURCE_DATABASE] !== pPITC[FIELD_MAP.SOURCE_DATABASE] ||
@@ -870,25 +803,8 @@ const getIndex = data => {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
 
-  const communityNumData = {
-    y: community.value,
-  }
-  const facilityNumData = {
-    y: facility.value,
-  }
-
-  const communityPosData = {
-    y: adjustPercentage({ row: pCommunity }),
-    source: pCommunity[FIELD_MAP.SOURCE_DATABASE],
-    year: pCommunity[FIELD_MAP.YEAR],
-    sourceYear: pCommunity[FIELD_MAP.SOURCE_YEAR],
-  }
-  const facilityPosData = {
-    y: adjustPercentage({ row: pFacility }),
-    source: pFacility[FIELD_MAP.SOURCE_DATABASE],
-    year: pFacility[FIELD_MAP.YEAR],
-    sourceYear: pFacility[FIELD_MAP.SOURCE_YEAR],
-  }
+  const [ communityNumData, communityPosData ] = getColumnPoints(community, pCommunity)
+  const [ facilityNumData, facilityPosData ] = getColumnPoints(facility, pFacility)
   
   const series = [
     {
