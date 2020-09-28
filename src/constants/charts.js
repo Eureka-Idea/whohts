@@ -71,6 +71,30 @@ const SOURCE_DB_MAP = {
   
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
 }
+const SOURCE_DISPLAY_MAP = {
+  ['AIDS (AIM)']: 'Spectrum estimates 2020 (UNAIDS/WHO)',
+  ['Demographic projection (DemProj)']: 'UNAIDS Demographic projections',
+  // ['Global AIDS Monitoring 2019']: 'Global AIDS Monitoring 2019',
+  // ['Global AIDS Monitoring 2020']: 'Global AIDS Monitoring 2020',
+  // ['The Global Fund']: 'The Global Fund',
+  ['Google 2019']: 'Google',
+  ['HIVST policy 2020 data set']: 'WHO NCPI',
+  // ['National programme data']: 'National programme data',
+  // ['National programme data 2019']: 'National programme data 2019',
+  // ['PEPFAR COP 2017 - 2018']: 'PEPFAR COP 2017 - 2018',
+  // ['PEPFAR COP 2019']: 'PEPFAR COP 2019',
+  // ['PEPFAR ROP 2017']: 'PEPFAR ROP 2017',
+  // ['PEPFAR ROP 2019']: 'PEPFAR ROP 2019',
+  // ['PEPFAR']: 'PEPFAR',
+  ['Shiny90']: 'Spectrum/Shiny90 estimates 2020 (UNAIDS/WHO)',
+  // ['Spectrum estimates 2020(UNAIDS / WHO)']: 'Spectrum estimates 2020 (UNAIDS/WHO)',
+  // ['UNAIDS KP - Atlas 2020']: 'UNAIDS KP-Atlas 2020',
+  // ['UNPOP 2019']: 'UNPOP 2019',
+  // ['WHO focal point catch-up plans']: 'WHO focal point catch-up plans',
+  ['WHO NCPI dataset']: 'WHO NCPI',
+  // ['WHO special review']: 'WHO special review',
+  ['World Bank List of Economies']: 'World Bank',
+}
 
 const FIELD_MAP = {
   INDICATOR: 'indicator',
@@ -1944,5 +1968,6 @@ export {
   FEMALE,
   MALE,
   SOURCE_DB_MAP,
+  SOURCE_DISPLAY_MAP,
   getIndicatorMap
 }

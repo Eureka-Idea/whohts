@@ -1096,7 +1096,8 @@ const getGroupsTable = (data, shinyCountry) => {
         [FIELD_MAP.VALUE]: value,
         [FIELD_MAP.VALUE_LOWER]: valueLower,
         [FIELD_MAP.VALUE_UPPER]: valueUpper,
-        [FIELD_MAP.SOURCE_DATABASE]: source
+        [FIELD_MAP.SOURCE_DATABASE]: source, 
+        noData
       } = indDemoData
       
       const vMap = { value, valueLower, valueUpper }
@@ -1119,7 +1120,7 @@ const getGroupsTable = (data, shinyCountry) => {
 
       
       rowData[ind] = {
-        source, year, ...vMap
+        source, year, noData, ...vMap
       }
     })
   })

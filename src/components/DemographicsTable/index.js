@@ -3,7 +3,7 @@ import ReactTooltip from 'react-tooltip';
 import _ from 'lodash'
 import './styles.css'
 import Tooltip from '../Tooltip'
-import { AGE_MAP } from '../../constants/charts'
+import { AGE_MAP, SOURCE_DISPLAY_MAP } from '../../constants/charts'
 
 const indicators = [
   { 
@@ -17,7 +17,7 @@ const indicators = [
     displayName: 'PLHIV who know status (%)',
   }, { 
     id: 'prev',
-    displayName: 'HIV prevalence',
+    displayName: 'HIV prevalence (%)',
   }, { 
     id: 'newly',
     displayName: 'New HIV infections',
@@ -160,17 +160,24 @@ class DemographicsTable extends Component {
               
               {indicators.map(({ id }) => {
                 const data = _.get(this.props.config, ['dataMap', dem.id, id], {})
-                const { value, valueUpper, valueLower, source, year } = data
+                const { value, valueUpper, valueLower, source, year, noData } = data
 
                 const uid = `${dem.id}-${id}`
                 // const x = (<p data-tip= "<p>HTML tooltip</p>" data-html={true}>aoeu</p>)
                 const tooltipId = 'tooltip-'+uid
-                const val = (<a data-tip data-for={tooltipId}>{value} </a>)
+                let val
+                if (!value || noData) {
+                  val = <span>N/A</span>
+                } else if (id === 'undiagnosed') {
+                  val = <span>{value}</span>
+                } else {
+                 val = <a data-tip data-for={tooltipId}>{value} </a>
+                }
                 const tooltip = (
                   <ReactTooltip id={tooltipId} type='info' effect='solid'>
                     <div>Upper bound: {valueUpper}</div>
                     <div>Lower bound: {valueLower}</div>
-                    <div>Source: {source}</div>
+                    <div>Source: {SOURCE_DISPLAY_MAP[source]||source}</div>
                     <div>Year: {year}</div>
                   </ReactTooltip>
                 )
