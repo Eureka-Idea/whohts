@@ -775,7 +775,6 @@ const CHARTS = {
     nonShinyTitle: 'Prevalence',
     id: 'PREVALENCE',
     shinyOnlyIndicators: {
-      // 15-99, confidence intervals on value_comment
       positivity: 'positivity',
       dYield: 'yldnew',
     },
@@ -783,7 +782,7 @@ const CHARTS = {
       prevalence: 'HIV Prevalence - adults (15-49)',
 
       // 15+
-      plhiv: 'People living with HIV - adults (aged 15+)', // ci on population_segment
+      plhiv: 'People living with HIV - adults (aged 15+)',
       onArt: 'People receiving antiretroviral therapy',
       population: 'Population by age and sex', // TODO: 15+
     }
