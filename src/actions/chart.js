@@ -17,9 +17,9 @@ const baseUrl = 'https://status.y-x.ch/query?'
 
 const debugList = {
   // [CHARTS.PREVALENCE.id]: true,
-  [CHARTS.KP_TABLE.id]: true,
-  [CHARTS.GROUPS_TABLE.id]: true,
-  [CHARTS.POLICY_TABLE.id]: true,
+  // [CHARTS.KP_TABLE.id]: true,
+  // [CHARTS.GROUPS_TABLE.id]: true,
+  // [CHARTS.POLICY_TABLE.id]: true,
 
   // [CHARTS.PLHIV_AGE.id]: true,
 }
