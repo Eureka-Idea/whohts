@@ -1,7 +1,7 @@
 import colors, {femaleColor, maleColor, barChartAccent, barChartColorDark } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import { CHARTS, R_2015_2019, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP } from "../../constants/charts";
+import { CHARTS, R_2015_2019, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
 // __________________________ HELPERS ____________________________________
@@ -52,10 +52,12 @@ function displayNumber({ v }) {
   }
   let str = Number(v.toPrecision(2)).toString()
   let spaced = ''
+  let spacer = ''
   let slStart
   while (str.length) {
-    spaced = str.slice(-3) + ' ' + spaced
+    spaced = str.slice(-3) + spacer + spaced
     str = str.slice(0, -3)
+    spacer = ' '
   }
 
   console.log('v: ', v)
@@ -98,6 +100,27 @@ function getColumnPoints(numData, posData) {
 
   return [numPoint, posPoint]
 }
+
+
+function getSubtitle(total, pTotal) {
+  const {
+    [FIELD_MAP.SOURCE_DATABASE]: source,
+    [FIELD_MAP.YEAR]: year,
+  } = total
+  const tooltip = `Source: ${SOURCE_DISPLAY_MAP[source]||source}\nYear: ${year}`
+
+  const {
+    [FIELD_MAP.SOURCE_DATABASE]: pSource,
+    [FIELD_MAP.YEAR]: pYear,
+  } = pTotal
+  const pTooltip = `Source: ${SOURCE_DISPLAY_MAP[pSource]||source}\nYear: ${pYear}`
+
+  const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true })
+  
+  return `<div><span title="${tooltip}"><b>Total tests</b>: ${displayNumber({ v: total.value })}</span>, 
+  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal}</span></div>` 
+}
+
 
 // __________________________________________________________________
 
@@ -670,9 +693,11 @@ const getAdults = data => {
   ]
   const categories = ['Women', 'Men']
 
-  // TODO should be weighted avg of %
   const options = {
-    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${adjustPercentage({ row: pTotal, toDisplay: true })}` }
+    subtitle: { 
+      useHTML: true,
+      text: getSubtitle(total, pTotal)
+    }
   }
   return _.merge({}, getColumnScat({ title, series, options, categories }))
 }
@@ -721,7 +746,10 @@ const getCommunity = data => {
   ]
 
   const options = {
-    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${adjustPercentage({ row: pTotal, toDisplay: true })}` }
+    subtitle: {
+      useHTML: true,
+      text: getSubtitle(total, pTotal)
+    }
   }
   const categories = ['Mobile Testing', 'VCT', 'Other']
   return _.merge({}, getColumnScat({ title, series, options, categories }))
@@ -802,7 +830,8 @@ const getFacility = data => {
 
   const options = {
     subtitle: {
-      text: `Total tests: ${total.value}, Average positivity: ${adjustPercentage({ row: pTotal, toDisplay: true })}`
+      useHTML: true,
+      text: getSubtitle(total, pTotal)
     }
   }
   const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other']
@@ -848,7 +877,10 @@ const getIndex = data => {
     }
   ]
   const options = {
-    subtitle: { text: `Total tests: ${total.value}, Average positivity: ${adjustPercentage({ row: pTotal, toDisplay: true })}` }
+    subtitle: {
+      useHTML: true,
+      text: getSubtitle(total, pTotal)
+    }
   }
   const categories = ['Community', 'Facility']
   return _.merge({}, getColumnScat({ title, options, categories, series }))
