@@ -167,7 +167,10 @@ const area = {
   legend: {
     symbolRadius: 0,
   },
-  yAxis: { title: { text: null } },
+  yAxis: {
+    title: { text: null },
+    stackLabels: { enabled: false }
+  },
   marker : {symbol : 'square', radius : 12 }
 }
 

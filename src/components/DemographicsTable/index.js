@@ -160,7 +160,7 @@ class DemographicsTable extends Component {
               
               {indicators.map(({ id }) => {
                 const data = _.get(this.props.config, ['dataMap', dem.id, id], {})
-                const { value, valueUpper, valueLower, source } = data
+                const { value, valueUpper, valueLower, source, year } = data
 
                 const uid = `${dem.id}-${id}`
                 // const x = (<p data-tip= "<p>HTML tooltip</p>" data-html={true}>aoeu</p>)
@@ -171,6 +171,7 @@ class DemographicsTable extends Component {
                     <div>Upper bound: {valueUpper}</div>
                     <div>Lower bound: {valueLower}</div>
                     <div>Source: {source}</div>
+                    <div>Year: {year}</div>
                   </ReactTooltip>
                 )
                 return (<td key={uid}>{val}{tooltip}</td>)
