@@ -46,6 +46,10 @@ function adjustPercentage({ row, toDisplay=false }) {
   return v
 }
 function displayNumber({ v }) {
+  if (!_.isNumber(v)) {
+    console.warn('NaN fed to displayNumber: ', v)
+    return null
+  }
   let str = Number(v.toPrecision(2)).toString()
   let spaced = ''
   let slStart
@@ -59,6 +63,10 @@ function displayNumber({ v }) {
   return spaced
 }
 function displayPercent({ v, adjust = false }) {
+  if (!_.isNumber(v)) {
+    console.warn('NaN fed to displayPercent: ', v)
+    return null
+  }
   const val = adjust ? (v * 100) : v
 
   if (val > 100) {
@@ -138,7 +146,7 @@ const getConfig = (chartId, chartData, shinyCountry) => {
   }  
 }
 
-const extractPrioritizedData = (data, indicatorIds, sourceCount, defaultValue=0) => {
+const extractPrioritizedData = (data, indicatorIds, sourceCount, defaultValue=undefined) => {
   const result = { missingIndicators: [] }
   _.each(indicatorIds, ind => {
 
@@ -918,7 +926,7 @@ const getKpTable = data => {
     awareMsm, awarePwid, awarePris, awareSw, awareTrans,
     yearMsm, yearPwid, yearPris, yearSw, yearTrans,
     missingIndicators
-  } = extractPrioritizedData(data, indicatorIds, sources.length, 'N/A')
+  } = extractPrioritizedData(data, indicatorIds, sources.length)
 
   // console.log(
   //   'KP DATA | ',
@@ -940,20 +948,25 @@ const getKpTable = data => {
   // )
 
   const sw = {
-    prev: prevSw.value, aware: awareSw.value, year: yearSw.value, 
+    prev: prevSw, aware: awareSw, year: yearSw, 
   }
   const msm = {
-    prev: prevMsm.value, aware: awareMsm.value, year: yearMsm.value, 
+    prev: prevMsm, aware: awareMsm, year: yearMsm, 
   }
   const pwid = {
-    prev: prevPwid.value, aware: awarePwid.value, year: yearPwid.value, 
+    prev: prevPwid, aware: awarePwid, year: yearPwid, 
   }
   const trans = {
-    prev: prevTrans.value, aware: awareTrans.value, year: yearTrans.value, 
+    prev: prevTrans, aware: awareTrans, year: yearTrans, 
   }
   const pris = {
-    prev: prevPris.value, aware: awarePris.value, year: yearPris.value, 
+    prev: prevPris, aware: awarePris, year: yearPris, 
   }
+
+  // const inds = ['']
+  // ['sw', 'msm', 'pwid', 'trans', 'pris'].map(dem => {
+
+  // })
 
   const config = {
     title,
@@ -1130,5 +1143,8 @@ const getGroupsTable = (data, shinyCountry) => {
 }
 
 export {
-  getConfig
+  getConfig,
+  adjustPercentage,
+  displayPercent,
+  displayNumber,
 }

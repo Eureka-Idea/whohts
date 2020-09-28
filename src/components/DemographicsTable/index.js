@@ -163,7 +163,6 @@ class DemographicsTable extends Component {
                 const { value, valueUpper, valueLower, source, year, noData } = data
 
                 const uid = `${dem.id}-${id}`
-                // const x = (<p data-tip= "<p>HTML tooltip</p>" data-html={true}>aoeu</p>)
                 const tooltipId = 'tooltip-'+uid
                 let val
                 if (!value || noData) {
@@ -173,8 +172,9 @@ class DemographicsTable extends Component {
                 } else {
                  val = <a data-tip data-for={tooltipId}>{value} </a>
                 }
+
                 const tooltip = (
-                  <ReactTooltip id={tooltipId} type='info' effect='solid'>
+                  <ReactTooltip id={tooltipId} className='td-tooltip' type='info' effect='solid'>
                     <div>Upper bound: {valueUpper}</div>
                     <div>Lower bound: {valueLower}</div>
                     <div>Source: {SOURCE_DISPLAY_MAP[source]||source}</div>
