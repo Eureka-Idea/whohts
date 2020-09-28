@@ -790,7 +790,7 @@ const CHARTS = {
   },
 
   ADULTS: {
-    title: 'Adults',
+    title: 'HIV tests conducted and positivity, by sex',
     id: 'ADULTS',
     sources: [
       adultsGAM20,
@@ -807,19 +807,19 @@ const CHARTS = {
     indicatorIds: ['total', 'men', 'women', 'pTotal', 'pMen', 'pWomen']
   },
   COMMUNITY: {
-    title: 'Community Testing Modalities',
+    title: 'HIV tests conducted and positivity at community level',
     id: 'COMMUNITY',
     sources: [communityGAM20, communityGAM19, communityNPD19, communityPEPFAR],
     indicatorIds: ['total', 'mobile', 'VCT', 'other', 'pTotal', 'pMobile', 'pVCT', 'pOther']
   },
   FACILITY: {
-    title: 'Facility Testing Modalities',
+    title: 'HIV tests conducted and positivity at facility level',
     id: 'FACILITY',
     sources: [facilityGAM20, facilityGAM19, facilityNPD19, facilityPEPFAR],
     indicatorIds: ['total', 'PITC', 'ANC', 'VCT', 'family', 'other', 'pTotal', 'pPITC', 'pANC', 'pVCT', 'pFamily', 'pOther']
   },
   INDEX: {
-    title: 'Index',
+    title: 'HIV tests conducted and positivity for Provider-assisted referral/Index testing',
     id: 'INDEX',
     sources: [indexPEPFAR],
     indicatorIds: ['total', 'community', 'facility', 'pTotal', 'pCommunity', 'pFacility']

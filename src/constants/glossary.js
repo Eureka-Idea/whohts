@@ -1,3 +1,5 @@
+import React from 'react'
+
 const diagnosticYield = {
   term: 'Diagnostic yield',
   // Note: Question from stakeholder on how this is determined so more detail may be needed.
@@ -57,7 +59,15 @@ const retest = {
 const shiny90 = {
   term: 'Shiny90',
   // TODO: add link
-  definition: 'A mathematical model that synthesizes population - based survey and HIV testing services program data to estimate awareness of HIV status over time. Full details of the model can be found here: https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'
+  definition: <span>
+    A mathematical model that synthesizes population - based survey and HIV testing services program data to estimate awareness of HIV status over time. Full details of the model can be found <a href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>here</a>.
+  </span>,
+  links: { 
+    LINK1: {
+      text: 'here',
+      url: 'https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'
+    }
+  }
 }
 
 

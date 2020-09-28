@@ -19,43 +19,23 @@ const KPTable = ({ config }) => {
 
     const {
       [FIELD_MAP.VALUE]: value,
-      [FIELD_MAP.VALUE_UPPER]: valueUpper,
-      [FIELD_MAP.VALUE_LOWER]: valueLower,
       [FIELD_MAP.SOURCE_DATABASE]: source,
       [FIELD_MAP.YEAR]: year,
       noData
     } = row
 
     const tooltipId = 'tooltip-' + uid
-    let val, dispValueUpper, dispValueLower, tooltipValueUpper, tooltipValueLower
+    let val
     if (!value || noData) {
       val = <span>N/A</span>
     } else if (ind === 'year') {
-      dispValueUpper = displayNumber({ v: valueUpper })
-      tooltipValueUpper = !dispValueUpper ? null : 
-        <div>Upper bound: {dispValueUpper}</div>
-
-      dispValueLower = displayNumber({ v: valueLower })
-      tooltipValueLower = !dispValueUpper ? null : 
-        <div>Upper bound: {dispValueUpper}</div>
-
       val = <a data-tip data-for={tooltipId}>{displayNumber({ v: value })}</a>
     } else {
-      dispValueUpper = displayPercent({ v: valueUpper })
-      tooltipValueUpper = !dispValueUpper ? null : 
-        <div>Upper bound: {dispValueUpper}</div>
-
-      dispValueLower = displayPercent({ v: valueLower })
-      tooltipValueLower = !dispValueLower ? null : 
-        <div>Lower bound: {dispValueLower}</div>
-
       val = <a data-tip data-for={tooltipId}>{displayPercent({ v: value })}</a>
     }
 
     const tooltip = (
       <ReactTooltip id={tooltipId} className='td-tooltip' type='info' effect='solid'>
-        {tooltipValueUpper}
-        {tooltipValueLower}
         <div>Source: {SOURCE_DISPLAY_MAP [source] || source}</div>
         <div>Year: {year}</div>
       </ReactTooltip>
@@ -78,7 +58,7 @@ const KPTable = ({ config }) => {
         <thead>
           <tr>
             <th scope='col'></th>
-            <th scope='col'>HIV prevalence</th>
+            <th scope='col'>HIV prevalence (%)</th>
             <th scope='col'>HIV testing and status awareness</th>
             <th scope='col'>Tested in past year</th>
           </tr>

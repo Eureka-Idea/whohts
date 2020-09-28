@@ -16,7 +16,7 @@ import { TERM_MAP, TERMS } from '../../constants/glossary'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { CHARTS, FIELD_MAP } from '../../constants/charts'
-import { getConfig } from './chartConfigs'
+import { getConfig, displayNumber } from './chartConfigs'
 import { COUNTRY_MAP } from '../../components/Homepage/countries'
 const HighchartsMore = require('highcharts/highcharts-more')
 const Highcharts = require('highcharts')
@@ -213,7 +213,7 @@ class Dashboard extends Component {
           <h1>{name}</h1>
         </div>
         <div className='country-details pb-3'>
-          <div><span>Population:</span><span> {population}</span></div>
+          <div><span>Population:</span><span> {displayNumber({ v: population })}</span></div>
           <div><span>World Bank classification:</span><span> {classification}</span></div>
 
         </div>
@@ -223,24 +223,21 @@ class Dashboard extends Component {
   
   render() {
 
-    // const configCascade = this.getCascade()
-    // const configConducted = this.getConducted()
-
-    const ptt = (
-      <Tooltip>
-        <div>
-          <div><b>Retests - PLHIV on ART:</b><span> Number of positive tests conducted in PLHIV already on ART. This is calculated by… Potential reasons for this type of testing include…</span></div>
-          <div><b>Retests - Aware but not on ART:</b><span> Number of positive tests conducted in PLHIV aware of their HIV infection but not on ART. This is calculated by… Potential reasons for this type of testing include…</span></div>
-          <div><b>New Diagnoses:</b><span> Number of positive tests returned that represent a newly identified HIV infection. This [does/does not] include retesting for verification prior to ART initiation as recommended by WHO. </span></div>
-        </div>
-      </Tooltip>
-    )
+    // const ptt = (
+    //   <Tooltip>
+    //     <div>
+    //       <div><b>Retests - PLHIV on ART:</b><span> Number of positive tests conducted in PLHIV already on ART. This is calculated by… Potential reasons for this type of testing include…</span></div>
+    //       <div><b>Retests - Aware but not on ART:</b><span> Number of positive tests conducted in PLHIV aware of their HIV infection but not on ART. This is calculated by… Potential reasons for this type of testing include…</span></div>
+    //       <div><b>New Diagnoses:</b><span> Number of positive tests returned that represent a newly identified HIV infection. This [does/does not] include retesting for verification prior to ART initiation as recommended by WHO. </span></div>
+    //     </div>
+    //   </Tooltip>
+    // )
     
     const diagnosis = this.getChart(CHARTS.PLHIV_DIAGNOSIS.id)
     const PLHIVAge = this.getChart(CHARTS.PLHIV_AGE.id)
     const PLHIVSex = this.getChart(CHARTS.PLHIV_SEX.id)
     const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
-    const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
+    const positive = this.getChart(CHARTS.HIV_POSITIVE.id)
     const prevalence = this.getChart(CHARTS.PREVALENCE.id)
     const adults = this.getChart(CHARTS.ADULTS.id)
     const community = this.getChart(CHARTS.COMMUNITY.id)
@@ -306,20 +303,20 @@ class Dashboard extends Component {
           <div className='row no-gutters mt-5 other-source-section'>
             <h3>Links to other sources</h3>
             <div className='sources'>
-              <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
+              {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
                 Shiny 90 Modelling Methodology
-              </a>
-              {/* <a target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
-                UNAIDS - Laws and Policies
-                </a>
-                <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
-                WHO Paediatric HIV Testing
               </a> */}
-              <a target='_blank' rel='noopener noreferrer' href='https://www.who.int/hiv/prep/global-prep-coalition/en/'>
-                Global PrEP Coalition
-              </a>
               <a target='_blank' rel='noopener noreferrer' href='https://cfs.hivci.org/'>
                 WHO HIV Country Profiles
+              </a>
+              <a target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
+                UNAIDS - Laws and Policies
+                </a>
+              {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
+              WHO Paediatric HIV Testing
+            </a> */}
+              <a target='_blank' rel='noopener noreferrer' href='https://www.who.int/hiv/prep/global-prep-coalition/en/'>
+                Global PrEP Coalition
               </a>
               {DEV && <a target='_blank' rel='noopener noreferrer' href='https://master.dv1i2lva39jkq.amplifyapp.com/'>
                 PROTOTYPE DASHBOARD (fake data)
@@ -345,8 +342,12 @@ class Dashboard extends Component {
         </div>
         <div className='terms'>
           {TERMS.map(t => {
+            // let definition = t.definition.replace(/{{{[.*]\|[.*]}}}/g, )
+            // _.each(t.links, (link, placeHolder) => {
+            //   definition.replace(placeHolder)
+            // })
             return (
-              <div className='term py-1'><strong>{t.term}</strong>: <span>{t.definition}</span></div>
+              <div key={t.term} className='term py-1'><strong>{t.term}</strong>: <span>{t.definition}</span></div>
             )
           })}
         </div>

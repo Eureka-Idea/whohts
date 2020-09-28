@@ -166,7 +166,7 @@ $nav-height: 70px;
   }
  
   .policy-table, .kp-table, .demographics-table {
-    td {
+    td, th:not(:first-of-type) {
       text-align: right;
     }
     .tooltip-container {

@@ -17,8 +17,8 @@ const sourceTooltipFormat = `
   {series.name}: <b>{point.y}</b><br/>
   Year: <b>{point.year}</b><br/>
   Source: <b>{point.source}</b><br/>
-  Source year: <b>{point.sourceYear}</b><br/>
   `
+  // Source year: <b>{point.sourceYear}</b><br/>
 
 const barChartsTestsName = 'Number of tests conducted'
 const barChartsPositivityName = 'Positivity' // TODO: acceptable?
@@ -45,12 +45,18 @@ function adjustPercentage({ row, toDisplay=false }) {
   }
   return v
 }
-function displayNumber({ v }) {
+function displayNumber({ v, unrounded=false }) {
   if (!_.isNumber(v)) {
     console.warn('NaN fed to displayNumber: ', v)
     return null
   }
-  let str = Number(v.toPrecision(2)).toString()
+
+  if (v > 1000000) {
+
+    return _.round(v/1000000, 1).toString() + ' million'
+  }
+  
+  let str = unrounded ? v.toString() : Number(v.toPrecision(2)).toString()
   let spaced = ''
   let spacer = ''
   let slStart
@@ -60,8 +66,6 @@ function displayNumber({ v }) {
     spacer = ' '
   }
 
-  console.log('v: ', v)
-  console.log('sp: ', spaced)
   return spaced
 }
 function displayPercent({ v, adjust = false }) {
@@ -115,9 +119,10 @@ function getSubtitle(total, pTotal) {
   } = pTotal
   const pTooltip = `Source: ${SOURCE_DISPLAY_MAP[pSource]||source}\nYear: ${pYear}`
 
+  const formattedTotal = displayNumber({ v: total.value, unrounded: true })
   const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true })
   
-  return `<div><span title="${tooltip}"><b>Total tests</b>: ${displayNumber({ v: total.value })}</span>, 
+  return `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal}</span>, 
   <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal}</span></div>` 
 }
 
@@ -297,7 +302,7 @@ const getPlhivSex = data => {
   const options = {
     legend: { symbolWidth: 40 },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-    yAxis: { max: 100 },
+    yAxis: { max: 100, min: 0 },
     plotOptions: { 
       series: { pointStart: 2015 },
     }
@@ -319,13 +324,13 @@ const getPlhivSex = data => {
 
   const series = [
     {
-      name: 'Men',
+      name: 'Men (15+)',
       color: maleColor,
       dashStyle: 'solid',
       data: maleXYValues,
     },
     {
-      name: 'Women',
+      name: 'Women (15+)',
       color: femaleColor,
       dashStyle: 'Solid',
       data: femaleXYValues,
@@ -340,7 +345,7 @@ const getPlhivAge = data => {
   const options = {
     legend: { symbolWidth: 40 },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-    yAxis: { max: 100 },
+    yAxis: { max: 100, min: 0 },
     plotOptions: { series: { pointStart: 2015 } }
   }
 
@@ -422,7 +427,7 @@ const getHivNegative = data => {
     title: { useHTML: true },
     yAxis: { title: { text: 'HIV Negative Tests' } },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-    plotOptions: { series: { pointStart: 2010 } }
+    plotOptions: { series: { pointStart: 2015 } }
     // tooltip: { valueSuffix: ' thousand' },
   }
   return _.merge({}, getArea({ title, series, options }))
@@ -903,18 +908,18 @@ const getForecast = data => {
   }
 
   // todo: remove compact
-  const distributedNumData = _.compact(distributed).map(d => ({
+  const distributedNumData = distributed.map(d => ({
     x: Number(d.year),
     y: d.value,
     source: d[FIELD_MAP.SOURCE_DATABASE]
   }))
 
-  const demandNumData = _.compact(demand).map(d => ({
+  const demandNumData = demand.map(d => ({
     x: Number(d.year),
     y: d.value,
   }))
 
-  const needNumData = _.compact(need).map(d => ({
+  const needNumData = need.map(d => ({
     x: Number(d.year),
     y: d.value,
     source: d[FIELD_MAP.SOURCE_DATABASE]
