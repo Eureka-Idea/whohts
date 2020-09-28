@@ -19,7 +19,7 @@ const baseUrl = 'https://status.y-x.ch/query?'
 const DEV = window.location.hostname === 'localhost'
 
 const debugList = {
-  // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
+  // [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
   // [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.POLICY_TABLE.id]: true,

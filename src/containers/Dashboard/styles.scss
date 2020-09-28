@@ -182,6 +182,22 @@ $nav-height: 70px;
     background: rgba(0, 0, 0, 0.8);
     text-align: left;
   }
+
+  .other-source-section {
+    display: block;
+    a, h3 {
+      display: block;
+    }
+    @media screen and (min-width: 992px) {
+      .sources {
+        display: flex;
+        justify-content: space-around;
+      }
+      a {
+        display: inline-block;
+      }
+    }
+  }  
 }
 
 #direct-query {
