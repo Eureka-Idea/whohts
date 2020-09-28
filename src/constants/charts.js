@@ -32,14 +32,14 @@ const MALE = 'male'
 const R_SEXES = [FEMALE, MALE]
 
 // ['f15-24', 'm15-24', 'f24-34' ... 'm15-99']
-const R_ALL_DEMO_GROUPS = _.flatMap(
-  [...R_ADULT_AGES, ALL_ADULTS].map(y => 
-  [FEMALE[0]+y, MALE[0]+y]
-))
-const R_LIMITED_DEMO_GROUPS = _.flatMap(
-  [ADULTS15, ALL_ADULTS].map(y => 
-  [FEMALE[0]+y, MALE[0]+y]
-))
+const R_ALL_DEMO_GROUPS = _.flatMap([
+  [ALL_ADULTS, ...R_ADULT_AGES].map(y => FEMALE[0]+y),
+  [ALL_ADULTS, ...R_ADULT_AGES].map(y => MALE[0]+y)
+])
+const R_LIMITED_DEMO_GROUPS = _.flatMap([
+  [ALL_ADULTS, ADULTS15].map(y => FEMALE[0]+y),
+  [ALL_ADULTS, ADULTS15].map(y => MALE[0]+y)
+])
 
 const SOURCE_DB_MAP = {
   S90: 'Shiny90',

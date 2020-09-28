@@ -18,7 +18,7 @@ const PolicyTable = ({ config }) => {
             return (
               <tr key={i}>
                 <th scope='row'>{r.rowName}</th>
-                <td>{r.value}</td>
+                <td>{r.value||'N/A'}</td>
                 {/* <td><span className='marker compliant'></span></td> */}
               </tr>
             )

@@ -1038,31 +1038,31 @@ const getPolicyTable = data => {
     title,
     data: [{ 
         rowName: 'Age of consent for HIV testing',
-        value: age[FIELD_MAP.VALUE_COMMENT]
+        value: _.get(age, [FIELD_MAP.VALUE_COMMENT])
       },{ 
         rowName: 'Provider-initiated testing',
-        value: provider[FIELD_MAP.VALUE_COMMENT]
+        value: _.get(provider, [FIELD_MAP.VALUE_COMMENT])
       },{ 
         rowName: 'Community-based testing',
-        value: community[FIELD_MAP.VALUE_COMMENT]
+        value: _.get(community, [FIELD_MAP.VALUE_COMMENT])
       },{ 
         rowName: 'Lay provider testing',
-        value: lay[FIELD_MAP.VALUE_COMMENT]
+        value: _.get(lay, [FIELD_MAP.VALUE_COMMENT])
       },{ 
         rowName: 'Self-testing',
-        value: hivst[FIELD_MAP.VALUE_COMMENT]
+        value: _.get(hivst, [FIELD_MAP.VALUE_COMMENT])
       },{ 
         rowName: 'Provider-assisted referral/index testing',
-        value: assisted[FIELD_MAP.VALUE_COMMENT]
+        value: _.get(assisted, [FIELD_MAP.VALUE_COMMENT])
       },{ 
         rowName: 'Social network-based testing',
-        value: social[FIELD_MAP.VALUE_COMMENT]
+        value: _.get(social, [FIELD_MAP.VALUE_COMMENT])
       },{ 
         rowName: 'Compliance with WHO testing strategy',
-        value: compliance[FIELD_MAP.VALUE_COMMENT]
+        value: _.get(compliance, [FIELD_MAP.VALUE_COMMENT])
       },{ 
         rowName: 'Verification testing before ART',
-        value: verification[FIELD_MAP.VALUE_COMMENT]
+        value: _.get(verification, [FIELD_MAP.VALUE_COMMENT])
       },]
   }
 

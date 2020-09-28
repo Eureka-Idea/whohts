@@ -84,7 +84,7 @@ class DemographicsTable extends Component {
   constructor(props) {
     super(props)
     
-    console.log('MAD PROPS : ', props)
+    // console.log('MAD PROPS : ', props)
     this.allWomen = []
     this.allMen = []
     this.everyone = []
