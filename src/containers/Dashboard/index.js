@@ -308,21 +308,21 @@ class Dashboard extends Component {
             <a className='col-xl-12' target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
               Shiny 90 Modelling Methodology
             </a>
-            <a className='col-xl-12' target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
+            {/* <a className='col-xl-12' target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
               UNAIDS - Laws and Policies
             </a>
             <a className='col-xl-12' target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
               WHO Paediatric HIV Testing
-            </a>
+            </a> */}
             <a className='col-xl-12' target='_blank' rel='noopener noreferrer' href='https://www.who.int/hiv/prep/global-prep-coalition/en/'>
               Global PrEP Coalition
             </a>
             <a className='col-xl-12' target='_blank' rel='noopener noreferrer' href='https://cfs.hivci.org/'>
               WHO HIV Country Profiles
             </a>
-            <a className='col-xl-12' target='_blank' rel='noopener noreferrer' href='https://master.dv1i2lva39jkq.amplifyapp.com/'>
+            {DEV && <a className='col-xl-12' target='_blank' rel='noopener noreferrer' href='https://master.dv1i2lva39jkq.amplifyapp.com/'>
               PROTOTYPE DASHBOARD (fake data)
-            </a>
+            </a>}
           </div>
           {this.getGlossary()}
           <br />
