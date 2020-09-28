@@ -123,7 +123,7 @@ function getSubtitle(total, pTotal) {
   const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true })
   
   return `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal}</span>, 
-  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal}</span></div>` 
+  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal}</span><br /><span>Programme Data</span></div>` 
 }
 
 

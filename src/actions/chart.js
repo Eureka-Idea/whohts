@@ -24,8 +24,8 @@ const debugList = {
   // [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.POLICY_TABLE.id]: true,
 
-  [CHARTS.PLHIV_AGE.id]: true,
-  // [CHARTS.ADULTS.id]: true,
+  // [CHARTS.PLHIV_AGE.id]: true,
+  [CHARTS.ADULTS.id]: true,
 }
 const debugSkipList = {
   // [CHARTS.ADULTS.id]: true,
