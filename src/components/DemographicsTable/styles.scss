@@ -1,134 +1,137 @@
 @import '../../styles/_variables.scss';
 
-.demographics-table {
-  position: relative;
-  background-color: white;
+.dashboard {
 
-  .table {
-    max-width: $max-width;
-
-    td {
-      white-space: nowrap;
-    }
-  }
-
-  h2 {
-    padding-left: 35px;
-  }
-
-  .table-title {
-    display: inline-block;
-  }
-
-  .empty-table {
-    font-weight: bold;
-  }
-
-  .token {
-    margin: 3px 2px;
-    border-radius: 6px;
-    border: 1px solid;
-    display: inline-block;
-    cursor: pointer;
-  }
-  
-  .group-toggles {
-    max-width: $max-width;
-    display: flex;
-    justify-content: space-around;
+  .demographics-table {
+    position: relative;
+    background-color: white;
     
-    .token {
-      padding: 3px 8px;
+    .table {
+      max-width: $max-width;
+      
+      td {
+        white-space: nowrap;
+      }
+    }
+    
+    h2 {
+      padding-left: 45px;
+    }
+    
+    .table-title {
+      display: inline-block;
+    }
+    
+    .empty-table {
       font-weight: bold;
-      font-size: 16px;
-
-      &.hide-all {
-        background: black;
-        color: white;
-      }
-      &.show-women {
-        // background: $women;
-        // color: #f2f2f2;
-        background-color: $women;
-        border-color: $women;
-      }
-      &.show-men {
-        // background: $men;
-        // color: #f2f2f2;
-        background-color: $men;
-        border-color: $men;
-      }
-      &.show-all {
-        // background: #f2f2f2;
-        background-color: white;
-        border-color: black;
-      }
-      &.hide-all, &.show-men, &.show-women  {
-        // background: #f2f2f2;
-        // border: 2px solid;
-        color: white;
-      }
     }
-  }
     
-  .hidden-rows {
-    display: flex;
-    max-width: $max-width;
-
-    .title {
-      flex-basis: 110px;
-      &.all-visible {
-        text-align: center;
-        flex-basis: 100%;
-      }
-      flex-grow: 0;
-      flex-shrink: 0;
-      line-height: 16px;
-      align-self: center;
-      i {
-        font-size: 12px;
-        display: block;
+    .token {
+      margin: 3px 2px;
+      border-radius: 6px;
+      border: 1px solid;
+      display: inline-block;
+      cursor: pointer;
+    }
+    
+    .group-toggles {
+      max-width: $max-width;
+      display: flex;
+      justify-content: space-around;
+      
+      .token {
+        padding: 3px 8px;
+        font-weight: bold;
+        font-size: 16px;
+        
+        &.hide-all {
+          background: black;
+          color: white;
+        }
+        &.show-women {
+          // background: $women;
+          // color: #f2f2f2;
+          background-color: $women;
+          border-color: $women;
+        }
+        &.show-men {
+          // background: $men;
+          // color: #f2f2f2;
+          background-color: $men;
+          border-color: $men;
+        }
+        &.show-all {
+          // background: #f2f2f2;
+          background-color: white;
+          border-color: black;
+        }
+        &.hide-all, &.show-men, &.show-women  {
+          // background: #f2f2f2;
+          // border: 2px solid;
+          color: white;
+        }
       }
     }
-
-    .token {
-      border: 3px solid;
-      // color: white;
-      padding: 2px 5px;
-      font-size: 13px;
-      font-weight: lighter;
-      background: #f2f2f2;
-      text-align: center;
-
-      &.women {
-        border-color: $women;
+    
+    .hidden-rows {
+      display: flex;
+      max-width: $max-width;
+      
+      .title {
+        flex-basis: 110px;
+        &.all-visible {
+          text-align: center;
+          flex-basis: 100%;
+        }
+        flex-grow: 0;
+        flex-shrink: 0;
+        line-height: 16px;
+        align-self: center;
+        i {
+          font-size: 12px;
+          display: block;
+        }
       }
-      &.men {
-        border-color: $men;
-      }
-      &.women50 {
-        border-color: rgba($women, .85);
-      }
-      &.men50 {
-        border-color: rgba($men, .85);
-      }
-      &.women35 {
-        border-color: rgba($women, .7);
-      }
-      &.men35 {
-        border-color: rgba($men, .7);
-      }
-      &.women25 {
-        border-color: rgba($women, .55);
-      }
-      &.men25 {
-        border-color: rgba($men, .55);
-      }
-      &.women15 {
-        border-color: rgba($women, .4);
-      }
-      &.men15 {
-        border-color: rgba($men, .4);
+      
+      .token {
+        border: 3px solid;
+        // color: white;
+        padding: 2px 5px;
+        font-size: 13px;
+        font-weight: lighter;
+        background: #f2f2f2;
+        text-align: center;
+        
+        &.women {
+          border-color: $women;
+        }
+        &.men {
+          border-color: $men;
+        }
+        &.women50 {
+          border-color: rgba($women, .85);
+        }
+        &.men50 {
+          border-color: rgba($men, .85);
+        }
+        &.women35 {
+          border-color: rgba($women, .7);
+        }
+        &.men35 {
+          border-color: rgba($men, .7);
+        }
+        &.women25 {
+          border-color: rgba($women, .55);
+        }
+        &.men25 {
+          border-color: rgba($men, .55);
+        }
+        &.women15 {
+          border-color: rgba($women, .4);
+        }
+        &.men15 {
+          border-color: rgba($men, .4);
+        }
       }
     }
   }

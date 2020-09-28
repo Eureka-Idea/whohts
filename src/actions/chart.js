@@ -14,6 +14,9 @@ const myInit = {
 }
 
 const baseUrl = 'https://status.y-x.ch/query?'
+// const baseUrl = 'https://eic-database-290813.ew.r.appspot.com/'
+
+const DEV = window.location.hostname === 'localhost'
 
 const debugList = {
   // [CHARTS.PREVALENCE.id]: true,
@@ -36,9 +39,9 @@ export const getChartData = (countryCode) =>
     const isShiny = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'], false)
     let indicatorMap = getIndicatorMap(isShiny)
 
-    if (!_.isEmpty(debugList)) {
+    if (!_.isEmpty(DEV && debugList)) {
       indicatorMap = _.pickBy(indicatorMap, (v, k) => debugList[k])
-    } else if (!_.isEmpty(debugSkipList)) {
+    } else if (!_.isEmpty(DEV && debugSkipList)) {
       indicatorMap = _.pickBy(indicatorMap, (v, k) => !debugList[k])
     }
     

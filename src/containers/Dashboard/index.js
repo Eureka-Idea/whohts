@@ -39,6 +39,7 @@ const DEV = window.location.hostname === 'localhost'
 // women men gap?
 
 const URLBase = 'https://status.y-x.ch/query?'
+// const URLBase = 'https://eic-database-290813.ew.r.appspot.com/'
 
 const fields = _.flatMap(FIELD_MAP)
 
@@ -174,7 +175,7 @@ class Dashboard extends Component {
     }
 
     return (
-      <div className='chart-container col-xl-4 col-lg-6 col-sm-12'>
+      <div className='chart-container col-sm-12'>
         {<Table config={config} />}
       </div>
     )

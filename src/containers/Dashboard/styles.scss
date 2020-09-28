@@ -164,6 +164,16 @@ $nav-height: 70px;
       }
     }
   }
+ 
+  .policy-table, .kp-table, .demographics-table {
+    .tooltip-container {
+      top: 15px;
+    }
+    h2 {
+      padding-top: 25px;
+      padding-left: 15px;
+    }
+  }
 }
 
 #direct-query {
