@@ -20,7 +20,7 @@ export default {
     "plotBackgroundColor": "#F8F8F8",
     "style": {
       "color": "#000000",
-      "fontFamily": "Arial, sans-serif"
+      "fontFamily": "'Archivo Narrow', sans-serif"
       // "fontFamily": "Verdana, sans-serif"
     },
     // "margin": [100, 100, 100, 100],
