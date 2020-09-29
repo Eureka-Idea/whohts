@@ -38,8 +38,8 @@ const DEV = window.location.hostname === 'localhost'
 // percentage marks on axis instead of yaxis label
 // women men gap?
 
-const URLBase = 'https://status.y-x.ch/query?'
-// const URLBase = 'https://eic-database-290813.ew.r.appspot.com/'
+// const URLBase = 'https://status.y-x.ch/query?'
+const URLBase = 'https://eic-database-290813.ew.r.appspot.com/query?'
 
 const fields = _.flatMap(FIELD_MAP)
 

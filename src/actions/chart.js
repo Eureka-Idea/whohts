@@ -13,8 +13,8 @@ const myInit = {
   // headers: myHeaders,
 }
 
-const baseUrl = 'https://status.y-x.ch/query?'
-// const baseUrl = 'https://eic-database-290813.ew.r.appspot.com/'
+// const baseUrl = 'https://status.y-x.ch/query?'
+const baseUrl = 'https://eic-database-290813.ew.r.appspot.com/query?'
 
 const DEV = window.location.hostname === 'localhost'
 

@@ -700,7 +700,7 @@ const getPrevalence = (data, shinyCountry) => {
       softThreshold: true
     } },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-    // yAxis: { floor: 0, min: 0, minPadding: .01, minRange: .1, },
+    yAxis: { min: 0 },
     // plotOptions: { series: { pointStart: 2015 } }
     // legend: {
     //   useHTML: true,
