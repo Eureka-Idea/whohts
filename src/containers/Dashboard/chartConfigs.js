@@ -26,24 +26,26 @@ const barChartsTestsName = 'Number of tests conducted'
 const barChartsPositivityName = 'Positivity' // TODO: acceptable?
 const barChartsPositivityNameTooltip = 'Positivity'
 
-function adjustPercentage({ row, toDisplay=false }) {
+function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
   if (!row) {
     console.warn('No % to adjust')
   }
   
   let {
     [FIELD_MAP.VALUE]: v,
+    [FIELD_MAP.INDICATOR]: indicator,
     [FIELD_MAP.SOURCE_DATABASE]: source,
   } = row
 
   if (!v) {
     console.warn('No % to adjust')
   }
-  if (source === SOURCE_DB_MAP.PEPFAR) {
+  if (source === SOURCE_DB_MAP.PEPFAR && indicator.toLowerCase().startsWith('positivity')) {
+    // console.log('!!!!!!!', indicator)
     v *= 100
   }
   if (toDisplay) {
-    v = displayPercent({ v })
+    v = displayPercent({ v, decimals })
   }
   return v
 }
@@ -70,7 +72,7 @@ function displayNumber({ v, unrounded=false }) {
 
   return spaced
 }
-function displayPercent({ v, adjust = false }) {
+function displayPercent({ v, adjust=false, decimals=0 }) {
   if (!_.isNumber(v)) {
     console.warn('NaN fed to displayPercent: ', v)
     return null
@@ -80,28 +82,39 @@ function displayPercent({ v, adjust = false }) {
   if (val > 100) {
     console.warn('Incorrect %')
   }
-  return _.round(val, 1) + '%'
+  if (val < .1) {
+    return '<0.1%'
+  }
+  if (val < .5 && !decimals) {
+    return '<0.5%'
+  }
+  let str = _.round(val, decimals).toString()
+  if (!str.includes('.') && decimals) {
+    str += '.0' // TODO: this doesn't accommodate decimals > 1
+  }
+  return str + '%' 
 }
 
+// intented
 function sourceTooltipFormatter () {
   // const seriesName = useBarChartsAltName ? barChartsPositivityNameTooltip : this.series.name
+  const decimals = this.decimals || 1
   return `
     <span style="color:${this.color}">●</span>
-    ${this.series.name}: <b>${displayPercent({ v: this.y })}</b><br/>
+    ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br/>
     Year: <b>${this.year}</b><br/>
     Source: <b>${this.source}</b><br/>
   `
 }
 function uncertaintyTooltipFormatter () {
   // const seriesName = useBarChartsAltName ? barChartsPositivityNameTooltip : this.series.name
-  console.log('l: ', this.l)
-  console.log('u: ', this.u)
-  const lVal = displayPercent({ v: this.l })
-  const uVal = displayPercent({ v: this.u })
+  const decimals = this.decimals || 0
+  const lVal = displayPercent({ v: this.l, decimals })
+  const uVal = displayPercent({ v: this.u, decimals })
   const uncertaintyLine = (!lVal || !uVal) ? '' : `Uncertainty range: <b>${lVal} - ${uVal}</b><br />`
   return `
     <span style = "color:${this.color}" >●</span >
-    ${this.series.name}: <b>${displayPercent({ v: this.y })}</b><br />
+    ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br />
     ${uncertaintyLine}
     Source: ${this.source}
     `
@@ -122,9 +135,9 @@ function getSubtitle(total, pTotal) {
   const pTooltip = `Source: ${SOURCE_DISPLAY_MAP[pSource]||source}\nYear: ${pYear}`
 
   const formattedTotal = displayNumber({ v: total.value, unrounded: true })
-  const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true })
+  const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
   
-  return `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal}</span>, 
+  return `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal}</span> 
   <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal}</span><br /><span>Programme Data</span></div>` 
 }
 
@@ -520,7 +533,7 @@ function getPrevPoints (row, year, adjust=false) {
   console.log('l: ',l)
   console.log('u: ',u)
   
-  const point = { x, year: x, y, l, u, source }
+  const point = { x, year: x, y, l, u, source, decimals: 1 }
   const rPoint = [l, u]
   return [point, rPoint]
 }
@@ -1235,7 +1248,7 @@ const getGroupsTable = (data, shinyCountry) => {
           }
           const percentages = ['aware', 'prev', 'ever']
           if (percentages.includes(ind)) {
-            v = displayPercent({ v, adjust: true })
+            v = displayPercent({ v, adjust: true, decimals: ind === 'prev' })
           } else {
             v = displayNumber({ v })
           }

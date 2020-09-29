@@ -25,17 +25,18 @@ const KPTable = ({ config }) => {
     } = row
 
     const tooltipId = 'tooltip-' + uid
+    const decimals = ind === 'prev' ? 1 : 0
     let val
     if (!value || noData) {
       val = <span>N/A</span>
     } else if (ind === 'year') {
       val = <a data-tip data-for={tooltipId}>{displayNumber({ v: value })}</a>
     } else {
-      val = <a data-tip data-for={tooltipId}>{displayPercent({ v: value })}</a>
+      val = <a data-tip data-for={tooltipId}>{displayPercent({ v: value, decimals })}</a>
     }
 
     const tooltip = (
-      <ReactTooltip id={tooltipId} className='td-tooltip' type='info' effect='solid'>
+      <ReactTooltip id={tooltipId} className='td-tooltip' type='dark' effect='solid'>
         <div>Source: {SOURCE_DISPLAY_MAP [source] || source}</div>
         <div>Year: {year}</div>
       </ReactTooltip>

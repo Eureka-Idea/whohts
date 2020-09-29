@@ -174,9 +174,9 @@ class DemographicsTable extends Component {
                 }
 
                 const tooltip = (
-                  <ReactTooltip id={tooltipId} className='td-tooltip' type='info' effect='solid'>
-                    <div>Upper bound: {valueUpper}</div>
+                  <ReactTooltip id={tooltipId} className='td-tooltip' type='dark' effect='solid'>
                     <div>Lower bound: {valueLower}</div>
+                    <div>Upper bound: {valueUpper}</div>
                     <div>Source: {SOURCE_DISPLAY_MAP[source]||source}</div>
                     <div>Year: {year}</div>
                   </ReactTooltip>
