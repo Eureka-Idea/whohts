@@ -113,7 +113,7 @@ function percentSourceTooltipFormatter () {
   `
 }
 function uncertaintyTooltipFormatter () {
-  const uncertaintyLine = (!this.l || !this.u) ? '' : `Uncertainty range: <b>${this.l} - ${this.u}</b><br />`
+  const uncertaintyLine = (!this.l || !this.u) ? '' : `Uncertainty range: <b>${displayNumber({ v: this.l })} - ${displayNumber({ v: this.u })}</b><br />`
   return `
     <span style = "color:${this.color}" >●</span >
     ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br />
@@ -468,27 +468,6 @@ const getPlhivAge = data => {
     })
   })
 
-  // const d15 = data['15-24']
-  // const d15Values = d15.map(d => {
-  //   const v = _.get(d, [FIELD_MAP.VALUE])
-  //   return v ? v * 100 : null
-  // })
-  // const d25 = data['25-34']
-  // const d25Values = d25.map(d => {
-  //   const v = _.get(d, [FIELD_MAP.VALUE])
-  //   return v ? v * 100 : null
-  // })
-  // const d35 = data['35-49']
-  // const d35Values = d35.map(d => {
-  //   const v = _.get(d, [FIELD_MAP.VALUE])
-  //   return v ? v * 100 : null
-  // })
-  // const d50 = data['50-99']
-  // const d50Values = d50.map(d => {
-  //   const v = _.get(d, [FIELD_MAP.VALUE])
-  //   return v ? v * 100 : null
-  // })
-
   const series = [
     {
       name: '15 - 24',
@@ -514,7 +493,7 @@ const getPlhivAge = data => {
     {
       name: '25 - 34',
       dashStyle: 'DashDot',
-      color: colors[5],
+      color: colors[0],
       data: dataMap['25-34'].points,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       zIndex: 1
@@ -527,7 +506,7 @@ const getPlhivAge = data => {
       enableMouseTracking: false,
       lineWidth: 0,
       linkedTo: ':previous',
-      color: colors[5],
+      color: colors[0],
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
@@ -582,27 +561,33 @@ const getPlhivAge = data => {
 const getHivNegative = data => {
   const title = '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
 
-  const retests = data.retests || Array(5).fill(null)
-  const retestsValues = retests.map(d => {
-    return _.get(d, [FIELD_MAP.VALUE])
+  const dataMap = {
+    ['retests']: { points: [] },
+    ['firsts']: { points: [] },
+  }
+
+  _.each(dataMap, (obj, age) => {
+    const rows = data[age]
+    _.each(rows, row => {
+      const [point] = getPlotPoints({ row, year: row.year })
+      obj.points.push(point)
+    })
   })
-  const firsts = data.firsts || Array(5).fill(null)
-  const firstsValues = firsts.map(d => {
-    return _.get(d, [FIELD_MAP.VALUE])
-  })
+
   const series = [
     {
       name: 'Retest',
       description: TERM_MAP.retest.definition,
-      // color: colors[4] + '97',
-      data: retestsValues
-
+      color: colors[6],
+      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      data: dataMap.retests.points,
     },
     {
       name: 'First test',
       description: TERM_MAP.firstTest.definition,
-      // color: colors[9] + '90',
-      data: firstsValues
+      color: colors[10],
+      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      data: dataMap.firsts.points,
     },
   ]
   const options = {
@@ -618,15 +603,17 @@ const getHivNegative = data => {
 const getHivPositive = data => {
   const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
 
-  const [art, aware, first] = ['arts', 'awares', 'firsts'].map(ind => {
-    const indData = data[ind]
+  const dataMap = {
+    ['arts']: { points: [] },
+    ['awares']: { points: [] },
+    ['firsts']: { points: [] },
+  }
 
-    return _.map(indData, d => {
-      return ({
-        x: Number(d[FIELD_MAP.YEAR]),
-        y: d[FIELD_MAP.VALUE],
-        source: d[FIELD_MAP.SOURCE_DATABASE]
-      })
+  _.each(dataMap, (obj, age) => {
+    const rows = data[age]
+    _.each(rows, row => {
+      const [point] = getPlotPoints({ row, year: row.year })
+      obj.points.push(point)
     })
   })
 
@@ -634,30 +621,71 @@ const getHivPositive = data => {
     title: { useHTML: true },
     yAxis: { title: { text: 'HIV Positive tests' } },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
-    // plotOptions: { series: { pointStart: 2015 } } // TODO no pointstart
-    // tooltip: { pointFormat: '{series.name}: <b>{point.y:.0f} million</b>' },
-    // yAxis: { max: 58*2 },
-    // tooltip: { valueSuffix: ',000' },
   }
   const series = [
     {
       name: 'Retest - know status on ART',
       description: TERM_MAP.retest.definition,
-      // color: colors[0] + '97',
-      data: art
+      color: colors[17],
+      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      data: dataMap.arts.points,
+      zIndex: 1,
     },
+    // {
+    //   name: 'Retest - know status on ART range',
+    //   data: dataMap.arts.rPoints,
+    //   pointStart: 2015,
+    //   type: 'arearange',
+    //   enableMouseTracking: false,
+    //   lineWidth: 0,
+    //   linkedTo: ':previous',
+    //   color: colors[11],
+    //   fillOpacity: 0.2,
+    //   zIndex: 0,
+    //   marker: { enabled: false }
+    // },
     {
       name: 'Retest - know status not on ART',
       description: TERM_MAP.retest.definition,
-      // color: colors[2] + '97',
-      data: aware
+      color: colors[11],
+      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      data: dataMap.awares.points,
+      zIndex: 1,
     },
+    // {
+    //   name: 'Retest - know status not on ART range',
+    //   data: dataMap.awares.rPoints,
+    //   pointStart: 2015,
+    //   type: 'arearange',
+    //   enableMouseTracking: false,
+    //   lineWidth: 0,
+    //   linkedTo: ':previous',
+    //   color: colors[17],
+    //   fillOpacity: 0.2,
+    //   zIndex: 0,
+    //   marker: { enabled: false }
+    // },
     {
       name: 'New diagnosis',
       description: TERM_MAP.newDiagnosis.definition,
-      // color: colors[1] + '97',
-      data: first
+      color: colors[5],
+      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      data: dataMap.firsts.points,
+      zIndex: 1,
     },
+    // {
+    //   name: 'New diagnosis15+) range',
+    //   data: dataMap.firsts.rPoints,
+    //   pointStart: 2015,
+    //   type: 'arearange',
+    //   enableMouseTracking: false,
+    //   lineWidth: 0,
+    //   linkedTo: ':previous',
+    //   color: colors[5],
+    //   fillOpacity: 0.2,
+    //   zIndex: 0,
+    //   marker: { enabled: false }
+    // },
   ]
   return _.merge({}, getArea({ title, series, options }))
 }
@@ -667,8 +695,12 @@ const getPrevalence = (data, shinyCountry) => {
   title = shinyCountry ? title : nonShinyTitle
 
   const options = {
-    plotOptions: { series: { marker: { radius: 3 } } },
+    plotOptions: { series: {
+      marker: { radius: 3 },
+      softThreshold: true
+    } },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+    // yAxis: { floor: 0, min: 0, minPadding: .01, minRange: .1, },
     // plotOptions: { series: { pointStart: 2015 } }
     // legend: {
     //   useHTML: true,
@@ -717,40 +749,6 @@ const getPrevalence = (data, shinyCountry) => {
       rDYieldData.push(rDYieldPoint)
     }
   })
-  
-  // // TODOxx
-  // const dyDataArr = [
-  //   2, 3, 3, 5, 6,
-  //   9, 11, 14, 17, 21,
-  // ]
-
-  // const dyRange = dyDataArr.map(v => {
-  //   const u = v + Math.floor(Math.random() * 2.5)
-  //   const l = v - Math.floor(Math.random() * 2.5)
-  //   return [l, u]
-  // })
-
-  // const dyDataObj = dyRange.map(([l, u], i) => {
-  //   const y = dyDataArr[i]
-  //   return { y, l, u }
-  // })
-
-
-  // const tapDataArr = [
-  //   2, 3, 3, 5, 6,
-  //   9, 11, 14, 17, 21,
-  // ]
-
-  // const tapRange = tapDataArr.map(v => {
-  //   const u = v + Math.floor(Math.random() * 2.5)
-  //   const l = v - Math.floor(Math.random() * 2.5)
-  //   return [l, u]
-  // })
-
-  // const tapDataObj = tapRange.map(([l, u], i) => {
-  //   const y = tapDataArr[i]
-  //   return { y, l, u }
-  // })
 
   const series = [
     {
@@ -758,14 +756,11 @@ const getPrevalence = (data, shinyCountry) => {
       description: TERM_MAP.hivPrevalence.definition,
       zIndex: 1,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      color: colors[12],
       dashStyle: 'ShortDot',
       marker: { radius: 1 },
       lineType: 'line',
       data: prevalenceData,
-      // data: [
-      //   { y: 43, l: 39, u: 46 }, { y: 43, l: 39, u: 44 }, { y: 42, l: 38, u: 43 }, { y: 42, l: 38, u: 43 }, { y: 42, l: 37, u: 42 },
-      //   { y: 41, l: 37, u: 42 }, { y: 41, l: 37, u: 42 }, { y: 41, l: 37, u: 42 }, { y: 41, l: 36, u: 42 }, { y: 40, l: 36, u: 41 },
-      // ].map(o => _.each(o, (v, k) => o[k] *= .4)),
     }, {
       name: 'Prevalence range',
       pointStart: 2015,
@@ -774,7 +769,7 @@ const getPrevalence = (data, shinyCountry) => {
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
       lineWidth: 0,
       linkedTo: ':previous',
-      color: colors[0],
+      color: colors[12],
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
@@ -783,7 +778,7 @@ const getPrevalence = (data, shinyCountry) => {
       name: 'Treatment adjusted prevalence',
       description: TERM_MAP.treatmentAdjustedPrevalence.definition,
       zIndex: 1,
-      color: colors[9],
+      color: colors[3],
       // dashStyle: 'LongDash',
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       data: adjPrevData
@@ -795,7 +790,7 @@ const getPrevalence = (data, shinyCountry) => {
     //   enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
     //   lineWidth: 0,
     //   linkedTo: ':previous',
-    //   color: colors[9],
+    //   color: colors[3],
     //   fillOpacity: 0.2,
     //   zIndex: 0,
     //   marker: { enabled: false }
@@ -806,14 +801,10 @@ const getPrevalence = (data, shinyCountry) => {
     const shinyAdditions = [{
       name: 'Positivity',
       description: TERM_MAP.positivity.definition,
-      // dashStyle: 'ShortDot',
       zIndex: 1,
+      color: colors[4],
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       data: positivityData
-      // data: [ // todo: on import, format l&u into string (as to deal with missing data pre-pointFormat)
-      //   { y: 2, l: 1, u: 4 }, { y: 3, l: 2, u: 6 }, { y: 3, l: 2, u: 5 }, { y: 5, l: 3, u: 7 }, { y: 6, l: 5, u: 8 },
-      //   { y: 9, l: 8, u: 9 }, { y: 11, l: 8, u: 12 }, { y: 14, l: 13, u: 15 }, { y: 17, l: 14, u: 19 }, { y: 21, l: 16, u: 23 },
-      // ].reverse(),
     }, {
       name: 'Positivity range',
       pointStart: 2015,
@@ -822,7 +813,7 @@ const getPrevalence = (data, shinyCountry) => {
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
       lineWidth: 0,
       linkedTo: ':previous',
-      color: colors[1],
+      color: colors[4],
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
@@ -830,8 +821,8 @@ const getPrevalence = (data, shinyCountry) => {
       name: 'Diagnostic yield',
       description: TERM_MAP.diagnosticYield.definition,
       zIndex: 1,
+      color: colors[8],
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
-      // dashStyle: 'DashDot',
       data: dYieldData
     }, {
       name: 'Diagnostic yield range',
@@ -841,7 +832,7 @@ const getPrevalence = (data, shinyCountry) => {
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
       lineWidth: 0,
       linkedTo: ':previous',
-      color: colors[2],
+      color: colors[8],
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
