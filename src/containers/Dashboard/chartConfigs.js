@@ -377,7 +377,7 @@ const getPlhivSex = data => {
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
     yAxis: { max: 100, min: 0 },
     plotOptions: { 
-      series: { pointStart: 2015 },
+      // series: { pointStart: 2015 },
     }
   }
 
@@ -449,51 +449,130 @@ const getPlhivAge = data => {
     legend: { symbolWidth: 40 },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
     yAxis: { max: 100, min: 0 },
-    plotOptions: { series: { pointStart: 2015 } }
+    // plotOptions: { series: { pointStart: 2015 } }
   }
 
-  const d15 = data['15-24']
-  const d15Values = d15.map(d => {
-    const v = _.get(d, [FIELD_MAP.VALUE])
-    return v ? v * 100 : null
+  const dataMap = {
+    ['15-24']: { points: [], rPoints: [] },
+    ['25-34']: { points: [], rPoints: [] },
+    ['35-49']: { points: [], rPoints: [] },
+    ['50-99']: { points: [], rPoints: [] },
+  }
+
+  _.each(dataMap, (obj, age) => {
+    const rows = data[age]
+    _.each(rows, row => {
+      const [point, rPoint] = getPlotPoints({ row, year: row.year, adjust: true })
+      obj.points.push(point)
+      obj.rPoints.push(rPoint)
+    })
   })
-  const d25 = data['25-34']
-  const d25Values = d25.map(d => {
-    const v = _.get(d, [FIELD_MAP.VALUE])
-    return v ? v * 100 : null
-  })
-  const d35 = data['35-49']
-  const d35Values = d35.map(d => {
-    const v = _.get(d, [FIELD_MAP.VALUE])
-    return v ? v * 100 : null
-  })
-  const d50 = data['50-99']
-  const d50Values = d50.map(d => {
-    const v = _.get(d, [FIELD_MAP.VALUE])
-    return v ? v * 100 : null
-  })
+
+  // const d15 = data['15-24']
+  // const d15Values = d15.map(d => {
+  //   const v = _.get(d, [FIELD_MAP.VALUE])
+  //   return v ? v * 100 : null
+  // })
+  // const d25 = data['25-34']
+  // const d25Values = d25.map(d => {
+  //   const v = _.get(d, [FIELD_MAP.VALUE])
+  //   return v ? v * 100 : null
+  // })
+  // const d35 = data['35-49']
+  // const d35Values = d35.map(d => {
+  //   const v = _.get(d, [FIELD_MAP.VALUE])
+  //   return v ? v * 100 : null
+  // })
+  // const d50 = data['50-99']
+  // const d50Values = d50.map(d => {
+  //   const v = _.get(d, [FIELD_MAP.VALUE])
+  //   return v ? v * 100 : null
+  // })
 
   const series = [
     {
       name: '15 - 24',
       dashStyle: 'ShortDot',
-      data: d15Values
+      color: colors[4],
+      data: dataMap['15-24'].points,
+      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      zIndex: 1
+    },
+    {
+      name: '15 - 24 range',
+      pointStart: 2015,
+      data: dataMap['15-24'].rPoints,
+      type: 'arearange',
+      enableMouseTracking: false,
+      lineWidth: 0,
+      linkedTo: ':previous',
+      color: colors[4],
+      fillOpacity: 0.2,
+      zIndex: 0,
+      marker: { enabled: false }
     },
     {
       name: '25 - 34',
       dashStyle: 'DashDot',
-      data: d25Values
+      color: colors[5],
+      data: dataMap['25-34'].points,
+      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      zIndex: 1
+    },
+    {
+      name: '25 - 34 range',
+      pointStart: 2015,
+      data: dataMap['25-34'].rPoints,
+      type: 'arearange',
+      enableMouseTracking: false,
+      lineWidth: 0,
+      linkedTo: ':previous',
+      color: colors[5],
+      fillOpacity: 0.2,
+      zIndex: 0,
+      marker: { enabled: false }
     },
     {
       name: '35 - 49',
       dashStyle: 'LongDash',
-      data: d35Values
+      color: colors[6],
+      data: dataMap['35-49'].points,
+      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      zIndex: 1
+    },
+    {
+      name: '35 - 49 range',
+      pointStart: 2015,
+      data: dataMap['35-49'].rPoints,
+      type: 'arearange',
+      enableMouseTracking: false,
+      lineWidth: 0,
+      linkedTo: ':previous',
+      color: colors[6],
+      fillOpacity: 0.2,
+      zIndex: 0,
+      marker: { enabled: false }
     },
     {
       name: '50+',
-      // color: colors[8],
       dashStyle: 'Solid',
-      data: d50Values
+      color: colors[7],
+      data: dataMap['50-99'].points,
+      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      zIndex: 1
+    },
+    {
+      name: '50+ range',
+      pointStart: 2015,
+      data: dataMap['50-99'].rPoints,
+      type: 'arearange',
+      enableMouseTracking: false,
+      lineWidth: 0,
+      linkedTo: ':previous',
+      fillOpacity: 0.2,
+      color: colors[7],
+      zIndex: 0,
+      marker: { enabled: false }
     },
   ]
 
