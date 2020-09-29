@@ -172,11 +172,11 @@ class DemographicsTable extends Component {
                 } else {
                  val = <a data-tip data-for={tooltipId}>{value} </a>
                 }
-
+                console.log(val, ' ||| ', valueLower, ' ||| ', valueUpper)
                 const tooltip = (
                   <ReactTooltip id={tooltipId} className='td-tooltip' type='dark' effect='solid'>
-                    <div>Lower bound: {valueLower}</div>
-                    <div>Upper bound: {valueUpper}</div>
+                    {valueLower && <div>Lower bound: {valueLower}</div>}
+                    {valueUpper && <div>Upper bound: {valueUpper}</div>}
                     <div>Source: {SOURCE_DISPLAY_MAP[source]||source}</div>
                     <div>Year: {year}</div>
                   </ReactTooltip>
