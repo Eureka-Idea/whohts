@@ -381,18 +381,20 @@ const getPlhivSex = data => {
     }
   }
 
-  // TODO: standardize
-  const femaleXYValues = data.Females.map(d => {
-    return ({
-      x: Number(d.year),
-      y: d.value,
-    })
+  const fPoints = []
+  const rFPoints = []
+  const mPoints = []
+  const rMPoints = []
+
+  data.Females.forEach(row => {
+    const [fPoint, rFPoint] = getPlotPoints({ row, year: row.year })
+    fPoints.push(fPoint)
+    rFPoints.push(rFPoint)
   })
-  const maleXYValues = data.Males.map(d => {
-    return ({
-      x: Number(d.year),
-      y: d.value,
-    })
+  data.Males.forEach(row => {
+    const [mPoint, rMPoint] =  getPlotPoints({ row, year: row.year })
+    mPoints.push(mPoint)
+    rMPoints.push(rMPoint)
   })
 
   const series = [
@@ -400,13 +402,41 @@ const getPlhivSex = data => {
       name: 'Men (15+)',
       color: maleColor,
       dashStyle: 'solid',
-      data: maleXYValues,
+      data: mPoints,
+      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      zIndex: 1
+    }, {
+      name: 'Men (15+) range',
+      pointStart: 2015,
+      data: rMPoints,
+      type: 'arearange',
+      enableMouseTracking: false,
+      lineWidth: 0,
+      linkedTo: ':previous',
+      color: maleColor,
+      fillOpacity: 0.2,
+      zIndex: 0,
+      marker: { enabled: false }
     },
     {
       name: 'Women (15+)',
       color: femaleColor,
       dashStyle: 'Solid',
-      data: femaleXYValues,
+      data: fPoints,
+      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      zIndex: 1
+    }, {
+      name: 'Women (15+) range',
+      pointStart: 2015,
+      data: rFPoints,
+      type: 'arearange',
+      enableMouseTracking: false,
+      lineWidth: 0,
+      linkedTo: ':previous',
+      color: femaleColor,
+      fillOpacity: 0.2,
+      zIndex: 0,
+      marker: { enabled: false }
     },
   ]
   return _.merge({}, getLine({ title, series, options }))
@@ -422,22 +452,22 @@ const getPlhivAge = data => {
     plotOptions: { series: { pointStart: 2015 } }
   }
 
-  const d15 = data['15-24'] || Array(5).fill(null)
+  const d15 = data['15-24']
   const d15Values = d15.map(d => {
     const v = _.get(d, [FIELD_MAP.VALUE])
     return v ? v * 100 : null
   })
-  const d25 = data['25-34'] || Array(5).fill(null)
+  const d25 = data['25-34']
   const d25Values = d25.map(d => {
     const v = _.get(d, [FIELD_MAP.VALUE])
     return v ? v * 100 : null
   })
-  const d35 = data['35-49'] || Array(5).fill(null)
+  const d35 = data['35-49']
   const d35Values = d35.map(d => {
     const v = _.get(d, [FIELD_MAP.VALUE])
     return v ? v * 100 : null
   })
-  const d50 = data['50-99'] || Array(5).fill(null)
+  const d50 = data['50-99']
   const d50Values = d50.map(d => {
     const v = _.get(d, [FIELD_MAP.VALUE])
     return v ? v * 100 : null
@@ -666,7 +696,7 @@ const getPrevalence = (data, shinyCountry) => {
       lineWidth: 0,
       linkedTo: ':previous',
       color: colors[0],
-      fillOpacity: 0.4,
+      fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
     },
@@ -687,7 +717,7 @@ const getPrevalence = (data, shinyCountry) => {
     //   lineWidth: 0,
     //   linkedTo: ':previous',
     //   color: colors[9],
-    //   fillOpacity: 0.4,
+    //   fillOpacity: 0.2,
     //   zIndex: 0,
     //   marker: { enabled: false }
     },
@@ -714,7 +744,7 @@ const getPrevalence = (data, shinyCountry) => {
       lineWidth: 0,
       linkedTo: ':previous',
       color: colors[1],
-      fillOpacity: 0.4,
+      fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
     }, {
@@ -733,7 +763,7 @@ const getPrevalence = (data, shinyCountry) => {
       lineWidth: 0,
       linkedTo: ':previous',
       color: colors[2],
-      fillOpacity: 0.4,
+      fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
     }]

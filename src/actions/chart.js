@@ -20,12 +20,12 @@ const DEV = window.location.hostname === 'localhost'
 
 const debugList = {
   // [CHARTS.PREVALENCE.id]: true,
-  [CHARTS.PLHIV_DIAGNOSIS.id]: true,
+  // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
   // [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.GROUPS_TABLE.id]: true,
 
-  // [CHARTS.PLHIV_AGE.id]: true,
-  // [CHARTS.ADULTS.id]: true,
+  [CHARTS.PLHIV_AGE.id]: true,
+  [CHARTS.PLHIV_SEX.id]: true,
 }
 const debugSkipList = {
   // [CHARTS.ADULTS.id]: true,
