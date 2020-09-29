@@ -56,8 +56,19 @@ function displayNumber({ v, unrounded=false }) {
   }
 
   if (v > 1000000) {
-
     return _.round(v/1000000, 1).toString() + ' million'
+  }
+  if (v < 100) {
+    return '<100'
+  }
+  if (v < 200) {
+    return '<200'
+  }
+  if (v < 500) {
+    return '<500'
+  }
+  if (v < 1000) {
+    return '<1000'
   }
   
   let str = unrounded ? v.toString() : Number(v.toPrecision(2)).toString()

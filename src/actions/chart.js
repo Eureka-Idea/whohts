@@ -23,8 +23,9 @@ const debugList = {
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
-  [CHARTS.GROUPS_TABLE.id]: true,
+  // [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
+  [CHARTS.ADULTS.id]: true,
 
   // [CHARTS.PLHIV_AGE.id]: true,
   // [CHARTS.PLHIV_SEX.id]: true,

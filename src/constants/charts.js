@@ -172,8 +172,8 @@ const adultsNPD19 = {
     women3: 'Women (15+) - Number of tests',
 
     pTotal3: 'Total aggregate positivity',
-    pMen3: 'Men (15+) - Positivity',
-    pWomen3: 'Women (15+) - Positivity',
+    pMen3: 'Men (15+) -  Positivity',
+    pWomen3: 'Women (15+) -  Positivity',
   }
 }
 const adultsPCOP20 = {
