@@ -95,10 +95,16 @@ function displayPercent({ v, adjust=false, decimals=0 }) {
   return str + '%' 
 }
 
-// intented
 function sourceTooltipFormatter () {
-  // const seriesName = useBarChartsAltName ? barChartsPositivityNameTooltip : this.series.name
-  const decimals = this.decimals || 1
+  return `
+    <span style="color:${this.color}">●</span>
+    ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br/>
+    Source: <b>${this.source}</b><br/>
+    `
+    // Year: <b>${this.year}</b><br/>
+}
+function percentSourceTooltipFormatter () {
+  const decimals = this.decimals || 1 // intended for column charts (positivity gets 1)
   return `
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br/>
@@ -107,7 +113,16 @@ function sourceTooltipFormatter () {
   `
 }
 function uncertaintyTooltipFormatter () {
-  // const seriesName = useBarChartsAltName ? barChartsPositivityNameTooltip : this.series.name
+  const uncertaintyLine = (!this.l || !this.u) ? '' : `Uncertainty range: <b>${this.l} - ${this.u}</b><br />`
+  return `
+    <span style = "color:${this.color}" >●</span >
+    ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br />
+    ${uncertaintyLine}
+    Source: ${this.source}
+    `
+    // Year: ${this.x}<br />
+}
+function percentUncertaintyTooltipFormatter () {
   const decimals = this.decimals || 0
   const lVal = displayPercent({ v: this.l, decimals })
   const uVal = displayPercent({ v: this.u, decimals })
@@ -141,6 +156,35 @@ function getSubtitle(total, pTotal) {
   <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal}</span><br /><span>Programme Data</span></div>` 
 }
 
+function getPlotPoints({ row, year, adjust=false, decimals=0}) {
+  const x = Number(year)
+  if (!row || !row.value) {
+    return { x, y: null }
+  }
+  let {
+    [FIELD_MAP.VALUE]: y,
+    [FIELD_MAP.VALUE_LOWER]: l,
+    [FIELD_MAP.VALUE_UPPER]: u,
+    [FIELD_MAP.SOURCE_DATABASE]: source,
+  } = row
+
+  source = SOURCE_DISPLAY_MAP[source] || source
+
+  if (adjust) {
+    y *= 100
+
+    if (_.isNumber(l)) {
+      l *= 100
+    }
+    if (_.isNumber(u)) {
+      u *= 100
+    }
+  }
+
+  const point = { x, year: x, y, l, u, source, decimals }
+  const rPoint = [l, u]
+  return [point, rPoint]
+}
 
 // __________________________________________________________________
 
@@ -272,22 +316,33 @@ const getPlhivDiagnosis = data => {
   R_2015_2019.forEach((y, i) => {
     // TODO: calc uci/lci
     // const onArtValue = _.get(yearRecord, 'median.value')
-    const onArtValue = _.get(data, ['onArt', i, 'value'], null)
-    const plhivValue = _.get(data, ['plhiv', i, 'value'])
-    const knowValue = _.get(data, ['know', i, 'value'])
-
-    const undiagnosedValue = (plhivValue - knowValue) || null
-    const notArtValue = (plhivValue - onArtValue) || null
+    const onArtRow = _.get(data, ['onArt', i])
+    const [onArtPoint] = getPlotPoints({ row: onArtRow, year: y })
+    const plhivRow = _.get(data, ['plhiv', i])
+    const [plhivPoint] = getPlotPoints({ row: plhivRow, year: y })
+    const knowRow = _.get(data, ['know', i])
+    const [knowPoint] = getPlotPoints({ row: knowRow, year: y })
+    console.log('on art: *** ', onArtPoint.y)
+    let undiagnosedPoint, notArtPoint
+    if (plhivPoint.y) {
+      if (knowPoint.y) {
+        // cannibalize knowPoint for its year, source etc
+        undiagnosedPoint = knowPoint
+        undiagnosedPoint.y = (plhivPoint.y - knowPoint.y)
+        // console.log('undiagnosedPoint.y: *** ', undiagnosedPoint.y)
+      }
+      if (onArtPoint.y) {
+        // cannibalize plhivPoint for its year, source etc
+        notArtPoint = plhivPoint
+        notArtPoint.y = (plhivPoint.y - onArtPoint.y)
+        console.log('notArtPoint.y: *** ', notArtPoint.y)
+      }
+    }
     
-    onArtData.push({ x: Number(y), y: onArtValue })
-    notArtData.push({ x: Number(y), y: notArtValue })
-    undiagnosedData.push({ x: Number(y), y: undiagnosedValue })
+    onArtData.push(onArtPoint)
+    notArtData.push(notArtPoint)
+    undiagnosedData.push(undiagnosedPoint)
   })
-  
-  // const [plhiv, know, onArt] = ['plhiv', 'know', 'onArt'].map(ind => {
-  //   const indData = data[ind] || Array(5).fill(null)
-  //   return _.map(indData, 'median.value')
-  // })
   
   const series = [
     {
@@ -295,18 +350,21 @@ const getPlhivDiagnosis = data => {
       description: TERM_MAP.undiagnosedPlhiv.definition,
       // color: colors[1] + '97',
       data: undiagnosedData,
+      tooltip: { pointFormatter: sourceTooltipFormatter },
     },
     {
       name: 'PLHIV know status not on ART',
       description: TERM_MAP.plhivWhoKnowStatusNotOnArt.definition,
       // color: colors[2] + '97',
       data: notArtData,
+      tooltip: { pointFormatter: sourceTooltipFormatter },
     },
     {
       name: 'PLHIV know status on ART',
       description: TERM_MAP.plhivKnowStatusOnArt.definition,
       // color: colors[0] + '97',
       data: onArtData,
+      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
     },
   ]
   return _.merge({}, getArea({ title, series, options }))
@@ -495,49 +553,6 @@ const getHivPositive = data => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-function getPrevPoints (row, year, adjust=false) {
-  const x = Number(year)
-  if (!row || !row.value) {
-    return { x, y: null }
-  }
-  let {
-    [FIELD_MAP.VALUE]: y,
-    [FIELD_MAP.VALUE_LOWER]: l,
-    [FIELD_MAP.VALUE_UPPER]: u,
-    [FIELD_MAP.SOURCE_DATABASE]: source,
-  } = row
-
-  source = SOURCE_DISPLAY_MAP[source] || source
-  
-  if (adjust) {
-    y *= 100
-
-    if (_.isNumber(l)) {
-      l *= 100
-    // } else {
-    //   l = '?'
-    }
-    if (_.isNumber(u)) {
-      u *= 100
-    // } else {
-    //   u = '?'
-    }
-  // } else {
-  //   if (_.isNumber(l)) {
-  //     l = '?'
-  //   }
-  //   if (_.isNumber(u)) {
-  //     u = '?'
-  // }
-  }
-  console.log('l: ',l)
-  console.log('u: ',u)
-  
-  const point = { x, year: x, y, l, u, source, decimals: 1 }
-  const rPoint = [l, u]
-  return [point, rPoint]
-}
-
 const getPrevalence = (data, shinyCountry) => {
   let { title, nonShinyTitle } = CHARTS.PREVALENCE
   title = shinyCountry ? title : nonShinyTitle
@@ -565,7 +580,7 @@ const getPrevalence = (data, shinyCountry) => {
   R_2015_2019.forEach((y, i) => {
     // TODO: calc uci/lci
     const prevalenceRow = _.get(data, ['prevalence', i])
-    const [prevalencePoint, rPrevalencePoint] = getPrevPoints(prevalenceRow, y)
+    const [prevalencePoint, rPrevalencePoint] = getPlotPoints({ row: prevalenceRow, year: y, decimals: 1 })
     prevalenceData.push(prevalencePoint)
     rPrevalenceData.push(rPrevalencePoint)
 
@@ -585,10 +600,10 @@ const getPrevalence = (data, shinyCountry) => {
     if (shinyCountry) {
       const positivityRow = _.get(data, ['positivity', i])
       const dYieldRow = _.get(data, ['dYield', i])
-      const [positivityPoint, rPositivityPoint] = getPrevPoints(positivityRow, y, true)
+      const [positivityPoint, rPositivityPoint] = getPlotPoints({ row: positivityRow, year: y, adjust: true, decimals: 1 })
       positivityData.push(positivityPoint)
       rPositivityData.push(rPositivityPoint)
-      const [dYieldPoint, rDYieldPoint] = getPrevPoints(dYieldRow, y, true)
+      const [dYieldPoint, rDYieldPoint] = getPlotPoints({ row: dYieldRow, year: y, adjust: true, decimals: 1 })
       dYieldData.push(dYieldPoint)
       rDYieldData.push(rDYieldPoint)
     }
@@ -633,7 +648,7 @@ const getPrevalence = (data, shinyCountry) => {
       name: 'HIV prevalence',
       description: TERM_MAP.hivPrevalence.definition,
       zIndex: 1,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       dashStyle: 'ShortDot',
       marker: { radius: 1 },
       lineType: 'line',
@@ -661,7 +676,7 @@ const getPrevalence = (data, shinyCountry) => {
       zIndex: 1,
       color: colors[9],
       // dashStyle: 'LongDash',
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       data: adjPrevData
     // }, {
     //   name: 'Treatment adjusted prevalence range',
@@ -684,7 +699,7 @@ const getPrevalence = (data, shinyCountry) => {
       description: TERM_MAP.positivity.definition,
       // dashStyle: 'ShortDot',
       zIndex: 1,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       data: positivityData
       // data: [ // todo: on import, format l&u into string (as to deal with missing data pre-pointFormat)
       //   { y: 2, l: 1, u: 4 }, { y: 3, l: 2, u: 6 }, { y: 3, l: 2, u: 5 }, { y: 5, l: 3, u: 7 }, { y: 6, l: 5, u: 8 },
@@ -706,7 +721,7 @@ const getPrevalence = (data, shinyCountry) => {
       name: 'Diagnostic yield',
       description: TERM_MAP.diagnosticYield.definition,
       zIndex: 1,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       // dashStyle: 'DashDot',
       data: dYieldData
     }, {
@@ -779,7 +794,7 @@ const getAdults = data => {
       // color: barChartAccent,
       type: 'line',
       tooltip: {
-        pointFormatter: sourceTooltipFormatter
+        pointFormatter: percentSourceTooltipFormatter
       },
       data: [wPosData, mPosData]
     }
@@ -832,7 +847,7 @@ const getCommunity = data => {
       // color: barChartAccent,
       type: 'line',
       tooltip: {
-        pointFormatter: sourceTooltipFormatter
+        pointFormatter: percentSourceTooltipFormatter
       },
       data: [mobilePosData, vctPosData, otherPosData]
     }
@@ -908,7 +923,7 @@ const getFacility = data => {
       // },
       type: 'line',
       tooltip: {
-        pointFormatter: sourceTooltipFormatter
+        pointFormatter: percentSourceTooltipFormatter
       },
       data: [
         pitcPosData,
@@ -964,7 +979,7 @@ const getIndex = data => {
       // color: barChartAccent,
       type: 'line',
       tooltip: {
-        pointFormatter: sourceTooltipFormatter
+        pointFormatter: percentSourceTooltipFormatter
       },
       data: [communityPosData, facilityPosData]
     }

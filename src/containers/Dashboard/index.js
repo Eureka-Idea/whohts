@@ -139,7 +139,7 @@ class Dashboard extends Component {
       config = _.merge({}, getLine({ title, series: [] }))
     }
     const chart = <ReactHighcharts config={config} />
-
+    // console.log('*** ', id, ' ****config:*** ', config)
     return (
       <div className='chart-container col-xl-4 col-lg-6 col-sm-12'>
         {chart}
