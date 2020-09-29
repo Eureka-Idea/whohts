@@ -66,10 +66,11 @@ const SOURCE_DB_MAP = {
   WNCPI: 'WHO NCPI dataset',
   HIVST20: 'HIVST policy 2020 data set',
   KP20: 'UNAIDS KP-Atlas 2020',
-  UNGAM20: 'UNAIDS Global AIDS Monitoring 2020',
+  // UNGAM20: 'UNAIDS Global AIDS Monitoring 2020',
   TGF: 'The Global Fund',
   
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
+  UNAIDS: 'UNAIDS',
 }
 const SOURCE_DISPLAY_MAP = {
   ['AIDS (AIM)']: 'Spectrum estimates 2020 (UNAIDS/WHO)',
@@ -135,6 +136,7 @@ const adultsGAM20 = {
     total1: 'Den Age-All',
     men1: 'Den Age-Male Gte 15',
     women1: 'Den Age-Female Gte 15',
+
     pTotal1: 'Per Age-All',
     pMen1: 'Per Age-Male Gte 15',
     pWomen1: 'Per Age-Female Gte 15',
@@ -151,6 +153,7 @@ const adultsGAM19 = {
     total2: 'Total volume of tests conducted in past year',
     men2: 'Men (15+) - Number of tests',
     women2: 'Women (15+) - Number of tests',
+
     pTotal2: 'Total aggregate positivity',
     pMen2: 'Men (15+) - Positivity',
     pWomen2: 'Women (15+) - Positivity',
@@ -167,6 +170,7 @@ const adultsNPD19 = {
     total3: 'Total volume of tests conducted in past year',
     men3: 'Men (15+) - Number of tests',
     women3: 'Women (15+) - Number of tests',
+
     pTotal3: 'Total aggregate positivity',
     pMen3: 'Men (15+) - Positivity',
     pWomen3: 'Women (15+) - Positivity',
@@ -183,6 +187,7 @@ const adultsPCOP20 = {
     total4: 'Den Age-All',
     men4: 'Den Age-Male Gte 15',
     women4: 'Den Age-Female Gte 15',
+
     pTotal4: 'Per Age-All',
     pMen4: 'Per Age-Male Gte 15',
     pWomen4: 'Per Age-Female Gte 15',
@@ -199,6 +204,7 @@ const adultsPROP20 = {
     total5: 'Den Age-All',
     men5: 'Den Age-Male Gte 15',
     women5: 'Den Age-Female Gte 15',
+
     pTotal5: 'Per Age-All',
     pMen5: 'Per Age-Male Gte 15',
     pWomen5: 'Per Age-Female Gte 15',
@@ -215,6 +221,7 @@ const adultsPCOP19 = {
     total6: 'People Tested in Past Year',
     men6: 'Men (Tested in past year)',
     women6: 'Women (Tested in past year)',
+
     pTotal6: 'Aggregate Positivity - Tests conducted and positivity, by sex',
     pMen6: 'Men - Positivity',
     pWomen6: 'Women - Positivity',
@@ -231,6 +238,7 @@ const adultsPROP19 = {
     total7: 'People Tested in Past Year',
     men7: 'Men (Tested in past year)',
     women7: 'Women (Tested in past year)',
+
     pTotal7: 'Aggregate Positivity - Tests conducted and positivity, by sex',
     pMen7: 'Men - Positivity',
     pWomen7: 'Women - Positivity',
@@ -247,6 +255,7 @@ const adultsPCOP1718 = {
     total10: 'People Tested in Past Year',
     men10: 'Men (Tested in past year)',
     women10: 'Women (Tested in past year)',
+
     pTotal10: 'Aggregate Positivity - Tests conducted and positivity, by sex',
     pMen10: 'Men - Positivity',
     pWomen10: 'Women - Positivity',
@@ -263,6 +272,7 @@ const adultsPROP17 = {
     total11: 'People Tested in Past Year',
     men11: 'Men (Tested in past year)',
     women11: 'Women (Tested in past year)',
+
     pTotal11: 'Aggregate Positivity - Tests conducted and positivity, by sex',
     pMen11: 'Men - Positivity',
     pWomen11: 'Women - Positivity',
@@ -279,6 +289,7 @@ const adultsPEPFAR = {
     total4: 'People Tested in Past Year',
     men4: 'Men (15+) Tested in Past Year',
     women4: 'Women (15+) Tested in Past Year',
+
     pTotal4: 'Total positivity',
     pMen4: 'Positivity - Men (15+)',
     pWomen4: 'Positivity - Women (15+)',
@@ -298,6 +309,7 @@ const communityGAM20 = {
     mobile1: 'Den Community-Community Mobile',
     VCT1: 'Den Community-Community Vct',
     other1: 'Den Community-Community Other',
+
     pTotal1: 'Per Community-Community All',
     pMobile1: 'Per Community-Community Mobile',
     pVCT1: 'Per Community-Community Vct',
@@ -316,6 +328,7 @@ const communityGAM19 = {
     mobile2: 'Mobile testing - Number of tests - Community',
     VCT2: 'VCT - Number of tests - Community',
     other2: 'Other - Number of tests - Community',
+
     pTotal2: 'Aggregate Positivity - Tests conducted and positivity at community level',
     pMobile2: 'Mobile testing - Positivity - Community',
     pVCT2: 'VCT - Positivity - Community',
@@ -334,6 +347,7 @@ const communityNPD19 = {
     mobile3: 'Mobile testing - Number of tests - Community',
     VCT3: 'VCT - Number of tests - Community',
     other3: 'Other - Number of tests - Community',
+
     pTotal3: 'Aggregate Positivity - Tests conducted and positivity at community level',
     pMobile3: 'Mobile testing - Positivity - Community',
     pVCT3: 'VCT - Positivity - Community',
@@ -352,6 +366,7 @@ const communityPEPFAR = {
     mobile4: 'Mobile testing - Number of tests - Community',
     VCT4: 'VCT - Number of tests - Community',
     other4: 'Other - Number of tests - Community',
+
     pTotal4: 'Positivity - Community Modalities Total',
     pMobile4: 'Positivity - Community Mobile Testing',
     pVCT4: 'Positivity - Community VCT Testing',
@@ -374,6 +389,7 @@ const facilityGAM20 = {
     VCT1: 'Den Facility-Facility Vct',
     family1: 'Den Facility-Facility Fp Clinic',
     other1: 'Den Facility-Facility Other',
+
     pTotal1: 'Per Facility-Facility All',
     pPITC1: 'Per Facility-Facility Provider Init',
     pANC1: 'Per Facility-Facility Anc',
@@ -395,6 +411,7 @@ const facilityGAM19 = {
     ANC2: 'ANC - Number of tests - Facility',
     VCT2: 'VCT - Number of tests - Facility',
     other2: 'Other - Number of tests - Facility',
+
     pTotal2: 'Aggregate Positivity - Tests conducted and positivity at facility level',
     pPITC2: 'PITC - Positivity - Facility',
     pANC2: 'ANC - Positivity - Facility',
@@ -415,6 +432,7 @@ const facilityNPD19 = {
     ANC3: 'ANC - Number of tests - Facility',
     VCT3: 'VCT - Number of tests - Facility',
     other3: 'Other - Number of tests - Facility',
+    
     pTotal3: 'Aggregate Positivity - Tests conducted and positivity at facility level',
     pPITC3: 'PITC - Positivity - Facility',
     pANC3: 'ANC - Positivity - Facility',
@@ -435,6 +453,7 @@ const facilityPEPFAR = {
     ANC4: 'ANC - Number of tests - Facility',
     VCT4: 'VCT - Number of tests - Facility',
     other4: 'Other - Number of tests - Facility',
+
     pTotal4: 'Positivity - Facility Modalities Total',
     pPITC4: 'Positivity - Facility PITC Testing',
     pANC4: 'Positivity - Facility ANC Testing',
@@ -454,6 +473,7 @@ const indexPEPFAR = {
     total1: 'Total Index Tests',
     community1: 'Index - Number of tests - Community',
     facility1: 'Index - Number of tests - Facility',
+
     pTotal1: 'Positivity- Index Testing Total',
     pCommunity1: 'Positivity - Community Index testing',
     pFacility1: 'Positivity - Facility Index Testing',
@@ -529,35 +549,43 @@ const kpKP20 = {
   indicators: {
     prevMsm1: 'HIV prevalence among men who have sex with men',
     awareMsm1: 'MSM (PLHIV who know status (%))',
+
     prevPwid1: 'HIV prevalence among people who inject drugs',
     awarePwid1: 'PWID (PLHIV who know status (%))',
+
     prevPris1: 'HIV prevalence among prisoners',
     // awarePris1: '',
+
     prevSw1: 'HIV prevalence among sex workers',
     awareSw1: 'SW (PLHIV who know status (%))',
+
     prevTrans1: 'HIV prevalence among transgender people',
     awareTrans1: 'Transgender (PLHIV who know status (%))',
   }
 }
-const kpUNGAM20 = {
-  id: 'UNGAM20',
+const kpGAM20 = {
+  id: 'GAM20',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNGAM20,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
       [F.AREA_NAME]: 'NULL',
     }
   },
   indicators: { // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
     prevMsm2: 'HIV prevalence among men who have sex with men',
-    awareMsm2: 'MSM (PLHIV who know status (%))',
+    awareMsm2: 'HIV testing and status awareness among men who have sex with men',
+
     prevPwid2: 'HIV prevalence among people who inject drugs',
-    awarePwid2: 'PWID (PLHIV who know status (%))',
+    awarePwid2: 'HIV testing and status awareness among people who inject drugs',
+
     prevPris2: 'HIV prevalence among prisoners',
     // awarePris2: '',
+
     prevSw2: 'HIV prevalence among sex workers',
-    awareSw2: 'SW (PLHIV who know status (%))',
+    awareSw2: 'HIV testing and status awareness among sex workers',
+    
     prevTrans2: 'HIV prevalence among transgender people',
-    awareTrans2: 'Transgender (PLHIV who know status (%))',
+    awareTrans2: 'HIV testing and status awareness among transgender people',
   }
 }
 const kpPCOP20 = {
@@ -839,7 +867,7 @@ const CHARTS = {
     title: 'Key Populations',
     id: 'KP_TABLE',
     sources: [
-      kpKP20, kpUNGAM20, kpPCOP20, kpPROP20, kpPCOP19, kpPROP19, kpPCOP1718, kpPROP17, kpTGF
+      kpKP20, kpGAM20, kpPCOP20, kpPROP20, kpPCOP19, kpPROP19, kpPCOP1718, kpPROP17, kpTGF
     ],
     filters: {
       prev: {
@@ -909,7 +937,7 @@ const CHARTS = {
       'plhiv', 'aware', 'prev', 'newly', 'year', 'ever',
     ],
     sourceCountMap: {
-      plhiv: 4,
+      plhiv: 10,
       aware: 2,
       prev: 5,
       newly: 4,
@@ -1318,6 +1346,24 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'plhiv2',
+        [F.INDICATOR]: 'People living with HIV - male adults (aged 15+)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
+            console.error(`**LOOKOUT! Taking highest firstesult for:
+            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
+            `, 'rs:', results)
+
+          }
+          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+        }
+      },
+      {
+        id: 'plhiv3',
         [F.INDICATOR]: 'People living with HIV - females aged 15-24',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
         // [F.YEAR]: '2019',
@@ -1335,24 +1381,6 @@ const getIndicatorMap = (isShiny) => {
         }
       },
       {
-        id: 'plhiv3',
-        [F.INDICATOR]: 'People living with HIV - male adults (aged 15+)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
-            // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
-      },
-      {
         id: 'plhiv4',
         [F.INDICATOR]: 'People living with HIV - males aged 15-24',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
@@ -1364,10 +1392,118 @@ const getIndicatorMap = (isShiny) => {
             // debugger
             console.error(`**LOOKOUT! Taking highest firstesult for:
             `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
+            `, 'rs:', results)
 
           }
           return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+        }
+      },
+      {
+        id: 'plhiv5',
+        [F.INDICATOR]: 'People living with HIV  25-34 ; Female',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
+            console.error(`**LOOKOUT! Taking highest firstesult for:
+            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
+            `,'rs:', results)
+
+          }
+          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+        }
+      },
+      {
+        id: 'plhiv6',
+        [F.INDICATOR]: 'People living with HIV  25-34 ; Male',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
+            console.error(`**LOOKOUT! Taking highest firstesult for:
+            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
+            `,'rs:', results)
+
+          }
+          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+        }
+      },
+      {
+        id: 'plhiv7',
+        [F.INDICATOR]: 'People living with HIV  35-49 ; Female',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
+            console.error(`**LOOKOUT! Taking highest firstesult for:
+            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
+            `,'rs:', results)
+
+          }
+          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+        }
+      },
+      {
+        id: 'plhiv8',
+        [F.INDICATOR]: 'People living with HIV  35-49 ; Male',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
+            console.error(`**LOOKOUT! Taking highest firstesult for:
+            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
+            `,'rs:', results)
+
+          }
+          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+        }
+      },
+      {
+        id: 'plhiv9',
+        [F.INDICATOR]: 'People living with HIV - females aged 50+',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
+            console.error(`**LOOKOUT! Taking highest firstesult for:
+            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
+            `, 'rs:', results)
+
+          }
+          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+        }
+      },
+      {
+        id: 'plhiv10',
+        [F.INDICATOR]: 'People living with HIV - males aged 50+',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
+        // [F.YEAR]: '2019',
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
+            console.error(`**LOOKOUT! Taking highest firstesult for:
+            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
+            `, 'rs:', results)
+
+          }
+          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
         }
       },
       // [ UNDIAGNOSED PLHIV = (1 - PLHIV WHO KNOW STATUS) * ESTIMATED # PLHIV]

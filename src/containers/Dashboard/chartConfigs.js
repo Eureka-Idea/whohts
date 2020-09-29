@@ -299,6 +299,8 @@ const getP95 = data => {
 const getPlhivDiagnosis = data => {
   const { title } = CHARTS.PLHIV_DIAGNOSIS
 
+  // colors: 17 11 5
+
   const options = {
     // yAxis: { labels: { format: '{value}%' } },
     subtitle: { text: 'Spectrum model estimates (UNAIDS, 2020)' },
@@ -348,21 +350,21 @@ const getPlhivDiagnosis = data => {
     {
       name: 'Undiagnosed PLHIV',
       description: TERM_MAP.undiagnosedPlhiv.definition,
-      // color: colors[1] + '97',
+      color: colors[2],
       data: undiagnosedData,
       tooltip: { pointFormatter: sourceTooltipFormatter },
     },
     {
       name: 'PLHIV know status not on ART',
       description: TERM_MAP.plhivWhoKnowStatusNotOnArt.definition,
-      // color: colors[2] + '97',
+      color: colors[1],
       data: notArtData,
       tooltip: { pointFormatter: sourceTooltipFormatter },
     },
     {
       name: 'PLHIV know status on ART',
       description: TERM_MAP.plhivKnowStatusOnArt.definition,
-      // color: colors[0] + '97',
+      color: colors[0],
       data: onArtData,
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
     },
@@ -626,7 +628,7 @@ const getHivPositive = data => {
     {
       name: 'Retest - know status on ART',
       description: TERM_MAP.retest.definition,
-      color: colors[17],
+      color: colors[0],
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
       data: dataMap.arts.points,
       zIndex: 1,
@@ -647,7 +649,7 @@ const getHivPositive = data => {
     {
       name: 'Retest - know status not on ART',
       description: TERM_MAP.retest.definition,
-      color: colors[11],
+      color: colors[1],
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
       data: dataMap.awares.points,
       zIndex: 1,
@@ -668,7 +670,7 @@ const getHivPositive = data => {
     {
       name: 'New diagnosis',
       description: TERM_MAP.newDiagnosis.definition,
-      color: colors[5],
+      color: colors[2],
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
       data: dataMap.firsts.points,
       zIndex: 1,

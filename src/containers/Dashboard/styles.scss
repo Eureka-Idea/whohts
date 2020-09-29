@@ -169,6 +169,12 @@ $nav-height: 70px;
     td, th:not(:first-of-type) {
       text-align: right;
     }
+    th {
+      font-weight: 600;
+    }
+    td {
+      font-weight: 400;
+    }
     .tooltip-container {
       top: 15px;
     }
@@ -176,11 +182,11 @@ $nav-height: 70px;
       padding-top: 25px;
       padding-left: 15px;
     }
-  }
-
-  .td-tooltip {
-    background: rgba(0, 0, 0, 0.8);
-    text-align: left;
+    
+    .td-tooltip {
+      background: rgba(0, 0, 0, 0.8);
+      text-align: left;
+    }
   }
 
   .other-source-section {
