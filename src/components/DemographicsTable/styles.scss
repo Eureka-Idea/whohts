@@ -8,6 +8,10 @@
     padding-bottom: $table-margin;
     
     .table {
+      @media screen and (min-width: 992px) {
+        display: table !important; // allows it to grow
+      }
+      
       max-width: $max-width;
       margin-left: $table-margin;
       

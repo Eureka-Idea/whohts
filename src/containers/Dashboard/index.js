@@ -131,7 +131,7 @@ class Dashboard extends Component {
               side={110}
               ratios={config}
               // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
-              colors={[colors[16]+'', colors[18]+'', colors[5]+'', colors[11]+'']}
+              colors={[colors[16]+'dd', colors[18]+'dd', colors[5]+'dd', colors[11]+'dd']}
               content={[
                 { inner: status, below: 'of people living with HIV know their status' },
                 { inner: art, below: 'of people living with HIV who know their status are on treatment' },
