@@ -2,13 +2,105 @@
 $nav-height-sm: 50px;
 $nav-height: 64px;
 
+  .loading-mask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparentize($color: $deep-sea-green, $amount: .58);
+    z-index: 999999;
+    content: '';
+    pointer-events: all;
+
+    .name {
+      font-size: 42px;
+      margin-top: 22vh;
+      padding-bottom: 2*$buffer;
+    }
+    .loading {
+      font-size: 28px;
+      position: absolute;
+      text-align: center;
+      display: block;
+      width: 100%;
+      bottom: 22vh;
+    }
+    .name, .loading {
+      text-align: center;
+      margin-left: 5vw;
+      margin-right: 5vw;
+      line-height: 1;
+      font-weight: 600;
+      // color: $who-brown;
+    }
+    @media screen and (min-width: 992px) {
+      .name { font-size: 58px; }
+      .loading { font-size: 36px; }
+    }
+    @media screen and (min-width: 1200px) {
+      .name { font-size: 78px; }
+      .loading { font-size: 56px; }
+      .squares span {
+        width: 120px !important;
+        height: 120px !important;
+      }
+    }
+
+    .squares {
+      text-align: center;
+      span {
+        width: 10vw;
+        height: 10vw;
+        display: inline-block;
+        margin: $buffer;
+
+        &:nth-child(1) {
+          // background-color: red;
+          animation: bounce 3s ease-in-out 0s infinite;
+        }
+        &:nth-child(2) {
+          // background-color: blue;
+          animation: bounce 3s ease-in-out .25s infinite;
+        }
+        &:nth-child(3) {
+          // background-color: yellow;
+          animation: bounce 3s ease-in-out .5s infinite;
+        }
+        &:nth-child(4) {
+          // background-color: yellow;
+          animation: bounce 3s ease-in-out .75s infinite;
+        }
+      }
+
+      @keyframes bounce {
+        0% {
+        // 0%, 100%, 60% {
+          // opacity: 1;
+          -webkit-transform: translateY(0); // rotate(-15deg);
+          transform: translateY(0); // rotate(-15deg);
+        }
+        50% {
+          // opacity: .1;
+          -webkit-transform: translateY(20vh); // rotate(15deg);
+          transform: translateY(20vh); // rotate(15deg);
+        }
+        100% {
+          // opacity: .1;
+          -webkit-transform: translateY(0); // rotate(-15deg);
+          transform: translateY(0); // rotate(-15deg);
+        }
+      }
+    }
+  }
+
 .dashboard {
   padding-top: $nav-height-sm;
   @media screen and (min-width: 768px) {
     padding-top: $nav-height;
   }
 
-   .nav {
+  .nav {
     position: fixed;
     flex-wrap: nowrap;
     top: 0;

@@ -39,7 +39,7 @@ const debugSkipList = {
 // gets records to cover the indicators relevant to each chart
 export const getChartData = (countryCode) =>
   dispatch => {
-    const isShiny = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'], false)
+    const isShiny = _.get(COUNTRY_MAP, [countryCode, 'shiny'], false)
     let indicatorMap = getIndicatorMap(isShiny)
 
     if (!_.isEmpty(DEV && debugList)) {
@@ -57,7 +57,7 @@ export const getChartData = (countryCode) =>
           let chartValue = indicator[f]
           if (chartValue) {
             if (f === FIELD_MAP.COUNTRY_ISO_CODE) {
-              chartValue = countryCode.toUpperCase()
+              chartValue = countryCode
             }
             let chunk = `${char}${f}=${chartValue}`
             chunk = encodeURI(chunk)
@@ -91,7 +91,7 @@ export const getChartData = (countryCode) =>
     Promise.all(allChartQueryPs)
     .then(chartsResults => {
       // console.log('...gave chartsResults')
-      const allChartData = {}
+      const allChartData = { countryCode }
       
       chartsResults.forEach(chartResults => {
         // const chartName = _.get(chartResults, '0.chartName')

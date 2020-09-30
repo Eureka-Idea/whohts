@@ -6,7 +6,7 @@ import {connect} from 'react-redux'
 import _ from 'lodash'
 import './styles.css'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import colors, { rum, casablanca, jungleMist, stormGray } from './colors'
+import colors, { P95ColorA, P95ColorB, P95ColorC, P95ColorD } from './colors'
 import Tooltip from '../../components/Tooltip'
 import NestedBoxes from '../../components/NestedBoxes'
 import KPTable from '../../components/KPTable'
@@ -48,7 +48,7 @@ const fields = _.flatMap(FIELD_MAP)
 class Dashboard extends Component {
   constructor() {
     super()
-    this.state = { alertOn: false }
+    this.state = { alertOn: false, loading: true }
     // fields.forEach(f => this.state[f] = false)
 
     this.updateField = this.updateField.bind(this)
@@ -57,8 +57,8 @@ class Dashboard extends Component {
     this.submitDQ = this.submitDQ.bind(this)
   }
   componentWillMount() {
-    const countryCode = _.get(this, 'props.match.params.countryCode', null)
-    if (!countryCode) {
+    const countryCode = _.get(this, 'props.match.params.countryCode', '').toUpperCase()
+    if (!COUNTRY_MAP[countryCode]) {
       // TODO: check country existence
       this.props.history.go('/')
       console.error('no country!')
@@ -72,7 +72,15 @@ class Dashboard extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (_.isEqual(newProps.chartData, this.props.chartData)) {
+    const d = new Date()
+    
+    const dataCountry = newProps.chartData.countryCode
+    // console.log('### props from ', dataCountry, ' at ', d.getMinutes()+':'+d.getSeconds())
+    const activeCountry = _.get(this, 'props.match.params.countryCode').toUpperCase()
+    // console.log('### (url PARAM of: ', activeCountry +')')
+    this.setState({ loading: activeCountry !== dataCountry })
+
+    if (_.isEqual(newProps.chartData.countryCode, this.props.chartData.countryCode)) {
       console.error('what changed?')
       return
     }
@@ -80,8 +88,8 @@ class Dashboard extends Component {
 
   getCountryContext() {
     const { id } = CHARTS.CONTEXT
-    const population = _.get(this.props.chartData, id + '.data.population.value', 'Unknown')
-    const classification = _.get(this.props.chartData, id + '.data.classification.value_comment', 'Unknown')
+    const population = _.get(this.props.chartData, id + '.data.population.value')
+    const classification = _.get(this.props.chartData, id + '.data.classification.value_comment')
 
     const countryCode = _.get(this, 'props.match.params.countryCode', null)
     const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
@@ -91,14 +99,14 @@ class Dashboard extends Component {
           <div className='content'>
             <p className='name'>{name}</p>
             <div className='details'>
-              <span className='detail'>
+              {population && <span className='detail'>
                 <p className='title'>Population </p>
                 <p className='value'>{displayNumber({ v: population })}</p>
-              </span>
-              <span className='detail'>
+              </span>}
+              {classification && <span className='detail'>
                 <p className='title'>World Bank classification </p>
                 <p className='value'>{classification}</p>
-              </span>
+              </span>}
             </div>
           </div>
         </div>
@@ -130,7 +138,7 @@ class Dashboard extends Component {
               side={110}
               ratios={config}
               // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
-              colors={[colors[16]+'dd', colors[18]+'dd', colors[5]+'dd', colors[11]+'dd']}
+              colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
               content={[
                 { inner: status, below: 'of people living with HIV know their status' },
                 { inner: art, below: 'of people living with HIV who know their status are on treatment' },
@@ -249,6 +257,29 @@ class Dashboard extends Component {
     const policy = this.getTable(CHARTS.POLICY_TABLE.id)
     const groups = this.getTable(CHARTS.GROUPS_TABLE.id)
 
+    // const d = new Date()
+    // console.log('### rendering ', this.props.chartData.countryCode, ' at ', d.getMinutes() + ':' + d.getSeconds())
+    // console.log('### (url PARAM of: ', _.get(this, 'props.match.params.countryCode', '').toUpperCase() + ')')
+
+    // console.log('### LOADING: ', this.state.loading)
+    if (this.state.loading) {
+
+      const countryCode = _.get(this, 'props.match.params.countryCode', null)
+      const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
+      return (
+        <div className='loading-mask'>
+          <p className='name'>{name}</p>
+          <div className='squares'>
+            {/* TODO: constify separately */}
+            <span style={{ backgroundColor: P95ColorA.slice(0,-2) }} />
+            <span style={{ backgroundColor: P95ColorB.slice(0,-2) }} />
+            <span style={{ backgroundColor: P95ColorC.slice(0,-2) }} />
+            <span style={{ backgroundColor: P95ColorD.slice(0,-2) }} />
+          </div>
+          <p className='loading'>Loading . . .</p>
+        </div>
+      )
+    }
     return (
       <div className='dashboard'>
         <div className='nav'>

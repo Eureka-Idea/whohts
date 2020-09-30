@@ -47,15 +47,20 @@ const botticelli = '#C5DDE2'
 const copper = '#B2793D'
 // const copper = '#B2793DDD'
 
-const femaleColor = cuttySark
-const maleColor = pirateGold
-
 // not in css
 const barChartColor = opal
 const nutmeg = '#794325'
 const barChartAccent = nutmeg
 const nevada = '#5F707C'
 const barChartColorDark = nevada
+
+
+const femaleColor = cuttySark
+const maleColor = pirateGold
+const P95ColorA = cuttySark + 'dd'
+const P95ColorB = nutmeg + 'dd'
+const P95ColorC = rum + 'dd'
+const P95ColorD = opal + 'dd'
 
 export default [
   stormGray,
@@ -106,4 +111,9 @@ export {
   barChartColor,
   barChartColorDark,
   barChartAccent,
+
+  P95ColorA,
+  P95ColorB,
+  P95ColorC,
+  P95ColorD,
 }
