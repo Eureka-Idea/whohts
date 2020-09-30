@@ -15,7 +15,7 @@ export default {
   "chart": {
     // "className": "charty-mcchartface",
     "alignTicks": true,
-    // "height": 400,
+    "height": 400,
     "backgroundColor": "#FFFFFF",
     "plotBackgroundColor": "#F8F8F8",
     "style": {
@@ -24,7 +24,7 @@ export default {
       // "fontFamily": "Verdana, sans-serif"
     },
     // "margin": [100, 100, 100, 100],
-    "spacing": [40, 40, 45, 40],
+    "spacing": [30, 30, 25, 25],
   },
   "title": { "align": "left", "x": 40 },
   "subtitle": { "align": "left", "x": 40 },

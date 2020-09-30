@@ -5,9 +5,11 @@
   .demographics-table {
     position: relative;
     background-color: white;
+    padding-bottom: $table-margin;
     
     .table {
       max-width: $max-width;
+      margin-left: $table-margin;
       
       td {
         white-space: nowrap;
@@ -73,64 +75,67 @@
       }
     }
     
-    .hidden-rows {
-      display: flex;
+    .row-control {
       max-width: $max-width;
-      
-      .title {
-        flex-basis: 110px;
-        &.all-visible {
-          text-align: center;
-          flex-basis: 100%;
-        }
-        flex-grow: 0;
-        flex-shrink: 0;
-        line-height: 16px;
-        align-self: center;
-        i {
-          font-size: 12px;
-          display: block;
-        }
-      }
-      
-      .token {
-        border: 3px solid;
-        // color: white;
-        padding: 2px 5px;
-        font-size: 13px;
-        font-weight: lighter;
-        background: #f2f2f2;
-        text-align: center;
+      margin: $table-margin;
+      .hidden-rows {
+        display: flex;
         
-        &.women {
-          border-color: $women;
+        .title {
+          flex-basis: 110px;
+          &.all-visible {
+            text-align: center;
+            flex-basis: 100%;
+          }
+          flex-grow: 0;
+          flex-shrink: 0;
+          line-height: 16px;
+          align-self: center;
+          i {
+            font-size: 12px;
+            display: block;
+          }
         }
-        &.men {
-          border-color: $men;
-        }
-        &.women50 {
-          border-color: rgba($women, .85);
-        }
-        &.men50 {
-          border-color: rgba($men, .85);
-        }
-        &.women35 {
-          border-color: rgba($women, .7);
-        }
-        &.men35 {
-          border-color: rgba($men, .7);
-        }
-        &.women25 {
-          border-color: rgba($women, .55);
-        }
-        &.men25 {
-          border-color: rgba($men, .55);
-        }
-        &.women15 {
+        
+        .token {
+          border: 3px solid;
+          // color: white;
+          padding: 2px 5px;
+          font-size: 13px;
+          font-weight: lighter;
+          background: #f2f2f2;
+          text-align: center;
+          
+          &.women {
+            border-color: $women;
+          }
+          &.men {
+            border-color: $men;
+          }
+          &.women50 {
+            border-color: rgba($women, .85);
+          }
+          &.men50 {
+            border-color: rgba($men, .85);
+          }
+          &.women35 {
+            border-color: rgba($women, .7);
+          }
+          &.men35 {
+            border-color: rgba($men, .7);
+          }
+          &.women25 {
+            border-color: rgba($women, .55);
+          }
+          &.men25 {
+            border-color: rgba($men, .55);
+          }
+          &.women15 {
           border-color: rgba($women, .4);
-        }
-        &.men15 {
-          border-color: rgba($men, .4);
+          }
+          &.men15 {
+            border-color: rgba($men, .4);
+          }
         }
       }
     }

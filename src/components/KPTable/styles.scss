@@ -4,9 +4,19 @@
 
   .kp-table {
     background-color: white;
+    max-width: $max-width;
+    margin-top: $table-margin;
+    margin-left: $table-margin;
+    padding-bottom: 1*$table-margin;
+    margin-bottom: 2*$table-margin;
     
     h2 {
       padding-left: 45px;
+    }
+
+    .tooltip-container {
+      // make up
+      transform: translate($table-margin, $table-margin);
     }
   }
 }

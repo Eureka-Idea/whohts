@@ -2,6 +2,10 @@
 
 .policy-table {
   background-color: white;
+  max-width: $max-width;
+  margin-left: $table-margin;
+  padding-bottom: 1*$table-margin;
+  margin-bottom: 2*$table-margin;
   
   span.marker {
     width: 20px;
