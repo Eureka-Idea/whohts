@@ -8,12 +8,80 @@ $nav-height: 64px;
     padding-top: $nav-height;
   }
 
-  .country-name, .country-details {
-    color: $who-brown;
-  }
-  .country-details {
-    font-weight: 300;
-    // padding-bottom: 25px;
+
+  .country-context {
+    .content {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    
+    .name {
+      font-size: 42px;
+      line-height: 1;
+      font-weight: 600;
+      // color: $who-brown;
+    }
+    .details {
+      // line-height: 1;
+      display: flex;
+      .detail {
+        // display: inline;
+        padding-right: 50px;
+        .title {
+          display: inline;
+          font-size: 14px;
+          // font-weight: lighter;
+        }
+        .value {
+          // display: inline;
+          font-weight: 500;
+          font-size: 22px;
+        }
+      }
+    }
+
+    @media screen and (min-width: 768px) {
+      .content {
+
+      }
+      
+      .name {
+        font-size: 54px;
+      }
+      .details {
+        flex-direction: column;
+        .detail {
+          .title {
+            font-size: 15px;
+          }
+          .value {
+            font-size: 24px;
+          }
+        }  
+      }
+    }
+
+    @media screen and (min-width: 1200px) {
+      .content {
+
+      }
+      
+      .name {
+        font-size: 72px;
+      }
+      .details {
+        flex-direction: row;
+        .detail {
+          padding-right: 72px;
+          .title {
+            // font-size: 18px;
+          }
+          .value {
+            font-size: 31px;
+          }
+        }  
+      }
+    }
   }
 
   .nav {

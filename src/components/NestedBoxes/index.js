@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import './styles.css'
 
+const EXPANDER = 1.1
+
 class NestedBoxes extends Component {
   constructor(props) {
     super(props)
@@ -46,7 +48,7 @@ class NestedBoxes extends Component {
        	borderColor = this.props.colors[idx+1]
        }
       const bridgeStyle = {
-        width: side*1.1+this.props.side,
+        width: (side * EXPANDER) + this.props.side-borderWidth,
         // width: (side + nextSide - borderWidth) + (nextSide/8) - (3.6*idx), // pixfix
         borderColor: borderColor
       }
@@ -124,7 +126,7 @@ class NestedBoxes extends Component {
   render() {
     const boxes = this.getBoxes(this.props.side, 0)
 
-    let width = this.props.side * (this.props.ratios.length+1)
+    let width = this.props.side * (this.props.ratios.length) * EXPANDER
     // let sideLength = this.props.side
     // this.props.ratios.forEach((r,i) => {
     //   if (i === this.props.ratios.length-1) {
@@ -137,7 +139,8 @@ class NestedBoxes extends Component {
     
     const style = {
       width: width + 'px',
-      height: (this.props.side * 2) + 'px',
+      height: '230px',
+      // height: (this.props.side * 2) + 'px',
     }
     
     return (

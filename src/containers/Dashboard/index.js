@@ -78,6 +78,33 @@ class Dashboard extends Component {
     }
   }
 
+  getCountryContext() {
+    console.log('gCC')
+    const { id } = CHARTS.CONTEXT
+    const population = _.get(this.props.chartData, id + '.data.population.value', 'UNKNOWN')
+    const classification = _.get(this.props.chartData, id + '.data.classification.value_comment', 'UNKNOWN')
+
+    const countryCode = _.get(this, 'props.match.params.countryCode', null)
+    const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
+    return (
+      <div className='col-xl-6 col-md-5 col-xs-12 country-context'>
+        <div className='content'>
+          <p className='name'>{name}</p>
+          <div className='details pb-3'>
+            <span className='detail'>
+              <p className='title'>Population </p>
+              <p className='value'>{displayNumber({ v: population })}</p>
+            </span>
+            <span className='detail'>
+              <p className='title'>World Bank classification </p>
+              <p className='value'>{classification}</p>
+            </span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   getP95() {
     const { id, title } = CHARTS.P95
 
@@ -92,7 +119,7 @@ class Dashboard extends Component {
     )
     
     return (
-      <div className='col-xl-4 col-md-8 col-xs-12 prog-95'>
+      <div className='col-xl-6 col-md-7 col-xs-12 prog-95'>
         <div className='content'>
           <p className='title'>{title}</p>
           <NestedBoxes
@@ -196,29 +223,6 @@ class Dashboard extends Component {
       legend: { enabled: false }
     }
     return _.merge({}, getColumn({title, series, options, categories}))
-  }
-
-  getCountryContext() {
-    console.log('gCC')
-    const { id } = CHARTS.CONTEXT
-    const population = _.get(this.props.chartData, id+'.data.population.value', 'UNKNOWN')
-    const classification = _.get(this.props.chartData, id+'.data.classification.value_comment', 'UNKNOWN')
-
-    const countryCode = _.get(this, 'props.match.params.countryCode', null)  
-    const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
-    return (
-      <div className='col-xl-4 col-md-4 col-xs-12'>
-
-        <div className='country-name'>
-          <h1>{name}</h1>
-        </div>
-        <div className='country-details pb-3'>
-          <div><span>Population:</span><span> {displayNumber({ v: population })}</span></div>
-          <div><span>World Bank classification:</span><span> {classification}</span></div>
-
-        </div>
-      </div>
-    )
   }
   
   render() {
