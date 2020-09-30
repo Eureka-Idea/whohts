@@ -75,6 +75,7 @@ $nav-height: 64px;
     .name {
       font-size: 42px;
       line-height: 1;
+      padding-bottom: 2*$buffer;
       font-weight: 600;
       // color: $who-brown;
     }
@@ -83,7 +84,9 @@ $nav-height: 64px;
       .detail {
         line-height: 1.2;
         // display: inline;
-        padding-right: 50px;
+        &:first-of-type {
+          padding-right: 50px;
+        }
         .title {
           margin-bottom: 4px;
           // display: inline;
@@ -105,11 +108,13 @@ $nav-height: 64px;
       
       .name {
         font-size: 54px;
+        padding-bottom: 3*$buffer;
       }
       .details {
         // flex-direction: column;
         // padding-bottom: 0;
         .detail {
+          padding-bottom: $buffer;
           .title {
             font-size: 15px;
           }
@@ -152,7 +157,9 @@ $nav-height: 64px;
       .details {
         flex-direction: row;
         .detail {
-          padding-right: 72px;
+          &:first-of-type {
+            padding-right: 72px;
+          }
           .title {
             // font-size: 18px;
           }
