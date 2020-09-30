@@ -271,10 +271,10 @@ class Dashboard extends Component {
           <p className='name'>{name}</p>
           <div className='squares'>
             {/* TODO: constify separately */}
-            <span style={{ backgroundColor: P95ColorA.slice(0,-2) }} />
-            <span style={{ backgroundColor: P95ColorB.slice(0,-2) }} />
-            <span style={{ backgroundColor: P95ColorC.slice(0,-2) }} />
-            <span style={{ backgroundColor: P95ColorD.slice(0,-2) }} />
+            <span style={{ backgroundColor: P95ColorA }} />
+            <span style={{ backgroundColor: P95ColorB }} />
+            <span style={{ backgroundColor: P95ColorC }} />
+            <span style={{ backgroundColor: P95ColorD }} />
           </div>
           <p className='loading'>Loading . . .</p>
         </div>
