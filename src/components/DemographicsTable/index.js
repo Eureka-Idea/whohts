@@ -164,16 +164,8 @@ class DemographicsTable extends Component {
 
                 const uid = `${dem.id}-${id}`
                 const tooltipId = 'tooltip-'+uid
-                let val
-                if (!value || noData) {
-                  val = <span>N/A</span>
-                } else if (id === 'undiagnosed') {
-                  val = <span>{value}</span>
-                } else {
-                 val = <a data-tip data-for={tooltipId}>{value} </a>
-                }
-                console.log(val, ' ||| ', valueLower, ' ||| ', valueUpper)
-                const tooltip = (
+                
+                let tooltip = (
                   <ReactTooltip id={tooltipId} className='td-tooltip' type='dark' effect='solid'>
                     {valueLower && <div>Lower bound: {valueLower}</div>}
                     {valueUpper && <div>Upper bound: {valueUpper}</div>}
@@ -181,7 +173,21 @@ class DemographicsTable extends Component {
                     <div>Year: {year}</div>
                   </ReactTooltip>
                 )
-                return (<td key={uid}>{val}{tooltip}</td>)
+                
+                let val = value
+                if (!value || noData) {
+                  tooltip = null
+                  val = 'N/A'
+                } else if (id === 'undiagnosed') {
+                  tooltip = null // calculated by us, no source/year or bounds
+                }
+
+                return (
+                  <td key={uid}>
+                    <a data-tip data-for={tooltipId}>{val}</a>
+                    {tooltip}
+                  </td>
+                )
               })}
             </tr>
           ))}

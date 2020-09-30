@@ -214,7 +214,7 @@ class Dashboard extends Component {
       <div className='col-sm-12'>
         <div className='card-stock'>
           {/* <div className='chart-container'> */}
-            {<Table config={config} />}
+            {<Table config={config} iso={countryCode} />}
           {/* </div> */}
         </div>
       </div>
