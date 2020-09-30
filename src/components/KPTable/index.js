@@ -18,21 +18,30 @@ const KPTable = ({ config }) => {
     const uid = `${dem}-${ind}`
 
     const {
-      [FIELD_MAP.VALUE]: value,
+      [FIELD_MAP.VALUE]: v,
       [FIELD_MAP.SOURCE_DATABASE]: source,
       [FIELD_MAP.YEAR]: year,
       noData
     } = row
 
     const tooltipId = 'tooltip-' + uid
-    const decimals = ind === 'prev' ? 1 : 0
     let val
-    if (!value || noData) {
+    if (!v || noData) {
       val = <span>N/A</span>
     } else if (ind === 'year') {
-      val = <a data-tip data-for={tooltipId}>{displayNumber({ v: value })}</a>
+      // year is programme data, no rounding
+      val = (
+        <a data-tip data-for={tooltipId}>
+          {displayNumber({ v, unrounded: true })}
+        </a>
+      )
     } else {
-      val = <a data-tip data-for={tooltipId}>{displayPercent({ v: value, decimals })}</a>
+      // prevalence gets a decimal place, aware doesn't
+      val = (
+        <a data-tip data-for={tooltipId}>
+          {displayPercent({ v, decimals: ind === 'prev' ? 1 : 0 })}
+        </a>
+      )
     }
 
     const tooltip = (

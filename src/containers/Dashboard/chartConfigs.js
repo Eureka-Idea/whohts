@@ -40,8 +40,9 @@ function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
   if (!v) {
     console.warn('No % to adjust')
   }
+
+  // NOTE: ** conditional source tweak **
   if (source === SOURCE_DB_MAP.PEPFAR && indicator.toLowerCase().startsWith('positivity')) {
-    // console.log('!!!!!!!', indicator)
     v *= 100
   }
   if (toDisplay) {
@@ -71,7 +72,8 @@ function displayNumber({ v, unrounded=false }) {
     return '<1000'
   }
   
-  let str = unrounded ? v.toString() : Number(v.toPrecision(2)).toString()
+  // still make sure unrounded # is an integer
+  let str = unrounded ? _.round(v).toString() : Number(v.toPrecision(2)).toString()
   let spaced = ''
   let spacer = ''
   let slStart
@@ -107,29 +109,32 @@ function displayPercent({ v, adjust=false, decimals=0 }) {
 }
 
 function sourceTooltipFormatter () {
-  return `
+
+return `
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br/>
-    Source: <b>${this.source}</b><br/>
+    ${!this.source ? '' : `Source: <b>${this.source}</b>`}
     `
     // Year: <b>${this.year}</b><br/>
 }
 function percentSourceTooltipFormatter () {
   const decimals = this.decimals || 1 // intended for column charts (positivity gets 1)
+  
   return `
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br/>
     Year: <b>${this.year}</b><br/>
-    Source: <b>${this.source}</b><br/>
+    ${!this.source ? '' : `Source: <b>${this.source}</b>`}
   `
 }
 function uncertaintyTooltipFormatter () {
   const uncertaintyLine = (!this.l || !this.u) ? '' : `Uncertainty range: <b>${displayNumber({ v: this.l })} - ${displayNumber({ v: this.u })}</b><br />`
+  
   return `
     <span style = "color:${this.color}" >●</span >
     ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br />
     ${uncertaintyLine}
-    Source: ${this.source}
+    ${!this.source ? '' : `Source: <b>${this.source}</b>`}
     `
     // Year: ${this.x}<br />
 }
@@ -138,11 +143,12 @@ function percentUncertaintyTooltipFormatter () {
   const lVal = displayPercent({ v: this.l, decimals })
   const uVal = displayPercent({ v: this.u, decimals })
   const uncertaintyLine = (!lVal || !uVal) ? '' : `Uncertainty range: <b>${lVal} - ${uVal}</b><br />`
+  
   return `
     <span style = "color:${this.color}" >●</span >
     ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br />
     ${uncertaintyLine}
-    Source: ${this.source}
+    ${!this.source ? '' : `Source: <b>${this.source}</b>`}
     `
     // Year: ${this.x}<br />
 }
@@ -412,14 +418,14 @@ const getPlhivSex = data => {
 
   const series = [
     {
-      name: 'Men (15+)',
+      name: 'Men',
       color: maleColor,
       dashStyle: 'solid',
       data: mPoints,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       zIndex: 1
     }, {
-      name: 'Men (15+) range',
+      name: 'Men range',
       pointStart: 2015,
       data: rMPoints,
       type: 'arearange',
@@ -432,14 +438,14 @@ const getPlhivSex = data => {
       marker: { enabled: false }
     },
     {
-      name: 'Women (15+)',
+      name: 'Women',
       color: femaleColor,
       dashStyle: 'Solid',
       data: fPoints,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       zIndex: 1
     }, {
-      name: 'Women (15+) range',
+      name: 'Women range',
       pointStart: 2015,
       data: rFPoints,
       type: 'arearange',
@@ -714,14 +720,6 @@ const getPrevalence = (data, shinyCountry) => {
     } },
     subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
     yAxis: { min: 0 },
-    // plotOptions: { series: { pointStart: 2015 } }
-    // legend: {
-    //   useHTML: true,
-    //   labelFormatter: function() {
-    //     console.log(this.name, this)
-    //     return `<span title='${this.userOptions.description}'>${this.name}</span>`
-    //   }
-    // },
   }
 
   const prevalenceData = []
@@ -732,7 +730,6 @@ const getPrevalence = (data, shinyCountry) => {
   const rDYieldData = [] // for shiny
   const adjPrevData = []
   R_2015_2019.forEach((y, i) => {
-    // TODO: calc uci/lci
     const prevalenceRow = _.get(data, ['prevalence', i])
     const [prevalencePoint, rPrevalencePoint] = getPlotPoints({ row: prevalenceRow, year: y, decimals: 1 })
     prevalenceData.push(prevalencePoint)
@@ -745,12 +742,12 @@ const getPrevalence = (data, shinyCountry) => {
     let adjPrevValue
     if (populationValue && onArtValue && plhivValue) {
       adjPrevValue = (
-        (plhivValue - onArtValue) /
+        (plhivValue - onArtValue) * 100 /
         (populationValue - onArtValue)
       )
     }
-    adjPrevData.push({ x: Number(y), y: adjPrevValue })
-    
+    adjPrevData.push({ x: Number(y), y: adjPrevValue, decimals: 1 })
+
     if (shinyCountry) {
       const positivityRow = _.get(data, ['positivity', i])
       const dYieldRow = _.get(data, ['dYield', i])
@@ -792,21 +789,8 @@ const getPrevalence = (data, shinyCountry) => {
       description: TERM_MAP.treatmentAdjustedPrevalence.definition,
       zIndex: 1,
       color: colors[3],
-      // dashStyle: 'LongDash',
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       data: adjPrevData
-    // }, {
-    //   name: 'Treatment adjusted prevalence range',
-    // pointStart: 2015,
-    //   data: [],
-    //   type: 'arearange',
-    //   enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
-    //   lineWidth: 0,
-    //   linkedTo: ':previous',
-    //   color: colors[3],
-    //   fillOpacity: 0.2,
-    //   zIndex: 0,
-    //   marker: { enabled: false }
     },
   ]
 
@@ -858,11 +842,14 @@ const getPrevalence = (data, shinyCountry) => {
 
 
 function getColumnPoints(numData, posData) {
+  
+  const tSource = posData[FIELD_MAP.SOURCE_DATABASE]
   const numPoint = numData.noData ? null : {
-    y: numData[FIELD_MAP.VALUE]
+    y: numData[FIELD_MAP.VALUE],
+    source: SOURCE_DISPLAY_MAP[tSource] || tSource,
   }
 
-  let source = posData[FIELD_MAP.SOURCE_DATABASE]
+  const source = posData[FIELD_MAP.SOURCE_DATABASE]
   const posPoint = !(numPoint && numPoint.y) ? null : {
     source: SOURCE_DISPLAY_MAP[source] || source,
     year: posData[FIELD_MAP.YEAR],
@@ -900,6 +887,9 @@ const getAdults = data => {
     {
       name: barChartsTestsName,
       // color: barChartColorDark,
+      tooltip: {
+        // pointFormatter: sourceTooltipFormatter
+      },
       data: [wNumData, mNumData]
     },
     {
@@ -912,7 +902,7 @@ const getAdults = data => {
       data: [wPosData, mPosData]
     }
   ]
-  const categories = ['Women', 'Men']
+  const categories = ['Women (15+)', 'Men (15+)']
 
   const options = {
     subtitle: { 
@@ -1378,7 +1368,9 @@ const getGroupsTable = (data, shinyCountry) => {
           if (percentages.includes(ind)) {
             v = displayPercent({ v, adjust: true, decimals: ind === 'prev' })
           } else {
-            v = displayNumber({ v })
+            // NOTE: ** conditional source tweak **
+            const unrounded = (ind === 'year' && source !== SOURCE_DB_MAP.S90)
+            v = displayNumber({ v, unrounded })
           }
           vMap[vId] = v
         }

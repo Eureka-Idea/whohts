@@ -1,5 +1,8 @@
 import _ from 'lodash'
 
+// const BASE_URL = 'https://status.y-x.ch/query?'
+const BASE_URL = 'https://eic-database-290813.ew.r.appspot.com/query?'
+
 // indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
 const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
 
@@ -155,8 +158,8 @@ const adultsGAM19 = {
     women2: 'Women (15+) - Number of tests',
 
     pTotal2: 'Total aggregate positivity',
-    pMen2: 'Men (15+) - Positivity',
-    pWomen2: 'Women (15+) - Positivity',
+    pMen2: 'Men (15+) -  Positivity',
+    pWomen2: 'Women (15+) -  Positivity',
   }
 }
 const adultsNPD19 = {
@@ -223,8 +226,8 @@ const adultsPCOP19 = {
     women6: 'Women (Tested in past year)',
 
     pTotal6: 'Aggregate Positivity - Tests conducted and positivity, by sex',
-    pMen6: 'Men - Positivity',
-    pWomen6: 'Women - Positivity',
+    pMen6: 'Men -  Positivity',
+    pWomen6: 'Women -  Positivity',
   }
 }
 const adultsPROP19 = {
@@ -240,8 +243,8 @@ const adultsPROP19 = {
     women7: 'Women (Tested in past year)',
 
     pTotal7: 'Aggregate Positivity - Tests conducted and positivity, by sex',
-    pMen7: 'Men - Positivity',
-    pWomen7: 'Women - Positivity',
+    pMen7: 'Men -  Positivity',
+    pWomen7: 'Women -  Positivity',
   }
 }
 const adultsPCOP1718 = {
@@ -257,8 +260,8 @@ const adultsPCOP1718 = {
     women10: 'Women (Tested in past year)',
 
     pTotal10: 'Aggregate Positivity - Tests conducted and positivity, by sex',
-    pMen10: 'Men - Positivity',
-    pWomen10: 'Women - Positivity',
+    pMen10: 'Men -  Positivity',
+    pWomen10: 'Women -  Positivity',
   }
 }
 const adultsPROP17 = {
@@ -274,8 +277,8 @@ const adultsPROP17 = {
     women11: 'Women (Tested in past year)',
 
     pTotal11: 'Aggregate Positivity - Tests conducted and positivity, by sex',
-    pMen11: 'Men - Positivity',
-    pWomen11: 'Women - Positivity',
+    pMen11: 'Men -  Positivity',
+    pWomen11: 'Women -  Positivity',
   }
 }
 const adultsPEPFAR = {
@@ -812,7 +815,7 @@ const CHARTS = {
       // 15+
       plhiv: 'People living with HIV - adults (aged 15+)',
       onArt: 'People receiving antiretroviral therapy',
-      population: 'Population by age and sex', // TODO: 15+
+      population: 'Population adults 15+', // TODO: 15+
     }
   },
 
@@ -846,7 +849,7 @@ const CHARTS = {
     indicatorIds: ['total', 'PITC', 'ANC', 'VCT', 'family', 'other', 'pTotal', 'pPITC', 'pANC', 'pVCT', 'pFamily', 'pOther']
   },
   INDEX: {
-    title: 'HIV tests conducted and positivity for Provider-assisted referral/Index testing',
+    title: 'HIV tests conducted and positivity for provider-assisted referral / index testing',
     id: 'INDEX',
     sources: [indexPEPFAR],
     indicatorIds: ['total', 'community', 'facility', 'pTotal', 'pCommunity', 'pFacility']
@@ -1161,7 +1164,7 @@ const getIndicatorMap = (isShiny) => {
         // [F.AGE]: '15+', TODO
         // [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
-        [F.UNIT_FORMAT]: 'NUMBER', // otherwise may get another unit, e.g. 51.4 for Kenya row 3991911
+        // [F.UNIT_FORMAT]: 'NUMBER', // otherwise may get another unit, e.g. 51.4 for Kenya row 3991911
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return R_2015_2019.map(y => {
@@ -2201,6 +2204,7 @@ const getIndicatorMap = (isShiny) => {
 }
 
 export {
+  BASE_URL,
   CHARTS,
   FIELD_MAP,
   AGGREGATE_GETTER,

@@ -15,7 +15,7 @@ import DemographicsTable from '../../components/DemographicsTable'
 import { TERM_MAP, TERMS } from '../../constants/glossary'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { CHARTS, FIELD_MAP } from '../../constants/charts'
+import { CHARTS, FIELD_MAP, BASE_URL } from '../../constants/charts'
 import { getConfig, displayNumber } from './chartConfigs'
 import { COUNTRY_MAP } from '../../components/Homepage/countries'
 const HighchartsMore = require('highcharts/highcharts-more')
@@ -37,9 +37,6 @@ const DEV = window.location.hostname === 'localhost'
 
 // percentage marks on axis instead of yaxis label
 // women men gap?
-
-// const URLBase = 'https://status.y-x.ch/query?'
-const URLBase = 'https://eic-database-290813.ew.r.appspot.com/query?'
 
 const fields = _.flatMap(FIELD_MAP)
 
@@ -91,23 +88,26 @@ class Dashboard extends Component {
     }
 
     const [status, art, suppression] = config.map(n => 
-      Math.round((n)*100)+'%'
+      Math.round((n)*100)
     )
     
     return (
-      <div className='col-xl-4 col-md-6 col-xs-12 prog-95'>
+      <div className='col-xl-4 col-md-8 col-xs-12 prog-95'>
         <div className='content'>
-          <p>{title}</p>
+          <p className='title'>{title}</p>
           <NestedBoxes
-            circle={true}
+            // circle={true}
             side={110}
             ratios={config}
             // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
-            colors={[rum, casablanca, jungleMist, stormGray]}
+            colors={[colors[16]+'', colors[18]+'', colors[5]+'', colors[11]+'']}
             content={[
               { inner: status, below: 'of people living with HIV know their status' },
               { inner: art, below: 'of people living with HIV who know their status are on treatment' },
               { inner: suppression, below: 'of people on treatment are virally suppressed' },
+              // { inner: status, below: ['of people living with HIV', 'know their status'] },
+              // { inner: art, below: ['of people living with HIV', 'who know their status', 'are on treatment'] },
+              // { inner: suppression, below: ['of people on treatment are virally suppressed'] },
             ]}
           />
         </div>
@@ -207,7 +207,7 @@ class Dashboard extends Component {
     const countryCode = _.get(this, 'props.match.params.countryCode', null)  
     const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
     return (
-      <div className='col-xl-4 col-md-6 col-xs-12'>
+      <div className='col-xl-4 col-md-4 col-xs-12'>
 
         <div className='country-name'>
           <h1>{name}</h1>
@@ -252,12 +252,15 @@ class Dashboard extends Component {
     return (
       <div className='dashboard'>
         <div className='nav'>
-          <Link to='/'>
-            <img className='who-logo' src='images/who_logo.png' alt='WHO logo' />
+          <Link className='who-logo' to='/'>
+            <img src='images/who_logo.png' alt='WHO logo' />
           </Link>
           <span className='title text-center'>
             HIV Testing Services Dashboard
           </span>
+          <Link className='link-home' to='/'>
+            Home
+          </Link>
         </div>
 
         <div className='charts container-fluid mt-4 p-0'>
@@ -375,7 +378,7 @@ class Dashboard extends Component {
         <button onClick={this.submit} action='#'>go fetch</button>
         <button onClick={this.submit.bind(this, true)} action='#'>dbug</button>
         <br />
-        <span>{URLBase}indicator=</span><input id='direct-query'></input>
+        <span>{BASE_URL}indicator=</span><input id='direct-query'></input>
         <button onClick={this.submitDQ} action='#'>direct query</button>
         <button onClick={this.submitDQ.bind(this, true)} action='#'>dbug</button>
       </div>
@@ -392,7 +395,7 @@ class Dashboard extends Component {
   submitDQ(e, dbug) {
     const v = document.querySelector('#direct-query')
     // debugger
-    const url = URLBase + 'indicator=' + v.value || ''
+    const url = BASE_URL + 'indicator=' + v.value || ''
     console.log('url: ', url)
     fetch(url)
     .then(response => response.json())
@@ -405,7 +408,7 @@ class Dashboard extends Component {
   }
 
   submit(e, dbug) {
-    let url = URLBase
+    let url = BASE_URL
     let char = ''
     fields.forEach(f => {
       if (this.state[f]) {

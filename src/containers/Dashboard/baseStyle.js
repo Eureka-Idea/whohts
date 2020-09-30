@@ -39,6 +39,9 @@ export default {
   "credits": { "enabled": false },
   "colors": colors,
   "xAxis": {
+    "tickInterval": 1,
+
+    // "tickAmount": 5,
     "stackLabels": { "enabled": true, "style": { "fontWeight": "bold", "color": "gray" } },
     "labels": {
       "style": {

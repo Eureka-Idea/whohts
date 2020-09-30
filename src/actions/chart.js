@@ -1,6 +1,6 @@
 import * as types from '../constants/types'
 import _ from 'lodash'
-import { getIndicatorMap, AGGREGATE_GETTER, FIELD_MAP, CHARTS } from '../constants/charts'
+import { getIndicatorMap, AGGREGATE_GETTER, FIELD_MAP, CHARTS, BASE_URL } from '../constants/charts'
 import { COUNTRY_MAP } from '../components/Homepage/countries'
 
 // TODO: does this prevent cacheing? 
@@ -13,19 +13,18 @@ const myInit = {
   // headers: myHeaders,
 }
 
-// const baseUrl = 'https://status.y-x.ch/query?'
-const baseUrl = 'https://eic-database-290813.ew.r.appspot.com/query?'
-
 const DEV = window.location.hostname === 'localhost'
 
 const debugList = {
   // [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
-  // [CHARTS.HIV_NEGATIVE.id]: true,
+  // [CHARTS.FACILITY.id]: true,
+  [CHARTS.CONTEXT.id]: true,
+  [CHARTS.P95.id]: true,
   // [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
-  [CHARTS.ADULTS.id]: true,
+  // [CHARTS.ADULTS.id]: true,
 
   // [CHARTS.PLHIV_AGE.id]: true,
   // [CHARTS.PLHIV_SEX.id]: true,
@@ -52,7 +51,7 @@ export const getChartData = (countryCode) =>
     const allChartQueryPs = _.map(indicatorMap, (indicators, chartName) => {
     
       const getIndicatorP = indicator => {
-        let url = baseUrl
+        let url = BASE_URL
         let char = ''
         _.each(FIELD_MAP, f => {
           let chartValue = indicator[f]
