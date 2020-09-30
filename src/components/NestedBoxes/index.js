@@ -35,6 +35,7 @@ class NestedBoxes extends Component {
       borderRadius: this.props.circle ? '50%' : 0
     }
 
+    // must call this before getBoxes for nextBoxes for accumulatedBorder hack to work
     const below = this.getBelow(idx, borderWidth)
     
     let nextBoxes;
@@ -101,9 +102,9 @@ class NestedBoxes extends Component {
     const content = this.props.content[idx].below
     const heading = this.props.content[idx].inner || 'Unknown '
 
-    console.log('**bw: ', borderWidth)
+    // TODO: eliminate hack
     this.accumulatedBorderWidth += borderWidth
-    console.log('**abw: ', this.accumulatedBorderWidth)
+
   	return (
     	<div
         className={'below-content below-content-'+idx}

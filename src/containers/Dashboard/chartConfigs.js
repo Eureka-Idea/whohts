@@ -24,11 +24,12 @@ const sourceTooltipFormat = `
 
 const barChartsTestsName = 'Number of tests conducted'
 const barChartsPositivityName = 'Positivity' // TODO: acceptable?
-const barChartsPositivityNameTooltip = 'Positivity'
+// const barChartsPositivityNameTooltip = 'Positivity'
 
 function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
   if (!row) {
     console.warn('No % to adjust')
+    return null
   }
   
   let {
@@ -37,8 +38,9 @@ function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
     [FIELD_MAP.SOURCE_DATABASE]: source,
   } = row
 
-  if (!v) {
+  if (!_.isNumber(v)) {
     console.warn('No % to adjust')
+    return null
   }
 
   // NOTE: ** conditional source tweak **
@@ -169,8 +171,8 @@ function getSubtitle(total, pTotal) {
   const formattedTotal = displayNumber({ v: total.value, unrounded: true })
   const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
   
-  return `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal}</span> 
-  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal}</span><br /><span>Programme Data</span></div>` 
+  return `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span> 
+  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme Data</span></div>` 
 }
 
 function getPlotPoints({ row, year, adjust=false, decimals=0}) {
@@ -341,20 +343,18 @@ const getPlhivDiagnosis = data => {
     const [plhivPoint] = getPlotPoints({ row: plhivRow, year: y })
     const knowRow = _.get(data, ['know', i])
     const [knowPoint] = getPlotPoints({ row: knowRow, year: y })
-    console.log('on art: *** ', onArtPoint.y)
+
     let undiagnosedPoint, notArtPoint
     if (plhivPoint.y) {
       if (knowPoint.y) {
         // cannibalize knowPoint for its year, source etc
         undiagnosedPoint = knowPoint
         undiagnosedPoint.y = (plhivPoint.y - knowPoint.y)
-        // console.log('undiagnosedPoint.y: *** ', undiagnosedPoint.y)
       }
       if (onArtPoint.y) {
         // cannibalize plhivPoint for its year, source etc
         notArtPoint = plhivPoint
         notArtPoint.y = (plhivPoint.y - onArtPoint.y)
-        console.log('notArtPoint.y: *** ', notArtPoint.y)
       }
     }
     
@@ -1318,14 +1318,14 @@ const getGroupsTable = (data, shinyCountry) => {
   allData.undiagnosed = undiagnosed
   
   // console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
-  console.log(
+  // console.log(
     // '\nPLHIV || ', allData.plhiv,
     // '\nAWARE || ', allData.aware,
     // '\nPREV || ', allData.prev,
     // '\nNEWLY || ', allData.newly,
     // '\nYEAR || ', allData.year,
     // '\nEVER || ', allData.ever,
-    )
+    // )
 
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
@@ -1382,8 +1382,7 @@ const getGroupsTable = (data, shinyCountry) => {
       }
     })
   })
-
-  console.log('POP_CONFIG: ', config)
+  
   return config
 }
 

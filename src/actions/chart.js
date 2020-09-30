@@ -22,9 +22,9 @@ const debugList = {
   // [CHARTS.FACILITY.id]: true,
   // [CHARTS.CONTEXT.id]: true,
   // [CHARTS.P95.id]: true,
-  [CHARTS.GROUPS_TABLE.id]: true,
-  [CHARTS.POLICY_TABLE.id]: true,
-  [CHARTS.KP_TABLE.id]: true,
+  // [CHARTS.GROUPS_TABLE.id]: true,
+  // [CHARTS.POLICY_TABLE.id]: true,
+  // [CHARTS.KP_TABLE.id]: true,
   // [CHARTS.ADULTS.id]: true,
 
   // [CHARTS.PLHIV_AGE.id]: true,
@@ -39,7 +39,6 @@ const debugSkipList = {
 // gets records to cover the indicators relevant to each chart
 export const getChartData = (countryCode) =>
   dispatch => {
-    console.log('GETCHARTDATA DISPATCH')
     const isShiny = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'], false)
     let indicatorMap = getIndicatorMap(isShiny)
 

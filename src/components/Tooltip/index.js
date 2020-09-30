@@ -16,13 +16,11 @@ class Tooltip extends Component {
         return
       }
       document.addEventListener('click', this.closeTooltip)
-      console.log('add')
       return { open: true }
     })
   }
 
   closeTooltip() {
-    console.log('remove')
     document.removeEventListener('click', this.closeTooltip)
     this.setState({ open: false })
   }

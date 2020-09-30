@@ -7,7 +7,7 @@ const INITIAL_STATE = {
 export default function (state = INITIAL_STATE, action) {
   switch (action.type) {
     case types.FETCH_CHART_DATA:
-      console.log('XXX,', action.payload)
+      console.log('XXX FETCH CHART PAYLOAD: XXX ', action.payload)
       return {
         ...state, chartData: action.payload
       };

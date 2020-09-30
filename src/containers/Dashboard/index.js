@@ -79,10 +79,9 @@ class Dashboard extends Component {
   }
 
   getCountryContext() {
-    console.log('gCC')
     const { id } = CHARTS.CONTEXT
-    const population = _.get(this.props.chartData, id + '.data.population.value', 'UNKNOWN')
-    const classification = _.get(this.props.chartData, id + '.data.classification.value_comment', 'UNKNOWN')
+    const population = _.get(this.props.chartData, id + '.data.population.value', 'Unknown')
+    const classification = _.get(this.props.chartData, id + '.data.classification.value_comment', 'Unknown')
 
     const countryCode = _.get(this, 'props.match.params.countryCode', null)
     const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
