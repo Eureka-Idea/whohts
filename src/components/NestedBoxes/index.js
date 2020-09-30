@@ -139,13 +139,14 @@ class NestedBoxes extends Component {
     
     const style = {
       width: width + 'px',
-      height: '230px',
+      minHeight: '270px',
       // height: (this.props.side * 2) + 'px',
     }
     
     return (
       <div className='nested-boxes' style={style}>
-       {boxes}
+        <p className='title'>{this.props.title}</p>
+        {boxes}
       </div>
     )
   }

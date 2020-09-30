@@ -87,18 +87,20 @@ class Dashboard extends Component {
     const countryCode = _.get(this, 'props.match.params.countryCode', null)
     const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
     return (
-      <div className='col-xl-6 col-md-5 col-xs-12 country-context'>
-        <div className='content'>
-          <p className='name'>{name}</p>
-          <div className='details pb-3'>
-            <span className='detail'>
-              <p className='title'>Population </p>
-              <p className='value'>{displayNumber({ v: population })}</p>
-            </span>
-            <span className='detail'>
-              <p className='title'>World Bank classification </p>
-              <p className='value'>{classification}</p>
-            </span>
+      <div className='col-xl-6 col-lg-6 col-xs-12 country-context'>
+        <div className='card-stock'>
+          <div className='content'>
+            <p className='name'>{name}</p>
+            <div className='details'>
+              <span className='detail'>
+                <p className='title'>Population </p>
+                <p className='value'>{displayNumber({ v: population })}</p>
+              </span>
+              <span className='detail'>
+                <p className='title'>World Bank classification </p>
+                <p className='value'>{classification}</p>
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -119,24 +121,27 @@ class Dashboard extends Component {
     )
     
     return (
-      <div className='col-xl-6 col-md-7 col-xs-12 prog-95'>
-        <div className='content'>
-          <p className='title'>{title}</p>
-          <NestedBoxes
-            // circle={true}
-            side={110}
-            ratios={config}
-            // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
-            colors={[colors[16]+'', colors[18]+'', colors[5]+'', colors[11]+'']}
-            content={[
-              { inner: status, below: 'of people living with HIV know their status' },
-              { inner: art, below: 'of people living with HIV who know their status are on treatment' },
-              { inner: suppression, below: 'of people on treatment are virally suppressed' },
-              // { inner: status, below: ['of people living with HIV', 'know their status'] },
-              // { inner: art, below: ['of people living with HIV', 'who know their status', 'are on treatment'] },
-              // { inner: suppression, below: ['of people on treatment are virally suppressed'] },
-            ]}
-          />
+      <div className='col-xl-6 col-lg-6 col-xs-12 prog-95'>
+        <div className='card-stock'>
+          <div className='content'>
+            {/* <p className='title'>{title}</p> */}
+            <NestedBoxes
+              // circle={true}
+              title={title}
+              side={110}
+              ratios={config}
+              // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
+              colors={[colors[16]+'', colors[18]+'', colors[5]+'', colors[11]+'']}
+              content={[
+                { inner: status, below: 'of people living with HIV know their status' },
+                { inner: art, below: 'of people living with HIV who know their status are on treatment' },
+                { inner: suppression, below: 'of people on treatment are virally suppressed' },
+                // { inner: status, below: ['of people living with HIV', 'know their status'] },
+                // { inner: art, below: ['of people living with HIV', 'who know their status', 'are on treatment'] },
+                // { inner: suppression, below: ['of people on treatment are virally suppressed'] },
+              ]}
+            />
+          </div>
         </div>
       </div>
     )
@@ -168,9 +173,13 @@ class Dashboard extends Component {
     const chart = <ReactHighcharts config={config} />
     // console.log('*** ', id, ' ****config:*** ', config)
     return (
-      <div className='chart-container col-xl-4 col-lg-6 col-sm-12'>
-        {chart}
-        {tt}
+      <div className='col-xl-4 col-lg-6 col-sm-12'>
+        <div className='card-stock'>
+          <div className='chart-container'>
+            {chart}
+            {tt}
+          </div>
+        </div>
       </div>
     )
   }
@@ -202,28 +211,16 @@ class Dashboard extends Component {
     }
 
     return (
-      <div className='chart-container col-sm-12'>
-        {<Table config={config} />}
+      <div className='col-sm-12'>
+        <div className='card-stock'>
+          {/* <div className='chart-container'> */}
+            {<Table config={config} />}
+          {/* </div> */}
+        </div>
       </div>
     )
   }
 
-  getSelf() {
-    const title = 'HIV self-tests distributed'
-    const series = [
-      {
-        name: 'number',
-        color: colors[5],
-        data: [67000],
-      },
-    ]
-    const categories = ['HIV self-tests distributed']
-    const options = {
-      // plotOptions: { column: { stacking: 'normal' } }
-      legend: { enabled: false }
-    }
-    return _.merge({}, getColumn({title, series, options, categories}))
-  }
   
   render() {
 
@@ -268,13 +265,15 @@ class Dashboard extends Component {
         </div>
 
         <div className='charts container-fluid mt-4 p-0'>
-          <div className='row no-gutters mb-4'>
+          <div className='row mb-4'>
+          {/* <div className='row no-gutters mb-4'> */}
 
             {this.getCountryContext()}
             {this.getP95()}
           </div>
 
-          <div className='row no-gutters'>
+          <div className='row'>
+          {/* <div className='row no-gutters'> */}
             {diagnosis}
             {PLHIVSex}
             {PLHIVAge}
