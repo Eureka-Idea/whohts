@@ -276,7 +276,7 @@ class Dashboard extends Component {
             <span style={{ backgroundColor: P95ColorC }} />
             <span style={{ backgroundColor: P95ColorD }} />
           </div>
-          <p className='loading'>Loading . . .</p>
+          <p className='loading'>Loading...</p>
         </div>
       )
     }
