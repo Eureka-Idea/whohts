@@ -14,12 +14,12 @@ import { TERM_MAP } from "../../constants/glossary";
 //   Source: {point.source}
 //   `
 
-const sourceTooltipFormat = `
-  <span style="color:{point.color}">●</span>
-  {series.name}: <b>{point.y}</b><br/>
-  Year: <b>{point.year}</b><br/>
-  Source: <b>{point.source}</b><br/>
-  `
+// const sourceTooltipFormat = `
+//   <span style="color:{point.color}">●</span>
+//   {series.name}: <b>{point.y}</b><br/>
+//   Year: <b>{point.year}</b><br/>
+//   Source: <b>{point.source}</b><br/>
+//   `
   // Source year: <b>{point.sourceYear}</b><br/>
 
 const barChartsTestsName = 'Number of tests conducted'
@@ -116,15 +116,15 @@ function displayPercent({ v, adjust=false, decimals=0 }) {
   return str + '%' 
 }
 
-function sourceTooltipFormatter () {
+// function sourceTooltipFormatter () {
 
-return `
-    <span style="color:${this.color}">●</span>
-    ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br/>
-    ${!this.source ? '' : `Source: <b>${this.source}</b>`}
-    `
-    // Year: <b>${this.year}</b><br/>
-}
+// return `
+//     <span style="color:${this.color}">●</span>
+//     ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br/>
+//     ${!this.source ? '' : `Source: <b>${this.source}</b>`}
+//     `
+//     // Year: <b>${this.year}</b><br/>
+// }
 function percentSourceTooltipFormatter () {
   const decimals = this.decimals || 1 // intended for column charts (positivity gets 1)
   
@@ -139,7 +139,7 @@ function uncertaintyTooltipFormatter () {
   const uncertaintyLine = (!this.l || !this.u) ? '' : `Uncertainty range: <b>${displayNumber({ v: this.l })} - ${displayNumber({ v: this.u })}</b><br />`
   
   return `
-    <span style = "color:${this.color}" >●</span >
+    <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br />
     ${uncertaintyLine}
     ${!this.source ? '' : `Source: <b>${this.source}</b>`}
@@ -153,7 +153,7 @@ function percentUncertaintyTooltipFormatter () {
   const uncertaintyLine = (!lVal || !uVal) ? '' : `Uncertainty range: <b>${lVal} - ${uVal}</b><br />`
   
   return `
-    <span style = "color:${this.color}" >●</span >
+    <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br />
     ${uncertaintyLine}
     ${!this.source ? '' : `Source: <b>${this.source}</b>`}
@@ -375,14 +375,14 @@ const getPlhivDiagnosis = data => {
       description: TERM_MAP.undiagnosedPlhiv.definition,
       color: colors[2],
       data: undiagnosedData,
-      tooltip: { pointFormatter: sourceTooltipFormatter },
+      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
     },
     {
       name: 'PLHIV know status not on ART',
       description: TERM_MAP.plhivWhoKnowStatusNotOnArt.definition,
       color: colors[1],
       data: notArtData,
-      tooltip: { pointFormatter: sourceTooltipFormatter },
+      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
     },
     {
       name: 'PLHIV know status on ART',
@@ -1173,7 +1173,7 @@ const getForecast = data => {
       type: 'line',
       data: needNumData,
       tooltip: {
-        pointFormat: sourceTooltipFormat // TODO: use formatter?
+        // pointFormat: sourceTooltipFormat // TODO: use formatter?
       },
     }
   ]

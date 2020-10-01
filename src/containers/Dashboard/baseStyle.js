@@ -1,4 +1,5 @@
 import colors from "./colors";
+import { withRouter } from "react-router";
 
 export default {
   "plotOptions": { 
@@ -12,6 +13,17 @@ export default {
     // "column": { "maxPointWidth": 40 },
     // "series": { "yAxis": { "stackLabels": { enabled: true } } },
   },
+  // tooltip: {
+  //   backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  //   fontColor: 'white',
+  //   color: 'white',
+  //   textColor: 'white',
+  //   borderWidth: '3px',
+  //   // useHTML: true,
+  //   style: {
+  //     color: 'white',
+  //   }
+  // },
   "chart": {
     // "className": "charty-mcchartface",
     "alignTicks": true,
