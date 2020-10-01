@@ -15,11 +15,8 @@ export default {
   },
   // tooltip: {
   //   backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  //   fontColor: 'white',
-  //   color: 'white',
-  //   textColor: 'white',
   //   borderWidth: '3px',
-  //   // useHTML: true,
+  //   useHTML: true,
   //   style: {
   //     color: 'white',
   //   }

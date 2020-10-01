@@ -1,4 +1,4 @@
-import colors, { barChartColorDark, barChartAccent, barChartColor } from "./colors"
+import colors, { barChartColorDark, barChartAccent, barChartColor, gunSmoke, copper } from "./colors"
 import _ from 'lodash'
 
 // custom label https://jsfiddle.net/BlackLabel/37h8kqdL/
@@ -107,10 +107,10 @@ const columnLine = {
 
   series: [
     {
-      color: colors[12],
+      color: gunSmoke,
     },
     {
-      color: colors[2],
+      color: copper,
     },
   ]
 }

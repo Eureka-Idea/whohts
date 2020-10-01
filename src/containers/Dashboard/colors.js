@@ -33,6 +33,9 @@ const cuttySark = '#4D7469'
 const jungleGreen = '#30A86E'
 const charm = '#DE869B'
 
+const buddhaGold = '#A2A500A5'
+const putty = '#E8D18D'
+
 // .9
 const jungleMist = '#BBD4D8'
 // const jungleMist = '#BBD4D8DD'
@@ -57,32 +60,32 @@ const barChartColorDark = nevada
 
 const femaleColor = cuttySark
 const maleColor = pirateGold
-const P95ColorA = cuttySark + 'dd' //
-const P95ColorB = nutmeg + 'dd'
-const P95ColorC = rum + 'dd'
-const P95ColorD = opal + 'dd'
+const P95ColorA = cuttySark + 'DD' //
+const P95ColorB = nutmeg + 'DD'
+const P95ColorC = rum + 'DD'
+const P95ColorD = opal + 'DD'
 
 export default [
-  stormGray,
-  botticelli,
-  copper,
-  jungleGreen,
-  casablanca,
-  rum,
-  steelBlue,
-  charm,
-  jungleMist,
-  deepSeaGreen,
-  midGray,
-  opal,
-  gunSmoke,
-  nandor,
-  snowDrift,
-  
-  capeCod,
-  cuttySark,
-  pirateGold,
-  nutmeg,
+  stormGray, // 0
+  botticelli, // 1
+  copper, // 2
+  jungleGreen, // 3
+  casablanca, // 4
+  rum, // 5
+  steelBlue, // 6
+  charm, // 7
+  jungleMist, // 8
+  deepSeaGreen, // 9
+  midGray, // 10
+  opal, // 11
+  gunSmoke, // 12
+  nandor, // 13
+  snowDrift, // 14
+   //
+  capeCod, // 15
+  cuttySark, // 16
+  pirateGold, // 17
+  nutmeg, // 18
 ]
 export {
   deepSeaGreen,
@@ -105,6 +108,8 @@ export {
   copper,
 
   nutmeg,
+  buddhaGold,
+  putty,
 
   femaleColor,
   maleColor,

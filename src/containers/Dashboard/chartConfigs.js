@@ -1,4 +1,4 @@
-import colors, {femaleColor, maleColor, barChartAccent, barChartColorDark } from "./colors"
+coimport colors, {femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
 import { CHARTS, R_2015_2019, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP } from "../../constants/charts";
@@ -373,21 +373,21 @@ const getPlhivDiagnosis = data => {
     {
       name: 'Undiagnosed PLHIV',
       description: TERM_MAP.undiagnosedPlhiv.definition,
-      color: colors[2],
+      color: copper,
       data: undiagnosedData,
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
     },
     {
       name: 'PLHIV know status not on ART',
       description: TERM_MAP.plhivWhoKnowStatusNotOnArt.definition,
-      color: colors[1],
+      color: botticelli,
       data: notArtData,
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
     },
     {
       name: 'PLHIV know status on ART',
       description: TERM_MAP.plhivKnowStatusOnArt.definition,
-      color: colors[0],
+      color: stormGray,
       data: onArtData,
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
     },
@@ -500,7 +500,7 @@ const getPlhivAge = data => {
     {
       name: '15 - 24',
       dashStyle: 'ShortDot',
-      color: colors[4],
+      color: casablanca,
       data: dataMap['15-24'].points,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       zIndex: 1
@@ -513,7 +513,7 @@ const getPlhivAge = data => {
       enableMouseTracking: false,
       lineWidth: 0,
       linkedTo: ':previous',
-      color: colors[4],
+      color: casablanca,
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
@@ -521,7 +521,7 @@ const getPlhivAge = data => {
     {
       name: '25 - 34',
       dashStyle: 'DashDot',
-      color: colors[0],
+      color: stormGray,
       data: dataMap['25-34'].points,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       zIndex: 1
@@ -534,7 +534,7 @@ const getPlhivAge = data => {
       enableMouseTracking: false,
       lineWidth: 0,
       linkedTo: ':previous',
-      color: colors[0],
+      color: stormGray,
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
@@ -542,7 +542,7 @@ const getPlhivAge = data => {
     {
       name: '35 - 49',
       dashStyle: 'LongDash',
-      color: colors[6],
+      color: jungleGreen, // steelBlue,
       data: dataMap['35-49'].points,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       zIndex: 1
@@ -555,7 +555,7 @@ const getPlhivAge = data => {
       enableMouseTracking: false,
       lineWidth: 0,
       linkedTo: ':previous',
-      color: colors[6],
+      color: steelBlue,
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
@@ -563,7 +563,7 @@ const getPlhivAge = data => {
     {
       name: '50+',
       dashStyle: 'Solid',
-      color: colors[7],
+      color: charm,
       data: dataMap['50-99'].points,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       zIndex: 1
@@ -577,7 +577,7 @@ const getPlhivAge = data => {
       lineWidth: 0,
       linkedTo: ':previous',
       fillOpacity: 0.2,
-      color: colors[7],
+      color: charm,
       zIndex: 0,
       marker: { enabled: false }
     },
@@ -608,14 +608,14 @@ const getHivNegative = data => {
     {
       name: 'Retest',
       description: TERM_MAP.retest.definition,
-      color: colors[6],
+      color: steelBlue,
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
       data: dataMap.retests.points,
     },
     {
       name: 'First test',
       description: TERM_MAP.firstTest.definition,
-      color: colors[10],
+      color: nandor,
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
       data: dataMap.firsts.points,
     },
@@ -658,7 +658,7 @@ const getHivPositive = data => {
     {
       name: 'Retest - know status on ART',
       description: TERM_MAP.retest.definition,
-      color: colors[0],
+      color: stormGray,
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
       data: dataMap.arts.points,
       zIndex: 1,
@@ -679,7 +679,7 @@ const getHivPositive = data => {
     {
       name: 'Retest - know status not on ART',
       description: TERM_MAP.retest.definition,
-      color: colors[1],
+      color: botticelli,
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
       data: dataMap.awares.points,
       zIndex: 1,
@@ -700,7 +700,7 @@ const getHivPositive = data => {
     {
       name: 'New diagnosis',
       description: TERM_MAP.newDiagnosis.definition,
-      color: colors[2],
+      color: copper,
       tooltip: { pointFormatter: uncertaintyTooltipFormatter },
       data: dataMap.firsts.points,
       zIndex: 1,
@@ -779,7 +779,7 @@ const getPrevalence = (data, shinyCountry) => {
       description: TERM_MAP.hivPrevalence.definition,
       zIndex: 1,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
-      color: colors[12],
+      color: gunSmoke,
       dashStyle: 'ShortDot',
       marker: { radius: 1 },
       lineType: 'line',
@@ -792,7 +792,7 @@ const getPrevalence = (data, shinyCountry) => {
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
       lineWidth: 0,
       linkedTo: ':previous',
-      color: colors[12],
+      color: gunSmoke,
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
@@ -801,7 +801,7 @@ const getPrevalence = (data, shinyCountry) => {
       name: 'Treatment adjusted prevalence',
       description: TERM_MAP.treatmentAdjustedPrevalence.definition,
       zIndex: 1,
-      color: colors[3],
+      color: buddhaGold,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       data: adjPrevData
     },
@@ -812,7 +812,7 @@ const getPrevalence = (data, shinyCountry) => {
       name: 'Positivity',
       description: TERM_MAP.positivity.definition,
       zIndex: 1,
-      color: colors[4],
+      color: putty,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       data: positivityData
     }, {
@@ -823,7 +823,7 @@ const getPrevalence = (data, shinyCountry) => {
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
       lineWidth: 0,
       linkedTo: ':previous',
-      color: colors[4],
+      color: putty,
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
@@ -831,7 +831,7 @@ const getPrevalence = (data, shinyCountry) => {
       name: 'Diagnostic yield',
       description: TERM_MAP.diagnosticYield.definition,
       zIndex: 1,
-      color: colors[8],
+      color: jungleMist,
       tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
       data: dYieldData
     }, {
@@ -842,7 +842,7 @@ const getPrevalence = (data, shinyCountry) => {
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
       lineWidth: 0,
       linkedTo: ':previous',
-      color: colors[8],
+      color: jungleMist,
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
@@ -1151,7 +1151,7 @@ const getForecast = data => {
     source: d[FIELD_MAP.SOURCE_DATABASE]
   }))
 
-
+  // COLORS: explore previous - cerulean, purple etc
   const options = {
     subtitle: { text: 'WHO model estimates, 2020' },
     // plotOptions: { series: { pointStart: 2019 } }
@@ -1161,7 +1161,7 @@ const getForecast = data => {
       name: 'HIVSTs distributed',
       data: distributedNumData,
       tooltip: {
-        pointFormat: sourceTooltipFormat // TODO: use formatter?
+        // pointFormat: sourceTooltipFormat // TODO: use formatter?
       },
     },
     {
