@@ -182,9 +182,9 @@ function getSubtitle(total, pTotal) {
 }
 
 function getPlotPoints({ row, year, adjust=false, decimals=0}) {
-  const x = Number(year)
+  const x = Number(year || _.get(row, [FIELD_MAP.YEAR]))
   if (!row || !row.value) {
-    return { x, y: null }
+    return [{ x, y: null }, { x, y: null }]
   }
   let {
     [FIELD_MAP.VALUE]: y,
@@ -411,13 +411,14 @@ const getPlhivSex = data => {
   const mPoints = []
   const rMPoints = []
 
-  data.Females.forEach(row => {
-    const [fPoint, rFPoint] = getPlotPoints({ row, year: row.year })
+  R_2015_2019.forEach((y, i) => {
+    const fRow = _.get(data, ['Females', i])
+    const [fPoint, rFPoint] = getPlotPoints({ row: fRow, year: y })
     fPoints.push(fPoint)
     rFPoints.push(rFPoint)
-  })
-  data.Males.forEach(row => {
-    const [mPoint, rMPoint] =  getPlotPoints({ row, year: row.year })
+
+    const mRow  = _.get(data, ['Males', i])
+    const [mPoint, rMPoint] =  getPlotPoints({ row: mRow, year: y })
     mPoints.push(mPoint)
     rMPoints.push(rMPoint)
   })
@@ -486,8 +487,10 @@ const getPlhivAge = data => {
 
   _.each(dataMap, (obj, age) => {
     const rows = data[age]
-    _.each(rows, row => {
-      const [point, rPoint] = getPlotPoints({ row, year: row.year, adjust: true })
+
+    R_2015_2019.forEach((y, i) => {
+      const row = rows[i]
+      const [point, rPoint] = getPlotPoints({ row, year: y, adjust: true })
       obj.points.push(point)
       obj.rPoints.push(rPoint)
     })
@@ -593,8 +596,10 @@ const getHivNegative = data => {
 
   _.each(dataMap, (obj, age) => {
     const rows = data[age]
-    _.each(rows, row => {
-      const [point] = getPlotPoints({ row, year: row.year })
+
+    R_2015_2019.forEach((y, i) => {
+      const row = rows[i]
+      const [point] = getPlotPoints({ row, year: y })
       obj.points.push(point)
     })
   })
@@ -636,8 +641,10 @@ const getHivPositive = data => {
 
   _.each(dataMap, (obj, age) => {
     const rows = data[age]
-    _.each(rows, row => {
-      const [point] = getPlotPoints({ row, year: row.year })
+
+    R_2015_2019.forEach((y, i) => {
+      const row = rows[i]
+      const [point] = getPlotPoints({ row, year: y })
       obj.points.push(point)
     })
   })
