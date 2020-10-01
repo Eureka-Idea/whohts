@@ -36,6 +36,7 @@ function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
     [FIELD_MAP.VALUE]: v,
     [FIELD_MAP.INDICATOR]: indicator,
     [FIELD_MAP.SOURCE_DATABASE]: source,
+    [FIELD_MAP.INDICATOR_DESCRIPTION]: description,
   } = row
 
   if (!_.isNumber(v)) {
@@ -44,7 +45,12 @@ function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
   }
 
   // NOTE: ** conditional source tweak **
-  if (source === SOURCE_DB_MAP.PEPFAR && indicator.toLowerCase().startsWith('positivity')) {
+  // console.log('*** source ***', source)
+  // console.log('*** indicator ***', indicator.toLowerCase())
+  // console.log('*** indicator desc ***', row[FIELD_MAP.INDICATOR_DESCRIPTION])
+  // console.log('*** v ***', v)
+  if (description === 'PEPFAR Calculated Indicator') {
+    // console.log('***YUP')
     v *= 100
   }
   if (toDisplay) {
@@ -166,7 +172,7 @@ function getSubtitle(total, pTotal) {
     [FIELD_MAP.SOURCE_DATABASE]: pSource,
     [FIELD_MAP.YEAR]: pYear,
   } = pTotal
-  const pTooltip = `Source: ${SOURCE_DISPLAY_MAP[pSource]||source}\nYear: ${pYear}`
+  const pTooltip = `Source: ${SOURCE_DISPLAY_MAP[pSource]||pSource}\nYear: ${pYear}`
 
   const formattedTotal = displayNumber({ v: total.value, unrounded: true })
   const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
@@ -1065,6 +1071,13 @@ const getIndex = data => {
 
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+  }
+
+  if (
+    community[FIELD_MAP.SOURCE_DATABASE] !== pCommunity[FIELD_MAP.SOURCE_DATABASE] ||
+    facility[FIELD_MAP.SOURCE_DATABASE] !== pFacility[FIELD_MAP.SOURCE_DATABASE]
+  ) {
+    console.error('**SOURCE MISMATCH**')
   }
 
   const [ communityNumData, communityPosData ] = getColumnPoints(community, pCommunity)
