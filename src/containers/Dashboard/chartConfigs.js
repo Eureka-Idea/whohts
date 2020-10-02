@@ -460,7 +460,7 @@ const getPlhivSex = (data, shinyCountry) => {
     }
   })
 
-  if (mPoints.length <= 1 || fPoints.length <= 1) {
+  if (mPoints.length <= 1 && fPoints.length <= 1) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -977,6 +977,11 @@ const getAdults = data => {
     console.error('**SOURCE MISMATCH**')
   }
 
+  if (!wNumData && !wPosData && !mNumData && !mPosData) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
+
   const series = [
     {
       name: barChartsTestsName,
@@ -1028,6 +1033,11 @@ const getCommunity = data => {
     other[FIELD_MAP.SOURCE_DATABASE] !== pOther[FIELD_MAP.SOURCE_DATABASE]
   ) {
     console.error('**SOURCE MISMATCH**')
+  }
+
+  if (!mobileNumData && !mobilePosData && !vctNumData && !vctPosData && !otherNumData && !otherPosData) {
+    console.warn(title + ' has all empty series.')
+    return null
   }
   
   const series = [
@@ -1083,6 +1093,13 @@ const getFacility = data => {
     other[FIELD_MAP.SOURCE_DATABASE] !== pOther[FIELD_MAP.SOURCE_DATABASE]
   ) {
     console.error('**SOURCE MISMATCH**')
+  }
+
+  
+  if (!pitcNumData && !pitcPosData && !ancNumData && !ancPosData && !vctNumData &&
+      !vctPosData && !familyNumData && !familyPosData && !otherNumData && !otherPosData) {
+    console.warn(title + ' has all empty series.')
+    return null
   }
   
   const series = [
@@ -1162,6 +1179,11 @@ const getIndex = data => {
   const [ communityNumData, communityPosData ] = getColumnPoints(community, pCommunity)
   const [ facilityNumData, facilityPosData ] = getColumnPoints(facility, pFacility)
   
+  if (!communityNumData && !communityPosData && !facilityNumData && !facilityPosData) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
+  
   const series = [
     {
       name: barChartsTestsName,
@@ -1202,7 +1224,6 @@ const getForecast = data => {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
 
-  // todo: remove compact
   const distributedNumData = distributed.map(d => ({
     x: Number(d.year),
     y: d.value,
@@ -1219,6 +1240,11 @@ const getForecast = data => {
     y: d.value,
     source: d[FIELD_MAP.SOURCE_DATABASE]
   }))
+
+  if (distributedNumData.length <= 1 && demandNumData.length <= 1 && needNumData.length <= 1) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
 
   // COLORS: explore previous - cerulean, purple etc
   const options = {
