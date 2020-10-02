@@ -174,8 +174,9 @@ class Dashboard extends Component {
       console.error(`${id} failed to produce a config.`)
 
       // show empty chart
-      const { title } = CHARTS[id]
-      config = _.merge({}, getLine({ title, series: [] }))
+      // const { title } = CHARTS[id]
+      // config = _.merge({}, getLine({ title, series: [] }))
+      return
     }
     const chart = <ReactHighcharts config={config} />
     // console.log('*** ', id, ' ****config:*** ', config)

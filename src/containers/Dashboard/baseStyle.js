@@ -13,14 +13,14 @@ export default {
     // "column": { "maxPointWidth": 40 },
     // "series": { "yAxis": { "stackLabels": { enabled: true } } },
   },
-  // tooltip: {
-  //   backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  "tooltip": {
+  //   backgroundColor: 'rgba(256, 256, 256, 0.8)',
   //   borderWidth: '3px',
-  //   useHTML: true,
+    "useHTML": true,
   //   style: {
   //     color: 'white',
   //   }
-  // },
+  },
   "chart": {
     // "className": "charty-mcchartface",
     "alignTicks": true,

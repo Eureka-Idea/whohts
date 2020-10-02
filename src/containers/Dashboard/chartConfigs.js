@@ -1,4 +1,4 @@
-coimport colors, {femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty } from "./colors"
+import colors, { femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
 import { CHARTS, R_2015_2019, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP } from "../../constants/charts";
@@ -25,6 +25,8 @@ import { TERM_MAP } from "../../constants/glossary";
 const barChartsTestsName = 'Number of tests conducted'
 const barChartsPositivityName = 'Positivity' // TODO: acceptable?
 // const barChartsPositivityNameTooltip = 'Positivity'
+const spectrumSource = 'Spectrum model estimates (UNAIDS, 2020)'
+const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)'
 
 function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
   if (!row) {
@@ -135,33 +137,46 @@ function percentSourceTooltipFormatter () {
     ${!this.source ? '' : `Source: <b>${this.source}</b>`}
   `
 }
-function uncertaintyTooltipFormatter () {
-  const uncertaintyLine = (!this.l || !this.u) ? '' : `Uncertainty range: <b>${displayNumber({ v: this.l })} - ${displayNumber({ v: this.u })}</b><br />`
+function getUncertaintyTooltipFormatter (shinyCountry) {
   
-  return `
+  const source = shinyCountry ? shinySource : spectrumSource
+
+  return function() {
+    const uncertaintyLine = (!this.l || !this.u) ? '' : `Uncertainty range: <b>${displayNumber({ v: this.l })} - ${displayNumber({ v: this.u })}</b><br />`
+    return `
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br />
     ${uncertaintyLine}
-    ${!this.source ? '' : `Source: <b>${this.source}</b>`}
+    Source: <b>${source}</b>
     `
-    // Year: ${this.x}<br />
+  }
 }
-function percentUncertaintyTooltipFormatter () {
-  const decimals = this.decimals || 0
-  const lVal = displayPercent({ v: this.l, decimals })
-  const uVal = displayPercent({ v: this.u, decimals })
-  const uncertaintyLine = (!lVal || !uVal) ? '' : `Uncertainty range: <b>${lVal} - ${uVal}</b><br />`
+function getPercentUncertaintyTooltipFormatter (shinyCountry) {
+
+  const source = shinyCountry ? shinySource : spectrumSource
   
-  return `
+  return function() {
+
+    const decimals = this.decimals || 0
+    const lVal = displayPercent({ v: this.l, decimals })
+    const uVal = displayPercent({ v: this.u, decimals })
+    const uncertaintyLine = (!lVal || !uVal) ? '' : `Uncertainty range: <b>${lVal} - ${uVal}</b><br />`
+    return `
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br />
     ${uncertaintyLine}
-    ${!this.source ? '' : `Source: <b>${this.source}</b>`}
+    Source: <b>${source}</b>
     `
-    // Year: ${this.x}<br />
+  }
 }
 
-function getSubtitle(total, pTotal) {
+function getLineChartSubtitle(shinyCountry) {
+  const tooltip = 'Source: ' + (shinyCountry ? shinySource : spectrumSource)
+  const subtitle = `<span title="${tooltip}">Modelled Data</span>`
+  return ({ useHTML: true, text: subtitle })
+}
+
+function getColumnChartSubtitle(total, pTotal) {
   const {
     [FIELD_MAP.SOURCE_DATABASE]: source,
     [FIELD_MAP.YEAR]: year,
@@ -177,8 +192,9 @@ function getSubtitle(total, pTotal) {
   const formattedTotal = displayNumber({ v: total.value, unrounded: true })
   const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
   
-  return `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span> 
-  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme Data</span></div>` 
+  const subtitle = `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span> 
+  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme Data</span></div>`
+  return ({ useHTML: true, text: subtitle })
 }
 
 function getPlotPoints({ row, year, adjust=false, decimals=0}) {
@@ -321,14 +337,14 @@ const getP95 = data => {
   return config
 }
 
-const getPlhivDiagnosis = data => {
+const getPlhivDiagnosis = (data, shinyCountry) => {
   const { title } = CHARTS.PLHIV_DIAGNOSIS
 
   // colors: 17 11 5
 
   const options = {
     // yAxis: { labels: { format: '{value}%' } },
-    subtitle: { text: 'Spectrum model estimates (UNAIDS, 2020)' },
+    subtitle: getLineChartSubtitle(shinyCountry),
     // tooltip: { valueSuffix: ' million' },
     yAxis: { title: { text: 'Adults 15+' } },
     // plotOptions: { series: { pointStart: 2015 } }
@@ -375,31 +391,31 @@ const getPlhivDiagnosis = data => {
       description: TERM_MAP.undiagnosedPlhiv.definition,
       color: copper,
       data: undiagnosedData,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
     },
     {
       name: 'PLHIV know status not on ART',
       description: TERM_MAP.plhivWhoKnowStatusNotOnArt.definition,
       color: botticelli,
       data: notArtData,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
     },
     {
       name: 'PLHIV know status on ART',
       description: TERM_MAP.plhivKnowStatusOnArt.definition,
       color: stormGray,
       data: onArtData,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
     },
   ]
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getPlhivSex = data => {
+const getPlhivSex = (data, shinyCountry) => {
   const { title } = CHARTS.PLHIV_SEX
   const options = {
     legend: { symbolWidth: 40 },
-    subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+    subtitle: getLineChartSubtitle(shinyCountry),
     yAxis: { max: 100, min: 0 },
     plotOptions: { 
       // series: { pointStart: 2015 },
@@ -429,7 +445,7 @@ const getPlhivSex = data => {
       color: maleColor,
       dashStyle: 'solid',
       data: mPoints,
-      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       zIndex: 1
     }, {
       name: 'Men range',
@@ -449,7 +465,7 @@ const getPlhivSex = data => {
       color: femaleColor,
       dashStyle: 'Solid',
       data: fPoints,
-      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       zIndex: 1
     }, {
       name: 'Women range',
@@ -468,12 +484,12 @@ const getPlhivSex = data => {
   return _.merge({}, getLine({ title, series, options }))
 }
 
-const getPlhivAge = data => {
+const getPlhivAge = (data, shinyCountry) => {
   const { title } = CHARTS.PLHIV_AGE
 
   const options = {
     legend: { symbolWidth: 40 },
-    subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+    subtitle: getLineChartSubtitle(shinyCountry),
     yAxis: { max: 100, min: 0 },
     // plotOptions: { series: { pointStart: 2015 } }
   }
@@ -502,7 +518,7 @@ const getPlhivAge = data => {
       dashStyle: 'ShortDot',
       color: casablanca,
       data: dataMap['15-24'].points,
-      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       zIndex: 1
     },
     {
@@ -523,7 +539,7 @@ const getPlhivAge = data => {
       dashStyle: 'DashDot',
       color: stormGray,
       data: dataMap['25-34'].points,
-      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       zIndex: 1
     },
     {
@@ -544,7 +560,7 @@ const getPlhivAge = data => {
       dashStyle: 'LongDash',
       color: jungleGreen, // steelBlue,
       data: dataMap['35-49'].points,
-      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       zIndex: 1
     },
     {
@@ -565,7 +581,7 @@ const getPlhivAge = data => {
       dashStyle: 'Solid',
       color: charm,
       data: dataMap['50-99'].points,
-      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       zIndex: 1
     },
     {
@@ -586,7 +602,7 @@ const getPlhivAge = data => {
   return _.merge({}, getLine({ title, series, options }))
 }
 
-const getHivNegative = data => {
+const getHivNegative = (data, shinyCountry) => {
   const title = '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
 
   const dataMap = {
@@ -609,28 +625,28 @@ const getHivNegative = data => {
       name: 'Retest',
       description: TERM_MAP.retest.definition,
       color: steelBlue,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.retests.points,
     },
     {
       name: 'First test',
       description: TERM_MAP.firstTest.definition,
       color: nandor,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.firsts.points,
     },
   ]
   const options = {
     title: { useHTML: true },
     yAxis: { title: { text: 'HIV Negative Tests' } },
-    subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+    subtitle: getLineChartSubtitle(shinyCountry),
     plotOptions: { series: { pointStart: 2015 } }
     // tooltip: { valueSuffix: ' thousand' },
   }
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getHivPositive = data => {
+const getHivPositive = (data, shinyCountry) => {
   const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
 
   const dataMap = {
@@ -652,14 +668,14 @@ const getHivPositive = data => {
   const options = {
     title: { useHTML: true },
     yAxis: { title: { text: 'HIV Positive tests' } },
-    subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+    subtitle: getLineChartSubtitle(shinyCountry),
   }
   const series = [
     {
       name: 'Retest - know status on ART',
       description: TERM_MAP.retest.definition,
       color: stormGray,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.arts.points,
       zIndex: 1,
     },
@@ -680,7 +696,7 @@ const getHivPositive = data => {
       name: 'Retest - know status not on ART',
       description: TERM_MAP.retest.definition,
       color: botticelli,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.awares.points,
       zIndex: 1,
     },
@@ -701,7 +717,7 @@ const getHivPositive = data => {
       name: 'New diagnosis',
       description: TERM_MAP.newDiagnosis.definition,
       color: copper,
-      tooltip: { pointFormatter: uncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.firsts.points,
       zIndex: 1,
     },
@@ -731,7 +747,7 @@ const getPrevalence = (data, shinyCountry) => {
       marker: { radius: 3 },
       softThreshold: true
     } },
-    subtitle: { text: 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)' },
+    subtitle: getLineChartSubtitle(shinyCountry),
     yAxis: { min: 0 },
   }
 
@@ -778,7 +794,7 @@ const getPrevalence = (data, shinyCountry) => {
       name: 'HIV prevalence',
       description: TERM_MAP.hivPrevalence.definition,
       zIndex: 1,
-      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       color: gunSmoke,
       dashStyle: 'ShortDot',
       marker: { radius: 1 },
@@ -802,7 +818,7 @@ const getPrevalence = (data, shinyCountry) => {
       description: TERM_MAP.treatmentAdjustedPrevalence.definition,
       zIndex: 1,
       color: buddhaGold,
-      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       data: adjPrevData
     },
   ]
@@ -813,7 +829,7 @@ const getPrevalence = (data, shinyCountry) => {
       description: TERM_MAP.positivity.definition,
       zIndex: 1,
       color: putty,
-      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       data: positivityData
     }, {
       name: 'Positivity range',
@@ -832,7 +848,7 @@ const getPrevalence = (data, shinyCountry) => {
       description: TERM_MAP.diagnosticYield.definition,
       zIndex: 1,
       color: jungleMist,
-      tooltip: { pointFormatter: percentUncertaintyTooltipFormatter },
+      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       data: dYieldData
     }, {
       name: 'Diagnostic yield range',
@@ -918,10 +934,7 @@ const getAdults = data => {
   const categories = ['Women (15+)', 'Men (15+)']
 
   const options = {
-    subtitle: { 
-      useHTML: true,
-      text: getSubtitle(total, pTotal)
-    }
+    subtitle: getColumnChartSubtitle(total, pTotal)
   }
   return _.merge({}, getColumnScat({ title, series, options, categories }))
 }
@@ -970,10 +983,7 @@ const getCommunity = data => {
   ]
 
   const options = {
-    subtitle: {
-      useHTML: true,
-      text: getSubtitle(total, pTotal)
-    }
+    subtitle: getColumnChartSubtitle(total, pTotal)
   }
   const categories = ['Mobile Testing', 'VCT', 'Other']
   return _.merge({}, getColumnScat({ title, series, options, categories }))
@@ -1053,10 +1063,7 @@ const getFacility = data => {
   ]
 
   const options = {
-    subtitle: {
-      useHTML: true,
-      text: getSubtitle(total, pTotal)
-    }
+    subtitle: getColumnChartSubtitle(total, pTotal)
   }
   const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other']
   // const options = { xAxis: { categories: ['Community', 'Facility']} }
@@ -1108,10 +1115,7 @@ const getIndex = data => {
     }
   ]
   const options = {
-    subtitle: {
-      useHTML: true,
-      text: getSubtitle(total, pTotal)
-    }
+    subtitle: getColumnChartSubtitle(total, pTotal)
   }
   const categories = ['Community', 'Facility']
   return _.merge({}, getColumnScat({ title, options, categories, series }))
