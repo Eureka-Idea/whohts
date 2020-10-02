@@ -762,6 +762,7 @@ const CHARTS = {
   PLHIV_DIAGNOSIS: {
     title: 'PLHIV by diagnosis and treatment status',
     id: 'PLHIV_DIAGNOSIS',
+    yearRange: R_2015_2019,
     indicators: {
       plhiv: 'People living with HIV - adults (aged 15+)',
       know: 'People living with HIV who know their status',
@@ -771,6 +772,7 @@ const CHARTS = {
   PLHIV_SEX: {
     title: 'PLHIV who know status - by sex',
     id: 'PLHIV_SEX',
+    yearRange: R_2015_2019,
     indicators: {
       status: 'Percent of people living with HIV who know their status',
     }
@@ -778,6 +780,7 @@ const CHARTS = {
   PLHIV_AGE: {
     title: 'PLHIV who know status - by age',
     id: 'PLHIV_AGE',
+    yearRange: R_2015_2019,
     shinyOnly: true,
     indicators: {
       aware: 'aware',
@@ -786,6 +789,7 @@ const CHARTS = {
   HIV_NEGATIVE: {
     title: 'HIV-negative tests - first-time testers and repeat testers',
     id: 'HIV_NEGATIVE',
+    yearRange: R_2015_2019,
     shinyOnly: true,
     indicators: {
       retests: 'retests_total',
@@ -795,6 +799,7 @@ const CHARTS = {
   HIV_POSITIVE: {
     title: 'HIV-positive tests - new diagnoses and retests',
     id: 'HIV_POSITIVE',
+    yearRange: R_2015_2019,
     shinyOnly: true,
     indicators: {
       arts: 'retests_art',
@@ -805,6 +810,7 @@ const CHARTS = {
   PREVALENCE: {
     title: 'Prevalence and positivity',
     nonShinyTitle: 'Prevalence',
+    yearRange: R_2015_2019,
     id: 'PREVALENCE',
     shinyOnlyIndicators: {
       positivity: 'positivity',
@@ -1083,7 +1089,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          return R_2015_2019.map(y => {
+          return C.PLHIV_DIAGNOSIS.yearRange.map(y => {
             const fResults = _.filter(results, r => r.year === y)
 
             if (fResults.length > 1) {
@@ -1103,7 +1109,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          return R_2015_2019.map(y => {
+          return C.PLHIV_SEX.yearRange.map(y => {
             return _.find(results, r => (r.year === y))
           })
         }
@@ -1118,7 +1124,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          return R_2015_2019.map(y => {
+          return C.PREVALENCE.yearRange.map(y => {
             const fResults = _.filter(results, r => r.year === y)
 
             if (fResults.length > 1) {
@@ -1136,7 +1142,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          return R_2015_2019.map(y => {
+          return C.PREVALENCE.yearRange.map(y => {
             const fResults = _.filter(results, r => r.year === y)
             
             if (fResults.length > 1) {
@@ -1154,7 +1160,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          return R_2015_2019.map(y => {
+          return C.PREVALENCE.yearRange.map(y => {
             return _.find(results, r => (r.year === y))
           })
         }
@@ -1168,7 +1174,7 @@ const getIndicatorMap = (isShiny) => {
         // [F.UNIT_FORMAT]: 'NUMBER', // otherwise may get another unit, e.g. 51.4 for Kenya row 3991911
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          return R_2015_2019.map(y => {
+          return C.PREVALENCE.yearRange.map(y => {
             return _.find(results, r => (r.year === y))
           })
         }
@@ -2123,7 +2129,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          return R_2015_2019.map(y => {
+          return C.PLHIV_AGE.yearRange.map(y => {
             const fResults = _.filter(results, r => r.year === y)
 
             if (fResults.length > 1) {
@@ -2144,7 +2150,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          return R_2015_2019.map(y => {
+          return C.HIV_NEGATIVE.yearRange.map(y => {
             const fResults = _.filter(results, r => r.year === y)
 
             if (fResults.length > 1) {
@@ -2165,7 +2171,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          return R_2015_2019.map(y => {
+          return C.HIV_POSITIVE.yearRange.map(y => {
             const fResults = _.filter(results, r => r.year === y)
 
             if (fResults.length > 1) {
@@ -2186,7 +2192,7 @@ const getIndicatorMap = (isShiny) => {
       [F.AREA_NAME]: 'NULL',
       [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
-          return R_2015_2019.map(y => {
+          return C.PREVALENCE.yearRange.map(y => {
             const fResults = _.filter(results, r => r.year === y)
 
             if (fResults.length > 1) {

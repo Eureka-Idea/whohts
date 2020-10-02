@@ -1,7 +1,7 @@
 import colors, { femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import { CHARTS, R_2015_2019, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP } from "../../constants/charts";
+import { CHARTS, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
 // __________________________ HELPERS ____________________________________
@@ -200,7 +200,7 @@ function getColumnChartSubtitle(total, pTotal) {
 function getPlotPoints({ row, year, adjust=false, decimals=0}) {
   const x = Number(year || _.get(row, [FIELD_MAP.YEAR]))
   if (!row || !row.value) {
-    return [{ x, y: null }, { x, y: null }]
+    return [null, null]
   }
   let {
     [FIELD_MAP.VALUE]: y,
@@ -225,6 +225,12 @@ function getPlotPoints({ row, year, adjust=false, decimals=0}) {
   const point = { x, year: x, y, l, u, source, decimals }
   const rPoint = [l, u]
   return [point, rPoint]
+}
+
+function isDataMapEmpty (dataMap) {
+  return _.every(dataMap, (obj, ind) => {
+    return obj.points.length <= 1
+  })
 }
 
 // __________________________________________________________________
@@ -267,7 +273,9 @@ const getConfig = (chartId, chartData, shinyCountry) => {
   console.log(chartId, ' data: ', data)
 
   try {
-    return getter(data, shinyCountry)
+    const config = getter(data, shinyCountry)
+    console.log(chartId, ' config: ', config)
+    return config
   } catch (error) {
     console.error(chartId, ' unable to generate config: ', error)
     return
@@ -338,7 +346,7 @@ const getP95 = data => {
 }
 
 const getPlhivDiagnosis = (data, shinyCountry) => {
-  const { title } = CHARTS.PLHIV_DIAGNOSIS
+  const { title, yearRange } = CHARTS.PLHIV_DIAGNOSIS
 
   // colors: 17 11 5
 
@@ -346,6 +354,7 @@ const getPlhivDiagnosis = (data, shinyCountry) => {
     // yAxis: { labels: { format: '{value}%' } },
     subtitle: getLineChartSubtitle(shinyCountry),
     // tooltip: { valueSuffix: ' million' },
+    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
     yAxis: { title: { text: 'Adults 15+' } },
     // plotOptions: { series: { pointStart: 2015 } }
     // tooltip: { pointFormat: '{series.name}: <b>{point.y:.0f} million</b>' },
@@ -356,9 +365,7 @@ const getPlhivDiagnosis = (data, shinyCountry) => {
   const notArtData = []
   const onArtData = []
   
-  R_2015_2019.forEach((y, i) => {
-    // TODO: calc uci/lci
-    // const onArtValue = _.get(yearRecord, 'median.value')
+  yearRange.forEach((y, i) => {
     const onArtRow = _.get(data, ['onArt', i])
     const [onArtPoint] = getPlotPoints({ row: onArtRow, year: y })
     const plhivRow = _.get(data, ['plhiv', i])
@@ -367,23 +374,32 @@ const getPlhivDiagnosis = (data, shinyCountry) => {
     const [knowPoint] = getPlotPoints({ row: knowRow, year: y })
 
     let undiagnosedPoint, notArtPoint
-    if (plhivPoint.y) {
-      if (knowPoint.y) {
+    // NOTE ** calculated indicator **
+    if (plhivPoint && plhivPoint.y) {
+      if (knowPoint && knowPoint.y) {
         // cannibalize knowPoint for its year, source etc
         undiagnosedPoint = knowPoint
         undiagnosedPoint.y = (plhivPoint.y - knowPoint.y)
       }
-      if (onArtPoint.y) {
+      if (onArtPoint && onArtPoint.y) {
         // cannibalize plhivPoint for its year, source etc
         notArtPoint = plhivPoint
         notArtPoint.y = (plhivPoint.y - onArtPoint.y)
       }
     }
     
-    onArtData.push(onArtPoint)
-    notArtData.push(notArtPoint)
-    undiagnosedData.push(undiagnosedPoint)
+    if (onArtPoint && notArtPoint && undiagnosedPoint) {
+      onArtData.push(onArtPoint)
+      notArtData.push(notArtPoint)
+      undiagnosedData.push(undiagnosedPoint)
+    }
   })
+
+  // just check one series, since points only get added when they exist for all indicators
+  if (onArtData.length <= 1) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
   
   const series = [
     {
@@ -412,10 +428,11 @@ const getPlhivDiagnosis = (data, shinyCountry) => {
 }
 
 const getPlhivSex = (data, shinyCountry) => {
-  const { title } = CHARTS.PLHIV_SEX
+  const { title, yearRange } = CHARTS.PLHIV_SEX
   const options = {
     legend: { symbolWidth: 40 },
     subtitle: getLineChartSubtitle(shinyCountry),
+    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
     yAxis: { max: 100, min: 0 },
     plotOptions: { 
       // series: { pointStart: 2015 },
@@ -427,18 +444,26 @@ const getPlhivSex = (data, shinyCountry) => {
   const mPoints = []
   const rMPoints = []
 
-  R_2015_2019.forEach((y, i) => {
+  yearRange.forEach((y, i) => {
     const fRow = _.get(data, ['Females', i])
     const [fPoint, rFPoint] = getPlotPoints({ row: fRow, year: y })
-    fPoints.push(fPoint)
-    rFPoints.push(rFPoint)
+    if (fPoint) {
+      fPoints.push(fPoint)
+      rFPoints.push(rFPoint)
+    }
 
     const mRow  = _.get(data, ['Males', i])
     const [mPoint, rMPoint] =  getPlotPoints({ row: mRow, year: y })
-    mPoints.push(mPoint)
-    rMPoints.push(rMPoint)
+    if (mPoint) {
+      mPoints.push(mPoint)
+      rMPoints.push(rMPoint)
+    }
   })
 
+  if (mPoints.length <= 1 || fPoints.length <= 1) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
   const series = [
     {
       name: 'Men',
@@ -485,11 +510,12 @@ const getPlhivSex = (data, shinyCountry) => {
 }
 
 const getPlhivAge = (data, shinyCountry) => {
-  const { title } = CHARTS.PLHIV_AGE
+  const { title, yearRange } = CHARTS.PLHIV_AGE
 
   const options = {
     legend: { symbolWidth: 40 },
     subtitle: getLineChartSubtitle(shinyCountry),
+    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
     yAxis: { max: 100, min: 0 },
     // plotOptions: { series: { pointStart: 2015 } }
   }
@@ -504,13 +530,20 @@ const getPlhivAge = (data, shinyCountry) => {
   _.each(dataMap, (obj, age) => {
     const rows = data[age]
 
-    R_2015_2019.forEach((y, i) => {
+    yearRange.forEach((y, i) => {
       const row = rows[i]
       const [point, rPoint] = getPlotPoints({ row, year: y, adjust: true })
-      obj.points.push(point)
-      obj.rPoints.push(rPoint)
+      if (point) {
+        obj.points.push(point)
+        obj.rPoints.push(rPoint)
+      }
     })
   })
+
+  if (isDataMapEmpty(dataMap)) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
 
   const series = [
     {
@@ -603,6 +636,7 @@ const getPlhivAge = (data, shinyCountry) => {
 }
 
 const getHivNegative = (data, shinyCountry) => {
+  const { yearRange } = CHARTS.HIV_NEGATIVE
   const title = '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
 
   const dataMap = {
@@ -610,16 +644,23 @@ const getHivNegative = (data, shinyCountry) => {
     ['firsts']: { points: [] },
   }
 
-  _.each(dataMap, (obj, age) => {
-    const rows = data[age]
+  _.each(dataMap, (obj, ind) => {
+    const rows = data[ind]
 
-    R_2015_2019.forEach((y, i) => {
+    yearRange.forEach((y, i) => {
       const row = rows[i]
       const [point] = getPlotPoints({ row, year: y })
-      obj.points.push(point)
+      if (point) {
+        obj.points.push(point)
+      }
     })
   })
 
+  if (isDataMapEmpty(dataMap)) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
+  
   const series = [
     {
       name: 'Retest',
@@ -638,6 +679,7 @@ const getHivNegative = (data, shinyCountry) => {
   ]
   const options = {
     title: { useHTML: true },
+    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
     yAxis: { title: { text: 'HIV Negative Tests' } },
     subtitle: getLineChartSubtitle(shinyCountry),
     plotOptions: { series: { pointStart: 2015 } }
@@ -647,6 +689,7 @@ const getHivNegative = (data, shinyCountry) => {
 }
 
 const getHivPositive = (data, shinyCountry) => {
+  const { yearRange } = CHARTS.HIV_POSITIVE
   const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
 
   const dataMap = {
@@ -655,18 +698,26 @@ const getHivPositive = (data, shinyCountry) => {
     ['firsts']: { points: [] },
   }
 
-  _.each(dataMap, (obj, age) => {
-    const rows = data[age]
+  _.each(dataMap, (obj, ind) => {
+    const rows = data[ind]
 
-    R_2015_2019.forEach((y, i) => {
+    yearRange.forEach((y, i) => {
       const row = rows[i]
       const [point] = getPlotPoints({ row, year: y })
-      obj.points.push(point)
+      if (point) {
+        obj.points.push(point)
+      }
     })
   })
 
+  if (isDataMapEmpty(dataMap)) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
+  
   const options = {
     title: { useHTML: true },
+    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
     yAxis: { title: { text: 'HIV Positive tests' } },
     subtitle: getLineChartSubtitle(shinyCountry),
   }
@@ -739,7 +790,7 @@ const getHivPositive = (data, shinyCountry) => {
 }
 
 const getPrevalence = (data, shinyCountry) => {
-  let { title, nonShinyTitle } = CHARTS.PREVALENCE
+  let { title, nonShinyTitle, yearRange } = CHARTS.PREVALENCE
   title = shinyCountry ? title : nonShinyTitle
 
   const options = {
@@ -748,6 +799,7 @@ const getPrevalence = (data, shinyCountry) => {
       softThreshold: true
     } },
     subtitle: getLineChartSubtitle(shinyCountry),
+    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
     yAxis: { min: 0 },
   }
 
@@ -758,11 +810,13 @@ const getPrevalence = (data, shinyCountry) => {
   const dYieldData = [] // for shiny
   const rDYieldData = [] // for shiny
   const adjPrevData = []
-  R_2015_2019.forEach((y, i) => {
+  yearRange.forEach((y, i) => {
     const prevalenceRow = _.get(data, ['prevalence', i])
     const [prevalencePoint, rPrevalencePoint] = getPlotPoints({ row: prevalenceRow, year: y, decimals: 1 })
-    prevalenceData.push(prevalencePoint)
-    rPrevalenceData.push(rPrevalencePoint)
+    if (prevalencePoint) {
+      prevalenceData.push(prevalencePoint)
+      rPrevalenceData.push(rPrevalencePoint)
+    }
 
     const populationValue = _.get(data, ['population', i, [FIELD_MAP.VALUE]])
     const onArtValue = _.get(data, ['onArt', i, [FIELD_MAP.VALUE]])
@@ -775,19 +829,30 @@ const getPrevalence = (data, shinyCountry) => {
         (populationValue - onArtValue)
       )
     }
-    adjPrevData.push({ x: Number(y), y: adjPrevValue, decimals: 1 })
+    if (adjPrevValue) {
+      adjPrevData.push({ x: Number(y), y: adjPrevValue, decimals: 1 })
+    }
 
     if (shinyCountry) {
       const positivityRow = _.get(data, ['positivity', i])
       const dYieldRow = _.get(data, ['dYield', i])
       const [positivityPoint, rPositivityPoint] = getPlotPoints({ row: positivityRow, year: y, adjust: true, decimals: 1 })
-      positivityData.push(positivityPoint)
-      rPositivityData.push(rPositivityPoint)
+      if (positivityPoint) {
+        positivityData.push(positivityPoint)
+        rPositivityData.push(rPositivityPoint)
+      }
       const [dYieldPoint, rDYieldPoint] = getPlotPoints({ row: dYieldRow, year: y, adjust: true, decimals: 1 })
-      dYieldData.push(dYieldPoint)
-      rDYieldData.push(rDYieldPoint)
+      if (dYieldPoint) {
+        dYieldData.push(dYieldPoint)
+        rDYieldData.push(rDYieldPoint)
+      }
     }
   })
+
+  if ([prevalenceData, adjPrevData, positivityData, dYieldData].every(s => s.length <= 1)) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
 
   const series = [
     {
