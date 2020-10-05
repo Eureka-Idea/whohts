@@ -340,9 +340,8 @@ class Dashboard extends Component {
           <Link className='who-logo' to='/'>
             <img src='images/who_logo.png' alt='WHO logo' />
           </Link>
-          <span className='title text-center'>
-            HIV Testing Services Dashboard
-          </span>
+          <span className='title text-center desktop'>HIV Testing Services Dashboard</span>
+          <span className='title text-center mobile'>HIVTS Dashboard</span>
           <div className='input-group'>
             <select defaultValue={this.props.chartData.countryCode} onChange={this.goToCountry} className='custom-select'>
               <option value='none'>Select Country</option>
