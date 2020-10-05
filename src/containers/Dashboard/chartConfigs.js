@@ -118,15 +118,18 @@ function displayPercent({ v, adjust=false, decimals=0 }) {
   return str + '%' 
 }
 
-// function sourceTooltipFormatter () {
+function sourceTooltipFormatter () {
+const mismatchedData = !this.mismatched ? '' : `
+  Year: <b>${this.year}</b><br/>
+  Source: <b>${this.source}</b>
+`
 
-// return `
-//     <span style="color:${this.color}">●</span>
-//     ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br/>
-//     ${!this.source ? '' : `Source: <b>${this.source}</b>`}
-//     `
-//     // Year: <b>${this.year}</b><br/>
-// }
+return `
+    <span style="color:${this.color}">●</span>
+    ${this.series.name}: <b>${displayNumber({ v: this.y, unrounded: true })}</b><br/>
+    ${mismatchedData}
+    `
+}
 function percentSourceTooltipFormatter () {
   const decimals = this.decimals || 1 // intended for column charts (positivity gets 1)
   
@@ -172,7 +175,7 @@ function getPercentUncertaintyTooltipFormatter (shinyCountry) {
 
 function getLineChartSubtitle(shinyCountry) {
   const tooltip = 'Source: ' + (shinyCountry ? shinySource : spectrumSource)
-  const subtitle = `<span title="${tooltip}">Modelled Data</span>`
+  const subtitle = `<span title="${tooltip}">Modelled Estimates</span>`
   return ({ useHTML: true, text: subtitle })
 }
 
@@ -937,17 +940,31 @@ const getPrevalence = (data, shinyCountry) => {
 
 function getColumnPoints(numData, posData) {
   
-  const tSource = posData[FIELD_MAP.SOURCE_DATABASE]
-  const numPoint = numData.noData ? null : {
-    y: numData[FIELD_MAP.VALUE],
-    source: SOURCE_DISPLAY_MAP[tSource] || tSource,
+  const {
+    [FIELD_MAP.VALUE]: y,
+    [FIELD_MAP.SOURCE_DATABASE]: source,
+    [FIELD_MAP.YEAR]: year,
+    noData
+  } = numData
+
+  const {
+    [FIELD_MAP.SOURCE_DATABASE]: pSource,
+    [FIELD_MAP.YEAR]: pYear,
+    noData: pNoData
+  } = posData
+  
+  const numPoint = noData ? null : {
+    y,
+    source,
+    year,
+    mismatched: (source !== pSource) || (year !== pYear)
   }
 
-  const source = posData[FIELD_MAP.SOURCE_DATABASE]
-  const posPoint = !(numPoint && numPoint.y) ? null : {
-    source: SOURCE_DISPLAY_MAP[source] || source,
-    year: posData[FIELD_MAP.YEAR],
-    y: adjustPercentage({ row: posData })
+  // don't show positivity if there's no nonzero num value, or no posData
+  const posPoint = (!y || pNoData) ? null : {
+    y: adjustPercentage({ row: posData }),
+    source: SOURCE_DISPLAY_MAP[pSource] || pSource,
+    year: pYear,
   }
 
   return [numPoint, posPoint]
@@ -985,15 +1002,13 @@ const getAdults = data => {
   const series = [
     {
       name: barChartsTestsName,
-      // color: barChartColorDark,
       tooltip: {
-        // pointFormatter: sourceTooltipFormatter
+        pointFormatter: sourceTooltipFormatter
       },
       data: [wNumData, mNumData]
     },
     {
       name: barChartsPositivityName,
-      // color: barChartAccent,
       type: 'line',
       tooltip: {
         pointFormatter: percentSourceTooltipFormatter
@@ -1026,7 +1041,7 @@ const getCommunity = data => {
   const [ mobileNumData, mobilePosData ] = getColumnPoints(mobile, pMobile)
   const [ vctNumData, vctPosData ] = getColumnPoints(VCT, pVCT)
   const [ otherNumData, otherPosData ] = getColumnPoints(other, pOther)
-
+  
   if (
     mobile[FIELD_MAP.SOURCE_DATABASE] !== pMobile[FIELD_MAP.SOURCE_DATABASE] ||
     VCT[FIELD_MAP.SOURCE_DATABASE] !== pVCT[FIELD_MAP.SOURCE_DATABASE] || 
@@ -1043,12 +1058,13 @@ const getCommunity = data => {
   const series = [
     {
       name: barChartsTestsName,
-      // color: barChartColorDark,
+      tooltip: {
+        pointFormatter: sourceTooltipFormatter
+      },
       data: [mobileNumData, vctNumData, otherNumData]
     },
     {
       name: barChartsPositivityName,
-      // color: barChartAccent,
       type: 'line',
       tooltip: {
         pointFormatter: percentSourceTooltipFormatter
@@ -1105,13 +1121,8 @@ const getFacility = data => {
   const series = [
     {
       name: barChartsTestsName,
-      // color: barChartColorDark,
       tooltip: {
-        // todo: delete if can be handled below (or in legend hover)
-        // pointFormat:`<span style="color:{point.color}">●</span>
-        //   {series.name}: <b>{point.y}</b><br/>
-        //   Uncertainty range: <b>{point.l}% - {point.u}%</b><br/>
-        //   Source: UNAIDS`,
+        pointFormatter: sourceTooltipFormatter
       },
       data: [
         pitcNumData,
@@ -1187,13 +1198,13 @@ const getIndex = data => {
   const series = [
     {
       name: barChartsTestsName,
-      // color: barChartColorDark,
+      tooltip: {
+        pointFormatter: sourceTooltipFormatter
+      },
       data: [communityNumData, facilityNumData]
-      // dataLabels,
     },
     {
       name: barChartsPositivityName,
-      // color: barChartAccent,
       type: 'line',
       tooltip: {
         pointFormatter: percentSourceTooltipFormatter
@@ -1248,7 +1259,7 @@ const getForecast = data => {
 
   // COLORS: explore previous - cerulean, purple etc
   const options = {
-    subtitle: { text: 'WHO model estimates, 2020' },
+    subtitle: { text: 'Programme data and modelled estimates' },
     // plotOptions: { series: { pointStart: 2019 } }
   }
   const series = [
