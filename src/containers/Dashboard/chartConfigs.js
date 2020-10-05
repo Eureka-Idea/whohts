@@ -295,7 +295,12 @@ const extractPrioritizedData = (data, indicatorIds, sourceCount, defaultValue=un
         result[ind] = indicatorResult
         break
       } else if (i === sourceCount) {
-        result[ind] = { value: defaultValue, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
+        result[ind] = {
+          value: defaultValue,
+          noData: true,
+          [FIELD_MAP.SOURCE_DATABASE]: 'N/A',
+          [FIELD_MAP.YEAR]: 'N/A',
+        }
         result.missingIndicators.push(ind)
       }
     }
@@ -328,7 +333,7 @@ const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCo
           return indicatorResult
         } else if (i === count) {
           _.set(result.missingIndicatorMap, [ind, range], true)
-          return { value: 0, [rangedField]: range, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'no data' }
+          return { value: null, [rangedField]: range, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'N/A', [FIELD_MAP.YEAR]: 'N/A' }
         }
       }
 
@@ -1007,7 +1012,7 @@ const getAdults = data => {
     console.error('**SOURCE MISMATCH**')
   }
 
-  if (!wNumData && !wPosData && !mNumData && !mPosData && !total && !pTotal) {
+  if (!wNumData && !wPosData && !mNumData && !mPosData && total.noData && pTotal.noData) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1063,7 +1068,7 @@ const getCommunity = data => {
     console.error('**SOURCE MISMATCH**')
   }
 
-  if (!mobileNumData && !mobilePosData && !vctNumData && !vctPosData && !otherNumData && !otherPosData && !total && !pTotal) {
+  if (!mobileNumData && !mobilePosData && !vctNumData && !vctPosData && !otherNumData && !otherPosData && total.noData && pTotal.noData) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1126,7 +1131,7 @@ const getFacility = data => {
 
   
   if (!pitcNumData && !pitcPosData && !ancNumData && !ancPosData && !vctNumData && !vctPosData && 
-    !familyNumData && !familyPosData && !otherNumData && !otherPosData && !total && !pTotal) {
+    !familyNumData && !familyPosData && !otherNumData && !otherPosData && total.noData && pTotal.noData) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1203,7 +1208,7 @@ const getIndex = data => {
   const [ communityNumData, communityPosData ] = getColumnPoints(community, pCommunity)
   const [ facilityNumData, facilityPosData ] = getColumnPoints(facility, pFacility)
   
-  if (!communityNumData && !communityPosData && !facilityNumData && !facilityPosData && !total && !pTotal) {
+  if (!communityNumData && !communityPosData && !facilityNumData && !facilityPosData && total.noData && pTotal.noData) {
     console.warn(title + ' has all empty series.')
     return null
   }

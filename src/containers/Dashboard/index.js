@@ -17,7 +17,7 @@ import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { CHARTS, FIELD_MAP, BASE_URL, SOURCE_DISPLAY_MAP } from '../../constants/charts'
 import { getConfig, displayNumber } from './chartConfigs'
-import { COUNTRY_MAP } from '../../components/Homepage/countries'
+import { COUNTRIES, COUNTRY_MAP } from '../../components/Homepage/countries'
 import ReactTooltip from 'react-tooltip'
 const HighchartsMore = require('highcharts/highcharts-more')
 const Highcharts = require('highcharts')
@@ -56,30 +56,37 @@ class Dashboard extends Component {
     this.updateAlert = this.updateAlert.bind(this)
     this.submit = this.submit.bind(this)
     this.submitDQ = this.submitDQ.bind(this)
+    this.goToCountry = this.goToCountry.bind(this)
   }
   componentWillMount() {
     const countryCode = _.get(this, 'props.match.params.countryCode', '').toUpperCase()
     if (!COUNTRY_MAP[countryCode]) {
       // TODO: check country existence
-      this.props.history.go('/')
+      this.props.history.push('/')
       console.error('no country!')
       return
     }
     this.props.actions.getChartData(countryCode)
   }
-
+  
   componentDidMount() {
     console.log('MOUNTED. ', this.props)
   }
-
+  
   componentWillReceiveProps(newProps) {
     const d = new Date()
     
     const dataCountry = newProps.chartData.countryCode
-    // console.log('### props from ', dataCountry, ' at ', d.getMinutes()+':'+d.getSeconds())
-    const activeCountry = _.get(this, 'props.match.params.countryCode').toUpperCase()
-    // console.log('### (url PARAM of: ', activeCountry +')')
-    this.setState({ loading: activeCountry !== dataCountry })
+    // console.log('### newprops from ', dataCountry, ' at ', d.getMinutes()+':'+d.getSeconds())
+    const paramCountry = _.get(newProps, 'match.params.countryCode').toUpperCase()
+    // console.log('### newurl PARAM of: ', paramCountry)
+    const loading = paramCountry !== dataCountry
+    // console.log('### loading: ', loading)
+    this.setState({ loading })
+    
+    if (loading) {
+      this.props.actions.getChartData(paramCountry)
+    }
 
     if (_.isEqual(newProps.chartData.countryCode, this.props.chartData.countryCode)) {
       console.error('what changed?')
@@ -271,6 +278,9 @@ class Dashboard extends Component {
     )
   }
 
+  goToCountry(e) {
+    this.props.history.push('/' + e.target.value)
+  }
   
   render() {
 
@@ -323,6 +333,7 @@ class Dashboard extends Component {
         </div>
       )
     }
+
     return (
       <div className='dashboard'>
         <div className='nav'>
@@ -332,6 +343,14 @@ class Dashboard extends Component {
           <span className='title text-center'>
             HIV Testing Services Dashboard
           </span>
+          <div className='input-group'>
+            <select defaultValue={this.props.chartData.countryCode} onChange={this.goToCountry} className='custom-select'>
+              <option value='none'>Select Country</option>
+              {COUNTRIES.map(c => {
+                return <option value={c.ISO} to={'/'+c.ISO} key={c.ISO}>{c.name}</option>
+              })}
+            </select>
+          </div>
           <Link className='link-home' to='/'>
             Home
           </Link>
@@ -470,7 +489,7 @@ class Dashboard extends Component {
 
   submitDQ(e, dbug) {
     const v = document.querySelector('#direct-query')
-    // debugger
+    debugger
     const url = BASE_URL + 'indicator=' + v.value || ''
     console.log('url: ', url)
     fetch(url)

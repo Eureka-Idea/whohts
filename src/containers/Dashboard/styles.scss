@@ -124,6 +124,7 @@ $nav-height: 64px;
 
   .nav {
     position: fixed;
+    justify-content: space-between;
     flex-wrap: nowrap;
     top: 0;
     left: 0;
@@ -144,7 +145,6 @@ $nav-height: 64px;
       cursor: pointer;
       margin: auto;
     }
-
     span.title {
       flex-grow: 1;
       display: flex;
@@ -158,6 +158,13 @@ $nav-height: 64px;
       color: $deep-sea-green;
       font-size: 14px;
     }
+    .input-group {
+      max-width: 140px;
+      margin-right: 2*$buffer;
+      select {
+        height: 34px;
+      }
+    }
 
     @media screen and (min-width: 768px) {
       height: $nav-height;
@@ -169,6 +176,11 @@ $nav-height: 64px;
       }
       .who-logo img {
         max-width: 115px;
+      }
+      .input-group {
+        select {
+          height: unset;
+        }
       }
     }
   }

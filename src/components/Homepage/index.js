@@ -17,8 +17,6 @@ const Homepage = withRouter(({ history }) =>
             {COUNTRIES.map(c => {
               return <option value={c.ISO} key={c.ISO}>{c.name}</option>
             })}
-            {/* <option value='Kenya'>Kenya</option>
-            <option value='Thailand'>Thailand</option> */}
           </select>
         </div>
       </div>
