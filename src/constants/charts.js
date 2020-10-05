@@ -73,7 +73,8 @@ const SOURCE_DB_MAP = {
   TGF: 'The Global Fund',
   
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
-  UNAIDS: 'UNAIDS',
+  UNAIDS: 'UNAIDS', // also a source organization
+  WB: 'World Bank', // also a source organization
 }
 const SOURCE_DISPLAY_MAP = {
   ['AIDS (AIM)']: 'Spectrum estimates 2020 (UNAIDS/WHO)',
@@ -1055,6 +1056,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'population',
         [F.INDICATOR]: 'Population',
         [F.UNIT_FORMAT]: 'NUMBER',
+        [F.SOURCE_ORGANIZATION]: SOURCE_DB_MAP.UNAIDS,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return _.maxBy(results, 'year')
@@ -1063,6 +1065,7 @@ const getIndicatorMap = (isShiny) => {
       {
         id: 'classification',
         [F.INDICATOR]: 'Income Group',
+        [F.SOURCE_ORGANIZATION]: SOURCE_DB_MAP.WB,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return _.maxBy(results, 'year')
@@ -1075,6 +1078,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: v,
         [F.COUNTRY_ISO_CODE]: true,
         [F.AGE]: 'all ages',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
         getter: results => {
           return _.maxBy(results, 'year')
         }
@@ -1087,11 +1091,12 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.PLHIV_DIAGNOSIS.yearRange.map(y => {
             const fResults = _.filter(results, r => r.year === y)
-
+            
             if (fResults.length > 1) {
               console.warn('## should not be multi results##')
             }
@@ -1107,6 +1112,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: sex,
         [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,        
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.PLHIV_SEX.yearRange.map(y => {
@@ -1122,6 +1128,7 @@ const getIndicatorMap = (isShiny) => {
         // [F.AGE]: '15-99', // TODO: 15-49 ok?
         // [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.PREVALENCE.yearRange.map(y => {
@@ -1140,6 +1147,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.PREVALENCE.yearRange.map(y => {
@@ -1158,6 +1166,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.PREVALENCE.yearRange.map(y => {
@@ -1168,10 +1177,8 @@ const getIndicatorMap = (isShiny) => {
       {
         id: 'population',
         [F.INDICATOR]: C.PREVALENCE.indicators.population,
-        // [F.AGE]: '15+', TODO
-        // [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
-        // [F.UNIT_FORMAT]: 'NUMBER', // otherwise may get another unit, e.g. 51.4 for Kenya row 3991911
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.PREVALENCE.yearRange.map(y => {
@@ -2127,6 +2134,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: ageRange,
         [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.PLHIV_AGE.yearRange.map(y => {
@@ -2148,6 +2156,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15-99',
         [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.HIV_NEGATIVE.yearRange.map(y => {
@@ -2169,6 +2178,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15-99',
         [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.HIV_POSITIVE.yearRange.map(y => {
@@ -2190,6 +2200,7 @@ const getIndicatorMap = (isShiny) => {
       [F.AGE]: '15-99',
       [F.SEX]: 'both',
       [F.AREA_NAME]: 'NULL',
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
       [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.PREVALENCE.yearRange.map(y => {

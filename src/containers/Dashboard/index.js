@@ -15,9 +15,10 @@ import DemographicsTable from '../../components/DemographicsTable'
 import { TERM_MAP, TERMS } from '../../constants/glossary'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { CHARTS, FIELD_MAP, BASE_URL } from '../../constants/charts'
+import { CHARTS, FIELD_MAP, BASE_URL, SOURCE_DISPLAY_MAP } from '../../constants/charts'
 import { getConfig, displayNumber } from './chartConfigs'
 import { COUNTRY_MAP } from '../../components/Homepage/countries'
+import ReactTooltip from 'react-tooltip'
 const HighchartsMore = require('highcharts/highcharts-more')
 const Highcharts = require('highcharts')
 const ReactHighcharts = require('react-highcharts').withHighcharts(Highcharts)
@@ -88,11 +89,34 @@ class Dashboard extends Component {
 
   getCountryContext() {
     const { id } = CHARTS.CONTEXT
-    const population = _.get(this.props.chartData, id + '.data.population.value')
-    const classification = _.get(this.props.chartData, id + '.data.classification.value_comment')
 
+    const populationRow = _.get(this.props.chartData, id + '.data.population')
+    const population = populationRow[FIELD_MAP.VALUE]
+    const pSource = populationRow[FIELD_MAP.SOURCE_DATABASE]
+    
+    const classificationRow = _.get(this.props.chartData, id + '.data.classification')
+    const classification = classificationRow[FIELD_MAP.VALUE_COMMENT]
+    const cSource = classificationRow[FIELD_MAP.SOURCE_DATABASE]
+    
     const countryCode = _.get(this, 'props.match.params.countryCode', null)
     const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
+    
+    const tooltipIdPop = this.props.chartData.countryCode + 'population-tooltip'
+    
+    const tooltipPop = (
+      <ReactTooltip id={tooltipIdPop} className='td-tooltip' type='dark' effect='solid'>
+        <div>Source: {SOURCE_DISPLAY_MAP[pSource] || pSource}</div>
+        <div>Year: {populationRow.year}</div>
+      </ReactTooltip>
+    )
+    
+    const tooltipIdClass = this.props.chartData.countryCode + 'classification-tooltip'
+    const tooltipClass = (
+      <ReactTooltip id={tooltipIdClass} className='td-tooltip' type='dark' effect='solid'>
+        <div>Source: {SOURCE_DISPLAY_MAP[cSource] || cSource}</div>
+        <div>Year: {classificationRow.year}</div>
+      </ReactTooltip>
+    )
     return (
       <div className='col-xl-6 col-lg-6 col-xs-12 country-context'>
         <div className='card-stock'>
@@ -101,11 +125,17 @@ class Dashboard extends Component {
             <div className='details'>
               {population && <span className='detail'>
                 <p className='title'>Population </p>
-                <p className='value'>{displayNumber({ v: population })}</p>
+                <a data-tip data-for={tooltipIdPop}>
+                  <p className='value'>{displayNumber({ v: population })}</p>
+                  {tooltipPop}
+                </a>
               </span>}
               {classification && <span className='detail'>
                 <p className='title'>World Bank classification </p>
-                <p className='value'>{classification}</p>
+                <a data-tip data-for={tooltipIdClass}>
+                  <p className='value'>{classification}</p>
+                  {tooltipClass}
+                </a>
               </span>}
             </div>
           </div>
@@ -126,12 +156,22 @@ class Dashboard extends Component {
     const [status, art, suppression] = config.map(n => 
       Math.round((n)*100)
     )
+
+    const tooltipId = this.props.chartData.countryCode + 'p95-tooltip'
+    
+    const tooltip = (
+      <ReactTooltip id={tooltipId} className='td-tooltip' type='dark' effect='solid'>
+        <div>Source: {config.source}</div>
+        <div>Year: {config.year}</div>
+      </ReactTooltip>
+    )
     
     return (
       <div className='col-xl-6 col-lg-6 col-xs-12 prog-95'>
         <div className='card-stock'>
           <div className='content'>
             {/* <p className='title'>{title}</p> */}
+            <a data-tip data-for={tooltipId}>
             <NestedBoxes
               // circle={true}
               title={title}
@@ -148,6 +188,8 @@ class Dashboard extends Component {
                 // { inner: suppression, below: ['of people on treatment are virally suppressed'] },
               ]}
             />
+            </a>
+            {tooltip}
           </div>
         </div>
       </div>

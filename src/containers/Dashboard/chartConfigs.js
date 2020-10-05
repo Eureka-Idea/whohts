@@ -340,10 +340,23 @@ const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCo
 }
 
 const getP95 = data => {
+  let source, year
   const config = ['status', 'art', 'suppression'].map(ind => {
-    const indVal = _.get(data, [ind, 'value'])
-    return indVal / 100
+    const indData = _.get(data, [ind], {})
+    const {
+      [FIELD_MAP.SOURCE_DATABASE]: indSource,
+      [FIELD_MAP.VALUE]: value,
+      [FIELD_MAP.YEAR]: indYear,
+    } = indData
+    // source/year should be same for all. just make sure to get one (in case one is missing)
+    source = source || indSource
+    year = year || indYear
+
+    return value / 100
   })
+
+  config.source = SOURCE_DISPLAY_MAP[source] || source
+  config.year = year
 
   return config
 }
