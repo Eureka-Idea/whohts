@@ -25,8 +25,8 @@ import { TERM_MAP } from "../../constants/glossary";
 const barChartsTestsName = 'Number of tests conducted'
 const barChartsPositivityName = 'Positivity' // TODO: acceptable?
 // const barChartsPositivityNameTooltip = 'Positivity'
-const spectrumSource = 'Spectrum model estimates (UNAIDS, 2020)'
-const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS, 2020)'
+const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2020)'
+const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2020)'
 
 function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
   if (!row) {
@@ -977,7 +977,7 @@ const getAdults = data => {
     console.error('**SOURCE MISMATCH**')
   }
 
-  if (!wNumData && !wPosData && !mNumData && !mPosData) {
+  if (!wNumData && !wPosData && !mNumData && !mPosData && !total && !pTotal) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1035,7 +1035,7 @@ const getCommunity = data => {
     console.error('**SOURCE MISMATCH**')
   }
 
-  if (!mobileNumData && !mobilePosData && !vctNumData && !vctPosData && !otherNumData && !otherPosData) {
+  if (!mobileNumData && !mobilePosData && !vctNumData && !vctPosData && !otherNumData && !otherPosData && !total && !pTotal) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1096,8 +1096,8 @@ const getFacility = data => {
   }
 
   
-  if (!pitcNumData && !pitcPosData && !ancNumData && !ancPosData && !vctNumData &&
-      !vctPosData && !familyNumData && !familyPosData && !otherNumData && !otherPosData) {
+  if (!pitcNumData && !pitcPosData && !ancNumData && !ancPosData && !vctNumData && !vctPosData && 
+    !familyNumData && !familyPosData && !otherNumData && !otherPosData && !total && !pTotal) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1179,7 +1179,7 @@ const getIndex = data => {
   const [ communityNumData, communityPosData ] = getColumnPoints(community, pCommunity)
   const [ facilityNumData, facilityPosData ] = getColumnPoints(facility, pFacility)
   
-  if (!communityNumData && !communityPosData && !facilityNumData && !facilityPosData) {
+  if (!communityNumData && !communityPosData && !facilityNumData && !facilityPosData && !total && !pTotal) {
     console.warn(title + ' has all empty series.')
     return null
   }
