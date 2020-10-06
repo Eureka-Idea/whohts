@@ -1,7 +1,7 @@
 import colors, { femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import { CHARTS, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP } from "../../constants/charts";
+import { CHARTS, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP, ALL_CHARTS, CSV_FIELDS } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
 // __________________________ HELPERS ____________________________________
@@ -200,7 +200,7 @@ function getColumnChartSubtitle(total, pTotal) {
   return ({ useHTML: true, text: subtitle })
 }
 
-function getPlotPoints({ row, year, adjust=false, decimals=0}) {
+function getPlotPoints({ row, year, adjust=false, decimals=0, forExport=false }) {
   const x = Number(year || _.get(row, [FIELD_MAP.YEAR]))
   if (!row || !row.value) {
     return [null, null]
@@ -226,6 +226,18 @@ function getPlotPoints({ row, year, adjust=false, decimals=0}) {
   }
 
   const point = { x, year: x, y, l, u, source, decimals }
+
+  if (forExport) {
+    point[FIELD_MAP.VALUE] = y
+    point[FIELD_MAP.VALUE_LOWER] = l
+    point[FIELD_MAP.VALUE_UPPER] = u
+    CSV_FIELDS.forEach(({ fieldId }) => {
+      if (_.isUndefined(point[fieldId])) {
+        point[fieldId] = row[fieldId] || 'NA'
+      }
+    })
+  }
+  
   const rPoint = [l, u]
   return [point, rPoint]
 }
@@ -238,7 +250,7 @@ function isDataMapEmpty (dataMap) {
 
 // __________________________________________________________________
 
-const getConfig = (chartId, chartData, shinyCountry) => {
+const getConfig = (chartId, chartData, shinyCountry=false, forExport=false) => {
   if (_.isEmpty(chartData)) {
     console.log('No chart data (perhaps awaiting API response)')
     return
@@ -260,8 +272,6 @@ const getConfig = (chartId, chartData, shinyCountry) => {
     [CHARTS.KP_TABLE.id]: getKpTable,
     [CHARTS.POLICY_TABLE.id]: getPolicyTable,
     [CHARTS.GROUPS_TABLE.id]: getGroupsTable,
-
-    // getExport
   }
   const getter = getterMap[chartId]
   if (!getter) {
@@ -278,8 +288,9 @@ const getConfig = (chartId, chartData, shinyCountry) => {
   console.log(chartId, ' data: ', data)
 
   try {
-    const config = getter(data, shinyCountry)
-    console.log(chartId, ' config: ', config)
+    const config = getter(data, shinyCountry, forExport)
+    const exp = forExport ? ' export' : ''
+    console.log(chartId, exp, ' config: ', config)
     return config
   } catch (error) {
     console.error(chartId, ' unable to generate config: ', error)
@@ -346,10 +357,15 @@ const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCo
   return result
 }
 
-const getP95 = data => {
+const getP95 = (data, shinyCountry=false, forExport=false) => {
+  const indicatorNames = ['status', 'art', 'suppression']
+  if (forExport) {
+    return indicatorNames.map(ind => _.get(data, ind))
+  }
+
   let source
   const years = []
-  const config = ['status', 'art', 'suppression'].map(ind => {
+  const config = indicatorNames.map(ind => {
     const indData = _.get(data, [ind], {})
     const {
       [FIELD_MAP.SOURCE_DATABASE]: indSource,
@@ -371,7 +387,7 @@ const getP95 = data => {
   return config
 }
 
-const getPlhivDiagnosis = (data, shinyCountry) => {
+const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
   const { title, yearRange } = CHARTS.PLHIV_DIAGNOSIS
 
   // colors: 17 11 5
@@ -393,11 +409,11 @@ const getPlhivDiagnosis = (data, shinyCountry) => {
   
   yearRange.forEach((y, i) => {
     const onArtRow = _.get(data, ['onArt', i])
-    const [onArtPoint] = getPlotPoints({ row: onArtRow, year: y })
+    const [onArtPoint] = getPlotPoints({ row: onArtRow, year: y, forExport })
     const plhivRow = _.get(data, ['plhiv', i])
-    const [plhivPoint] = getPlotPoints({ row: plhivRow, year: y })
+    const [plhivPoint] = getPlotPoints({ row: plhivRow, year: y, forExport })
     const knowRow = _.get(data, ['know', i])
-    const [knowPoint] = getPlotPoints({ row: knowRow, year: y })
+    const [knowPoint] = getPlotPoints({ row: knowRow, year: y, forExport })
 
     let undiagnosedPoint, notArtPoint
     // NOTE ** calculated indicator **
@@ -414,12 +430,16 @@ const getPlhivDiagnosis = (data, shinyCountry) => {
       }
     }
     
-    if (onArtPoint && notArtPoint && undiagnosedPoint) {
+    if ((onArtPoint && notArtPoint && undiagnosedPoint) || forExport) {
       onArtData.push(onArtPoint)
       notArtData.push(notArtPoint)
       undiagnosedData.push(undiagnosedPoint)
     }
   })
+
+  if (forExport) {
+    return [...onArtData, ...notArtData, ...undiagnosedData]
+  }
 
   // just check one series, since points only get added when they exist for all indicators
   if (onArtData.length <= 1) {
@@ -453,7 +473,7 @@ const getPlhivDiagnosis = (data, shinyCountry) => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getPlhivSex = (data, shinyCountry) => {
+const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
   const { title, yearRange } = CHARTS.PLHIV_SEX
   const options = {
     legend: { symbolWidth: 40 },
@@ -535,7 +555,7 @@ const getPlhivSex = (data, shinyCountry) => {
   return _.merge({}, getLine({ title, series, options }))
 }
 
-const getPlhivAge = (data, shinyCountry) => {
+const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
   const { title, yearRange } = CHARTS.PLHIV_AGE
 
   const options = {
@@ -661,7 +681,7 @@ const getPlhivAge = (data, shinyCountry) => {
   return _.merge({}, getLine({ title, series, options }))
 }
 
-const getHivNegative = (data, shinyCountry) => {
+const getHivNegative = (data, shinyCountry=false, forExport=false) => {
   const { yearRange } = CHARTS.HIV_NEGATIVE
   const title = '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
 
@@ -714,7 +734,7 @@ const getHivNegative = (data, shinyCountry) => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getHivPositive = (data, shinyCountry) => {
+const getHivPositive = (data, shinyCountry=false, forExport=false) => {
   const { yearRange } = CHARTS.HIV_POSITIVE
   const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
 
@@ -815,7 +835,7 @@ const getHivPositive = (data, shinyCountry) => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getPrevalence = (data, shinyCountry) => {
+const getPrevalence = (data, shinyCountry=false, forExport=false) => {
   let { title, nonShinyTitle, yearRange } = CHARTS.PREVALENCE
   title = shinyCountry ? title : nonShinyTitle
 
@@ -993,7 +1013,7 @@ function getColumnPoints(numData, posData) {
   return [numPoint, posPoint]
 }
 
-const getAdults = data => {
+const getAdults = (data, shinyCountry=false, forExport=false) => {
   const { title, indicatorIds, sources } = CHARTS.ADULTS
 
   const { 
@@ -1047,7 +1067,7 @@ const getAdults = data => {
   return _.merge({}, getColumnScat({ title, series, options, categories }))
 }
 
-const getCommunity = data => {
+const getCommunity = (data, shinyCountry=false, forExport=false) => {
   const { title, indicatorIds, sources } = CHARTS.COMMUNITY
 
   const {
@@ -1103,7 +1123,7 @@ const getCommunity = data => {
   return _.merge({}, getColumnScat({ title, series, options, categories }))
 }
 
-const getFacility = data => {
+const getFacility = (data, shinyCountry=false, forExport=false) => {
   const { title, indicatorIds, sources } = CHARTS.FACILITY
 
   const {
@@ -1186,7 +1206,7 @@ const getFacility = data => {
   return _.merge({}, getColumnScat({ title, options, categories, series }))
 }
 
-const getIndex = data => {
+const getIndex = (data, shinyCountry=false, forExport=false) => {
 
   const { title, indicatorIds, sources } = CHARTS.INDEX
 
@@ -1242,7 +1262,7 @@ const getIndex = data => {
   return _.merge({}, getColumnScat({ title, options, categories, series }))
 }
 
-const getForecast = data => {
+const getForecast = (data, shinyCountry=false, forExport=false) => {
   const { title, indicatorIds, indicatorYears, sources } = CHARTS.FORECAST
 
   const {
@@ -1310,7 +1330,7 @@ const getForecast = data => {
   return _.merge({}, getColumnLine({ title, series, options }))
 }
 
-const getKpTable = data => {
+const getKpTable = (data, shinyCountry=false, forExport=false) => {
   const { title, indicatorIds, sources } = CHARTS.KP_TABLE
   
   const {
@@ -1374,7 +1394,7 @@ const getKpTable = data => {
   return config
 }
 
-const getPolicyTable = data => {
+const getPolicyTable = (data, shinyCountry=false, forExport=false) => {
   const { title } = CHARTS.POLICY_TABLE
   
   const {
@@ -1424,7 +1444,7 @@ const getPolicyTable = data => {
   return config
 }
 
-const getGroupsTable = (data, shinyCountry) => {
+const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
   const { title, indicatorIds, indicatorDemographics, indicatorDemographicsNoShiny, sourceCountMap } = CHARTS.GROUPS_TABLE
 
   const indicatorRangeMap = shinyCountry ?
@@ -1535,8 +1555,60 @@ const getGroupsTable = (data, shinyCountry) => {
   return config
 }
 
+const getExportData = (data, shinyCountry=false) => {
+  const headers = _.map(CSV_FIELDS, 'displayName')
+  const valueArrays = [['Chart', ...headers]]
+
+  try {
+    _.each(ALL_CHARTS, chart => {
+      if (chart.shinyOnly && !shinyCountry) {
+        return
+      }
+
+      // the "export config" is an array of the data rows used to build the chart
+      const chartExportConfig = getConfig(chart.id, data, shinyCountry, true)
+
+      _.each(chartExportConfig, row => {
+        if (!row) {
+          return
+        }
+        
+        const rowValues = _.map(CSV_FIELDS, f => {
+          let v = row[f.fieldId]
+          // seems new lines are fine
+          // v = v.replace(/\n/gm, '')
+          if (!v) {
+            return ''
+          }
+          v = String(v).replace(/"/gm, "'")
+          return v ? `"${v}"` : ""
+        })
+        valueArrays.push([chart.title, ...rowValues])
+      })
+    })
+
+    let csv = ''
+    _.each(valueArrays, r => {
+      csv += r.join(',')
+      csv += '\n'
+    })
+
+    const hiddenElement = document.createElement('a')
+    // encodeURI broke on #:
+    // https://stackoverflow.com/questions/55267116/how-to-download-csv-using-a-href-with-a-number-sign-in-chrome
+    hiddenElement.href = 'data:text/csvcharset=UTF-8,' + encodeURIComponent(csv)
+    hiddenElement.target = '_blank'
+    hiddenElement.download = 'WhoHTS.csv'
+    hiddenElement.click()
+    hiddenElement.remove()
+  } catch (error) {
+    console.error('Unable to export to CSV. Please try again. ' + error)
+  }
+}
+
 export {
   getConfig,
+  getExportData,
   adjustPercentage,
   displayPercent,
   displayNumber,

@@ -16,7 +16,7 @@ import { TERM_MAP, TERMS } from '../../constants/glossary'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { CHARTS, FIELD_MAP, BASE_URL, SOURCE_DISPLAY_MAP } from '../../constants/charts'
-import { getConfig, displayNumber } from './chartConfigs'
+import { getConfig, displayNumber, getExportData } from './chartConfigs'
 import { COUNTRIES, COUNTRY_MAP } from '../../components/Homepage/countries'
 import ReactTooltip from 'react-tooltip'
 const HighchartsMore = require('highcharts/highcharts-more')
@@ -57,6 +57,7 @@ class Dashboard extends Component {
     this.submit = this.submit.bind(this)
     this.submitDQ = this.submitDQ.bind(this)
     this.goToCountry = this.goToCountry.bind(this)
+    this.exportData = this.exportData.bind(this)
   }
   componentWillMount() {
     const countryCode = _.get(this, 'props.match.params.countryCode', '').toUpperCase()
@@ -210,6 +211,7 @@ class Dashboard extends Component {
     }
 
     const countryCode = _.get(this, 'props.match.params.countryCode')
+    // TODO: pass as prop?
     const shinyCountry = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'])
     const shinyChart = _.get(CHARTS, [id, 'shinyOnly'])
 
@@ -280,6 +282,13 @@ class Dashboard extends Component {
 
   goToCountry(e) {
     this.props.history.push('/' + e.target.value)
+  }
+
+  exportData() {
+    const countryCode = _.get(this, 'props.match.params.countryCode')
+    const shinyCountry = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'])  
+    
+    getExportData(this.props.chartData, shinyCountry)
   }
   
   render() {
@@ -352,6 +361,9 @@ class Dashboard extends Component {
           <Link className='link-home' to='/'>
             Home
           </Link>
+          <span className='export button' onClick={this.exportData}>
+              Export
+          </span>
         </div>
 
         <div className='charts container-fluid mt-4 p-0'>

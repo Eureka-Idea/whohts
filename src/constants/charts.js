@@ -127,6 +127,16 @@ const FIELD_MAP = {
   VALUE_LOWER: 'value_lower',
 }
 const F = FIELD_MAP
+const CSV_FIELDS = [
+  { fieldId: FIELD_MAP.INDICATOR, displayName: 'Indicator' },
+  { fieldId: FIELD_MAP.VALUE, displayName: 'Value' },
+  { fieldId: FIELD_MAP.VALUE_LOWER, displayName: 'Lower Bound' },
+  { fieldId: FIELD_MAP.VALUE_UPPER, displayName: 'Upper Bound' },
+  { fieldId: FIELD_MAP.VALUE_COMMENT, displayName: 'Value Comment' },
+  { fieldId: FIELD_MAP.SOURCE_DATABASE, displayName: 'Source Database' },
+  { fieldId: FIELD_MAP.YEAR, displayName: 'Year' },
+  { fieldId: FIELD_MAP.NOTES, displayName: 'Notes' },
+]
 
 // SOURCE objects for source prio charts
 const adultsGAM20 = {
@@ -968,6 +978,23 @@ const CHARTS = {
   },
 }
 const C = CHARTS
+const ALL_CHARTS = [ //population/country context?
+  C.P95,
+  C.PLHIV_DIAGNOSIS,
+  // C.PLHIV_SEX,
+  // C.PLHIV_AGE,
+  // C.HIV_NEGATIVE,
+  // C.HIV_POSITIVE,
+  // C.PREVALENCE,
+  // C.ADULTS,
+  // C.COMMUNITY,
+  // C.FACILITY,
+  // C.INDEX,
+  // C.FORECAST,
+  // C.KP_TABLE,
+  // C.POLICY_TABLE,
+  // C.GROUPS_TABLE,
+]
 
 const getGenericIndId = indId => {
   return indId.replace(/\d+$/, '')
@@ -2223,8 +2250,10 @@ const getIndicatorMap = (isShiny) => {
 
 export {
   BASE_URL,
-  CHARTS,
+  CHARTS, // TODO: rename "CHART_MAP"
+  ALL_CHARTS,
   FIELD_MAP,
+  CSV_FIELDS,
   AGGREGATE_GETTER,
   R_2015_2019,
   R_ADULT_AGES,

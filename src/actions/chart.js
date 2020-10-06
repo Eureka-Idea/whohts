@@ -18,7 +18,7 @@ const DEV = window.location.hostname === 'localhost'
 const debugList = {
   // [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
-  // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
+  [CHARTS.PLHIV_DIAGNOSIS.id]: true,
   // [CHARTS.FACILITY.id]: true,
   [CHARTS.CONTEXT.id]: true,
   [CHARTS.P95.id]: true,
@@ -28,7 +28,7 @@ const debugList = {
   // [CHARTS.ADULTS.id]: true,
 
   // [CHARTS.PLHIV_AGE.id]: true,
-  // [CHARTS.PLHIV_SEX.id]: true,
+  [CHARTS.PLHIV_SEX.id]: true,
 }
 const debugSkipList = {
   // [CHARTS.ADULTS.id]: true,
