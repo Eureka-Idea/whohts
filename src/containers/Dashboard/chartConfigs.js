@@ -492,19 +492,24 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
 
   yearRange.forEach((y, i) => {
     const fRow = _.get(data, ['Females', i])
-    const [fPoint, rFPoint] = getPlotPoints({ row: fRow, year: y })
+    const [fPoint, rFPoint] = getPlotPoints({ row: fRow, year: y, forExport })
     if (fPoint) {
       fPoints.push(fPoint)
       rFPoints.push(rFPoint)
     }
 
     const mRow  = _.get(data, ['Males', i])
-    const [mPoint, rMPoint] =  getPlotPoints({ row: mRow, year: y })
+    const [mPoint, rMPoint] =  getPlotPoints({ row: mRow, year: y, forExport })
     if (mPoint) {
       mPoints.push(mPoint)
       rMPoints.push(rMPoint)
     }
   })
+
+  if (forExport) {
+    return [...fPoints, ...mPoints]
+  }
+
 
   if (mPoints.length <= 1 && fPoints.length <= 1) {
     console.warn(title + ' has all empty series.')
@@ -578,13 +583,18 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
 
     yearRange.forEach((y, i) => {
       const row = rows[i]
-      const [point, rPoint] = getPlotPoints({ row, year: y, adjust: true })
+      const [point, rPoint] = getPlotPoints({ row, year: y, adjust: true, forExport })
       if (point) {
         obj.points.push(point)
         obj.rPoints.push(rPoint)
       }
     })
   })
+
+  if (forExport) {
+    return _.flatMap(dataMap, 'points')
+  }
+
 
   if (isDataMapEmpty(dataMap)) {
     console.warn(title + ' has all empty series.')
@@ -695,12 +705,16 @@ const getHivNegative = (data, shinyCountry=false, forExport=false) => {
 
     yearRange.forEach((y, i) => {
       const row = rows[i]
-      const [point] = getPlotPoints({ row, year: y })
+      const [point] = getPlotPoints({ row, year: y, forExport })
       if (point) {
         obj.points.push(point)
       }
     })
   })
+
+  if (forExport) {
+    return _.flatMap(dataMap, 'points')
+  }
 
   if (isDataMapEmpty(dataMap)) {
     console.warn(title + ' has all empty series.')
@@ -749,12 +763,16 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
 
     yearRange.forEach((y, i) => {
       const row = rows[i]
-      const [point] = getPlotPoints({ row, year: y })
+      const [point] = getPlotPoints({ row, year: y, forExport })
       if (point) {
         obj.points.push(point)
       }
     })
   })
+
+  if (forExport) {
+    return _.flatMap(dataMap, 'points')
+  }
 
   if (isDataMapEmpty(dataMap)) {
     console.warn(title + ' has all empty series.')
@@ -858,7 +876,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
   const adjPrevData = []
   yearRange.forEach((y, i) => {
     const prevalenceRow = _.get(data, ['prevalence', i])
-    const [prevalencePoint, rPrevalencePoint] = getPlotPoints({ row: prevalenceRow, year: y, decimals: 1 })
+    const [prevalencePoint, rPrevalencePoint] = getPlotPoints({ row: prevalenceRow, year: y, decimals: 1, forExport })
     if (prevalencePoint) {
       prevalenceData.push(prevalencePoint)
       rPrevalenceData.push(rPrevalencePoint)
@@ -876,24 +894,34 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       )
     }
     if (adjPrevValue) {
-      adjPrevData.push({ x: Number(y), y: adjPrevValue, decimals: 1 })
+      const adjPrevPoint = { x: Number(y), y: adjPrevValue, decimals: 1 }
+      if (forExport) {
+        adjPrevPoint[FIELD_MAP.VALUE] = adjPrevValue
+        adjPrevPoint[FIELD_MAP.INDICATOR] = 'Treatment adjusted Prevalence'
+        adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = '(calculated using population, estimated PLHIV, and estimated PLHIV on ART data values)'
+      }
+      adjPrevData.push(adjPrevPoint)
     }
 
     if (shinyCountry) {
       const positivityRow = _.get(data, ['positivity', i])
       const dYieldRow = _.get(data, ['dYield', i])
-      const [positivityPoint, rPositivityPoint] = getPlotPoints({ row: positivityRow, year: y, adjust: true, decimals: 1 })
+      const [positivityPoint, rPositivityPoint] = getPlotPoints({ row: positivityRow, year: y, adjust: true, decimals: 1, forExport })
       if (positivityPoint) {
         positivityData.push(positivityPoint)
         rPositivityData.push(rPositivityPoint)
       }
-      const [dYieldPoint, rDYieldPoint] = getPlotPoints({ row: dYieldRow, year: y, adjust: true, decimals: 1 })
+      const [dYieldPoint, rDYieldPoint] = getPlotPoints({ row: dYieldRow, year: y, adjust: true, decimals: 1, forExport })
       if (dYieldPoint) {
         dYieldData.push(dYieldPoint)
         rDYieldData.push(rDYieldPoint)
       }
     }
   })
+
+  if (forExport) {
+    return [...prevalenceData, ...positivityData, ...dYieldData, ...adjPrevData]
+  }
 
   if ([prevalenceData, adjPrevData, positivityData, dYieldData].every(s => s.length <= 1)) {
     console.warn(title + ' has all empty series.')
@@ -1556,7 +1584,7 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
 }
 
 const getExportData = (data, shinyCountry=false) => {
-  const headers = _.map(CSV_FIELDS, 'displayName')
+  const headers = _.map(CSV_FIELDS, 'fieldId')
   const valueArrays = [['Chart', ...headers]]
 
   try {
