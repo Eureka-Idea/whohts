@@ -344,7 +344,6 @@ class Dashboard extends Component {
           <span className='title text-center mobile'>HIVTS Dashboard</span>
           <div className='input-group'>
             <select defaultValue={this.props.chartData.countryCode} onChange={this.goToCountry} className='custom-select'>
-              <option value='none'>Select Country</option>
               {COUNTRIES.map(c => {
                 return <option value={c.ISO} to={'/'+c.ISO} key={c.ISO}>{c.name}</option>
               })}
@@ -406,9 +405,12 @@ class Dashboard extends Component {
               <a target='_blank' rel='noopener noreferrer' href='https://cfs.hivci.org/'>
                 WHO HIV Country Profiles
               </a>
+              <a target='_blank' rel='noopener noreferrer' href='https://aidsinfo.unaids.org/'>
+                UNAIDS AIDSinfo
+              </a>
               <a target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
                 UNAIDS - Laws and Policies
-                </a>
+              </a>
               {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
               WHO Paediatric HIV Testing
             </a> */}

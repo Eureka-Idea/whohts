@@ -175,7 +175,7 @@ function getPercentUncertaintyTooltipFormatter (shinyCountry) {
 
 function getLineChartSubtitle(shinyCountry) {
   const tooltip = 'Source: ' + (shinyCountry ? shinySource : spectrumSource)
-  const subtitle = `<span title="${tooltip}">Modelled Estimates</span>`
+  const subtitle = `<span title="${tooltip}">Modelled estimates</span>`
   return ({ useHTML: true, text: subtitle })
 }
 
@@ -196,7 +196,7 @@ function getColumnChartSubtitle(total, pTotal) {
   const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
   
   const subtitle = `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span> 
-  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme Data</span></div>`
+  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme data</span></div>`
   return ({ useHTML: true, text: subtitle })
 }
 
@@ -260,6 +260,8 @@ const getConfig = (chartId, chartData, shinyCountry) => {
     [CHARTS.KP_TABLE.id]: getKpTable,
     [CHARTS.POLICY_TABLE.id]: getPolicyTable,
     [CHARTS.GROUPS_TABLE.id]: getGroupsTable,
+
+    // getExport
   }
   const getter = getterMap[chartId]
   if (!getter) {
@@ -345,7 +347,8 @@ const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCo
 }
 
 const getP95 = data => {
-  let source, year
+  let source
+  const years = []
   const config = ['status', 'art', 'suppression'].map(ind => {
     const indData = _.get(data, [ind], {})
     const {
@@ -355,13 +358,15 @@ const getP95 = data => {
     } = indData
     // source/year should be same for all. just make sure to get one (in case one is missing)
     source = source || indSource
-    year = year || indYear
+    console.log('indsrc: ', indSource)
+    console.log('indyr: ', indYear)
+    years.push(indYear)
 
     return value / 100
   })
 
   config.source = SOURCE_DISPLAY_MAP[source] || source
-  config.year = year
+  config.year = _.chain(years).compact().uniq().sort().value().join(', ')
 
   return config
 }
