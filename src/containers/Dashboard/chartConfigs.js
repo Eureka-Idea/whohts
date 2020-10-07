@@ -36,8 +36,8 @@ function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
   
   let {
     [FIELD_MAP.VALUE]: v,
-    [FIELD_MAP.INDICATOR]: indicator,
-    [FIELD_MAP.SOURCE_DATABASE]: source,
+    // [FIELD_MAP.INDICATOR]: indicator,
+    // [FIELD_MAP.SOURCE_DATABASE]: source,
     [FIELD_MAP.INDICATOR_DESCRIPTION]: description,
   } = row
 
@@ -47,18 +47,35 @@ function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
   }
 
   // NOTE: ** conditional source tweak **
-  // console.log('*** source ***', source)
-  // console.log('*** indicator ***', indicator.toLowerCase())
-  // console.log('*** indicator desc ***', row[FIELD_MAP.INDICATOR_DESCRIPTION])
-  // console.log('*** v ***', v)
   if (description === 'PEPFAR Calculated Indicator') {
-    // console.log('***YUP')
     v *= 100
   }
   if (toDisplay) {
-    v = displayPercent({ v, decimals })
+    return displayPercent({ v, decimals })
   }
   return v
+}
+function displayPercent({ v, adjust = false, decimals = 0 }) {
+  if (!_.isNumber(v)) {
+    console.warn('NaN fed to displayPercent: ', v)
+    return null
+  }
+  const val = adjust ? (v * 100) : v
+
+  if (val > 100) {
+    console.warn('Incorrect %')
+  }
+  if (val < .1) {
+    return '<0.1%'
+  }
+  if (val < .5 && !decimals) {
+    return '<0.5%'
+  }
+  let str = _.round(val, decimals).toString()
+  if (!str.includes('.') && decimals) {
+    str += '.0' // TODO: this doesn't accommodate decimals > 1
+  }
+  return str + '%'
 }
 function displayNumber({ v, unrounded=false }) {
   if (!_.isNumber(v)) {
@@ -94,28 +111,6 @@ function displayNumber({ v, unrounded=false }) {
   }
 
   return spaced
-}
-function displayPercent({ v, adjust=false, decimals=0 }) {
-  if (!_.isNumber(v)) {
-    console.warn('NaN fed to displayPercent: ', v)
-    return null
-  }
-  const val = adjust ? (v * 100) : v
-
-  if (val > 100) {
-    console.warn('Incorrect %')
-  }
-  if (val < .1) {
-    return '<0.1%'
-  }
-  if (val < .5 && !decimals) {
-    return '<0.5%'
-  }
-  let str = _.round(val, decimals).toString()
-  if (!str.includes('.') && decimals) {
-    str += '.0' // TODO: this doesn't accommodate decimals > 1
-  }
-  return str + '%' 
 }
 
 function sourceTooltipFormatter () {
@@ -228,12 +223,13 @@ function getPlotPoints({ row, year, adjust=false, decimals=0, forExport=false })
   const point = { x, year: x, y, l, u, source, decimals }
 
   if (forExport) {
+    // TODO: should we adjust??
     point[FIELD_MAP.VALUE] = y
     point[FIELD_MAP.VALUE_LOWER] = l
     point[FIELD_MAP.VALUE_UPPER] = u
     CSV_FIELDS.forEach(({ fieldId }) => {
       if (_.isUndefined(point[fieldId])) {
-        point[fieldId] = row[fieldId] || 'NA'
+        point[fieldId] = row[fieldId] || ''
       }
     })
   }
@@ -898,7 +894,8 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       if (forExport) {
         adjPrevPoint[FIELD_MAP.VALUE] = adjPrevValue
         adjPrevPoint[FIELD_MAP.INDICATOR] = 'Treatment adjusted Prevalence'
-        adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = '(calculated using population, estimated PLHIV, and estimated PLHIV on ART data values)'
+        adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = '(calculated)',
+        adjPrevPoint[FIELD_MAP.NOTES] = 'based on population, estimated PLHIV, and estimated PLHIV on ART data values'
       }
       adjPrevData.push(adjPrevPoint)
     }
@@ -1048,7 +1045,11 @@ const getAdults = (data, shinyCountry=false, forExport=false) => {
     total, men, women,
     pTotal, pMen, pWomen, missingIndicators
   } = extractPrioritizedData(data, indicatorIds, sources.length)
-  
+
+  if (forExport) {
+    return [women, pWomen, men, pMen, total, pTotal]
+  }
+
   // console.log('total: ',total, 'men: ',men, 'women: ',women, 'pTotal: ',pTotal, 'pMen: ',pMen, 'pWomen: ',pWomen, 'missingIndicators: ',missingIndicators)
 
   if (missingIndicators.length) {
@@ -1104,7 +1105,11 @@ const getCommunity = (data, shinyCountry=false, forExport=false) => {
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
   // console.log('total: ', total, 'mobile: ', mobile, 'VCT: ', VCT, 'other: ', other, 'pTotal: ', pTotal, 'pMobile: ', pMobile, 'pVCT: ', pVCT, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
-  
+
+  if (forExport) {
+    return [mobile, pMobile, VCT, pVCT, other, pOther, total, pTotal]
+  }
+
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
@@ -1159,6 +1164,10 @@ const getFacility = (data, shinyCountry=false, forExport=false) => {
     pTotal, pPITC, pANC, pVCT, pFamily, pOther, missingIndicators
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
+  if (forExport) {
+    return [PITC, pPITC, ANC, pANC, VCT, pVCT, family, pFamily, total, pTotal]
+  }
+
   // console.log('total: ', total, 'PITC: ', PITC, 'ANC: ', ANC, 'VCT: ', VCT, 'family: ', family, 'other: ', other,
     // 'pTotal: ', pTotal, 'pPITC: ', pPITC, 'pANC: ', pANC, 'pVCT: ', pVCT, 'pFamily: ', pFamily, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
 
@@ -1182,7 +1191,6 @@ const getFacility = (data, shinyCountry=false, forExport=false) => {
     console.error('**SOURCE MISMATCH**')
   }
 
-  
   if (!pitcNumData && !pitcPosData && !ancNumData && !ancPosData && !vctNumData && !vctPosData && 
     !familyNumData && !familyPosData && !otherNumData && !otherPosData && total.noData && pTotal.noData) {
     console.warn(title + ' has all empty series.')
@@ -1243,6 +1251,11 @@ const getIndex = (data, shinyCountry=false, forExport=false) => {
     pTotal, pCommunity, pFacility, missingIndicators
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
+
+  if (forExport) {
+    return [community, pCommunity, facility, pFacility, total, pTotal]
+  }
+
   // console.log('total: ', total, 'community', community, 'facility', facility,
   //   'ptotal: ', pTotal, 'pcommunity: ', pCommunity, 'pfacility: ', pFacility,
   //  'missingIndicators: ', missingIndicators)
@@ -1298,6 +1311,14 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
   } = extractPrioritizedRangeData(
     { data, indicatorIds, sourceCount: sources.length, indicatorRangeMap: indicatorYears }
   )
+
+
+  if (forExport) {
+    // TODO
+    // return []
+  }
+
+
   const missingIndicators = Object.keys(missingIndicatorMap)
 
   // console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
@@ -1387,6 +1408,16 @@ const getKpTable = (data, shinyCountry=false, forExport=false) => {
   //   'yearTrans: ', yearTrans,
   // )
 
+  if (forExport) {
+    return [
+      prevSw, awareSw, yearSw,
+      prevMsm, awareMsm, yearMsm,
+      prevPwid, awarePwid, yearPwid,
+      prevTrans, awareTrans, yearTrans,
+      prevPris, awarePris, yearPris, 
+    ]
+  }
+
   const sw = {
     prev: prevSw, aware: awareSw, year: yearSw, 
   }
@@ -1436,6 +1467,20 @@ const getPolicyTable = (data, shinyCountry=false, forExport=false) => {
     compliance,
     verification,
   } = data
+
+  if (forExport) {
+    return [
+      age,
+      provider,
+      community,
+      lay,
+      hivst,
+      assisted,
+      social,
+      compliance,
+      verification,
+    ]
+  }
 
   const config = {
     title,
@@ -1494,23 +1539,34 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
   const undiagnosed = _.mapValues(allData.aware, (v, dem) => {
     let { 
       [FIELD_MAP.VALUE]: awareVal,
-      [FIELD_MAP.SOURCE_DATABASE]: awareSource
+      [FIELD_MAP.SOURCE_DATABASE]: awareSource, // for adjustment
+      [FIELD_MAP.SEX]: awareSex, // forExport
+      [FIELD_MAP.AGE]: awareAge, // forExport
     } = _.get(allData, ['aware', dem], {})
 
     let { 
       [FIELD_MAP.VALUE]: plhivVal,
-      [FIELD_MAP.SOURCE_DATABASE]: plhivSource
+      // [FIELD_MAP.SOURCE_DATABASE]: plhivSource
     } = _.get(allData, ['plhiv', dem], {})
 
     if (!awareVal || !plhivVal) {
-      return { value: undefined }
+      return { noData: true }
     }
 
+    // not a source tweak, just for our own calc
     if (awareSource === SOURCE_DB_MAP.SPEC20) {
       awareVal/=100
     }
     
-    return { value: ((1-awareVal) * plhivVal), source: 'calculated' }
+    return { 
+      value: ((1-awareVal) * plhivVal),
+      // forExport
+      [FIELD_MAP.SEX]: awareSex,
+      [FIELD_MAP.INDICATOR]: 'Undiagnosed PLHIV',
+      [FIELD_MAP.AGE]: awareAge,
+      [FIELD_MAP.SOURCE_DATABASE]: '(calculated)',
+      [FIELD_MAP.NOTES]: 'based on the estimated PLHIV and % aware data values',
+    }
   })
   allData.undiagnosed = undiagnosed
   
@@ -1535,7 +1591,7 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
   }
 
   _.each(config.includedDemographics, dem => {
-    const rowData = { demographic: dem }
+    const rowData = {}
     config.dataMap[dem] = rowData
     
     _.each([...indicatorIds, 'undiagnosed'], ind => {
@@ -1557,6 +1613,7 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
       rowData[ind] = {}
       _.each(vMap, (v, vId) => {
         if (_.isNumber(v)) {
+          // TODO: eliminate, add S90 to adjust criteria of adjustPercentage, and change displayPercent below to adjustPercentage(toDisplay=true)
           if ((ind === 'aware' || ind === 'prev')
             && source === SOURCE_DB_MAP.SPEC20) {
             v = v/100
@@ -1572,20 +1629,35 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
           vMap[vId] = v
         }
       })
-
       
       rowData[ind] = {
         source, year, noData, ...vMap
       }
+      if (forExport) {
+        // TODO: should we adjust??
+        rowData[ind][FIELD_MAP.VALUE_LOWER] = valueLower
+        rowData[ind][FIELD_MAP.VALUE_UPPER] = valueUpper
+        CSV_FIELDS.forEach(({ fieldId }) => {
+          if (_.isUndefined(rowData[ind][fieldId])) {
+            rowData[ind][fieldId] = indDemoData[fieldId] || ''
+          }
+        })
+      }
     })
   })
+
+  if (forExport) {
+    // const result = _.flatMap(config.dataMap)
+    // return result
+    return _.flatMap(config.dataMap, ind => _.flatMap(ind))
+  }
   
   return config
 }
 
 const getExportData = (data, shinyCountry=false) => {
   const headers = _.map(CSV_FIELDS, 'fieldId')
-  const valueArrays = [['Chart', ...headers]]
+  const valueArrays = [['chart', ...headers]]
 
   try {
     _.each(ALL_CHARTS, chart => {
@@ -1597,7 +1669,7 @@ const getExportData = (data, shinyCountry=false) => {
       const chartExportConfig = getConfig(chart.id, data, shinyCountry, true)
 
       _.each(chartExportConfig, row => {
-        if (!row) {
+        if (!row || row.noData) {
           return
         }
         
@@ -1609,9 +1681,9 @@ const getExportData = (data, shinyCountry=false) => {
             return ''
           }
           v = String(v).replace(/"/gm, "'")
-          return v ? `"${v}"` : ""
+          return `"${v}"`
         })
-        valueArrays.push([chart.title, ...rowValues])
+        valueArrays.push([`"${chart.title}"`, ...rowValues])
       })
     })
 

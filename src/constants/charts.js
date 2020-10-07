@@ -127,16 +127,18 @@ const FIELD_MAP = {
   VALUE_LOWER: 'value_lower',
 }
 const F = FIELD_MAP
-const CSV_FIELDS = [
+const CSV_FIELDS = [ 
+  // NOTE: for now we're displaying the fieldId in the CSV, so displayName is irrelevant
   { fieldId: FIELD_MAP.INDICATOR, displayName: 'Indicator' },
   { fieldId: FIELD_MAP.VALUE, displayName: 'Value' },
   { fieldId: FIELD_MAP.VALUE_LOWER, displayName: 'Lower Bound' },
   { fieldId: FIELD_MAP.VALUE_UPPER, displayName: 'Upper Bound' },
   { fieldId: FIELD_MAP.VALUE_COMMENT, displayName: 'Value Comment' },
+  // { fieldId: FIELD_MAP.UNIT_FORMAT, displayName: 'UF' },
   { fieldId: FIELD_MAP.SEX, displayName: 'Sex' },
   { fieldId: FIELD_MAP.AGE, displayName: 'Age' },
-  { fieldId: FIELD_MAP.SOURCE_DATABASE, displayName: 'Source Database' },
   { fieldId: FIELD_MAP.YEAR, displayName: 'Year' },
+  { fieldId: FIELD_MAP.SOURCE_DATABASE, displayName: 'Source Database' },
   { fieldId: FIELD_MAP.NOTES, displayName: 'Notes' },
 ]
 
@@ -988,14 +990,14 @@ const ALL_CHARTS = [ //population/country context?
   C.HIV_NEGATIVE,
   C.HIV_POSITIVE,
   C.PREVALENCE,
-  // C.ADULTS,
-  // C.COMMUNITY,
-  // C.FACILITY,
-  // C.INDEX,
+  C.ADULTS,
+  C.COMMUNITY,
+  C.FACILITY,
+  C.INDEX,
   // C.FORECAST,
-  // C.KP_TABLE,
-  // C.POLICY_TABLE,
-  // C.GROUPS_TABLE,
+  C.KP_TABLE,
+  C.POLICY_TABLE,
+  C.GROUPS_TABLE,
 ]
 
 const getGenericIndId = indId => {
