@@ -160,16 +160,18 @@ $nav-height: 64px;
         display: none;
       }
     }
-    .link-home {
+    .link-home, .export {
       margin: auto;
       padding-right: $buffer;
       color: $deep-sea-green;
       font-size: 14px;
+      cursor: pointer;
     }
     .input-group {
       max-width: 140px;
       margin-right: $buffer;
       select {
+        font-size: 14px;
         height: 34px;
       }
     }
@@ -190,7 +192,7 @@ $nav-height: 64px;
       span.title {
         font-size: 18px;
       }
-      .link-home {
+      .link-home, .export {
         font-size: 16px;
       }
       .who-logo {
@@ -203,6 +205,7 @@ $nav-height: 64px;
       .input-group {
         margin-right: 2*$buffer;
         select {
+          font-size: 16px;
           height: unset;
         }
       }

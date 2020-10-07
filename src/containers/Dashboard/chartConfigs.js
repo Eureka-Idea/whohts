@@ -28,7 +28,10 @@ const barChartsPositivityName = 'Positivity' // TODO: acceptable?
 const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2020)'
 const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2020)'
 
-function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
+function adjustPercentage({ row, toDisplay=false, decimals=0, returnRow=false }) {
+
+
+  
   if (!row) {
     console.warn('No % to adjust')
     return null
@@ -47,9 +50,20 @@ function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
   }
 
   // NOTE: ** conditional source tweak **
-  if (description === 'PEPFAR Calculated Indicator') {
+  const adjust = description === 'PEPFAR Calculated Indicator'
+  if (adjust) {
     v *= 100
   }
+
+  // for export we want the whole row (cloned for safety)
+  if (returnRow) {
+    if (!adjust) {
+      return row
+    } else {
+      return _.extend({}, row, { [FIELD_MAP.VALUE]: v })
+    }
+  }
+
   if (toDisplay) {
     return displayPercent({ v, decimals })
   }
@@ -223,7 +237,6 @@ function getPlotPoints({ row, year, adjust=false, decimals=0, forExport=false })
   const point = { x, year: x, y, l, u, source, decimals }
 
   if (forExport) {
-    // TODO: should we adjust??
     point[FIELD_MAP.VALUE] = y
     point[FIELD_MAP.VALUE_LOWER] = l
     point[FIELD_MAP.VALUE_UPPER] = u
@@ -1047,7 +1060,8 @@ const getAdults = (data, shinyCountry=false, forExport=false) => {
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
   if (forExport) {
-    return [women, pWomen, men, pMen, total, pTotal]
+    return [women, pWomen, men, pMen, total, pTotal].map(row =>
+      adjustPercentage({ row, returnRow: true }))
   }
 
   // console.log('total: ',total, 'men: ',men, 'women: ',women, 'pTotal: ',pTotal, 'pMen: ',pMen, 'pWomen: ',pWomen, 'missingIndicators: ',missingIndicators)
@@ -1107,7 +1121,8 @@ const getCommunity = (data, shinyCountry=false, forExport=false) => {
   // console.log('total: ', total, 'mobile: ', mobile, 'VCT: ', VCT, 'other: ', other, 'pTotal: ', pTotal, 'pMobile: ', pMobile, 'pVCT: ', pVCT, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
 
   if (forExport) {
-    return [mobile, pMobile, VCT, pVCT, other, pOther, total, pTotal]
+    return [mobile, pMobile, VCT, pVCT, other, pOther, total, pTotal].map(row =>
+      adjustPercentage({ row, returnRow: true }))
   }
 
   if (missingIndicators.length) {
@@ -1165,7 +1180,8 @@ const getFacility = (data, shinyCountry=false, forExport=false) => {
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
   if (forExport) {
-    return [PITC, pPITC, ANC, pANC, VCT, pVCT, family, pFamily, total, pTotal]
+    return [PITC, pPITC, ANC, pANC, VCT, pVCT, family, pFamily, total, pTotal].map(row =>
+      adjustPercentage({ row, returnRow: true }))
   }
 
   // console.log('total: ', total, 'PITC: ', PITC, 'ANC: ', ANC, 'VCT: ', VCT, 'family: ', family, 'other: ', other,
@@ -1253,7 +1269,8 @@ const getIndex = (data, shinyCountry=false, forExport=false) => {
 
 
   if (forExport) {
-    return [community, pCommunity, facility, pFacility, total, pTotal]
+    return [community, pCommunity, facility, pFacility, total, pTotal].map(row =>
+      adjustPercentage({ row, returnRow: true }))
   }
 
   // console.log('total: ', total, 'community', community, 'facility', facility,
@@ -1656,15 +1673,13 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
   })
 
   if (forExport) {
-    // const result = _.flatMap(config.dataMap)
-    // return result
     return _.flatMap(config.dataMap, ind => _.flatMap(ind))
   }
   
   return config
 }
 
-const getExportData = (data, shinyCountry=false) => {
+const getExportData = (data, counttryCode, shinyCountry=false) => {
   const headers = _.map(CSV_FIELDS, 'fieldId')
   const valueArrays = [['chart', ...headers]]
 
@@ -1707,11 +1722,11 @@ const getExportData = (data, shinyCountry=false) => {
     // https://stackoverflow.com/questions/55267116/how-to-download-csv-using-a-href-with-a-number-sign-in-chrome
     hiddenElement.href = 'data:text/csvcharset=UTF-8,' + encodeURIComponent(csv)
     hiddenElement.target = '_blank'
-    hiddenElement.download = 'WhoHTS.csv'
+    hiddenElement.download = `Who HTS Data - ${counttryCode}.csv`
     hiddenElement.click()
     hiddenElement.remove()
   } catch (error) {
-    console.error('Unable to export to CSV. Please try again. ' + error)
+    console.error('Unable to export to CSV. Error: ' + error)
   }
 }
 

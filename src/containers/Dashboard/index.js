@@ -288,7 +288,7 @@ class Dashboard extends Component {
     const countryCode = _.get(this, 'props.match.params.countryCode')
     const shinyCountry = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'])  
     
-    getExportData(this.props.chartData, shinyCountry)
+    getExportData(this.props.chartData, countryCode, shinyCountry)
   }
   
   render() {
@@ -358,12 +358,12 @@ class Dashboard extends Component {
               })}
             </select>
           </div>
+          <span className='export' onClick={this.exportData}>
+              Export
+          </span>
           <Link className='link-home' to='/'>
             Home
           </Link>
-          <span className='export button' onClick={this.exportData}>
-              Export
-          </span>
         </div>
 
         <div className='charts container-fluid mt-4 p-0'>
