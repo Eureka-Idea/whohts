@@ -405,7 +405,7 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
     // yAxis: { labels: { format: '{value}%' } },
     subtitle: getLineChartSubtitle(shinyCountry),
     // tooltip: { valueSuffix: ' million' },
-    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
+    xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
     yAxis: { title: { text: 'Adults 15+' } },
     // plotOptions: { series: { pointStart: 2015 } }
     // tooltip: { pointFormat: '{series.name}: <b>{point.y:.0f} million</b>' },
@@ -487,7 +487,7 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
   const options = {
     legend: { symbolWidth: 40 },
     subtitle: getLineChartSubtitle(shinyCountry),
-    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
+    xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
     yAxis: { max: 100, min: 0 },
     plotOptions: { 
       // series: { pointStart: 2015 },
@@ -575,7 +575,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
   const options = {
     legend: { symbolWidth: 40 },
     subtitle: getLineChartSubtitle(shinyCountry),
-    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
+    xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
     yAxis: { max: 100, min: 0 },
     // plotOptions: { series: { pointStart: 2015 } }
   }
@@ -748,7 +748,7 @@ const getHivNegative = (data, shinyCountry=false, forExport=false) => {
   ]
   const options = {
     title: { useHTML: true },
-    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
+    xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
     yAxis: { title: { text: 'HIV Negative Tests' } },
     subtitle: getLineChartSubtitle(shinyCountry),
     plotOptions: { series: { pointStart: 2015 } }
@@ -790,7 +790,7 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
   
   const options = {
     title: { useHTML: true },
-    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
+    xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
     yAxis: { title: { text: 'HIV Positive tests' } },
     subtitle: getLineChartSubtitle(shinyCountry),
   }
@@ -872,7 +872,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       softThreshold: true
     } },
     subtitle: getLineChartSubtitle(shinyCountry),
-    xAxis: { max: Number(_.last(yearRange)), min: Number(yearRange[0]) },
+    xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
     yAxis: { min: 0 },
   }
 

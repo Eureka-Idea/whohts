@@ -61,10 +61,14 @@ const barChartColorDark = nevada
 
 const femaleColor = cuttySark
 const maleColor = pirateGold
-const P95ColorA = pirateGold88 //
-const P95ColorB = 'rgb(151, 204, 166)'
-const P95ColorC = 'rgb(179, 158, 198)'
-const P95ColorD = 'rgb(182, 227, 234)'
+// const P95ColorA = pirateGold88 //
+// const P95ColorB = 'rgb(151, 204, 166)'
+const P95ColorB = 'rgb(179, 158, 198)'
+// const P95ColorD = 'rgb(182, 227, 234)'
+const P95ColorA = cuttySark + '' //
+const P95ColorD = pirateGold88 //
+// const P95ColorC = rum + 'DD'
+const P95ColorC = opal + ''
 
 export default [
   stormGray, // 0
