@@ -55,7 +55,7 @@ function adjustPercentage({ row, toDisplay=false, decimals=0 }) {
   }
   return v
 }
-function displayPercent({ v, adjust = false, decimals = 0 }) {
+function displayPercent({ v, adjust=false, decimals=0 }) {
   if (!_.isNumber(v)) {
     console.warn('NaN fed to displayPercent: ', v)
     return null
@@ -1611,17 +1611,25 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
       
       const vMap = { value, valueLower, valueUpper }
       rowData[ind] = {}
+
+      // prepare values for display.
+      // if forExport, all we want is to standardize percentages
       _.each(vMap, (v, vId) => {
         if (_.isNumber(v)) {
-          // TODO: eliminate, add S90 to adjust criteria of adjustPercentage, and change displayPercent below to adjustPercentage(toDisplay=true)
-          if ((ind === 'aware' || ind === 'prev')
-            && source === SOURCE_DB_MAP.SPEC20) {
-            v = v/100
-          }
+          // if ((ind === 'aware' || ind === 'prev') && source === SOURCE_DB_MAP.SPEC20) {
+          //   v = v / 100
+          // }
           const percentages = ['aware', 'prev', 'ever']
           if (percentages.includes(ind)) {
-            v = displayPercent({ v, adjust: true, decimals: ind === 'prev' })
-          } else {
+            // NOTE: ** conditional source tweak **
+            const adjust = source === SOURCE_DB_MAP.S90
+            if (forExport) {
+              v = adjust ? (v * 100) : v
+            } else {
+              const decimals = ind === 'prev' ? 1 : 0
+              v = displayPercent({ v, adjust, decimals })
+            }
+          } else if (!forExport) {
             // NOTE: ** conditional source tweak **
             const unrounded = (ind === 'year' && source !== SOURCE_DB_MAP.S90)
             v = displayNumber({ v, unrounded })
@@ -1634,9 +1642,10 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
         source, year, noData, ...vMap
       }
       if (forExport) {
-        // TODO: should we adjust??
-        rowData[ind][FIELD_MAP.VALUE_LOWER] = valueLower
-        rowData[ind][FIELD_MAP.VALUE_UPPER] = valueUpper
+        // IMPORTANT - we copy over values from vMap (rather than from row directly) as they may have been tweaked
+        rowData[ind][FIELD_MAP.VALUE] = vMap.value
+        rowData[ind][FIELD_MAP.VALUE_LOWER] = vMap.valueLower
+        rowData[ind][FIELD_MAP.VALUE_UPPER] = vMap.valueUpper
         CSV_FIELDS.forEach(({ fieldId }) => {
           if (_.isUndefined(rowData[ind][fieldId])) {
             rowData[ind][fieldId] = indDemoData[fieldId] || ''
