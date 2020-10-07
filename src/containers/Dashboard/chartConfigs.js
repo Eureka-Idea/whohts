@@ -614,7 +614,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
     {
       name: '15 - 24',
       dashStyle: 'ShortDot',
-      color: casablanca,
+      color: jungleGreen,
       data: dataMap['15-24'].points,
       tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       zIndex: 1
@@ -627,7 +627,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
       enableMouseTracking: false,
       lineWidth: 0,
       linkedTo: ':previous',
-      color: casablanca,
+      color: jungleGreen,
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }
@@ -656,7 +656,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
     {
       name: '35 - 49',
       dashStyle: 'LongDash',
-      color: jungleGreen, // steelBlue,
+      color: casablanca, // steelBlue,
       data: dataMap['35-49'].points,
       tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
       zIndex: 1
@@ -669,7 +669,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
       enableMouseTracking: false,
       lineWidth: 0,
       linkedTo: ':previous',
-      color: steelBlue,
+      color: casablanca, // steelBlue,
       fillOpacity: 0.2,
       zIndex: 0,
       marker: { enabled: false }

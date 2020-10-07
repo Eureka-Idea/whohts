@@ -27,6 +27,7 @@ const nandor = '#545A59'
 const snowDrift = '#F0F4F1'
 const casablanca = '#F2B04D'
 const pirateGold = '#C98300'
+const pirateGold88 = '#E2BD78'
 const rum = '#7F6A93'
 const steelBlue = '#4997AE'
 const cuttySark = '#4D7469'
@@ -60,10 +61,10 @@ const barChartColorDark = nevada
 
 const femaleColor = cuttySark
 const maleColor = pirateGold
-const P95ColorA = cuttySark + 'DD' //
-const P95ColorB = nutmeg + 'DD'
-const P95ColorC = rum + 'DD'
-const P95ColorD = opal + 'DD'
+const P95ColorA = pirateGold88 //
+const P95ColorB = 'rgb(151, 204, 166)'
+const P95ColorC = 'rgb(179, 158, 198)'
+const P95ColorD = 'rgb(182, 227, 234)'
 
 export default [
   stormGray, // 0
