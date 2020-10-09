@@ -906,6 +906,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
         adjPrevPoint[FIELD_MAP.VALUE] = adjPrevValue
         adjPrevPoint[FIELD_MAP.INDICATOR] = 'Treatment adjusted Prevalence'
         adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = '(calculated)',
+        adjPrevPoint[FIELD_MAP.YEAR] = y,
         adjPrevPoint[FIELD_MAP.NOTES] = 'based on population, estimated PLHIV, and estimated PLHIV on ART data values'
       }
       adjPrevData.push(adjPrevPoint)
@@ -1348,10 +1349,21 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
       [FIELD_MAP.SOURCE_DATABASE]: source,
       [FIELD_MAP.YEAR]: year,
     } = r
+    
 
-    return {
+    const point = {
       y, x: Number(year), source, year, mismatched: true,
     }
+
+    if (forExport) {
+      CSV_FIELDS.forEach(({ fieldId }) => {
+        if (_.isUndefined(point[fieldId])) {
+          point[fieldId] = r[fieldId] || ''
+        }
+      })
+    }
+
+    return point
   })
   //   ({
   //   x: Number(d.year),
@@ -1369,6 +1381,10 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
     y: d.value,
     source: d[FIELD_MAP.SOURCE_DATABASE]
   }))
+
+  if (forExport) {
+    return [...distributedNumData, ...demandNumData, ...needNumData]
+  }
 
   if (!distributedNumData.length && !demandNumData.length && !needNumData.length) {
     console.warn(title + ' has all empty series.')
@@ -1574,6 +1590,7 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
     
     let { 
       [FIELD_MAP.VALUE]: plhivVal,
+      [FIELD_MAP.YEAR]: plhivYear,
       // [FIELD_MAP.SOURCE_DATABASE]: plhivSource
     } = _.get(allData, ['plhiv', dem], {})
     
@@ -1592,7 +1609,7 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
       [FIELD_MAP.SEX]: awareSex,
       [FIELD_MAP.INDICATOR]: 'Undiagnosed PLHIV',
       [FIELD_MAP.AGE]: awareAge,
-      [FIELD_MAP.YEAR]: awareYear,
+      [FIELD_MAP.YEAR]: (awareYear === plhivYear) ? plhivYear : '',
       [FIELD_MAP.SOURCE_DATABASE]: '(calculated)',
       [FIELD_MAP.NOTES]: 'based on the estimated PLHIV and % aware data values',
     }

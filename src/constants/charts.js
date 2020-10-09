@@ -994,7 +994,7 @@ const ALL_CHARTS = [ //population/country context?
   C.COMMUNITY,
   C.FACILITY,
   C.INDEX,
-  // C.FORECAST,
+  C.FORECAST,
   C.KP_TABLE,
   C.POLICY_TABLE,
   C.GROUPS_TABLE,
