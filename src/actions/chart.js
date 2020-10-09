@@ -26,9 +26,9 @@ const debugList = {
   // [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.POLICY_TABLE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
-  // [CHARTS.ADULTS.id]: true,
+  [CHARTS.ADULTS.id]: true,
   // [CHARTS.COMMUNITY.id]: true,
-  // [CHARTS.FACILITY.id]: true,
+  [CHARTS.FORECAST.id]: true,
   // [CHARTS.INDEX.id]: true,
 
   // [CHARTS.PLHIV_AGE.id]: true,

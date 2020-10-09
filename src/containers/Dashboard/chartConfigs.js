@@ -29,8 +29,6 @@ const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2020)'
 const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2020)'
 
 function adjustPercentage({ row, toDisplay=false, decimals=0, returnRow=false }) {
-
-
   
   if (!row) {
     console.warn('No % to adjust')
@@ -354,8 +352,8 @@ const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCo
         if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
           return indicatorResult
         } else if (i === count) {
-          _.set(result.missingIndicatorMap, [ind, range], true)
-          return { value: null, [rangedField]: range, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'N/A', [FIELD_MAP.YEAR]: 'N/A' }
+          _.setWith(result.missingIndicatorMap, [ind, range], true, Object)
+          return { value: null, [rangedField]: range, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'N/A', [FIELD_MAP.YEAR]: (rangedField === 'year' ? range : 'N/A') }
         }
       }
 
@@ -1338,30 +1336,41 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
 
   const missingIndicators = Object.keys(missingIndicatorMap)
 
-  // console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
+  console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
 
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
 
-  const distributedNumData = distributed.map(d => ({
+  const distributedNumData = distributed.filter(r => !r.noData).map(r => {
+    const {
+      [FIELD_MAP.VALUE]: y,
+      [FIELD_MAP.SOURCE_DATABASE]: source,
+      [FIELD_MAP.YEAR]: year,
+    } = r
+
+    return {
+      y, x: Number(year), source, year, mismatched: true,
+    }
+  })
+  //   ({
+  //   x: Number(d.year),
+  //   y: d.value,
+  //   source: d[FIELD_MAP.SOURCE_DATABASE]
+  // }))
+
+  const demandNumData = demand.filter(r => !r.noData).map(d => ({
+    x: Number(d.year),
+    y: d.value,
+  }))
+
+  const needNumData = need.filter(r => !r.noData).map(d => ({
     x: Number(d.year),
     y: d.value,
     source: d[FIELD_MAP.SOURCE_DATABASE]
   }))
 
-  const demandNumData = demand.map(d => ({
-    x: Number(d.year),
-    y: d.value,
-  }))
-
-  const needNumData = need.map(d => ({
-    x: Number(d.year),
-    y: d.value,
-    source: d[FIELD_MAP.SOURCE_DATABASE]
-  }))
-
-  if (distributedNumData.length <= 1 && demandNumData.length <= 1 && needNumData.length <= 1) {
+  if (!distributedNumData.length && !demandNumData.length && !needNumData.length) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1376,24 +1385,24 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
       name: 'HIVSTs distributed',
       data: distributedNumData,
       tooltip: {
-        // pointFormat: sourceTooltipFormat // TODO: use formatter?
+        pointFormatter: sourceTooltipFormatter // TODO: use formatter?
       },
     },
-    {
-      name: 'HIVST forecast demand',
-      data: demandNumData,
-    },
-    {
-      name: 'HIVST forecast need',
-      type: 'line',
-      data: needNumData,
-      tooltip: {
-        // pointFormat: sourceTooltipFormat // TODO: use formatter?
-      },
-    }
+    // {
+    //   name: 'HIVST forecast demand',
+    //   data: demandNumData,
+    // },
+    // {
+    //   name: 'HIVST forecast need',
+    //   type: 'line',
+    //   data: needNumData,
+    //   tooltip: {
+    //     // pointFormat: sourceTooltipFormat // TODO: use formatter?
+    //   },
+    // }
   ]
 
-  return _.merge({}, getColumnLine({ title, series, options }))
+  return _.merge({}, getColumn({ title, series, options }))
 }
 
 const getKpTable = (data, shinyCountry=false, forExport=false) => {
@@ -1557,19 +1566,21 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
     let { 
       [FIELD_MAP.VALUE]: awareVal,
       [FIELD_MAP.SOURCE_DATABASE]: awareSource, // for adjustment
-      [FIELD_MAP.SEX]: awareSex, // forExport
-      [FIELD_MAP.AGE]: awareAge, // forExport
+      // forExport
+      [FIELD_MAP.YEAR]: awareYear,
+      [FIELD_MAP.SEX]: awareSex,
+      [FIELD_MAP.AGE]: awareAge,
     } = _.get(allData, ['aware', dem], {})
-
+    
     let { 
       [FIELD_MAP.VALUE]: plhivVal,
       // [FIELD_MAP.SOURCE_DATABASE]: plhivSource
     } = _.get(allData, ['plhiv', dem], {})
-
+    
     if (!awareVal || !plhivVal) {
       return { noData: true }
     }
-
+    
     // not a source tweak, just for our own calc
     if (awareSource === SOURCE_DB_MAP.SPEC20) {
       awareVal/=100
@@ -1581,6 +1592,7 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
       [FIELD_MAP.SEX]: awareSex,
       [FIELD_MAP.INDICATOR]: 'Undiagnosed PLHIV',
       [FIELD_MAP.AGE]: awareAge,
+      [FIELD_MAP.YEAR]: awareYear,
       [FIELD_MAP.SOURCE_DATABASE]: '(calculated)',
       [FIELD_MAP.NOTES]: 'based on the estimated PLHIV and % aware data values',
     }
