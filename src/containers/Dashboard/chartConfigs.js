@@ -245,7 +245,8 @@ function getPlotPoints({ row, year, adjust=false, decimals=0, forExport=false })
     })
   }
   
-  const rPoint = [l, u]
+  // https://api.highcharts.com/highcharts/series.arearange.data
+  const rPoint = [x, l, u]
   return [point, rPoint]
 }
 
@@ -537,7 +538,7 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
       zIndex: 1
     }, {
       name: 'Men range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: rMPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -557,7 +558,7 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
       zIndex: 1
     }, {
       name: 'Women range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: rFPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -624,7 +625,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
     },
     {
       name: '15 - 24 range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: dataMap['15-24'].rPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -645,7 +646,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
     },
     {
       name: '25 - 34 range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: dataMap['25-34'].rPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -666,7 +667,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
     },
     {
       name: '35 - 49 range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: dataMap['35-49'].rPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -687,7 +688,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
     },
     {
       name: '50+ range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: dataMap['50-99'].rPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -754,7 +755,7 @@ const getHivNegative = (data, shinyCountry=false, forExport=false) => {
     xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
     yAxis: { title: { text: 'HIV Negative Tests' } },
     subtitle: getLineChartSubtitle(shinyCountry),
-    plotOptions: { series: { pointStart: 2015 } }
+    // plotOptions: { series: { pointStart: 2015 } }
     // tooltip: { valueSuffix: ' thousand' },
   }
   return _.merge({}, getArea({ title, series, options }))
@@ -955,7 +956,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       data: prevalenceData,
     }, {
       name: 'Prevalence range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: rPrevalenceData,
       type: 'arearange',
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
@@ -986,7 +987,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       data: positivityData
     }, {
       name: 'Positivity range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: rPositivityData,
       type: 'arearange',
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
@@ -1005,7 +1006,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       data: dYieldData
     }, {
       name: 'Diagnostic yield range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: rDYieldData,
       type: 'arearange',
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
