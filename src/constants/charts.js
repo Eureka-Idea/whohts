@@ -739,7 +739,6 @@ const kpTGF = {
 //   filters: {
 //     ALL: {
 //       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-//       [F.YEAR]: '2019',
 //     }
 //   },
 //   indicators: {
@@ -1383,7 +1382,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'plhiv1',
         [F.INDICATOR]: 'People living with HIV - female adults (aged 15+)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1401,7 +1399,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'plhiv2',
         [F.INDICATOR]: 'People living with HIV - male adults (aged 15+)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1419,7 +1416,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'plhiv3',
         [F.INDICATOR]: 'People living with HIV - females aged 15-24',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1437,7 +1433,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'plhiv4',
         [F.INDICATOR]: 'People living with HIV - males aged 15-24',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1455,7 +1450,6 @@ const getIndicatorMap = (isShiny) => {
       //   id: 'plhiv5',
       //   [F.INDICATOR]: 'People living with HIV  25-34 ; Female',
       //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   // [F.YEAR]: '2019',
       //   [F.AREA_NAME]: 'NULL',
       //   [F.COUNTRY_ISO_CODE]: true,
       //   getter: results => {
@@ -1473,7 +1467,6 @@ const getIndicatorMap = (isShiny) => {
       //   id: 'plhiv6',
       //   [F.INDICATOR]: 'People living with HIV  25-34 ; Male',
       //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   // [F.YEAR]: '2019',
       //   [F.AREA_NAME]: 'NULL',
       //   [F.COUNTRY_ISO_CODE]: true,
       //   getter: results => {
@@ -1491,7 +1484,6 @@ const getIndicatorMap = (isShiny) => {
       //   id: 'plhiv7',
       //   [F.INDICATOR]: 'People living with HIV  35-49 ; Female',
       //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   // [F.YEAR]: '2019',
       //   [F.AREA_NAME]: 'NULL',
       //   [F.COUNTRY_ISO_CODE]: true,
       //   getter: results => {
@@ -1509,7 +1501,6 @@ const getIndicatorMap = (isShiny) => {
       //   id: 'plhiv8',
       //   [F.INDICATOR]: 'People living with HIV  35-49 ; Male',
       //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   // [F.YEAR]: '2019',
       //   [F.AREA_NAME]: 'NULL',
       //   [F.COUNTRY_ISO_CODE]: true,
       //   getter: results => {
@@ -1527,7 +1518,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'plhiv5',
         [F.INDICATOR]: 'People living with HIV - females aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1546,7 +1536,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'plhiv6',
         [F.INDICATOR]: 'People living with HIV - males aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1565,7 +1554,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'plhiv7',
         [F.INDICATOR]: 'People living with HIV - females aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1584,7 +1572,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'plhiv8',
         [F.INDICATOR]: 'People living with HIV - males aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1603,7 +1590,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'plhiv9',
         [F.INDICATOR]: 'People living with HIV - females aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1621,7 +1607,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'plhiv10',
         [F.INDICATOR]: 'People living with HIV - males aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1641,7 +1626,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'aware1',
         [F.INDICATOR]: 'Percent of people living with HIV who know their status',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1684,7 +1668,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'prev1',
         [F.INDICATOR]: 'HIV Prevalence - young women (15-24)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1702,7 +1685,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'prev2',
         [F.INDICATOR]: 'HIV Prevalence - young men (15-24)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1720,7 +1702,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'prev3',
         [F.INDICATOR]: 'HIV Prevalence - female adults (15-49)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1738,7 +1719,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'prev4',
         [F.INDICATOR]: 'HIV Prevalence - male adults (15-49)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1756,7 +1736,6 @@ const getIndicatorMap = (isShiny) => {
       //   id: 'prev5',
       //   [F.INDICATOR]: 'prev',
       //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-      //   [F.YEAR]: '2019',
       //   [F.AREA_NAME]: 'NULL',
       //   [F.COUNTRY_ISO_CODE]: true,
       //   getter: results => {
@@ -1777,7 +1756,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'prev5',
         [F.INDICATOR]: 'HIV Prevalence - females aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1796,7 +1774,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'prev6',
         [F.INDICATOR]: 'HIV Prevalence - males aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1815,7 +1792,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'prev7',
         [F.INDICATOR]: 'HIV Prevalence - females aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1834,7 +1810,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'prev8',
         [F.INDICATOR]: 'HIV Prevalence - males aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1854,7 +1829,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'newly1',
         [F.INDICATOR]: 'New HIV Infections - female adults (aged 15+)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1873,7 +1847,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'newly2',
         [F.INDICATOR]: 'New HIV Infections - male adults (aged 15+)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1891,7 +1864,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'newly3',
         [F.INDICATOR]: 'New HIV Infections - females aged 15-24',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1909,7 +1881,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'newly4',
         [F.INDICATOR]: 'New HIV Infections - males aged 15-24',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -1927,7 +1898,6 @@ const getIndicatorMap = (isShiny) => {
       //   id: 'newly5',
       //   [F.INDICATOR]: 'New HIV Infections  25-34 ; Female',
       //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   // [F.YEAR]: '2019',
       //   [F.AREA_NAME]: 'NULL',
       //   [F.COUNTRY_ISO_CODE]: true,
       //   getter: results => {
@@ -1945,7 +1915,6 @@ const getIndicatorMap = (isShiny) => {
       //   id: 'newly6',
       //   [F.INDICATOR]: 'New HIV Infections  25-34 ; Male',
       //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   // [F.YEAR]: '2019',
       //   [F.AREA_NAME]: 'NULL',
       //   [F.COUNTRY_ISO_CODE]: true,
       //   getter: results => {
@@ -1963,7 +1932,6 @@ const getIndicatorMap = (isShiny) => {
       //   id: 'newly7',
       //   [F.INDICATOR]: 'New HIV Infections  35-49 ; Female',
       //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   // [F.YEAR]: '2019',
       //   [F.AREA_NAME]: 'NULL',
       //   [F.COUNTRY_ISO_CODE]: true,
       //   getter: results => {
@@ -1981,7 +1949,6 @@ const getIndicatorMap = (isShiny) => {
       //   id: 'newly8',
       //   [F.INDICATOR]: 'New HIV Infections  35-49 ; Male',
       //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   // [F.YEAR]: '2019',
       //   [F.AREA_NAME]: 'NULL',
       //   [F.COUNTRY_ISO_CODE]: true,
       //   getter: results => {
@@ -1999,7 +1966,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'newly5',
         [F.INDICATOR]: 'New HIV Infections - females aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2018,7 +1984,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'newly6',
         [F.INDICATOR]: 'New HIV Infections - males aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2037,7 +2002,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'newly7',
         [F.INDICATOR]: 'New HIV Infections - females aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2056,7 +2020,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'newly8',
         [F.INDICATOR]: 'New HIV Infections - males aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2075,7 +2038,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'newly9',
         [F.INDICATOR]: 'New HIV Infections - females aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2093,7 +2055,6 @@ const getIndicatorMap = (isShiny) => {
         id: 'newly10',
         [F.INDICATOR]: 'New HIV Infections - males aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
-        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2172,7 +2133,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year4',
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-        [F.YEAR]: '2019',
+        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2187,7 +2148,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year5',
         [F.INDICATOR]: 'Den Age-Male Gte 15',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-        [F.YEAR]: '2019',
+        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2202,7 +2163,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year6',
         [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-        [F.YEAR]: '2019',
+        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2217,7 +2178,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year7',
         [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-        [F.YEAR]: '2019',
+        // [F.YEAR]: '2019',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2232,7 +2193,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year8',
         [F.INDICATOR]: 'Women (15+) - Number of tests',
         // [F.SOURCE_DATABASE]
-        [F.YEAR]: '2018',
+        // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2246,7 +2207,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year9',
         [F.INDICATOR]: 'Men (15+) - Number of tests',
         // [F.SOURCE_DATABASE]
-        [F.YEAR]: '2018',
+        // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2260,7 +2221,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year10',
         [F.INDICATOR]: 'Women (Tested in past year)',
         // [F.SOURCE_DATABASE]
-        [F.YEAR]: '2018',
+        // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2278,7 +2239,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year11',
         [F.INDICATOR]: 'Men (Tested in past year)',
         // [F.SOURCE_DATABASE]
-        [F.YEAR]: '2018',
+        // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2296,7 +2257,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year12',
         [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
         // [F.SOURCE_DATABASE]
-        [F.YEAR]: '2018',
+        // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2314,7 +2275,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year13',
         [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
         // [F.SOURCE_DATABASE]
-        [F.YEAR]: '2018',
+        // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2331,8 +2292,8 @@ const getIndicatorMap = (isShiny) => {
       {
         id: 'year14',
         [F.INDICATOR]: 'Women (15+) Tested in Past Year',
-        // [F.SOURCE_DATABASE]
-        [F.YEAR]: '2018',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+        // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2349,8 +2310,8 @@ const getIndicatorMap = (isShiny) => {
       {
         id: 'year15',
         [F.INDICATOR]: 'Men (15+) Tested in Past Year',
-        // [F.SOURCE_DATABASE]
-        [F.YEAR]: '2018',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+        // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
