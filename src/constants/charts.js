@@ -73,6 +73,8 @@ const SOURCE_DB_MAP = {
   TGF: 'The Global Fund',
   
   ULP: 'UNAIDS Laws and Policies',
+  DHS: 'The DHS Program',
+  MICS: 'MICS UNICEF',
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
   UNAIDS: 'UNAIDS', // also a source organization
   WB: 'World Bank', // also a source organization
@@ -962,6 +964,7 @@ const CHARTS = {
     indicatorIds: [
       'plhiv', 'aware', 'prev', 'newly', 'year', 'ever',
     ],
+    // NOTE: this MUST be updated if an additional source is added for an indicator
     // TODO: calculate dynamically
     sourceCountMap: {
       plhiv: 10,
@@ -969,7 +972,7 @@ const CHARTS = {
       prev: 8,
       newly: 10,
       year: 15,
-      ever: 1,
+      ever: 5,
     },
     // calculatedIndicatorIds: ['undiagnosed'],
     indicatorDemographics: {
@@ -2379,6 +2382,76 @@ const getIndicatorMap = (isShiny) => {
 
               resultMap[`${sex[0]}${ageRange}`] = result
             })
+          })
+          return resultMap
+        }
+      },
+      {
+        id: 'ever2',
+        [F.INDICATOR]: 'Women ever receiving an HIV test',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.DHS,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
+            console.error(`**LOOKOUT! Taking first result.**
+            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
+            `, 'rs:', results)
+
+          }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+        }
+      },
+      {
+        id: 'ever3',
+        [F.INDICATOR]: 'Men ever receiving an HIV test',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.DHS,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+            // debugger
+            console.error(`**LOOKOUT! Taking first result.**
+            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
+            `, 'rs:', results)
+
+          }
+          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+        }
+      },
+      {
+        id: 'ever4',
+        [F.INDICATOR]: 'ever_tested',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.MICS,
+        // [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const resultMap = {}
+          R_SEXES.forEach(sex => {
+            resultMap[`${sex[0]}${ADULTS15}`] = 
+              _.find(results, r => r[F.SEX] === sex && r[F.AGE] === ADULTS15)
+
+            resultMap[`${sex[0]}${ALL_ADULTS}`] = 
+              _.find(results, r => r[F.SEX] === sex && r[F.AGE] === '15-49')
+          })
+          return resultMap
+        }
+      },
+      {
+        id: 'ever5',
+        [F.INDICATOR]: 'ever_tested_results',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.MICS,
+        // [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: results => {
+          const resultMap = {}
+          R_SEXES.forEach(sex => {
+            resultMap[`${sex[0]}${ADULTS15}`] = 
+              _.find(results, r => r[F.SEX] === sex && r[F.AGE] === ADULTS15)
+
+            resultMap[`${sex[0]}${ALL_ADULTS}`] = 
+              _.find(results, r => r[F.SEX] === sex && r[F.AGE] === '15-49')
           })
           return resultMap
         }

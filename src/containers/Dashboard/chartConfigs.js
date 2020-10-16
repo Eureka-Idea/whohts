@@ -345,11 +345,16 @@ const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCo
     result[ind] = mapper(ranges, (range, ri) => {
       const count = sourceCountMap[ind] || sourceCount
 
-      for (let i = 1; i <= count; i++) {
+      for (let i = 1; i <= count+1; i++) {
         // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
         const selector = mappedData ? range : ri
         const indicatorResult = _.get(data, [ind+i, selector], null)
         if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
+
+          if (i > count) {
+            console.error('!!! Update sourceCountMap to reflect added sources to prevent data from being dropped !!!')
+          }
+          
           return indicatorResult
         } else if (i === count) {
           _.setWith(result.missingIndicatorMap, [ind, range], true, Object)
