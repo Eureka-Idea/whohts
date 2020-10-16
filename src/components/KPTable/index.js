@@ -67,7 +67,7 @@ const KPTable = ({ config, iso }) => {
           Data from multiple sources and time periods. Hover a data value for more information.
         </div>
       </Tooltip>
-      <table className='table table-striped'>
+      <table className='table table-striped table-responsive table-responsive-lg'>
         <thead>
           <tr>
             <th scope='col'></th>

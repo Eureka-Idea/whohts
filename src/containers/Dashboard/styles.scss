@@ -324,8 +324,9 @@ $nav-height: 64px;
   }
 
   .prog-95 {
+    max-width: 100vw; // NOTE: prevent screen expansion on mobile
     .card-stock {
-      margin-top: 2*$buffer;
+      margin-top: 2*$buffer;;
     }
 
     .nested-boxes {
@@ -337,7 +338,6 @@ $nav-height: 64px;
 
     .content {
       // background: white;
-      // padding: 0px;
     }
   }
 
@@ -544,6 +544,23 @@ $nav-height: 64px;
       }
     }
   }  
+}
+
+// MOBILE FIXES
+@media screen and (max-width: 576px) {
+  .dashboard {
+  
+    .prog-95 {
+      .card-stock {
+        overflow: scroll; // in case p95 outgrows mobile screen
+        .content {
+          
+          transform: scale(.8);
+          padding: 20px 0px !important;
+        }
+      }
+    }
+  }
 }
 
 #direct-query {

@@ -2,6 +2,13 @@
 
 .dashboard {
 
+  .table {
+    max-width: $max-width;
+    @media screen and (max-width: 576px) {
+      max-width: $max-width-mobile;
+    }
+  }
+
   .demographics-table {
     position: relative;
     background-color: white;
@@ -12,7 +19,7 @@
         display: table !important; // allows it to grow
       }
       
-      max-width: $max-width;
+      // max-width: $max-width;
       margin-left: $table-margin;
       
       td {
