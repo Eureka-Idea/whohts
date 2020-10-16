@@ -72,6 +72,7 @@ const SOURCE_DB_MAP = {
   // UNGAM20: 'UNAIDS Global AIDS Monitoring 2020',
   TGF: 'The Global Fund',
   
+  ULP: 'UNAIDS Laws and Policies',
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
   UNAIDS: 'UNAIDS', // also a source organization
   WB: 'World Bank', // also a source organization
@@ -915,7 +916,7 @@ const CHARTS = {
         [F.AREA_NAME]: 'NULL',
       },
       age: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       provider: {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
@@ -943,7 +944,7 @@ const CHARTS = {
       },
     },
     indicators: {
-      age: 'Age of consent for HIV testing',
+      age: 'Laws requiring parental consent for adolescents to access HIV testing',
       provider: 'Provider-initiated testing',
       community: 'Community-based testing',
       lay: 'Lay provider testing',

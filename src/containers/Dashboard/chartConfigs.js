@@ -1527,7 +1527,7 @@ const getPolicyTable = (data, shinyCountry=false, forExport=false) => {
   const config = {
     title,
     data: [{ 
-        rowName: 'Age of consent for HIV testing',
+      rowName: 'Laws requiring parental consent for adolescents to access HIV testing',
         value: _.get(age, [FIELD_MAP.VALUE_COMMENT])
       },{ 
         rowName: 'Provider-initiated testing',
