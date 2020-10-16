@@ -11,6 +11,15 @@ const firstTest = {
   definition: 'Refers to the first time an individual has ever tested for HIV'
 }
 
+const GAM = {
+  term: 'Global AIDS Monitoring',
+  definition: (
+    <span>
+      Full details of the Global AIDS Monitoring(GAM) process for monitoring the 2016 Political Declaration on ending AIDS can be found <a target='_blank' rel='noopener noreferrer' href='https://www.unaids.org/en/resources/documents/2019/Global-AIDS-Monitoring'>here</a>.
+    </span>
+  )
+}
+
 const hivPrevalence = {
   term: 'HIV prevalence',
   definition: 'Proportion of all people in the country who are HIV - infected'
@@ -29,6 +38,15 @@ const hivstNeed = {
 const newDiagnosis = {
   term: 'New diagnosis',
   definition: 'The first positive / reactive test for an individual (i.e., the first time they become aware they are living with HIV). This can be either a first test or a retest.'
+}
+
+const PEPFAR = {
+  term: 'PEPFAR',
+  definition: (
+    <span>
+      PEPFAR programme data is derived from indicators as outlined in the PEPFAR MER guidance which can be found <a target='_blank' rel='noopener noreferrer' href='https://datim.zendesk.com/hc/en-us/articles/360000084446-MER-Indicator-Reference-Guides'>here</a>.
+    </span>
+  )
 }
 
 const plhivWhoKnowStatus = {
@@ -59,15 +77,17 @@ const retest = {
 const shiny90 = {
   term: 'Shiny90',
   // TODO: add link
-  definition: <span>
-    A mathematical model that synthesizes population - based survey and HIV testing services program data to estimate awareness of HIV status over time. Full details of the model can be found <a href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>here</a>.
-  </span>,
-  links: { 
-    LINK1: {
-      text: 'here',
-      url: 'https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'
-    }
-  }
+  definition: (
+    <span>
+      A mathematical model that synthesizes population - based survey and HIV testing services program data to estimate awareness of HIV status over time. Full details of the model can be found <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>here</a>.
+    </span>
+  )
+  // links: { 
+  //   LINK1: {
+  //     text: 'here',
+  //     url: 'https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'
+  //   }
+  // }
 }
 
 
@@ -81,7 +101,24 @@ const undiagnosedPlhiv = {
   definition: 'A person living with HIV who is unaware of their HIV infection'
 }
 
-const TERMS = [diagnosticYield, firstTest, hivPrevalence, hivstDemand, hivstNeed, newDiagnosis, plhivWhoKnowStatus, plhivWhoKnowStatusNotOnArt, plhivKnowStatusOnArt, positivity, retest, shiny90, treatmentAdjustedPrevalence, undiagnosedPlhiv]
+const TERMS = [
+  diagnosticYield,
+  firstTest,
+  GAM,
+  hivPrevalence,
+  hivstDemand,
+  hivstNeed,
+  newDiagnosis,
+  PEPFAR,
+  plhivWhoKnowStatus,
+  plhivWhoKnowStatusNotOnArt,
+  plhivKnowStatusOnArt,
+  positivity,
+  retest,
+  shiny90,
+  treatmentAdjustedPrevalence,
+  undiagnosedPlhiv
+]
 
 const TERM_MAP = {
   diagnosticYield,
@@ -89,7 +126,9 @@ const TERM_MAP = {
   hivPrevalence,
   hivstDemand,
   hivstNeed,
+  GAM,
   newDiagnosis,
+  PEPFAR,
   plhivWhoKnowStatus,
   plhivWhoKnowStatusNotOnArt,
   plhivKnowStatusOnArt,

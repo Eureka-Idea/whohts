@@ -31,7 +31,7 @@ const debugList = {
   // [CHARTS.FORECAST.id]: true,
   // [CHARTS.INDEX.id]: true,
 
-  [CHARTS.PLHIV_AGE.id]: true,
+  // [CHARTS.PLHIV_AGE.id]: true,
   // [CHARTS.PLHIV_SEX.id]: true,
 }
 const debugSkipList = {

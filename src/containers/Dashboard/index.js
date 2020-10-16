@@ -27,7 +27,7 @@ HighchartsMore(ReactHighcharts.Highcharts)
 ReactHighcharts.Highcharts.theme = baseStyle
 ReactHighcharts.Highcharts.setOptions(ReactHighcharts.Highcharts.theme)
 
-const DEV = window.location.hostname === 'localhost'
+const DEV = window.location.hostname === 'localhosty'
 
 // fix legend markers
 // ReactHighcharts.Highcharts.seriesTypes.area.prototype.drawLegendSymbol = 
@@ -62,7 +62,6 @@ class Dashboard extends Component {
   componentWillMount() {
     const countryCode = _.get(this, 'props.match.params.countryCode', '').toUpperCase()
     if (!COUNTRY_MAP[countryCode]) {
-      // TODO: check country existence
       this.props.history.push('/')
       console.error('no country!')
       return
@@ -280,6 +279,55 @@ class Dashboard extends Component {
     )
   }
 
+  getResourcesSection() {
+    return (
+      <div className='row resources-section'>
+
+        <div className='col-12'>
+          <h3>Links to other sources</h3>
+          <div className='sources'>
+            {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
+              Shiny 90 Modelling Methodology
+            </a> */}
+            <a target='_blank' rel='noopener noreferrer' href='https://cfs.hivci.org/'>
+              WHO HIV Country Profiles
+            </a>
+            <a target='_blank' rel='noopener noreferrer' href='https://aidsinfo.unaids.org/'>
+              UNAIDS AIDSinfo
+            </a>
+            <a target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
+              UNAIDS - Laws and Policies
+            </a>
+            {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
+            WHO Paediatric HIV Testing
+          </a> */}
+            <a target='_blank' rel='noopener noreferrer' href='https://www.who.int/hiv/prep/global-prep-coalition/en/'>
+              Global PrEP Coalition
+            </a>
+            {DEV && <a target='_blank' rel='noopener noreferrer' href='https://master.dv1i2lva39jkq.amplifyapp.com/'>
+              PROTOTYPE DASHBOARD (fake data)
+            </a>}
+          </div>
+
+        </div>
+
+        <div className='col-12 pt-5'>
+          <h3>Glossary</h3>
+          <div className='terms'>
+            {TERMS.map(t => {
+              return (
+                <div key={t.term} className='term py-1'>
+                  <p className='name'>{t.term}</p>
+                  <p className='definition'>{t.definition}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   goToCountry(e) {
     this.props.history.push('/' + e.target.value)
   }
@@ -332,7 +380,6 @@ class Dashboard extends Component {
         <div className='loading-mask'>
           <p className='name'>{name}</p>
           <div className='squares'>
-            {/* TODO: constify separately */}
             <span style={{ backgroundColor: P95ColorA }} />
             <span style={{ backgroundColor: P95ColorB }} />
             <span style={{ backgroundColor: P95ColorC }} />
@@ -350,7 +397,7 @@ class Dashboard extends Component {
             <img src='images/who_logo.png' alt='WHO logo' />
           </Link>
           <span className='title text-center desktop'>HIV Testing Services Dashboard</span>
-          <span className='title text-center mobile'>HIVTS Dashboard</span>
+          <span className='title text-center mobile'>HIV Testing Services</span>
           <div className='input-group'>
             <select defaultValue={this.props.chartData.countryCode} onChange={this.goToCountry} className='custom-select'>
               {COUNTRIES.map(c => {
@@ -392,76 +439,12 @@ class Dashboard extends Component {
             {policy}
             {groups}
           </div>
-
-          {/* <div className='row no-gutters'>
-            <h5 className='col-12 text-center mt-4 mb-2'>HIV tests conducted and positivity in the past year</h5>
-            <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configAdults}/></div>
-            <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configCommunity}/></div>
-            <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configFacility}/></div>
-            <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configIndex}/></div>
-            <div className='col-xl-4 col-lg-6 col-md-6 col-sm-12'><ReactHighcharts config={configForecast} /></div>
-          </div> */}
-
-          {/* <div className='row no-gutters mt-5'>
-            <KPTable classes='col-sm-12 col-md-7 p-3' />
-            <PolicyTable classes='col-sm-12 col-md-5 p-3' />
-            <DemographicsTable shiny={shiny} classes='p-3' />
-          </div> */}
-
-          <div className='row no-gutters mt-5 other-source-section'>
-            <h3>Links to other sources</h3>
-            <div className='sources'>
-              {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
-                Shiny 90 Modelling Methodology
-              </a> */}
-              <a target='_blank' rel='noopener noreferrer' href='https://cfs.hivci.org/'>
-                WHO HIV Country Profiles
-              </a>
-              <a target='_blank' rel='noopener noreferrer' href='https://aidsinfo.unaids.org/'>
-                UNAIDS AIDSinfo
-              </a>
-              <a target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
-                UNAIDS - Laws and Policies
-              </a>
-              {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
-              WHO Paediatric HIV Testing
-            </a> */}
-              <a target='_blank' rel='noopener noreferrer' href='https://www.who.int/hiv/prep/global-prep-coalition/en/'>
-                Global PrEP Coalition
-              </a>
-              {DEV && <a target='_blank' rel='noopener noreferrer' href='https://master.dv1i2lva39jkq.amplifyapp.com/'>
-                PROTOTYPE DASHBOARD (fake data)
-              </a>}
-            </div>
-          </div>
-          {this.getGlossary()}
-          <br />
-          <br />
-          <br />
-        
-          {this.getDevSection()}
         </div>
-      </div>
-    )
-  }
 
-  getGlossary() {
-    return(
-      <div className='row no-gutters mt-5 glossary'>
-        <div className='col-12'>
-          <h2>Glossary</h2>
-        </div>
-        <div className='terms'>
-          {TERMS.map(t => {
-            // let definition = t.definition.replace(/{{{[.*]\|[.*]}}}/g, )
-            // _.each(t.links, (link, placeHolder) => {
-            //   definition.replace(placeHolder)
-            // })
-            return (
-              <div key={t.term} className='term py-1'><strong>{t.term}</strong>: <span>{t.definition}</span></div>
-            )
-          })}
-        </div>
+        {this.getResourcesSection()}
+      
+        {this.getDevSection()}
+
       </div>
     )
   }
@@ -476,6 +459,9 @@ class Dashboard extends Component {
 
     return (
       <div>
+        <br />
+        <br />
+        <br />
         <h5 className='text-center'>~ FOR DEVELOPMENT ~</h5>
         <h5>Color Palette</h5>
         {colors.map((c, i) => {

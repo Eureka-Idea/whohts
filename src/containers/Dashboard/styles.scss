@@ -3,10 +3,10 @@ $nav-height-sm: 50px;
 $nav-height: 64px;
 
 
-.highcharts-tooltip span {
-    background-color: rgba(256,256,256,.9);
-    // z-index:9999!important;
-}
+// .highcharts-tooltip span {
+//   background-color: rgba(256,256,256,.9);
+//   z-index:9999!important;
+// }
 
 .loading-mask {
   position: fixed;
@@ -130,7 +130,7 @@ $nav-height: 64px;
     left: 0;
     right: 0;
     height: $nav-height-sm;
-    color: $deep-sea-green;
+    // color: $deep-sea-green;
     font-weight: 600;
     background-color: white;
     // background-color: $accent-blue-x-dark;
@@ -163,7 +163,7 @@ $nav-height: 64px;
     .link-home, .export {
       margin: auto;
       padding-right: $buffer;
-      color: $deep-sea-green;
+      color: $link-color;
       font-size: 14px;
       cursor: pointer;
     }
@@ -373,7 +373,7 @@ $nav-height: 64px;
   }
 
   .charts {
-
+    // background: $vista-white;
     .card-stock {
       // padding-right: 20px;
     }
@@ -457,26 +457,6 @@ $nav-height: 64px;
       }
     }
   }
-
-  .glossary {
-    // font-family: serif;
-    .terms {
-      @media screen and (min-width: 768px) {
-        column-count: 2;
-      }
-      @media screen and (min-width: 992px) {
-        column-count: 3;
-      }
-      column-count: 1;
-      column-gap: 20px;
-      word-break: break-word;
-
-      .term {
-        // so definition doesn't split between columns
-        display: inline-block;
-      }
-    }
-  }
  
   .policy-table, .kp-table, .demographics-table {
     td, th:not(:first-of-type) {
@@ -502,18 +482,65 @@ $nav-height: 64px;
     }
   }
 
-  .other-source-section {
+  .resources-section {
+    padding: 70px 30px;
+    margin-top: 70px;
+    background: white;
     display: block;
-    a, h3 {
+
+    h3 {
       display: block;
+      // color: $near-black;
+      margin-bottom: 40px;
     }
+    .sources {
+      a {
+        display: block;
+        color: $link-color;
+      }
+    }
+
     @media screen and (min-width: 992px) {
       .sources {
         display: flex;
         justify-content: space-around;
+        a {
+          display: inline-block;
+        }
+      }
+    }
+
+    .terms {
+      column-count: 1;
+      @media screen and (min-width: 768px) {
+        column-count: 2;
+      }
+      @media screen and (min-width: 1200px) {
+        column-count: 3;
+      }
+      column-gap: 30px;
+      word-break: break-word;
+
+      .term {
+        // so definition doesn't split between columns
+        display: inline-block;
+        line-height: 1.5;
+
+        .name {
+          // color: $near-black;
+          font-weight: 600;
+          font-size: 16px;
+          margin-bottom: 6px;
+        }
+        .definition {
+          color: $sirocco;
+          font-weight: 500;
+          font-size: 14px;
+          margin-bottom: 17px;
+        }
       }
       a {
-        display: inline-block;
+        color: $link-color;
       }
     }
   }  
