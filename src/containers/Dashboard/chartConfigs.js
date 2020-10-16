@@ -1751,7 +1751,7 @@ const getExportData = (data, counttryCode, shinyCountry=false) => {
     // https://stackoverflow.com/questions/55267116/how-to-download-csv-using-a-href-with-a-number-sign-in-chrome
     hiddenElement.href = 'data:text/csvcharset=UTF-8,' + encodeURIComponent(csv)
     hiddenElement.target = '_blank'
-    hiddenElement.download = `Who HTS Data - ${counttryCode}.csv`
+    hiddenElement.download = `WHO HTS Data - ${counttryCode}.csv`
     hiddenElement.click()
     hiddenElement.remove()
   } catch (error) {
