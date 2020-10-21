@@ -346,7 +346,7 @@ const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCo
     result[ind] = mapper(ranges, (range, ri) => {
       const count = sourceCountMap[ind] || sourceCount
 
-      for (let i = 1; i <= count+1; i++) {
+      for (let i = 1; i <= (count+2); i++) { // go to count+2 in case sourceCountMap wasn't updated
         // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
         const selector = mappedData ? range : ri
         const indicatorResult = _.get(data, [ind+i, selector], null)
@@ -738,14 +738,14 @@ const getHivNegative = (data, shinyCountry=false, forExport=false) => {
     {
       name: 'Retest',
       description: TERM_MAP.retest.definition,
-      color: steelBlue,
+      color: nandor,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.retests.points,
     },
     {
       name: 'First test',
       description: TERM_MAP.firstTest.definition,
-      color: nandor,
+      color: steelBlue,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.firsts.points,
     },
@@ -831,8 +831,6 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
     {
       name: 'Retest',
       description: TERM_MAP.retest.definition,
-      // color: copper,
-      // color: froly,
       color: stormGray,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.retests.points,
@@ -875,8 +873,7 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
     {
       name: 'New diagnosis',
       description: TERM_MAP.newDiagnosis.definition,
-      color: froly,
-      // color: stormGray,
+      color: copper,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.firsts.points,
       zIndex: 1,
