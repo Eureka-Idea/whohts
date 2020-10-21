@@ -26,6 +26,7 @@ $purple: #995cb8;
 // ________ NEW COLORS ______________
 // background:
 $vista-white: #FCFAF7;
+$saturated-vista-white: #FDF5E9;
 $pampas: #F9F8F6;
 
 $deep-sea-green: #084D3E;
@@ -58,7 +59,8 @@ $link-color: #956837;
 // $link-hover-color: $cutty-sark;
 
 // TODO set better paramaters
-$max-width: calc(100vw - 65px);
-$max-width-mobile: calc(100vw - 65px);
+// $max-width-mobile: calc(100vw - 65px);
 $table-margin: 15px;
+$gutter: 15px; // just for below calc
+$max-width: calc(100vw - (2 * #{$gutter} + #{$table-margin} + 15px)); // ...
 $buffer: 10px;

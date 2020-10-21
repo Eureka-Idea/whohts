@@ -7,7 +7,7 @@
     // otherwise table overflows screen width
     max-width: $max-width;
     @media screen and (max-width: 576px) {
-      max-width: $max-width-mobile;
+      // max-width: $max-width-mobile;
     }
     @media screen and (min-width: 768px) {
       // otherwise table doesn't take up screen width

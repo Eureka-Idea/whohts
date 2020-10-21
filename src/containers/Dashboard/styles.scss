@@ -381,12 +381,12 @@ $nav-height: 64px;
     }
     
     .plhiv.tooltip-container.open {
-      width: 340px;
-      height: 220px;
+      // width: 340px;
+      // height: 220px;
 
-      .nested-boxes .box-2 .below-content {
-        width: 90px;
-      }
+      // .nested-boxes .box-2 .below-content {
+      //   width: 90px;
+      // }
     }
 
     .hivp-title {
@@ -436,8 +436,8 @@ $nav-height: 64px;
     // todo: move 
     .tooltip-container {
       position: absolute;
-      left: 0px;
-      top: 0px;
+      // left: 20px;
+      top: 20px;
       margin: 5px;
       margin: 5px;
       padding: 5px;
@@ -445,9 +445,10 @@ $nav-height: 64px;
       &.open {
         // min-width: 240px;
         // min-height: 120px;
-        font-size: 16px;
-        border: solid gray .1px;
-        background: white;
+        font-size: 12px;
+        // border: solid gray .1px;
+        background: $saturated-vista-white;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
       }
       .contents {
         margin: $buffer;
@@ -461,7 +462,7 @@ $nav-height: 64px;
   }
  
   .policy-table, .kp-table, .demographics-table {
-    margin: 0 $table-margin/2 $table-margin;
+    margin: 0 $table-margin/2 $table-margin; // update $max-width if L/R margin tweaked
     padding-bottom: $table-margin;
     td, th:not(:first-of-type) {
       text-align: right;
@@ -472,8 +473,9 @@ $nav-height: 64px;
     td {
       font-weight: 400;
     }
-    .tooltip-container {
-      top: 20px;
+    .tooltip-container.open {
+      // top: 20px;
+      font-size: 16px; // less text than the charts (PLHIV_POS) 
     }
     h2 {
       padding-top: 25px;
