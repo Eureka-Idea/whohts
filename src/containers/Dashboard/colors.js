@@ -117,6 +117,7 @@ export {
   nutmeg,
   buddhaGold,
   putty,
+  froly,
 
   femaleColor,
   maleColor,

@@ -1,4 +1,4 @@
-import colors, { femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty } from "./colors"
+import colors, { femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty, froly } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
 import { CHARTS, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP, ALL_CHARTS, CSV_FIELDS } from "../../constants/charts";
@@ -766,16 +766,45 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
   const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
 
   const dataMap = {
-    ['arts']: { points: [] },
-    ['awares']: { points: [] },
+    ['retests']: { points: [] },
+    // ['arts']: { points: [] },
+    // ['awares']: { points: [] },
     ['firsts']: { points: [] },
   }
 
   _.each(dataMap, (obj, ind) => {
-    const rows = data[ind]
+    const rows = data[ind] // only for 'firsts'
 
     yearRange.forEach((y, i) => {
-      const row = rows[i]
+      let row = _.get(rows, i)
+
+      if (ind === 'retests') {
+        const artRow = _.get(data, ['arts', i])
+        const awareRow = _.get(data, ['awares', i])
+        const artRowVal = _.get(artRow, FIELD_MAP.VALUE, 0)
+        const awareRowVal = _.get(awareRow, FIELD_MAP.VALUE, 0)
+        // console.log('artRow: ', artRowVal)
+        // console.log('awareRow: ', awareRowVal)
+
+        if (artRow && awareRow) {
+          row = _.extend({}, artRow, {
+            [FIELD_MAP.INDICATOR]: 'retests',
+            [FIELD_MAP.VALUE]: artRowVal + awareRowVal,
+            [FIELD_MAP.VALUE_UPPER]: undefined,
+            [FIELD_MAP.VALUE_LOWER]: undefined,
+            [FIELD_MAP.SOURCE_DATABASE]: '(calculated)',
+            [FIELD_MAP.NOTES]: 'based on retests_aware and retests_art'
+,
+          })
+        } else if (artRow) {
+          row = artRow
+        } else if (awareRow) {
+          row = awareRow
+        }
+
+        // console.log('RETEST VALUE: ', _.get(row, 'value'))
+      }
+
       const [point] = getPlotPoints({ row, year: y, forExport })
       if (point) {
         obj.points.push(point)
@@ -800,11 +829,13 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
   }
   const series = [
     {
-      name: 'Retest - know status on ART',
+      name: 'Retest',
       description: TERM_MAP.retest.definition,
+      // color: copper,
+      // color: froly,
       color: stormGray,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
-      data: dataMap.arts.points,
+      data: dataMap.retests.points,
       zIndex: 1,
     },
     // {
@@ -820,14 +851,14 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
     //   zIndex: 0,
     //   marker: { enabled: false }
     // },
-    {
-      name: 'Retest - know status not on ART',
-      description: TERM_MAP.retest.definition,
-      color: botticelli,
-      tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
-      data: dataMap.awares.points,
-      zIndex: 1,
-    },
+    // {
+    //   name: 'Retest - know status not on ART',
+    //   description: TERM_MAP.retest.definition,
+    //   color: botticelli,
+    //   tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
+    //   data: dataMap.awares.points,
+    //   zIndex: 1,
+    // },
     // {
     //   name: 'Retest - know status not on ART range',
     //   data: dataMap.awares.rPoints,
@@ -844,7 +875,8 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
     {
       name: 'New diagnosis',
       description: TERM_MAP.newDiagnosis.definition,
-      color: copper,
+      color: froly,
+      // color: stormGray,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.firsts.points,
       zIndex: 1,
