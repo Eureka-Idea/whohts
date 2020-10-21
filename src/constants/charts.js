@@ -968,7 +968,7 @@ const CHARTS = {
     sourceCountMap: {
       plhiv: 10,
       aware: 2,
-      prev: 9,
+      prev: 10,
       newly: 10,
       year: 15,
       ever: 5,
