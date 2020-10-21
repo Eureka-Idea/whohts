@@ -461,6 +461,8 @@ $nav-height: 64px;
   }
  
   .policy-table, .kp-table, .demographics-table {
+    margin: 0 $table-margin/2 $table-margin;
+    padding-bottom: $table-margin;
     td, th:not(:first-of-type) {
       text-align: right;
     }
@@ -554,7 +556,7 @@ $nav-height: 64px;
   
     .prog-95 {
       .card-stock {
-        overflow: scroll; // in case p95 outgrows mobile screen
+        overflow: hidden; // in case p95 outgrows mobile screen
         .content {
           
           transform: scale(.8);

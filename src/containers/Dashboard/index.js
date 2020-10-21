@@ -263,13 +263,19 @@ class Dashboard extends Component {
       [CHARTS.POLICY_TABLE.id]: PolicyTable,
     }[id]
 
+    const classes = {
+      [CHARTS.KP_TABLE.id]: 'col-sm-12 col-xl-5',
+      [CHARTS.GROUPS_TABLE.id]: 'col-sm-12',
+      [CHARTS.POLICY_TABLE.id]: 'col-sm-12 col-xl-7',
+    }[id]
+
     if (!Table) {
       console.error(`${id} is not a valid table type.`)
       return
     }
 
     return (
-      <div className='col-sm-12'>
+      <div className={classes}>
         <div className='card-stock'>
           {/* <div className='chart-container'> */}
             {<Table config={config} iso={countryCode} />}
@@ -434,7 +440,7 @@ class Dashboard extends Component {
             {facility}
             {index}
             {forecast}
-
+            <div className='col-12 mt-2'>&nbsp;</div>
             {kp}
             {policy}
             {groups}

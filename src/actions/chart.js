@@ -23,9 +23,11 @@ const debugList = {
   // [CHARTS.FACILITY.id]: true,
   // [CHARTS.CONTEXT.id]: true,
   // [CHARTS.P95.id]: true,
-  // [CHARTS.GROUPS_TABLE.id]: true,
-  // [CHARTS.POLICY_TABLE.id]: true,
-  // [CHARTS.KP_TABLE.id]: true,
+  
+  [CHARTS.GROUPS_TABLE.id]: true,
+  [CHARTS.POLICY_TABLE.id]: true,
+  [CHARTS.KP_TABLE.id]: true,
+
   // [CHARTS.ADULTS.id]: true,
   // [CHARTS.COMMUNITY.id]: true,
   // [CHARTS.FORECAST.id]: true,
