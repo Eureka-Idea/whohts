@@ -10,15 +10,15 @@
 
     font-weight: 300;
     white-space: pre;
-  }
-
-  @media screen and (min-width: 1200px) {
-    font-size: 24px;
+    
+    @media screen and (min-width: 1200px) {
+      font-size: 24px;
+    }
   }
   
   .nested-boxes {
     svg {
-      padding-left: 10%;
+      padding-left: 15%;
       display: block;
       margin: auto;
       max-height: 300px;

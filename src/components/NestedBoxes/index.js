@@ -4,8 +4,8 @@ import _ from 'lodash'
 
 const BUFFER_RATIO = .2
 const DEFAULT_RATIO = .7
-const FONT_SIZE_RATIO = .2
-const HEADER_FONT_SIZE_RATIO = .3
+const FONT_SIZE_RATIO = .16
+const HEADER_FONT_SIZE_RATIO = .22
 
 class NestedBoxes extends Component {
   constructor(props) {
@@ -52,7 +52,7 @@ class NestedBoxes extends Component {
           <tspan className='percent' x={bufferDistance} style={{ fill: colorInner, fontSize: headerFontSize }}>
             {inner || 'Unknown '}%
           </tspan>
-          {below.map(txt => <tspan className='description' x={bufferDistance} dy={fontSize}>{txt}</tspan>)}
+          {below.map(txt => <tspan className='description' x={bufferDistance} dy={fontSize*1.1}>{txt}</tspan>)}
         </text>
       )
       texts.push(text)
