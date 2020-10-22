@@ -182,14 +182,33 @@ class Dashboard extends Component {
             <NestedBoxes
               // circle={true}
               title={title}
-              side={110}
+              side={20}
               ratios={config}
               // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
               colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
               content={[
-                { inner: status, below: 'of people living with HIV know their status' },
-                { inner: art, below: 'of people living with HIV who know their status are on treatment' },
-                { inner: suppression, below: 'of people on treatment are virally suppressed' },
+                { 
+                  inner: status,
+                  below: [
+                    'of people living with',
+                    'HIV know their status'
+                  ]
+                },
+                { 
+                  inner: art,
+                  below: [
+                    'of people living with',
+                    'HIV who know their status',
+                    'are on treatment'
+                  ]
+                },
+                { 
+                  inner: suppression,
+                  below: [
+                    'of people on treatment',
+                    'are virally suppressed'
+                  ]
+                },
                 // { inner: status, below: ['of people living with HIV', 'know their status'] },
                 // { inner: art, below: ['of people living with HIV', 'who know their status', 'are on treatment'] },
                 // { inner: suppression, below: ['of people on treatment are virally suppressed'] },
@@ -390,7 +409,7 @@ class Dashboard extends Component {
     // console.log('### (url PARAM of: ', _.get(this, 'props.match.params.countryCode', '').toUpperCase() + ')')
 
     // console.log('### LOADING: ', this.state.loading)
-    if (this.state.loading) {
+    if (this.state.loading && false) {
 
       const countryCode = _.get(this, 'props.match.params.countryCode', null)
       const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])

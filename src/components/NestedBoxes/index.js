@@ -1,153 +1,83 @@
 import React, {Component} from 'react'
 import './styles.css'
+import _ from 'lodash'
 
-const EXPANDER = 1.1
+const BUFFER_RATIO = .2
+const DEFAULT_RATIO = .7
 
 class NestedBoxes extends Component {
   constructor(props) {
     super(props)
-    
-    this.getBoxes = this.getBoxes.bind(this)
-    this.getInards = this.getInards.bind(this)
-    this.getBelow = this.getBelow.bind(this)
-    this.accumulatedBorderWidth = 0
-  }
-  
-  getBoxes(side, idx) {
-    if (idx === 0) {
-      this.accumulatedBorderWidth = 0
-    }
-    
-    const { ratios } = this.props
-    let ratio = ratios[idx]
-    const noRatio = !ratio
-    ratio = ratio || .8 // todo: default
-    const nextSide = (ratio*side) //for border px
-    const borderWidth = (side - nextSide)/2
-    
-    const height = idx === 0 ? side : '100%'
-		const color = this.props.colors[idx] || 'black'
-    const boxStyle = {
-      height,
-      width: side - (1.8*idx), // pixfix
-      background: this.props.colors[idx+1],
-      border: `solid ${borderWidth}px ${color}`,
-      borderRadius: this.props.circle ? '50%' : 0
-    }
-
-    // must call this before getBoxes for nextBoxes for accumulatedBorder hack to work
-    const below = this.getBelow(idx, borderWidth)
-    
-    let nextBoxes;
-		 if (idx < this.props.ratios.length - 1) {
-     	let borderColor = 'transparent'
-      if (
-      	!this.props.circle &&
-        !this.props.bridgeless &&
-        this.props.colors[idx+1]
-       ) {
-       	borderColor = this.props.colors[idx+1]
-       }
-      const bridgeStyle = {
-        width: (side * EXPANDER) + this.props.side-borderWidth,
-        // width: (side + nextSide - borderWidth) + (nextSide/8) - (3.6*idx), // pixfix
-        borderColor: borderColor
-      }
-    	nextBoxes = (
-      	<div 
-          className={'bridge bridge-'+idx}
-          style={bridgeStyle}
-        >
-          {this.getBoxes(nextSide, idx+1)}
-        </div>
-      )
-    }
-
-    return (
-    	<div
-        style={boxStyle}
-        className={'box box-'+idx}
-      >
-       {nextBoxes}
-       {this.getInards(idx, nextSide)}
-       {below}
-      </div>
-    )
-  }
-  
-  getInards(idx, innerSide) {
-  	if (
-    	!this.props.content ||
-      !this.props.content[idx] ||
-      !this.props.content[idx].inner
-     ) return
-    const content = this.props.content[idx].inner
-    return null
-  	return (
-    	<div
-        className={'inner-content inner-content-'+idx}
-        style={{fontSize: innerSide/3}}
-       >
-        <div>{content}</div>
-      </div>
-    )
-  }  
-  
-  getBelow(idx, borderWidth) {
-  	if (
-    	!this.props.content ||
-      !this.props.content[idx] ||
-      !this.props.content[idx].below
-     ) return
-    const content = this.props.content[idx].below
-    const heading = this.props.content[idx].inner || 'Unknown '
-
-    // TODO: eliminate hack
-    this.accumulatedBorderWidth += borderWidth
-
-  	return (
-    	<div
-        className={'below-content below-content-'+idx}
-        style={{
-          // transform: `translate(0, ${borderWidth+5}px)`,
-          top: `calc(100% + ${this.accumulatedBorderWidth + 5}px)`,
-          left: -borderWidth,
-          width: this.props.side
-          // right: -(this.props.side),
-          // right: -borderWidth,
-        }}
-       >
-        <span className='heading' style={{ color: this.props.colors[idx + 1] }}>{heading}%</span>
-        {/* <div>{content.map(text => <div key={text}>{text}</div>)}</div> */}
-        <div>{content}</div>
-      </div>
-    )
   }
   
   render() {
-    const boxes = this.getBoxes(this.props.side, 0)
+    const bufferDistance = this.props.side * (1 + BUFFER_RATIO)
 
-    let width = this.props.side * (this.props.ratios.length) * EXPANDER
-    // let sideLength = this.props.side
-    // this.props.ratios.forEach((r,i) => {
-    //   if (i === this.props.ratios.length-1) {
-    //     return
-    //   }
+    let side = this.props.side
+    let x = 0
+    let y = 0
 
-    //   sideLength *= r
-    //   width += 9/8 * sideLength // include bridge width
-    // })
-    
-    const style = {
-      width: width + 'px',
-      minHeight: '270px',
-      // height: (this.props.side * 2) + 'px',
-    }
+    const fontSize = this.props.side/4
+
+    const rects = []
+    const texts = []
+    const connectingLines = []
+
+    _.each(this.props.ratios, (ratio, i) => {
+      const noRatio = !ratio
+      ratio = ratio || DEFAULT_RATIO
+
+      const colorOuter = this.props.colors[i]
+      const colorInner = this.props.colors[i+1]
+
+      // add outer box
+      rects.push(<rect x={x} y={y} width={side} height={side} fill={colorOuter} />)
+      
+      let nextSide = side * ratio
+      const borderWidth = (side - nextSide)/2 // the amount of outer box that shows around the inner box
+      x += borderWidth
+      y += borderWidth
+      side = nextSide
+      
+      // add inner box
+      rects.push(<rect x={x} y={y} width={side} height={side} fill={colorInner} />)
+
+      const { inner, below = [] } = _.get(this.props.content, i, {})
+
+      const text = (
+        <text fontSize={fontSize} x={0} y={y + fontSize}>
+          <tspan className='percent' x={bufferDistance} style={{ fill: colorInner, fontSize: fontSize*1.25 }}>
+            {inner || 'Unknown '}%
+          </tspan>
+          {below.map(txt => <tspan className='description' x={bufferDistance} dy={fontSize}>{txt}</tspan>)}
+        </text>
+      )
+      texts.push(text)
+
+      if (i === this.props.ratios.length-1) {
+        return
+      }
+
+      const line1 = <line stroke={colorInner} x1={x} x2={x} y1={y+side} y2={y+bufferDistance} />
+      const line2 = <line stroke={colorInner} x1={x+side} x2={x+side} y1={y+side} y2={y+bufferDistance} />
+      connectingLines.push(line1, line2)
+      
+      // if there's another box coming, add lines to it
+      y += bufferDistance
+      
+    })
+
+    const sideTextWidth = bufferDistance + this.props.side
+    const totalY = y + this.props.side
+    const totalX = sideTextWidth + this.props.side
     
     return (
-      <div className='nested-boxes' style={style}>
-        <p className='title'>{this.props.title}</p>
-        {boxes}
+      <div className='nested-boxes'>
+        <svg viewBox={`0 0 ${totalX} ${totalY}`}>
+          {rects}
+          {texts}
+          {connectingLines}
+        </svg>
       </div>
     )
   }

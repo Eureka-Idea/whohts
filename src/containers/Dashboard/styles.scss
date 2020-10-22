@@ -362,7 +362,7 @@ $nav-height: 64px;
 
     .prog-95 {
       .card-stock {
-        margin-top: 0;
+        // margin-top: 0;
         // margin-left: 1.5*$buffer;
       }
     }
@@ -556,16 +556,16 @@ $nav-height: 64px;
 @media screen and (max-width: 576px) {
   .dashboard {
   
-    .prog-95 {
-      .card-stock {
-        overflow: hidden; // in case p95 outgrows mobile screen
-        .content {
+    // .prog-95 {
+    //   .card-stock {
+    //     overflow: hidden; // in case p95 outgrows mobile screen
+    //     .content {
           
-          transform: scale(.8);
-          padding: 20px 0px !important;
-        }
-      }
-    }
+    //       transform: scale(.8);
+    //       padding: 20px 0px !important;
+    //     }
+    //   }
+    // }
   }
 }
 

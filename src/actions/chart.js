@@ -16,13 +16,13 @@ const myInit = {
 const DEV = window.location.hostname === 'localhost'
 
 const debugList = {
+  [CHARTS.P95.id]: true,
+  [CHARTS.CONTEXT.id]: true,
+  [CHARTS.PLHIV_DIAGNOSIS.id]: true,
   // [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
-  // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
   // [CHARTS.FACILITY.id]: true,
-  // [CHARTS.CONTEXT.id]: true,
-  // [CHARTS.P95.id]: true,
   
   [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.POLICY_TABLE.id]: true,

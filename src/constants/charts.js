@@ -1625,6 +1625,7 @@ const getIndicatorMap = (isShiny) => {
       {
         id: 'aware1',
         [F.INDICATOR]: 'Percent of people living with HIV who know their status',
+        [F.AGE]: '15+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
@@ -1632,12 +1633,12 @@ const getIndicatorMap = (isShiny) => {
           const resultMap = {}
 
           _.each(['Females', 'Males'], sex => {
-            const fResults = _.filter(results, r =>
-              r[F.SEX] === sex && r[F.AGE] === '15+')
+            const fResults = _.filter(results, r => r[F.SEX] === sex)
 
             resultMap[`${sex[0].toLowerCase()}${ALL_ADULTS}`] = _.maxBy(fResults, 'year')
           })
 
+          console.log('&&&&&', resultMap)
           return resultMap
         }
       },
