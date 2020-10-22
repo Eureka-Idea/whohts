@@ -125,7 +125,7 @@ class Dashboard extends Component {
       </ReactTooltip>
     )
     return (
-      <div className='col-xl-6 col-lg-6 col-xs-12 country-context'>
+      <div className='col-xl-6 col-md-6 col-xs-12 country-context'>
         <div className='card-stock'>
           <div className='content'>
             <p className='name'>{name}</p>
@@ -174,46 +174,42 @@ class Dashboard extends Component {
     )
     
     return (
-      <div className='col-xl-6 col-lg-6 col-xs-12 prog-95'>
+      <div className='col-xl-6 col-md-6 col-xs-12 prog-95'>
         <div className='card-stock'>
+          <p className='title'>{title}</p>
           <div className='content'>
-            {/* <p className='title'>{title}</p> */}
             <a data-tip data-for={tooltipId}>
-            <NestedBoxes
-              // circle={true}
-              title={title}
-              side={20}
-              ratios={config}
-              // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
-              colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
-              content={[
-                { 
-                  inner: status,
-                  below: [
-                    'of people living with',
-                    'HIV know their status'
-                  ]
-                },
-                { 
-                  inner: art,
-                  below: [
-                    'of people living with',
-                    'HIV who know their status',
-                    'are on treatment'
-                  ]
-                },
-                { 
-                  inner: suppression,
-                  below: [
-                    'of people on treatment',
-                    'are virally suppressed'
-                  ]
-                },
-                // { inner: status, below: ['of people living with HIV', 'know their status'] },
-                // { inner: art, below: ['of people living with HIV', 'who know their status', 'are on treatment'] },
-                // { inner: suppression, below: ['of people on treatment are virally suppressed'] },
-              ]}
-            />
+              <NestedBoxes
+                // circle={true}
+                title={title}
+                side={20}
+                ratios={config}
+                colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
+                content={[
+                  { 
+                    inner: status,
+                    below: [
+                      'of people living with',
+                      'HIV know their status'
+                    ]
+                  },
+                  { 
+                    inner: art,
+                    below: [
+                      'of people living with',
+                      'HIV who know their status',
+                      'are on treatment'
+                    ]
+                  },
+                  { 
+                    inner: suppression,
+                    below: [
+                      'of people on treatment',
+                      'are virally suppressed'
+                    ]
+                  },
+                ]}
+              />
             </a>
             {tooltip}
           </div>

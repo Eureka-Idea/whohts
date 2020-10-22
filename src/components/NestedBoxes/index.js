@@ -4,6 +4,8 @@ import _ from 'lodash'
 
 const BUFFER_RATIO = .2
 const DEFAULT_RATIO = .7
+const FONT_SIZE_RATIO = .2
+const HEADER_FONT_SIZE_RATIO = .3
 
 class NestedBoxes extends Component {
   constructor(props) {
@@ -17,7 +19,8 @@ class NestedBoxes extends Component {
     let x = 0
     let y = 0
 
-    const fontSize = this.props.side/4
+    const fontSize = this.props.side * FONT_SIZE_RATIO
+    const headerFontSize = this.props.side * HEADER_FONT_SIZE_RATIO
 
     const rects = []
     const texts = []
@@ -46,7 +49,7 @@ class NestedBoxes extends Component {
 
       const text = (
         <text fontSize={fontSize} x={0} y={y + fontSize}>
-          <tspan className='percent' x={bufferDistance} style={{ fill: colorInner, fontSize: fontSize*1.25 }}>
+          <tspan className='percent' x={bufferDistance} style={{ fill: colorInner, fontSize: headerFontSize }}>
             {inner || 'Unknown '}%
           </tspan>
           {below.map(txt => <tspan className='description' x={bufferDistance} dy={fontSize}>{txt}</tspan>)}
@@ -57,14 +60,14 @@ class NestedBoxes extends Component {
       if (i === this.props.ratios.length-1) {
         return
       }
-
+      
+      // if there's another box coming, add lines to it
       const line1 = <line stroke={colorInner} x1={x} x2={x} y1={y+side} y2={y+bufferDistance} />
       const line2 = <line stroke={colorInner} x1={x+side} x2={x+side} y1={y+side} y2={y+bufferDistance} />
       connectingLines.push(line1, line2)
       
-      // if there's another box coming, add lines to it
+      // and shift down for the next
       y += bufferDistance
-      
     })
 
     const sideTextWidth = bufferDistance + this.props.side
@@ -73,6 +76,7 @@ class NestedBoxes extends Component {
     
     return (
       <div className='nested-boxes'>
+        {/* <p className='title'>{this.props.title}</p> */}
         <svg viewBox={`0 0 ${totalX} ${totalY}`}>
           {rects}
           {texts}

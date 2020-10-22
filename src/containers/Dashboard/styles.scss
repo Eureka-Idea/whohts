@@ -215,9 +215,13 @@ $nav-height: 64px;
   }
 
   .country-context {
-    // height: 100%;
+    padding-bottom: 2*$buffer;
     .card-stock {
       height: 100%;
+    }
+
+    @media screen and (min-width: 768px) {
+      padding-bottom: 0;
     }
 
     .content {
@@ -265,7 +269,7 @@ $nav-height: 64px;
         padding-bottom: 3*$buffer;
       }
       .details {
-        // flex-direction: column;
+        flex-direction: column;
         // padding-bottom: 0;
         .detail {
           padding-bottom: $buffer;
@@ -288,7 +292,7 @@ $nav-height: 64px;
         // font-size: 54px;
       }
       .details {
-        flex-direction: column;
+        // flex-direction: column;
         .detail {
           .title {
             // font-size: 15px;
@@ -309,7 +313,7 @@ $nav-height: 64px;
         font-size: 72px;
       }
       .details {
-        flex-direction: row;
+        // flex-direction: row;
         .detail {
           &:first-of-type {
             padding-right: 72px;
@@ -327,20 +331,8 @@ $nav-height: 64px;
 
   .prog-95 {
     max-width: 100vw; // NOTE: prevent screen expansion on mobile
-    .card-stock {
-      margin-top: 2*$buffer;;
-    }
-
-    .nested-boxes {
-      margin: auto;
-    }
-    
     display: flex;
     justify-content: center;
-
-    .content {
-      // background: white;
-    }
   }
 
   .card-stock {
@@ -350,27 +342,6 @@ $nav-height: 64px;
     // padding: 10px;
     .content {
       padding: 30px 50px;
-    }
-  }
-
-  @media screen and (min-width: 992px) {
-    .country-context {
-      .card-stock {
-        // margin-right: 1.5*$buffer;
-      }
-    }
-
-    .prog-95 {
-      .card-stock {
-        // margin-top: 0;
-        // margin-left: 1.5*$buffer;
-      }
-    }
-  }
-
-  @media screen and (min-width: 1200px) {
-    .card-stock {
-
     }
   }
 

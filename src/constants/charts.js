@@ -1638,7 +1638,6 @@ const getIndicatorMap = (isShiny) => {
             resultMap[`${sex[0].toLowerCase()}${ALL_ADULTS}`] = _.maxBy(fResults, 'year')
           })
 
-          console.log('&&&&&', resultMap)
           return resultMap
         }
       },
