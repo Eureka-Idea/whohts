@@ -183,6 +183,7 @@ class Dashboard extends Component {
                 // circle={true}
                 title={title}
                 side={20}
+                horizontal={true}
                 ratios={config}
                 colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
                 content={[

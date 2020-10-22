@@ -25,12 +25,14 @@
     }
 
     line {
-      stroke-width: .4;
-      stroke-dasharray: .6 .8;
+      stroke-width: .6;
+      stroke-dasharray: 1 1.2;
     }
 
     text {
-
+      .percent {
+        font-weight: 600;
+      }
     }
   }
 }

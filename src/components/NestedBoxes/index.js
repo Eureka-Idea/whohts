@@ -13,6 +13,10 @@ class NestedBoxes extends Component {
   }
   
   render() {
+    const resolveOrientation = (v1, v2) => {
+       return this.props.horizontal ? v2 : v1
+    }
+    
     const bufferDistance = this.props.side * (1 + BUFFER_RATIO)
 
     let side = this.props.side
@@ -34,7 +38,7 @@ class NestedBoxes extends Component {
       const colorInner = this.props.colors[i+1]
 
       // add outer box
-      rects.push(<rect x={x} y={y} width={side} height={side} fill={colorOuter} />)
+      rects.push(<rect x={resolveOrientation(x, y)} y={resolveOrientation(y, x)} width={side} height={side} fill={colorOuter} />)
       
       let nextSide = side * ratio
       const borderWidth = (side - nextSide)/2 // the amount of outer box that shows around the inner box
@@ -43,16 +47,38 @@ class NestedBoxes extends Component {
       side = nextSide
       
       // add inner box
-      rects.push(<rect x={x} y={y} width={side} height={side} fill={colorInner} />)
+      rects.push(
+        <rect 
+          x={resolveOrientation(x, y)}
+          y={resolveOrientation(y, x)}
+          width={side}
+          height={side}
+          fill={colorInner}
+        />
+      )
 
       const { inner, below = [] } = _.get(this.props.content, i, {})
 
       const text = (
-        <text fontSize={fontSize} x={0} y={y + fontSize}>
-          <tspan className='percent' x={bufferDistance} style={{ fill: colorInner, fontSize: headerFontSize }}>
+        <text
+          fontSize={fontSize}
+          // set the initial y for all tspans
+          // the x we set on each individually so they don't try to go one after another
+          y={resolveOrientation(y+fontSize, bufferDistance)}
+        >
+          <tspan
+            className='percent'
+            x={resolveOrientation(bufferDistance, y)}
+            style={{ fill: colorInner, fontSize: headerFontSize }}
+          >
             {inner || 'Unknown '}%
           </tspan>
-          {below.map(txt => <tspan className='description' x={bufferDistance} dy={fontSize*1.1}>{txt}</tspan>)}
+          {below.map((txt, i) => 
+            <tspan
+              className='description' 
+              x={resolveOrientation(bufferDistance, y)}
+              dy={fontSize*1.1}
+            >{txt}</tspan>)}
         </text>
       )
       texts.push(text)
@@ -62,8 +88,26 @@ class NestedBoxes extends Component {
       }
       
       // if there's another box coming, add lines to it
-      const line1 = <line stroke={colorInner} x1={x} x2={x} y1={y+side} y2={y+bufferDistance} />
-      const line2 = <line stroke={colorInner} x1={x+side} x2={x+side} y1={y+side} y2={y+bufferDistance} />
+      const line1 = (
+        <line
+          stroke={colorInner}
+          x1={resolveOrientation(x, y+side)}
+          x2={resolveOrientation(x, y+bufferDistance)}
+
+          y1={resolveOrientation(y+side, x)}
+          y2={resolveOrientation(y+bufferDistance, x)}
+        />
+      )
+      const line2 = (
+        <line
+          stroke={colorInner}
+          x1={resolveOrientation(x+side, y+side)}
+          x2={resolveOrientation(x+side, y+bufferDistance)}
+
+          y1={resolveOrientation(y+side, x+side)}
+          y2={resolveOrientation(y+bufferDistance, x+side)}
+        />
+      )
       connectingLines.push(line1, line2)
       
       // and shift down for the next
@@ -77,7 +121,7 @@ class NestedBoxes extends Component {
     return (
       <div className='nested-boxes'>
         {/* <p className='title'>{this.props.title}</p> */}
-        <svg viewBox={`0 0 ${totalX} ${totalY}`}>
+        <svg viewBox={`0 0 ${resolveOrientation(totalX, totalY)} ${resolveOrientation(totalY, totalX)}`}>
           {rects}
           {texts}
           {connectingLines}
