@@ -241,9 +241,9 @@ class DemographicsTable extends Component {
   getGroupToggles() {
     return(
       <div className='group-toggles mt-3'>
-        <span onClick={this.toggleGroup.bind(this, 'show-all')} className='token group show-all'>Show All</span>
         <span onClick={this.toggleGroup.bind(this, 'show-women')} className='token group show-women'>Only Women</span>
         <span onClick={this.toggleGroup.bind(this, 'show-men')} className='token group show-men'>Only Men</span>
+        <span onClick={this.toggleGroup.bind(this, 'show-all')} className='token group show-all'>Show All</span>
         <span onClick={this.toggleGroup.bind(this, 'hide-all')} className='token group hide-all'>Hide All</span>
       </div>
     )
