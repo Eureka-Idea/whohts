@@ -57,12 +57,13 @@
       min-height: 210px;
     }
   }
-  @media screen and (min-width: 376px) and (max-width: 768px) {
+  @media screen and (min-width: 376px) and (max-width: 767.9px) {
     .content {
       display: flex;
       justify-content: center;
     }
     svg {
+      min-width: 220px; // without this Chrome lets it shrink to width 0
       min-height: 250px;
     }
     .title {

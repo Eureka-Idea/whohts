@@ -16,11 +16,11 @@ const myInit = {
 const DEV = window.location.hostname === 'localhost'
 
 const debugList = {
-  [CHARTS.P95.id]: true,
-  [CHARTS.CONTEXT.id]: true,
+  // [CHARTS.P95.id]: true,
+  // [CHARTS.CONTEXT.id]: true,
   // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
   // [CHARTS.PREVALENCE.id]: true,
-  [CHARTS.HIV_POSITIVE.id]: true,
+  // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
   // [CHARTS.FACILITY.id]: true,
   
@@ -46,9 +46,9 @@ export const getChartData = (countryCode) =>
     const isShiny = _.get(COUNTRY_MAP, [countryCode, 'shiny'], false)
     let indicatorMap = getIndicatorMap(isShiny)
 
-    if (!_.isEmpty(DEV && debugList)) {
+    if (DEV && !_.isEmpty(debugList)) {
       indicatorMap = _.pickBy(indicatorMap, (v, k) => debugList[k])
-    } else if (!_.isEmpty(DEV && debugSkipList)) {
+    } else if (DEV && !_.isEmpty(debugSkipList)) {
       indicatorMap = _.pickBy(indicatorMap, (v, k) => !debugList[k])
     }
     
@@ -59,6 +59,12 @@ export const getChartData = (countryCode) =>
         let char = ''
         _.each(FIELD_MAP, f => {
           let chartValue = indicator[f]
+
+          if (f === FIELD_MAP.VALUE_COMMENT) {
+            // unless we want a specific value comment, every query should request non-suppressed data values
+            // chartValue = chartValue || '!suppressed'
+          }
+          
           if (chartValue) {
             if (f === FIELD_MAP.COUNTRY_ISO_CODE) {
               chartValue = countryCode
