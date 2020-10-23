@@ -38,6 +38,15 @@
     }
   }
   
+  @media screen and (max-width: 376px) {
+    .title {
+      font-size: 16px;
+      top: 115px;
+    }
+    svg {
+      min-height: 180px;
+    }
+  }
   @media screen and (min-width: 1200px) {
     .title {
       display: none;
@@ -46,7 +55,7 @@
       }
       transform: none;
       position: static;
-      font-size: 28px;
+      font-size: 24px;
       text-align: center;
     }
     .nested-boxes {
@@ -55,8 +64,8 @@
         display: block;
       }
       svg {
-        padding-left: 0;
-        max-height: 300px;
+        padding-left: 30px;
+        max-height: 210px;
       }
     }
   }

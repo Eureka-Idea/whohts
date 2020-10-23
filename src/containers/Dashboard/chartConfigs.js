@@ -769,11 +769,11 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
     ['retests']: { points: [] },
     // ['arts']: { points: [] },
     // ['awares']: { points: [] },
-    ['firsts']: { points: [] },
+    ['news']: { points: [] },
   }
 
   _.each(dataMap, (obj, ind) => {
-    const rows = data[ind] // only for 'firsts'
+    const rows = data[ind] // only for 'news'
 
     yearRange.forEach((y, i) => {
       let row = _.get(rows, i)
@@ -875,12 +875,12 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
       description: TERM_MAP.newDiagnosis.definition,
       color: copper,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
-      data: dataMap.firsts.points,
+      data: dataMap.news.points,
       zIndex: 1,
     },
     // {
     //   name: 'New diagnosis15+) range',
-    //   data: dataMap.firsts.rPoints,
+    //   data: dataMap.news.rPoints,
     //   pointStart: 2015,
     //   type: 'arearange',
     //   enableMouseTracking: false,

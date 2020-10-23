@@ -821,7 +821,7 @@ const CHARTS = {
     indicators: {
       arts: 'retests_art',
       awares: 'retests_aware',
-      firsts: 'tests_first',
+      news: 'new_diagnoses',
     }
   },
   PREVALENCE: {
