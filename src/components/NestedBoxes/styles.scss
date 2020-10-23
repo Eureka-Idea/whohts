@@ -2,6 +2,9 @@
 
 .prog-95 {
   .title {
+    &.xl {
+      display: none;
+    }
     transform: rotate(-90deg);
     position: absolute;
     left: calc(-120px + 25%);
@@ -10,28 +13,50 @@
 
     font-weight: 300;
     white-space: pre;
-    
-    @media screen and (min-width: 1200px) {
-      font-size: 24px;
-    }
   }
   
   .nested-boxes {
+    &.xl {
+      display: none;
+    }
     svg {
       padding-left: 15%;
       display: block;
       margin: auto;
       max-height: 300px;
     }
-
+    
     line {
       stroke-width: .6;
       stroke-dasharray: 1 1.2;
     }
-
+    
     text {
       .percent {
         font-weight: 600;
+      }
+    }
+  }
+  
+  @media screen and (min-width: 1200px) {
+    .title {
+      display: none;
+      &.xl {
+        display: block;
+      }
+      transform: none;
+      position: static;
+      font-size: 28px;
+      text-align: center;
+    }
+    .nested-boxes {
+      display: none;
+      &.xl {
+        display: block;
+      }
+      svg {
+        padding-left: 0;
+        max-height: 300px;
       }
     }
   }

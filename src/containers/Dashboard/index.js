@@ -125,7 +125,7 @@ class Dashboard extends Component {
       </ReactTooltip>
     )
     return (
-      <div className='col-xl-6 col-md-6 col-xs-12 country-context'>
+      <div className='col-xl-5 col-md-6 col-xs-12 country-context'>
         <div className='card-stock'>
           <div className='content'>
             <p className='name'>{name}</p>
@@ -172,45 +172,58 @@ class Dashboard extends Component {
         <div>Year: {config.year}</div>
       </ReactTooltip>
     )
+
+    const getBoxes = (xl) => {
+
+      return (
+        <NestedBoxes
+          // circle={true}
+          classes={xl ? 'xl' : ''}
+          title={title}
+          bufferRatio={xl ? .8 : .2}
+          lineHeight={xl ? 1.4 : 1.1}
+          textBufferRatio={.2}
+          firstSide={20}
+          horizontal={xl}
+          ratios={config}
+          colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
+          content={[
+            {
+              inner: status,
+              below: [
+                'of people living with',
+                'HIV know their status'
+              ]
+            },
+            {
+              inner: art,
+              below: [
+                'of people living with',
+                'HIV who know their status',
+                'are on treatment'
+              ]
+            },
+            {
+              inner: suppression,
+              below: [
+                'of people on treatment',
+                'are virally suppressed'
+              ]
+            },
+          ]}
+        />
+      )
+    }
     
     return (
-      <div className='col-xl-6 col-md-6 col-xs-12 prog-95'>
+      <div className='col-xl-7 col-md-6 col-xs-12 prog-95'>
         <div className='card-stock'>
           <p className='title'>{title}</p>
           <div className='content'>
+            <p className='title xl'>{title}</p>
             <a data-tip data-for={tooltipId}>
-              <NestedBoxes
-                // circle={true}
-                title={title}
-                side={20}
-                horizontal={true}
-                ratios={config}
-                colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
-                content={[
-                  { 
-                    inner: status,
-                    below: [
-                      'of people living with',
-                      'HIV know their status'
-                    ]
-                  },
-                  { 
-                    inner: art,
-                    below: [
-                      'of people living with',
-                      'HIV who know their status',
-                      'are on treatment'
-                    ]
-                  },
-                  { 
-                    inner: suppression,
-                    below: [
-                      'of people on treatment',
-                      'are virally suppressed'
-                    ]
-                  },
-                ]}
-              />
+              {getBoxes()}
+              {getBoxes(true)}
             </a>
             {tooltip}
           </div>
@@ -406,7 +419,7 @@ class Dashboard extends Component {
     // console.log('### (url PARAM of: ', _.get(this, 'props.match.params.countryCode', '').toUpperCase() + ')')
 
     // console.log('### LOADING: ', this.state.loading)
-    if (this.state.loading && false) {
+    if (this.state.loading) {
 
       const countryCode = _.get(this, 'props.match.params.countryCode', null)
       const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
