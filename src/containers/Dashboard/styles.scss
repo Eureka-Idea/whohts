@@ -311,6 +311,7 @@ $nav-height: 64px;
       
       .name {
         font-size: 72px;
+        padding-top: 2*$buffer;
       }
       .details {
         // flex-direction: row;
