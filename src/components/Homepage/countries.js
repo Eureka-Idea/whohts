@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 const COUNTRIES = [
-  { ISO: 'AGO', name: 'Angola', shiny: false },
+  // { ISO: 'AGO', name: 'Angola', shiny: false },
   { ISO: 'BWA', name: 'Botswana', shiny: true },
   { ISO: 'BRA', name: 'Brazil', shiny: false },
   { ISO: 'KHM', name: 'Cambodia', shiny: false },

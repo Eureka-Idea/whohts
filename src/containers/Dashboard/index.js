@@ -393,7 +393,7 @@ class Dashboard extends Component {
           </p>
 
           <p>
-            For more details on the methods for calculating and interpreting retesting proportions from the Shiny90 model, see <a href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx' target='_blank'>Maheu-Giroux, M. et al. (2019) AIDS v33 p S255.</a>
+            For more details on the methods for calculating and interpreting retesting proportions from the Shiny90 model, see <a href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx' target='_blank'>Maheu-Giroux, M. et al. (2019) AIDS v33 p S255</a> and <a href='https://www.medrxiv.org/content/10.1101/2020.10.20.20216283v1' target='_blank'>Giguère, K. et al. (2020) preprint</a>.
           </p>
         </div>
       </Tooltip>
@@ -441,9 +441,9 @@ class Dashboard extends Component {
     return (
       <div className='dashboard'>
         <div className='nav'>
-          <Link className='who-logo' to='/'>
+          <a className='who-logo' href='https://who.int/' target='_blank'>
             <img src='images/who_logo.png' alt='WHO logo' />
-          </Link>
+          </a>
           <span className='title text-center desktop'>HIV Testing Services Dashboard</span>
           <span className='title text-center mobile'>HIV Testing Services</span>
           <div className='input-group'>
