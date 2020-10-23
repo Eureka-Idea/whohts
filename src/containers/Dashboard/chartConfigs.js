@@ -763,7 +763,7 @@ const getHivNegative = (data, shinyCountry=false, forExport=false) => {
 
 const getHivPositive = (data, shinyCountry=false, forExport=false) => {
   const { yearRange } = CHARTS.HIV_POSITIVE
-  const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
+  const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and re-diagnoses'
 
   const dataMap = {
     ['retests']: { points: [] },
@@ -829,7 +829,7 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
   }
   const series = [
     {
-      name: 'Retest',
+      name: 'Re-diagnosis',
       description: TERM_MAP.retest.definition,
       color: stormGray,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },

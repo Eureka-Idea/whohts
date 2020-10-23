@@ -218,8 +218,9 @@ class Dashboard extends Component {
     return (
       <div className='col-xl-7 col-md-6 col-xs-12 prog-95'>
         <div className='card-stock'>
-          <p className='title'>{title}</p>
           <div className='content'>
+            <p className='title vertical'>{title}</p>
+            <p className='title stacked'>Progress<br/>towards<br/>95-95-95</p>
             <p className='title xl'>{title}</p>
             <a data-tip data-for={tooltipId}>
               {getBoxes()}
@@ -392,7 +393,7 @@ class Dashboard extends Component {
           </p>
 
           <p>
-            For more details on the methods for calculating and interpreting retesting proportions from the Shiny90 model, see <a href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx' target='_blank'>Maheu-Giroux, M. et al. (2019) AIDS v33 p @255.</a>
+            For more details on the methods for calculating and interpreting retesting proportions from the Shiny90 model, see <a href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx' target='_blank'>Maheu-Giroux, M. et al. (2019) AIDS v33 p S255.</a>
           </p>
         </div>
       </Tooltip>
