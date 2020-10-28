@@ -879,7 +879,7 @@ const CHARTS = {
     indicatorIds: ['total', 'community', 'facility', 'pTotal', 'pCommunity', 'pFacility']
   },
   FORECAST: {
-    title: 'HIVST self-tests',
+    title: 'HIV self-tests',
     id: 'FORECAST',
     sources: [forecastGAM20, forecastGAM19, forecastNPD19, forecastPEPFAR, forecastWME],
     indicatorIds: ['distributed', 'demand', 'need'],
