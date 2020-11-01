@@ -118,7 +118,7 @@ const NestedBoxes = ({
   const totalX = firstSide + (textBufferDistance + firstSide) // (text width)
   const totalY = y + firstSide
   const totalXh = y + bufferDistance
-  const totalYh = textBufferDistance + (headerFontSize + fontSize*3) // (text height)
+  const totalYh = textBufferDistance + (headerFontSize + fontSize*4) // (text height)
   
   const classNames = 'nested-boxes ' + classes
   
