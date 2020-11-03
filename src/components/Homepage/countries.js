@@ -1,5 +1,6 @@
 import _ from 'lodash'
 
+// commented countries won't be visible or accessible
 const COUNTRIES = [
   // { ISO: 'AGO', name: 'Angola', shiny: false },
   { ISO: 'BWA', name: 'Botswana', shiny: true },
@@ -28,7 +29,7 @@ const COUNTRIES = [
   // { ISO: 'MEX', name: 'Mexico', shiny: false },
   { ISO: 'MAR', name: 'Morocco', shiny: false },
   { ISO: 'MOZ', name: 'Mozambique', shiny: true },
-  { ISO: 'MMR', name: 'Myanmar', shiny: false },
+  // { ISO: 'MMR', name: 'Myanmar', shiny: false },
   { ISO: 'NAM', name: 'Namibia', shiny: false },
   { ISO: 'NGA', name: 'Nigeria', shiny: false },
   { ISO: 'PAK', name: 'Pakistan', shiny: false },

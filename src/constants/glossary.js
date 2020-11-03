@@ -3,7 +3,7 @@ import React from 'react'
 const diagnosticYield = {
   term: 'Diagnostic yield',
   // Note: Question from stakeholder on how this is determined so more detail may be needed.
-  definition: 'Proportion of all tests conducted in which a new HIV diagnosis was identified.'
+  definition: 'Proportion of all tests conducted in which a new HIV diagnosis was identified'
 }
 
 const firstTest = {
@@ -32,12 +32,17 @@ const hivstDemand = {
 
 const hivstNeed = {
   term: 'HIVST need',
-  definition: 'Estimated volume of HIV self - tests required based on target population groups epidemiological characteristics, WHO testing guidance and scale-up of testing services to meet global goals.'
+  definition: 'Estimated volume of HIV self - tests required based on target population groups epidemiological characteristics, WHO testing guidance and scale-up of testing services to meet global goals'
 }
 
 const newDiagnosis = {
   term: 'New diagnosis',
   definition: 'The first positive / reactive test for an individual (i.e., the first time they become aware they are living with HIV). This can be either a first test or a retest.'
+}
+
+const reDiagnosis = {
+  term: 'Re-diagnosis',
+  definition: 'Refers to HIV tests amongst people living with HIV who have previously tested positive for HIV'
 }
 
 const PEPFAR = {
@@ -114,6 +119,7 @@ const TERMS = [
   plhivWhoKnowStatusNotOnArt,
   plhivKnowStatusOnArt,
   positivity,
+  reDiagnosis,
   retest,
   shiny90,
   treatmentAdjustedPrevalence,
@@ -133,6 +139,7 @@ const TERM_MAP = {
   plhivWhoKnowStatusNotOnArt,
   plhivKnowStatusOnArt,
   positivity,
+  reDiagnosis,
   retest,
   shiny90,
   treatmentAdjustedPrevalence,

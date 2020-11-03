@@ -830,7 +830,7 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
   const series = [
     {
       name: 'Re-diagnosis',
-      description: TERM_MAP.retest.definition,
+      description: TERM_MAP.reDiagnosis.definition,
       color: stormGray,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.retests.points,
