@@ -67,6 +67,11 @@ export const getChartData = (countryCode) =>
             // unless we want a specific value comment, every query should request non-suppressed data values
             chartValue = chartValue || '‼️suppressed'
           }
+
+          if (f === FIELD_MAP.AREA_NAME) {
+            // unless we want a specific area name, every query should request national-level data
+            chartValue = chartValue || 'NULL'
+          }
           
           if (chartValue) {
             if (f === FIELD_MAP.COUNTRY_ISO_CODE) {
