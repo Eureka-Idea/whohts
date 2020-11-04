@@ -1108,6 +1108,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: v,
         [F.COUNTRY_ISO_CODE]: true,
         [F.AGE]: 'all ages',
+        [F.AREA_NAME]: 'NULL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC20,
         getter: results => {
           return _.maxBy(results, 'year')

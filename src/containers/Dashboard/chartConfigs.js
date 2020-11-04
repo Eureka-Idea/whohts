@@ -433,13 +433,24 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
     if (plhivPoint && plhivPoint.y) {
       if (knowPoint && knowPoint.y) {
         // cannibalize knowPoint for its year, source etc
-        undiagnosedPoint = knowPoint
-        undiagnosedPoint.y = (plhivPoint.y - knowPoint.y)
-      }
-      if (onArtPoint && onArtPoint.y) {
-        // cannibalize plhivPoint for its year, source etc
-        notArtPoint = plhivPoint
-        notArtPoint.y = (plhivPoint.y - onArtPoint.y)
+        const undiagnosedValue = (plhivPoint.y - knowPoint.y)
+        undiagnosedPoint = _.extend({}, knowPoint, {
+          [FIELD_MAP.VALUE_UPPER]: null,
+          [FIELD_MAP.VALUE_LOWER]: null,
+          [FIELD_MAP.VALUE]: undiagnosedValue,
+          y: undiagnosedValue,
+        })
+
+        if (onArtPoint && onArtPoint.y) {
+          // cannibalize plhivPoint for its year, source etc
+          const notArtValue = (knowPoint.y - onArtPoint.y)
+          notArtPoint = _.extend({}, plhivPoint, {
+            [FIELD_MAP.VALUE_UPPER]: null,
+            [FIELD_MAP.VALUE_LOWER]: null,
+            [FIELD_MAP.VALUE]: notArtValue,
+            y: notArtValue,
+          })
+        }
       }
     }
     
@@ -1546,14 +1557,16 @@ const getPolicyTable = (data, shinyCountry=false, forExport=false) => {
   } = data
 
   if (forExport) {
+    // NOTE: ** conditional tweak ** 
+    // for some indicators WHO wants to display the SOURCE_YEAR as the YEAR
     return [
       age,
-      provider,
-      community,
-      lay,
+      _.extend({}, provider, { [FIELD_MAP.YEAR]: provider[FIELD_MAP.SOURCE_YEAR] }),
+      _.extend({}, community, { [FIELD_MAP.YEAR]: community[FIELD_MAP.SOURCE_YEAR] }),
+      _.extend({}, lay, { [FIELD_MAP.YEAR]: lay[FIELD_MAP.SOURCE_YEAR] }),
       hivst,
-      assisted,
-      social,
+      _.extend({}, assisted, { [FIELD_MAP.YEAR]: assisted[FIELD_MAP.SOURCE_YEAR] }),
+      _.extend({}, social, { [FIELD_MAP.YEAR]: social[FIELD_MAP.SOURCE_YEAR] }),
       compliance,
       verification,
     ]
