@@ -436,7 +436,9 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
         const undiagnosedValue = (plhivPoint.y - knowPoint.y)
         undiagnosedPoint = _.extend({}, knowPoint, {
           [FIELD_MAP.VALUE_UPPER]: null,
+          u: null,
           [FIELD_MAP.VALUE_LOWER]: null,
+          l: null,
           [FIELD_MAP.VALUE]: undiagnosedValue,
           y: undiagnosedValue,
         })
@@ -446,7 +448,9 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
           const notArtValue = (knowPoint.y - onArtPoint.y)
           notArtPoint = _.extend({}, plhivPoint, {
             [FIELD_MAP.VALUE_UPPER]: null,
+            u: null,
             [FIELD_MAP.VALUE_LOWER]: null,
+            l: null,
             [FIELD_MAP.VALUE]: notArtValue,
             y: notArtValue,
           })

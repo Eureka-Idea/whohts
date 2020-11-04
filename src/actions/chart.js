@@ -68,8 +68,9 @@ export const getChartData = (countryCode) =>
             chartValue = chartValue || '‼️suppressed'
           }
 
-          if (f === FIELD_MAP.AREA_NAME) {
+          if (f === FIELD_MAP.AREA_NAME && indicator[FIELD_MAP.INDICATOR !== 'Income Group']) {
             // unless we want a specific area name, every query should request national-level data
+            // Income Group rows lists region (Sub-Saharan Africa) for area name, so skip those
             chartValue = chartValue || 'NULL'
           }
           
