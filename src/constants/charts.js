@@ -1014,7 +1014,7 @@ const isAllSex = r => {
 
   const is = !sex || allSexVariations.includes(sex.toLowerCase())
   if (!is) {
-    console.log('Not considered ALLSEX: ', sex)
+    // console.log('Not considered ALLSEX: ', sex)
   }
   return is
 }
@@ -1024,7 +1024,7 @@ const isAllAge = r => {
 
   const is = !age || allAgeVariations.includes(age.toLowerCase())
   if (!is) {
-    console.log('Not considered ALLAGE: ', age)
+    // console.log('Not considered ALLAGE: ', age)
   }
   return is
 }
@@ -1040,11 +1040,6 @@ const isAllAge = r => {
 //     })
 
 //     const latest = _.maxBy(fResults, 'year')
-//     if (fResults.length > 1) {
-//       console.log('*** multiple results: ***')
-//       console.log(fResults)
-//       console.log('!: ', latest)
-//     }
 //     return latest
 //   })
 // }
@@ -1074,9 +1069,9 @@ const findPrioritizedResult = ({ results, dbHierarchy, resultCriteria = {}, allS
 
     const latest = _.maxBy(fResults, 'year')
     if (fResults.length > 1) {
-      console.log('*** multiple results: ***')
-      console.log(fResults)
-      console.log('!: ', latest)
+      // console.log('*** multiple results: ***')
+      // console.log(fResults)
+      // console.log('!: ', latest)
     }
     return latest
   })

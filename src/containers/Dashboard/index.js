@@ -27,7 +27,7 @@ HighchartsMore(ReactHighcharts.Highcharts)
 ReactHighcharts.Highcharts.theme = baseStyle
 ReactHighcharts.Highcharts.setOptions(ReactHighcharts.Highcharts.theme)
 
-const DEV = window.location.hostname === 'localhostyy'
+const DEV = window.location.hostname === 'localhost'
 
 // fix legend markers
 // ReactHighcharts.Highcharts.seriesTypes.area.prototype.drawLegendSymbol = 
@@ -63,35 +63,32 @@ class Dashboard extends Component {
     const countryCode = _.get(this, 'props.match.params.countryCode', '').toUpperCase()
     if (!COUNTRY_MAP[countryCode]) {
       this.props.history.push('/')
-      console.error('no country!')
+      // console.error('no country!')
       return
     }
     this.props.actions.getChartData(countryCode)
   }
   
-  componentDidMount() {
-    console.log('MOUNTED. ', this.props)
-  }
+  // componentDidMount() {
+    // console.log('MOUNTED. ', this.props)
+  // }
   
   componentWillReceiveProps(newProps) {
     const d = new Date()
     
     const dataCountry = newProps.chartData.countryCode
-    // console.log('### newprops from ', dataCountry, ' at ', d.getMinutes()+':'+d.getSeconds())
     const paramCountry = _.get(newProps, 'match.params.countryCode').toUpperCase()
-    // console.log('### newurl PARAM of: ', paramCountry)
     const loading = paramCountry !== dataCountry
-    // console.log('### loading: ', loading)
     this.setState({ loading })
     
     if (loading) {
       this.props.actions.getChartData(paramCountry)
     }
 
-    if (_.isEqual(newProps.chartData.countryCode, this.props.chartData.countryCode)) {
-      console.error('what changed?')
-      return
-    }
+    // if (_.isEqual(newProps.chartData.countryCode, this.props.chartData.countryCode)) {
+    //   console.error('what changed?')
+    //   return
+    // }
   }
 
   getCountryContext() {
@@ -235,7 +232,7 @@ class Dashboard extends Component {
 
   getChart(id, tt) {
     if (_.isEmpty(this.props.chartData)) {
-      console.log('No chart data (perhaps awaiting API response)')
+      // console.log('No chart data (perhaps awaiting API response)')
       return
     }
 
@@ -245,13 +242,13 @@ class Dashboard extends Component {
     const shinyChart = _.get(CHARTS, [id, 'shinyOnly'])
 
     if (shinyChart && !shinyCountry) {
-      console.log(`${countryCode} is not shiny, skipping ${id} chart.`)
+      // console.log(`${countryCode} is not shiny, skipping ${id} chart.`)
       return
     }
 
     let config = getConfig(id, this.props.chartData, shinyCountry)
     if (!config) {
-      console.error(`${id} failed to produce a config.`)
+      // console.error(`${id} failed to produce a config.`)
 
       // show empty chart
       // const { title } = CHARTS[id]
@@ -274,7 +271,7 @@ class Dashboard extends Component {
 
   getTable(id) {
     if (_.isEmpty(this.props.chartData)) {
-      console.log('No chart data (perhaps awaiting API response)')
+      // console.log('No chart data (perhaps awaiting API response)')
       return
     }
 
@@ -283,7 +280,7 @@ class Dashboard extends Component {
 
     let config = getConfig(id, this.props.chartData, shinyCountry)
     if (!config) {
-      console.error(`${id} failed to produce a config.`)
+      // console.error(`${id} failed to produce a config.`)
       return // TODO do we want to produce blank table?
     }
 
@@ -300,7 +297,7 @@ class Dashboard extends Component {
     }[id]
 
     if (!Table) {
-      console.error(`${id} is not a valid table type.`)
+      // console.error(`${id} is not a valid table type.`)
       return
     }
 
@@ -415,13 +412,7 @@ class Dashboard extends Component {
     const policy = this.getTable(CHARTS.POLICY_TABLE.id)
     const groups = this.getTable(CHARTS.GROUPS_TABLE.id)
 
-    // const d = new Date()
-    // console.log('### rendering ', this.props.chartData.countryCode, ' at ', d.getMinutes() + ':' + d.getSeconds())
-    // console.log('### (url PARAM of: ', _.get(this, 'props.match.params.countryCode', '').toUpperCase() + ')')
-
-    // console.log('### LOADING: ', this.state.loading)
     if (this.state.loading) {
-
       const countryCode = _.get(this, 'props.match.params.countryCode', null)
       const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
       return (
@@ -498,7 +489,6 @@ class Dashboard extends Component {
   }
 
   // dev form
-
   getDevSection() {
     if (!DEV) return
     const inputs = fields.map(f => {

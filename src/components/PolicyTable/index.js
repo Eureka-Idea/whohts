@@ -3,7 +3,6 @@ import './styles.css'
 
 const PolicyTable = ({ config }) => {
   if (!config) {
-    console.error('Policy Table has no config.')
     return
   }
   

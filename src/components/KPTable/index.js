@@ -16,7 +16,6 @@ const dems = {
 
 const KPTable = ({ config, iso }) => {
   if (!config) {
-    console.error('KP Table has no config.')
     return
   }
   

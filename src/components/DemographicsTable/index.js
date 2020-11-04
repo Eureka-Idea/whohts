@@ -84,14 +84,13 @@ class DemographicsTable extends Component {
   constructor(props) {
     super(props)
     
-    // console.log('MAD PROPS : ', props)
     this.allWomen = []
     this.allMen = []
     this.everyone = []
     props.config.includedDemographics.forEach(dem => {
       const demObj = _.get(demoMap, dem)
       if (!demObj) {
-        console.error('no demographic found for: ', dem)
+        // console.error('no demographic found for: ', dem)
         return
       }
       this.everyone.push(demObj)
