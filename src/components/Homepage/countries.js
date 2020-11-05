@@ -4,7 +4,7 @@ import _ from 'lodash'
 const COUNTRIES = [
   // { ISO: 'AGO', name: 'Angola', shiny: false },
   { ISO: 'BWA', name: 'Botswana', shiny: true },
-  { ISO: 'BRA', name: 'Brazil', shiny: false },
+  // { ISO: 'BRA', name: 'Brazil', shiny: false },
   { ISO: 'KHM', name: 'Cambodia', shiny: false },
   { ISO: 'CMR', name: 'Cameroon', shiny: true },
   { ISO: 'TCD', name: 'Chad', shiny: true },
@@ -29,7 +29,7 @@ const COUNTRIES = [
   // { ISO: 'MEX', name: 'Mexico', shiny: false },
   { ISO: 'MAR', name: 'Morocco', shiny: false },
   { ISO: 'MOZ', name: 'Mozambique', shiny: true },
-  // { ISO: 'MMR', name: 'Myanmar', shiny: false },
+  { ISO: 'MMR', name: 'Myanmar', shiny: false },
   { ISO: 'NAM', name: 'Namibia', shiny: false },
   { ISO: 'NGA', name: 'Nigeria', shiny: false },
   { ISO: 'PAK', name: 'Pakistan', shiny: false },

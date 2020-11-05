@@ -47,7 +47,7 @@
     }
   }
   
-  @media screen and (max-width: 376px) {
+  @media screen and (max-width: 470px) {
     .title.vertical {
       font-size: 16px;
       top: 160px;
@@ -57,7 +57,7 @@
       min-height: 210px;
     }
   }
-  @media screen and (min-width: 376px) and (max-width: 767.9px) {
+  @media screen and (min-width: 470px) and (max-width: 767.9px) {
     .content {
       display: flex;
       justify-content: center;
