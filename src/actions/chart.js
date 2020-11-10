@@ -30,7 +30,7 @@ const debugList = {
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
   
-  // [CHARTS.GROUPS_TABLE.id]: true,
+  [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.POLICY_TABLE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
 

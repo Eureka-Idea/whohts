@@ -29,7 +29,9 @@
       }
       
       // max-width: $max-width;
-      
+      th[scope="row"] {
+        cursor: pointer;
+      }
       td {
         white-space: nowrap;
       }
