@@ -95,6 +95,9 @@ function displayNumber({ v, unrounded=false }) {
     return null
   }
 
+  if (v > 1000000000) {
+    return _.round(v/1000000000, 1).toString() + ' billion'
+  }
   if (v > 1000000) {
     return _.round(v/1000000, 1).toString() + ' million'
   }
@@ -942,9 +945,10 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
     const populationValue = _.get(data, ['population', i, [FIELD_MAP.VALUE]])
     const onArtValue = _.get(data, ['onArt', i, [FIELD_MAP.VALUE]])
     const plhivValue = _.get(data, ['plhiv', i, [FIELD_MAP.VALUE]])
+    const isCameroon = _.get(data, ['plhiv', i, [FIELD_MAP.COUNTRY_ISO_CODE]]) === 'CMR'
 
     let adjPrevValue
-    if (populationValue && onArtValue && plhivValue) {
+    if (populationValue && onArtValue && plhivValue && !isCameroon) {
       adjPrevValue = (
         (plhivValue - onArtValue) * 100 /
         (populationValue - onArtValue)
@@ -1011,15 +1015,20 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       zIndex: 0,
       marker: { enabled: false }
     },
-    {
-      name: 'Treatment adjusted prevalence',
-      description: TERM_MAP.treatmentAdjustedPrevalence.definition,
-      zIndex: 1,
-      color: buddhaGold,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-      data: adjPrevData
-    },
   ]
+
+  if (adjPrevData.length) {
+    series.push(
+      {
+        name: 'Treatment adjusted prevalence',
+        description: TERM_MAP.treatmentAdjustedPrevalence.definition,
+        zIndex: 1,
+        color: buddhaGold,
+        tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
+        data: adjPrevData
+      },
+    )
+  }
 
   if (shinyCountry) {
     const shinyAdditions = [{
