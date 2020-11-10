@@ -6,6 +6,8 @@ import { TERM_MAP } from "../../constants/glossary";
 
 // TODO: move
 const WITH_CUSTOM_HEADER_CHART_HEIGHT = 300 // keep in sync with styles.scss with-custom-header height
+// reduces chart top spacing (first number) by ~15 to give custom-header charts proper distance from header
+const WITH_CUSTOM_HEADER_CHART_SPACING = [15, 30, 25, 25] // keep in sync with baseStyle spacing
 
 // __________________________ HELPERS ____________________________________
 
@@ -1180,6 +1182,7 @@ const getAdults = (data, shinyCountry=false, forExport=false) => {
     customHeader: getColumnChartCustomHeader(total, pTotal, title),
     chart: {
       height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
     }
   }
   return _.merge({}, getColumnScat({ series, options, categories }))
@@ -1243,6 +1246,7 @@ const getCommunity = (data, shinyCountry=false, forExport=false) => {
     customHeader: getColumnChartCustomHeader(total, pTotal, title),
     chart: {
       height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
     }
   }
   const categories = ['Mobile Testing', 'VCT', 'Other']
@@ -1332,6 +1336,7 @@ const getFacility = (data, shinyCountry=false, forExport=false) => {
     customHeader: getColumnChartCustomHeader(total, pTotal, title),
     chart: {
       height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
     }
   }
   const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other']
@@ -1398,6 +1403,7 @@ const getIndex = (data, shinyCountry=false, forExport=false) => {
     customHeader: getColumnChartCustomHeader(total, pTotal, title),
     chart: {
       height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
     }
   }
   const categories = ['Community', 'Facility']

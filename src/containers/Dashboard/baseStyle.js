@@ -36,7 +36,7 @@ export default {
       // "fontFamily": "Verdana, sans-serif"
     },
     // "margin": [100, 100, 100, 100],
-    "spacing": [30, 30, 25, 25],
+    "spacing": [30, 30, 25, 25], // keep in sync with chartConfigs spacing
   },
   "title": { "align": "left", "x": 40 },
   "subtitle": { "align": "left", "x": 40 },

@@ -426,9 +426,11 @@ $nav-height: 64px;
     }
     .chart-container.FORECAST {
       margin-top: 0;
+      margin-bottom: 2*$buffer;
     }
     .chart-container.with-custom-header {
       margin-top: 0;
+      margin-bottom: 2*$buffer;
       div[data-highcharts-chart] {
         height: 300px; // keep in sync with chartConfigs WITH_CUSTOM_HEADER_CHART_HEIGHT
       }
