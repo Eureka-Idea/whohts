@@ -373,6 +373,25 @@ $nav-height: 64px;
       width: 270px;
     }
 
+    .custom-header {
+      padding: 25px 45px 0 55px;
+      .chart-title {
+        font-size: 18px;
+        line-height: 1;
+        min-height: 38px; // keep alignment between charts with 1 & 2 line titles
+        margin: 0;
+      }
+      .chart-subtitle {
+        font-size: 12px;
+        p {
+          display: inline;
+          &.total {
+            padding-right: 4px;
+          }
+        }
+      }
+    }
+
     .chart-container {
       // background: white;
       margin: 1.5*$buffer $buffer;
@@ -384,7 +403,7 @@ $nav-height: 64px;
       // FIXES: chart width doesn't resize inside flex container
       // SOLUTION 1 (https://github.com/highcharts/highcharts/issues/4649#issuecomment-425375098)
       div[data-highcharts-chart] {
-        height: 400px;
+        height: 400px; // keep in sync with baseStyles height
         position: relative;
         width: 100%;
         overflow: hidden;
@@ -404,6 +423,15 @@ $nav-height: 64px;
       // .highcharts-container, .highcharts-container svg { 
         //   width: 100% !important; 
         // }
+    }
+    .chart-container.FORECAST {
+      margin-top: 0;
+    }
+    .chart-container.with-custom-header {
+      margin-top: 0;
+      div[data-highcharts-chart] {
+        height: 300px; // keep in sync with chartConfigs WITH_CUSTOM_HEADER_CHART_HEIGHT
+      }
     }
     
     // todo: move 

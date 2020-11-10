@@ -14,6 +14,11 @@ const myInit = {
 }
 
 const DEV = window.location.hostname === 'localhost'
+if (!DEV) {
+  console.log = _.noop
+  console.warn = _.noop
+  console.error = _.noop
+}
 
 // NOTE: exclusively for dev use, if any charts are marked true only those will appear on dashboard
 // (speeds load time and narrows code scope when debugging)
@@ -24,7 +29,6 @@ const debugList = {
   // [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
-  // [CHARTS.FACILITY.id]: true,
   
   // [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.POLICY_TABLE.id]: true,
@@ -32,6 +36,7 @@ const debugList = {
 
   // [CHARTS.ADULTS.id]: true,
   // [CHARTS.COMMUNITY.id]: true,
+  // [CHARTS.FACILITY.id]: true,
   // [CHARTS.FORECAST.id]: true,
   // [CHARTS.INDEX.id]: true,
 

@@ -19,7 +19,7 @@ const COUNTRIES = [
   // { ISO: 'HTI', name: 'Haiti', shiny: false },
   // { ISO: 'IND', name: 'India ', shiny: false },
   { ISO: 'IDN', name: 'Indonesia', shiny: false },
-  // { ISO: 'IRN', name: 'Iran (Islamic Republic of)', shiny: false },
+  { ISO: 'IRN', name: 'Iran (Islamic Republic of)', shiny: false },
   // { ISO: 'JAM', name: 'Jamaica', shiny: false },
   { ISO: 'KEN', name: 'Kenya', shiny: true },
   { ISO: 'LSO', name: 'Lesotho', shiny: true },

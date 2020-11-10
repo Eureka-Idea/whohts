@@ -257,10 +257,62 @@ class Dashboard extends Component {
     }
     const chart = <ReactHighcharts config={config} />
     // console.log('*** ', id, ' ****config:*** ', config)
+
+    const { title, columnChartHeader } = _.get(config, 'customHeader', {})
+    let header = null
+    if (columnChartHeader) {
+      const {
+        totalTests,
+        totalSource,
+        totalYear,
+        averagePositivity,
+        averageSource,
+        averageYear,
+      } = _.get(config, 'customHeader.subtitle')
+
+      const tooltipId = this.props.chartData.countryCode + title.split(' ').join('-') + '-tooltip-'
+      const tooltipIdTotal = tooltipId + '-total'
+      const tooltipIdAverage = tooltipId + '-average'
+
+      const tooltipTotal = (
+        <ReactTooltip id={tooltipIdTotal} className='td-tooltip' type='dark' effect='solid'>
+          <div>Source: {totalSource}</div>
+          <div>Year: {totalYear}</div>
+        </ReactTooltip>
+      )
+      
+      const tooltipAverage = (
+        <ReactTooltip id={tooltipIdAverage} className='td-tooltip' type='dark' effect='solid'>
+          <div>Source: {averageSource}</div>
+          <div>Year: {averageYear}</div>
+        </ReactTooltip>
+      )
+
+      header = (
+        <div className='custom-header'>
+          <p className='chart-title'>{title}</p>
+          <div className='chart-subtitle'>
+            <a data-tip data-for={tooltipIdTotal}>
+              <p className='total'><b>Total tests</b>: {totalTests||'N/A'}</p>
+              {totalTests && tooltipTotal}
+            </a>
+            <a data-tip data-for={tooltipIdAverage}>
+              <p className='average'><b>Average positivity</b>: {averagePositivity||'N/A'}</p>
+              {averagePositivity && tooltipAverage}
+            </a><br />
+            <p>Programme data</p>
+          </div>
+        </div>
+      )
+    }
+
+    const containerClasses = `chart-container ${id} ${(header ? 'with-custom-header' : '')}`
+    
     return (
       <div className='col-xl-4 col-lg-6 col-sm-12'>
         <div className='card-stock'>
-          <div className='chart-container'>
+          {header}
+          <div className={containerClasses}>
             {chart}
             {tt}
           </div>
@@ -468,6 +520,7 @@ class Dashboard extends Component {
             {negative}
             {positive}
             {prevalence}
+            <div className='col-12 mt-2'>&nbsp;</div>
             {adults}
             {community}
             {facility}

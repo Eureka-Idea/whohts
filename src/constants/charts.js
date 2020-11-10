@@ -1311,11 +1311,11 @@ const getIndicatorMap = (isShiny) => {
             const genericIndId = getGenericIndId(indId)
             return C.FORECAST.indicatorYears[genericIndId].map(y => {
               const fResults = _.filter(results, r => r.year === y)
-              if (results.length > 1) {
+              if (fResults.length > 1) {
                 // debugger
                 console.error(`**LOOKOUT! Taking first result for: * ', indI
-                `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-                `,'rs:', results)
+                `, fResults[0].indicator, 'R:', _.maxBy(fResults, 'year'), `
+                `,'rs:', fResults)
               }
               return _.maxBy(fResults, 'year')
             })

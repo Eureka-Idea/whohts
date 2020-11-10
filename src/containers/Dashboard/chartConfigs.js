@@ -4,6 +4,9 @@ import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './gen
 import { CHARTS, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP, ALL_CHARTS, CSV_FIELDS } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
+// TODO: move
+const WITH_CUSTOM_HEADER_CHART_HEIGHT = 300 // keep in sync with styles.scss with-custom-header height
+
 // __________________________ HELPERS ____________________________________
 
 // const uncertaintyTooltipFormat = `
@@ -189,25 +192,36 @@ function getLineChartSubtitle(shinyCountry) {
   return ({ useHTML: true, text: subtitle })
 }
 
-function getColumnChartSubtitle(total, pTotal) {
+function getColumnChartCustomHeader(totalRow, averageRow, title) {
   const {
-    [FIELD_MAP.SOURCE_DATABASE]: source,
-    [FIELD_MAP.YEAR]: year,
-  } = total
-  const tooltip = `Source: ${SOURCE_DISPLAY_MAP[source]||source}\nYear: ${year}`
+    [FIELD_MAP.SOURCE_DATABASE]: totalSource,
+    [FIELD_MAP.YEAR]: totalYear,
+  } = totalRow
+  // const tooltip = `Source: ${SOURCE_DISPLAY_MAP[source]||source}\nYear: ${year}`
 
   const {
-    [FIELD_MAP.SOURCE_DATABASE]: pSource,
-    [FIELD_MAP.YEAR]: pYear,
-  } = pTotal
-  const pTooltip = `Source: ${SOURCE_DISPLAY_MAP[pSource]||pSource}\nYear: ${pYear}`
+    [FIELD_MAP.SOURCE_DATABASE]: averageSource,
+    [FIELD_MAP.YEAR]: averageYear,
+  } = averageRow
+  // const pTooltip = `Source: ${SOURCE_DISPLAY_MAP[pSource]||pSource}\nYear: ${pYear}`
 
-  const formattedTotal = displayNumber({ v: total.value, unrounded: true })
-  const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
+  // const formattedTotal = displayNumber({ v: total.value, unrounded: true })
+  // const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
   
-  const subtitle = `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span> 
-  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme data</span></div>`
-  return ({ useHTML: true, text: subtitle })
+  // const subtitle = `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span> 
+  // <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme data</span></div>`
+  return ({
+    columnChartHeader: true,
+    title,
+    subtitle: {
+      totalTests: displayNumber({ v: totalRow.value, unrounded: true }),
+      totalSource: SOURCE_DISPLAY_MAP[totalSource] || totalSource,
+      totalYear,
+      averagePositivity: adjustPercentage({ row: averageRow, toDisplay: true, decimals: 1 }),
+      averageSource: SOURCE_DISPLAY_MAP[averageSource] || averageSource,
+      averageYear,
+    }
+   })
 }
 
 function getPlotPoints({ row, year, adjust=false, decimals=0, forExport=false }) {
@@ -1163,9 +1177,12 @@ const getAdults = (data, shinyCountry=false, forExport=false) => {
   const categories = ['Women (15+)', 'Men (15+)']
 
   const options = {
-    subtitle: getColumnChartSubtitle(total, pTotal)
+    customHeader: getColumnChartCustomHeader(total, pTotal, title),
+    chart: {
+      height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+    }
   }
-  return _.merge({}, getColumnScat({ title, series, options, categories }))
+  return _.merge({}, getColumnScat({ series, options, categories }))
 }
 
 const getCommunity = (data, shinyCountry=false, forExport=false) => {
@@ -1223,10 +1240,13 @@ const getCommunity = (data, shinyCountry=false, forExport=false) => {
   ]
 
   const options = {
-    subtitle: getColumnChartSubtitle(total, pTotal)
+    customHeader: getColumnChartCustomHeader(total, pTotal, title),
+    chart: {
+      height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+    }
   }
   const categories = ['Mobile Testing', 'VCT', 'Other']
-  return _.merge({}, getColumnScat({ title, series, options, categories }))
+  return _.merge({}, getColumnScat({ series, options, categories }))
 }
 
 const getFacility = (data, shinyCountry=false, forExport=false) => {
@@ -1309,11 +1329,14 @@ const getFacility = (data, shinyCountry=false, forExport=false) => {
   ]
 
   const options = {
-    subtitle: getColumnChartSubtitle(total, pTotal)
+    customHeader: getColumnChartCustomHeader(total, pTotal, title),
+    chart: {
+      height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+    }
   }
   const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other']
   // const options = { xAxis: { categories: ['Community', 'Facility']} }
-  return _.merge({}, getColumnScat({ title, options, categories, series }))
+  return _.merge({}, getColumnScat({ options, categories, series }))
 }
 
 const getIndex = (data, shinyCountry=false, forExport=false) => {
@@ -1372,10 +1395,13 @@ const getIndex = (data, shinyCountry=false, forExport=false) => {
     }
   ]
   const options = {
-    subtitle: getColumnChartSubtitle(total, pTotal)
+    customHeader: getColumnChartCustomHeader(total, pTotal, title),
+    chart: {
+      height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+    }
   }
   const categories = ['Community', 'Facility']
-  return _.merge({}, getColumnScat({ title, options, categories, series }))
+  return _.merge({}, getColumnScat({ options, categories, series }))
 }
 
 const getForecast = (data, shinyCountry=false, forExport=false) => {
