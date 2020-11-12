@@ -62,37 +62,33 @@ class Dashboard extends Component {
   componentWillMount() {
     const countryCode = _.get(this, 'props.match.params.countryCode', '').toUpperCase()
     if (!COUNTRY_MAP[countryCode]) {
-      // TODO: check country existence
       this.props.history.push('/')
-      console.error('no country!')
+      // console.error('no country!')
       return
     }
     this.props.actions.getChartData(countryCode)
   }
   
-  componentDidMount() {
-    console.log('MOUNTED. ', this.props)
-  }
+  // componentDidMount() {
+    // console.log('MOUNTED. ', this.props)
+  // }
   
   componentWillReceiveProps(newProps) {
     const d = new Date()
     
     const dataCountry = newProps.chartData.countryCode
-    // console.log('### newprops from ', dataCountry, ' at ', d.getMinutes()+':'+d.getSeconds())
     const paramCountry = _.get(newProps, 'match.params.countryCode').toUpperCase()
-    // console.log('### newurl PARAM of: ', paramCountry)
     const loading = paramCountry !== dataCountry
-    // console.log('### loading: ', loading)
     this.setState({ loading })
     
     if (loading) {
       this.props.actions.getChartData(paramCountry)
     }
 
-    if (_.isEqual(newProps.chartData.countryCode, this.props.chartData.countryCode)) {
-      console.error('what changed?')
-      return
-    }
+    // if (_.isEqual(newProps.chartData.countryCode, this.props.chartData.countryCode)) {
+    //   console.error('what changed?')
+    //   return
+    // }
   }
 
   getCountryContext() {
@@ -126,7 +122,7 @@ class Dashboard extends Component {
       </ReactTooltip>
     )
     return (
-      <div className='col-xl-6 col-lg-6 col-xs-12 country-context'>
+      <div className='col-xl-5 col-md-6 col-xs-12 country-context'>
         <div className='card-stock'>
           <div className='content'>
             <p className='name'>{name}</p>
@@ -173,29 +169,59 @@ class Dashboard extends Component {
         <div>Year: {config.year}</div>
       </ReactTooltip>
     )
+
+    const getBoxes = (xl) => {
+
+      return (
+        <NestedBoxes
+          // circle={true}
+          classes={xl ? 'xl' : ''}
+          title={title}
+          bufferRatio={xl ? .8 : .2}
+          lineHeight={xl ? 1.4 : 1.1}
+          textBufferRatio={.2}
+          firstSide={20}
+          horizontal={xl}
+          ratios={config}
+          colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
+          content={[
+            {
+              inner: status,
+              below: [
+                'of people living with',
+                'HIV know their status'
+              ]
+            },
+            {
+              inner: art,
+              below: [
+                'of people living with',
+                'HIV who know their status',
+                'are on treatment'
+              ]
+            },
+            {
+              inner: suppression,
+              below: [
+                'of people on treatment',
+                'are virally suppressed'
+              ]
+            },
+          ]}
+        />
+      )
+    }
     
     return (
-      <div className='col-xl-6 col-lg-6 col-xs-12 prog-95'>
+      <div className='col-xl-7 col-md-6 col-xs-12 prog-95'>
         <div className='card-stock'>
           <div className='content'>
-            {/* <p className='title'>{title}</p> */}
+            <p className='title vertical'>{title}</p>
+            <p className='title stacked'>Progress<br/>towards<br/>95-95-95</p>
+            <p className='title xl'>{title}</p>
             <a data-tip data-for={tooltipId}>
-            <NestedBoxes
-              // circle={true}
-              title={title}
-              side={110}
-              ratios={config}
-              // colors={[colors[1]+'97', colors[2]+'97', colors[0]+'97', colors[0]+'40']}
-              colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
-              content={[
-                { inner: status, below: 'of people living with HIV know their status' },
-                { inner: art, below: 'of people living with HIV who know their status are on treatment' },
-                { inner: suppression, below: 'of people on treatment are virally suppressed' },
-                // { inner: status, below: ['of people living with HIV', 'know their status'] },
-                // { inner: art, below: ['of people living with HIV', 'who know their status', 'are on treatment'] },
-                // { inner: suppression, below: ['of people on treatment are virally suppressed'] },
-              ]}
-            />
+              {getBoxes()}
+              {getBoxes(true)}
             </a>
             {tooltip}
           </div>
@@ -206,7 +232,7 @@ class Dashboard extends Component {
 
   getChart(id, tt) {
     if (_.isEmpty(this.props.chartData)) {
-      console.log('No chart data (perhaps awaiting API response)')
+      // console.log('No chart data (perhaps awaiting API response)')
       return
     }
 
@@ -216,13 +242,13 @@ class Dashboard extends Component {
     const shinyChart = _.get(CHARTS, [id, 'shinyOnly'])
 
     if (shinyChart && !shinyCountry) {
-      console.log(`${countryCode} is not shiny, skipping ${id} chart.`)
+      // console.log(`${countryCode} is not shiny, skipping ${id} chart.`)
       return
     }
 
     let config = getConfig(id, this.props.chartData, shinyCountry)
     if (!config) {
-      console.error(`${id} failed to produce a config.`)
+      // console.error(`${id} failed to produce a config.`)
 
       // show empty chart
       // const { title } = CHARTS[id]
@@ -231,10 +257,62 @@ class Dashboard extends Component {
     }
     const chart = <ReactHighcharts config={config} />
     // console.log('*** ', id, ' ****config:*** ', config)
+
+    const { title, columnChartHeader } = _.get(config, 'customHeader', {})
+    let header = null
+    if (columnChartHeader) {
+      const {
+        totalTests,
+        totalSource,
+        totalYear,
+        averagePositivity,
+        averageSource,
+        averageYear,
+      } = _.get(config, 'customHeader.subtitle')
+
+      const tooltipId = this.props.chartData.countryCode + title.split(' ').join('-') + '-tooltip-'
+      const tooltipIdTotal = tooltipId + '-total'
+      const tooltipIdAverage = tooltipId + '-average'
+
+      const tooltipTotal = (
+        <ReactTooltip id={tooltipIdTotal} className='td-tooltip' type='dark' effect='solid'>
+          <div>Source: {totalSource}</div>
+          <div>Year: {totalYear}</div>
+        </ReactTooltip>
+      )
+      
+      const tooltipAverage = (
+        <ReactTooltip id={tooltipIdAverage} className='td-tooltip' type='dark' effect='solid'>
+          <div>Source: {averageSource}</div>
+          <div>Year: {averageYear}</div>
+        </ReactTooltip>
+      )
+
+      header = (
+        <div className='custom-header'>
+          <p className='chart-title'>{title}</p>
+          <div className='chart-subtitle'>
+            <a data-tip data-for={tooltipIdTotal}>
+              <p className='total'><b>Total tests</b>: {totalTests||'N/A'}</p>
+              {totalTests && tooltipTotal}
+            </a>
+            <a data-tip data-for={tooltipIdAverage}>
+              <p className='average'><b>Average positivity</b>: {averagePositivity||'N/A'}</p>
+              {averagePositivity && tooltipAverage}
+            </a><br />
+            <p>Programme data</p>
+          </div>
+        </div>
+      )
+    }
+
+    const containerClasses = `chart-container ${id} ${(header ? 'with-custom-header' : '')}`
+    
     return (
       <div className='col-xl-4 col-lg-6 col-sm-12'>
         <div className='card-stock'>
-          <div className='chart-container'>
+          {header}
+          <div className={containerClasses}>
             {chart}
             {tt}
           </div>
@@ -245,7 +323,7 @@ class Dashboard extends Component {
 
   getTable(id) {
     if (_.isEmpty(this.props.chartData)) {
-      console.log('No chart data (perhaps awaiting API response)')
+      // console.log('No chart data (perhaps awaiting API response)')
       return
     }
 
@@ -254,7 +332,7 @@ class Dashboard extends Component {
 
     let config = getConfig(id, this.props.chartData, shinyCountry)
     if (!config) {
-      console.error(`${id} failed to produce a config.`)
+      // console.error(`${id} failed to produce a config.`)
       return // TODO do we want to produce blank table?
     }
 
@@ -264,17 +342,72 @@ class Dashboard extends Component {
       [CHARTS.POLICY_TABLE.id]: PolicyTable,
     }[id]
 
+    const classes = {
+      [CHARTS.KP_TABLE.id]: 'col-sm-12 col-xl-5',
+      [CHARTS.GROUPS_TABLE.id]: 'col-sm-12',
+      [CHARTS.POLICY_TABLE.id]: 'col-sm-12 col-xl-7',
+    }[id]
+
     if (!Table) {
-      console.error(`${id} is not a valid table type.`)
+      // console.error(`${id} is not a valid table type.`)
       return
     }
 
     return (
-      <div className='col-sm-12'>
+      <div className={classes}>
         <div className='card-stock'>
           {/* <div className='chart-container'> */}
             {<Table config={config} iso={countryCode} />}
           {/* </div> */}
+        </div>
+      </div>
+    )
+  }
+
+  getResourcesSection() {
+    return (
+      <div className='row resources-section'>
+
+        <div className='col-12'>
+          <h3>Links to other sources</h3>
+          <div className='sources'>
+            {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
+              Shiny 90 Modelling Methodology
+            </a> */}
+            <a target='_blank' rel='noopener noreferrer' href='https://cfs.hivci.org/'>
+              WHO HIV Country Profiles
+            </a>
+            <a target='_blank' rel='noopener noreferrer' href='https://aidsinfo.unaids.org/'>
+              UNAIDS AIDSinfo
+            </a>
+            <a target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
+              UNAIDS - Laws and Policies
+            </a>
+            {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
+            WHO Paediatric HIV Testing
+          </a> */}
+            <a target='_blank' rel='noopener noreferrer' href='https://www.who.int/hiv/prep/global-prep-coalition/en/'>
+              Global PrEP Coalition
+            </a>
+            {DEV && <a target='_blank' rel='noopener noreferrer' href='https://master.dv1i2lva39jkq.amplifyapp.com/'>
+              PROTOTYPE DASHBOARD (fake data)
+            </a>}
+          </div>
+
+        </div>
+
+        <div className='col-12 pt-5'>
+          <h3>Glossary</h3>
+          <div className='terms'>
+            {TERMS.map(t => {
+              return (
+                <div key={t.term} className='term py-1'>
+                  <p className='name'>{t.term}</p>
+                  <p className='definition'>{t.definition}</p>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     )
@@ -293,21 +426,33 @@ class Dashboard extends Component {
   
   render() {
 
-    // const ptt = (
-    //   <Tooltip>
-    //     <div>
-    //       <div><b>Retests - PLHIV on ART:</b><span> Number of positive tests conducted in PLHIV already on ART. This is calculated by… Potential reasons for this type of testing include…</span></div>
-    //       <div><b>Retests - Aware but not on ART:</b><span> Number of positive tests conducted in PLHIV aware of their HIV infection but not on ART. This is calculated by… Potential reasons for this type of testing include…</span></div>
-    //       <div><b>New Diagnoses:</b><span> Number of positive tests returned that represent a newly identified HIV infection. This [does/does not] include retesting for verification prior to ART initiation as recommended by WHO. </span></div>
-    //     </div>
-    //   </Tooltip>
-    // )
+    const ptt = (
+      <Tooltip>
+        <div>
+          <p>
+            For countries with estimates from the Shiny90 model, the proportion of new diagnoses out of all positive tests is calculated for countries with annual data on the number adults tested and the number testing positive. 
+          </p>
+
+          <p>
+            The Shiny90 model uses household surveys and HTS program data to estimate the rates of HIV testing among adults not living with HIV and those living with HIV. HIV testing rates are assumed to vary with calendar time, sex, age, previous HIV testing status, awareness of status, and, for PLHIV, CD4 cell count category as a marker of risk of AIDS-related symptoms motivating care-seeking and HIV testing. The proportion of PLHIV who know their status estimated by Shiny90 is bound by ART coverage (minimum) and the proportion of PLHIV who have ever been tested and received the results (maximum). 
+          </p>
+
+          <p>
+            In addition to estimating the number of new diagnoses, the proportion of HIV positive tests that are retests is produced as a model output. This retesting proportion of all positive tests is large when the cumulative number of positive HIV tests is greater than the number of estimated PLHIV  that are undiagnosed, including those that are newly infected. The model calculates the proportion of diagnosed PLHIV who retest using a time-varying retesting rate ratio that is based on empirical evidence showing that retesting among PLHIV with known HIV status is common, ranging from 13% to 68% in many countries in SSA. Retesting among those who have already tested positive can be motivated by multiple factors, including the desire to confirm a previous test result or to avoid disclosing prior knowledge of HIV positive status when re-engaging with care after being lost to follow up due to societal stigma or denial. 
+          </p>
+
+          <p>
+            For more details on the methods for calculating and interpreting retesting proportions from the Shiny90 model, see <a href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx' target='_blank'>Maheu-Giroux, M. et al. (2019) AIDS v33 p S255</a> and <a href='https://www.medrxiv.org/content/10.1101/2020.10.20.20216283v1' target='_blank'>Giguère, K. et al. (2020) preprint</a>.
+          </p>
+        </div>
+      </Tooltip>
+    )
     
     const diagnosis = this.getChart(CHARTS.PLHIV_DIAGNOSIS.id)
     const PLHIVAge = this.getChart(CHARTS.PLHIV_AGE.id)
     const PLHIVSex = this.getChart(CHARTS.PLHIV_SEX.id)
     const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
-    const positive = this.getChart(CHARTS.HIV_POSITIVE.id)
+    const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
     const prevalence = this.getChart(CHARTS.PREVALENCE.id)
     const adults = this.getChart(CHARTS.ADULTS.id)
     const community = this.getChart(CHARTS.COMMUNITY.id)
@@ -319,20 +464,13 @@ class Dashboard extends Component {
     const policy = this.getTable(CHARTS.POLICY_TABLE.id)
     const groups = this.getTable(CHARTS.GROUPS_TABLE.id)
 
-    // const d = new Date()
-    // console.log('### rendering ', this.props.chartData.countryCode, ' at ', d.getMinutes() + ':' + d.getSeconds())
-    // console.log('### (url PARAM of: ', _.get(this, 'props.match.params.countryCode', '').toUpperCase() + ')')
-
-    // console.log('### LOADING: ', this.state.loading)
     if (this.state.loading) {
-
       const countryCode = _.get(this, 'props.match.params.countryCode', null)
       const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
       return (
         <div className='loading-mask'>
           <p className='name'>{name}</p>
           <div className='squares'>
-            {/* TODO: constify separately */}
             <span style={{ backgroundColor: P95ColorA }} />
             <span style={{ backgroundColor: P95ColorB }} />
             <span style={{ backgroundColor: P95ColorC }} />
@@ -346,11 +484,11 @@ class Dashboard extends Component {
     return (
       <div className='dashboard'>
         <div className='nav'>
-          <Link className='who-logo' to='/'>
+          <a className='who-logo' href='https://who.int/' target='_blank'>
             <img src='images/who_logo.png' alt='WHO logo' />
-          </Link>
+          </a>
           <span className='title text-center desktop'>HIV Testing Services Dashboard</span>
-          <span className='title text-center mobile'>HIVTS Dashboard</span>
+          <span className='title text-center mobile'>HIV Testing Services</span>
           <div className='input-group'>
             <select defaultValue={this.props.chartData.countryCode} onChange={this.goToCountry} className='custom-select'>
               {COUNTRIES.map(c => {
@@ -382,92 +520,28 @@ class Dashboard extends Component {
             {negative}
             {positive}
             {prevalence}
+            <div className='col-12 mt-2'>&nbsp;</div>
             {adults}
             {community}
             {facility}
             {index}
             {forecast}
-
+            <div className='col-12 mt-2'>&nbsp;</div>
             {kp}
             {policy}
             {groups}
           </div>
-
-          {/* <div className='row no-gutters'>
-            <h5 className='col-12 text-center mt-4 mb-2'>HIV tests conducted and positivity in the past year</h5>
-            <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configAdults}/></div>
-            <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configCommunity}/></div>
-            <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configFacility}/></div>
-            <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12'><ReactHighcharts config={configIndex}/></div>
-            <div className='col-xl-4 col-lg-6 col-md-6 col-sm-12'><ReactHighcharts config={configForecast} /></div>
-          </div> */}
-
-          {/* <div className='row no-gutters mt-5'>
-            <KPTable classes='col-sm-12 col-md-7 p-3' />
-            <PolicyTable classes='col-sm-12 col-md-5 p-3' />
-            <DemographicsTable shiny={shiny} classes='p-3' />
-          </div> */}
-
-          <div className='row no-gutters mt-5 other-source-section'>
-            <h3>Links to other sources</h3>
-            <div className='sources'>
-              {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
-                Shiny 90 Modelling Methodology
-              </a> */}
-              <a target='_blank' rel='noopener noreferrer' href='https://cfs.hivci.org/'>
-                WHO HIV Country Profiles
-              </a>
-              <a target='_blank' rel='noopener noreferrer' href='https://aidsinfo.unaids.org/'>
-                UNAIDS AIDSinfo
-              </a>
-              <a target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
-                UNAIDS - Laws and Policies
-              </a>
-              {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
-              WHO Paediatric HIV Testing
-            </a> */}
-              <a target='_blank' rel='noopener noreferrer' href='https://www.who.int/hiv/prep/global-prep-coalition/en/'>
-                Global PrEP Coalition
-              </a>
-              {DEV && <a target='_blank' rel='noopener noreferrer' href='https://master.dv1i2lva39jkq.amplifyapp.com/'>
-                PROTOTYPE DASHBOARD (fake data)
-              </a>}
-            </div>
-          </div>
-          {this.getGlossary()}
-          <br />
-          <br />
-          <br />
-        
-          {this.getDevSection()}
         </div>
-      </div>
-    )
-  }
 
-  getGlossary() {
-    return(
-      <div className='row no-gutters mt-5 glossary'>
-        <div className='col-12'>
-          <h2>Glossary</h2>
-        </div>
-        <div className='terms'>
-          {TERMS.map(t => {
-            // let definition = t.definition.replace(/{{{[.*]\|[.*]}}}/g, )
-            // _.each(t.links, (link, placeHolder) => {
-            //   definition.replace(placeHolder)
-            // })
-            return (
-              <div key={t.term} className='term py-1'><strong>{t.term}</strong>: <span>{t.definition}</span></div>
-            )
-          })}
-        </div>
+        {this.getResourcesSection()}
+      
+        {this.getDevSection()}
+
       </div>
     )
   }
 
   // dev form
-
   getDevSection() {
     if (!DEV) return
     const inputs = fields.map(f => {
@@ -476,6 +550,9 @@ class Dashboard extends Component {
 
     return (
       <div>
+        <br />
+        <br />
+        <br />
         <h5 className='text-center'>~ FOR DEVELOPMENT ~</h5>
         <h5>Color Palette</h5>
         {colors.map((c, i) => {

@@ -14,12 +14,15 @@ export default {
     // "series": { "yAxis": { "stackLabels": { enabled: true } } },
   },
   "tooltip": {
-  //   backgroundColor: 'rgba(256, 256, 256, 0.8)',
-  //   borderWidth: '3px',
-    "useHTML": true,
-  //   style: {
-  //     color: 'white',
-  //   }
+    // tooltip can escape chart bounds. so separate SVG is created, which solves
+    // the problem of HTML titles/subtitles appearing on top of it
+    "outside": true,
+    "backgroundColor": 'rgba(256, 256, 256, .95)',
+      // borderWidth: '1px',
+    // "useHTML": true,
+    //   style: {
+    //     color: 'white',
+    //   }
   },
   "chart": {
     // "className": "charty-mcchartface",
@@ -33,7 +36,7 @@ export default {
       // "fontFamily": "Verdana, sans-serif"
     },
     // "margin": [100, 100, 100, 100],
-    "spacing": [30, 30, 25, 25],
+    "spacing": [30, 30, 25, 25], // keep in sync with chartConfigs spacing
   },
   "title": { "align": "left", "x": 40 },
   "subtitle": { "align": "left", "x": 40 },

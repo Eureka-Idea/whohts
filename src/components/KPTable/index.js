@@ -16,7 +16,6 @@ const dems = {
 
 const KPTable = ({ config, iso }) => {
   if (!config) {
-    console.error('KP Table has no config.')
     return
   }
   
@@ -61,13 +60,13 @@ const KPTable = ({ config, iso }) => {
   
   return (
     <div className='kp-table' key={iso}>
-      <h2>Key Populations</h2>
       <Tooltip className='table-tooltip'>
         <div>
           Data from multiple sources and time periods. Hover a data value for more information.
         </div>
       </Tooltip>
-      <table className='table table-striped'>
+      <h2>Key Populations</h2>
+      <table className='table table-striped table-responsive table-responsive-lg'>
         <thead>
           <tr>
             <th scope='col'></th>

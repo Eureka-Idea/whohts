@@ -40,9 +40,9 @@ class Tooltip extends Component {
           viewBox='0 0 27 27'
           className='info-icon'
         >
-          <circle cx="13.5" cy="13.5" r="13.5" fill="#DBEDF2"/>
-          <circle cx="13.5" cy="7.5" r="1.5" fill="#709FAC"/>
-          <rect x="12" y="11" width="3" height="10" rx="1.5" fill="#709FAC"/>
+          <circle cx='13.5' cy='13.5' r='13.5' fill='#DBEDF2'/>
+          <circle cx='13.5' cy='7.5' r='1.5' fill='#709FAC'/>
+          <rect x='12' y='11' width='3' height='10' rx='1.5' fill='#709FAC'/>
         </svg>
         <div className='contents'>
           {this.state.open && this.props.children}

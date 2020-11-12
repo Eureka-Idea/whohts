@@ -3,10 +3,10 @@ $nav-height-sm: 50px;
 $nav-height: 64px;
 
 
-.highcharts-tooltip span {
-    background-color: rgba(256,256,256,.9);
-    // z-index:9999!important;
-}
+// .highcharts-tooltip span {
+//   background-color: rgba(256,256,256,.9);
+//   z-index:9999!important;
+// }
 
 .loading-mask {
   position: fixed;
@@ -130,7 +130,7 @@ $nav-height: 64px;
     left: 0;
     right: 0;
     height: $nav-height-sm;
-    color: $deep-sea-green;
+    // color: $deep-sea-green;
     font-weight: 600;
     background-color: white;
     // background-color: $accent-blue-x-dark;
@@ -156,6 +156,8 @@ $nav-height: 64px;
       flex-direction: column;
       justify-content: center;
       font-size: 15px;
+      flex-basis: 250px;
+      line-height: 1;
       &.desktop {
         display: none;
       }
@@ -163,7 +165,7 @@ $nav-height: 64px;
     .link-home, .export {
       margin: auto;
       padding-right: $buffer;
-      color: $deep-sea-green;
+      color: $link-color;
       font-size: 14px;
       cursor: pointer;
     }
@@ -203,6 +205,7 @@ $nav-height: 64px;
         }
       }
       .input-group {
+        max-width: 250px;
         margin-right: 2*$buffer;
         select {
           font-size: 16px;
@@ -213,9 +216,13 @@ $nav-height: 64px;
   }
 
   .country-context {
-    // height: 100%;
+    padding-bottom: 2*$buffer;
     .card-stock {
       height: 100%;
+    }
+
+    @media screen and (min-width: 768px) {
+      padding-bottom: 0;
     }
 
     .content {
@@ -263,7 +270,7 @@ $nav-height: 64px;
         padding-bottom: 3*$buffer;
       }
       .details {
-        // flex-direction: column;
+        flex-direction: column;
         // padding-bottom: 0;
         .detail {
           padding-bottom: $buffer;
@@ -286,7 +293,7 @@ $nav-height: 64px;
         // font-size: 54px;
       }
       .details {
-        flex-direction: column;
+        // flex-direction: column;
         .detail {
           .title {
             // font-size: 15px;
@@ -305,9 +312,10 @@ $nav-height: 64px;
       
       .name {
         font-size: 72px;
+        padding-top: 2*$buffer;
       }
       .details {
-        flex-direction: row;
+        // flex-direction: row;
         .detail {
           &:first-of-type {
             padding-right: 72px;
@@ -324,21 +332,9 @@ $nav-height: 64px;
   }
 
   .prog-95 {
-    .card-stock {
-      margin-top: 2*$buffer;
-    }
-
-    .nested-boxes {
-      margin: auto;
-    }
-    
+    max-width: 100vw; // NOTE: prevent screen expansion on mobile
     display: flex;
     justify-content: center;
-
-    .content {
-      // background: white;
-      // padding: 0px;
-    }
   }
 
   .card-stock {
@@ -351,40 +347,19 @@ $nav-height: 64px;
     }
   }
 
-  @media screen and (min-width: 992px) {
-    .country-context {
-      .card-stock {
-        // margin-right: 1.5*$buffer;
-      }
-    }
-
-    .prog-95 {
-      .card-stock {
-        margin-top: 0;
-        // margin-left: 1.5*$buffer;
-      }
-    }
-  }
-
-  @media screen and (min-width: 1200px) {
-    .card-stock {
-
-    }
-  }
-
   .charts {
-
+    // background: $vista-white;
     .card-stock {
       // padding-right: 20px;
     }
     
     .plhiv.tooltip-container.open {
-      width: 340px;
-      height: 220px;
+      // width: 340px;
+      // height: 220px;
 
-      .nested-boxes .box-2 .below-content {
-        width: 90px;
-      }
+      // .nested-boxes .box-2 .below-content {
+      //   width: 90px;
+      // }
     }
 
     .hivp-title {
@@ -398,6 +373,25 @@ $nav-height: 64px;
       width: 270px;
     }
 
+    .custom-header {
+      padding: 25px 45px 0 55px;
+      .chart-title {
+        font-size: 18px;
+        line-height: 1;
+        min-height: 38px; // keep alignment between charts with 1 & 2 line titles
+        margin: 0;
+      }
+      .chart-subtitle {
+        font-size: 12px;
+        p {
+          display: inline;
+          &.total {
+            padding-right: 4px;
+          }
+        }
+      }
+    }
+
     .chart-container {
       // background: white;
       margin: 1.5*$buffer $buffer;
@@ -409,7 +403,7 @@ $nav-height: 64px;
       // FIXES: chart width doesn't resize inside flex container
       // SOLUTION 1 (https://github.com/highcharts/highcharts/issues/4649#issuecomment-425375098)
       div[data-highcharts-chart] {
-        height: 400px;
+        height: 400px; // keep in sync with baseStyles height
         position: relative;
         width: 100%;
         overflow: hidden;
@@ -430,12 +424,23 @@ $nav-height: 64px;
         //   width: 100% !important; 
         // }
     }
+    .chart-container.FORECAST {
+      margin-top: 0;
+      margin-bottom: 2*$buffer;
+    }
+    .chart-container.with-custom-header {
+      margin-top: 0;
+      margin-bottom: 2*$buffer;
+      div[data-highcharts-chart] {
+        height: 300px; // keep in sync with chartConfigs WITH_CUSTOM_HEADER_CHART_HEIGHT
+      }
+    }
     
     // todo: move 
     .tooltip-container {
       position: absolute;
-      left: 0px;
-      top: 0px;
+      // left: 20px;
+      top: 20px;
       margin: 5px;
       margin: 5px;
       padding: 5px;
@@ -443,9 +448,10 @@ $nav-height: 64px;
       &.open {
         // min-width: 240px;
         // min-height: 120px;
-        font-size: 16px;
-        border: solid gray .1px;
-        background: white;
+        font-size: 12px;
+        // border: solid gray .1px;
+        background: $saturated-vista-white;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
       }
       .contents {
         margin: $buffer;
@@ -457,28 +463,10 @@ $nav-height: 64px;
       }
     }
   }
-
-  .glossary {
-    // font-family: serif;
-    .terms {
-      @media screen and (min-width: 768px) {
-        column-count: 2;
-      }
-      @media screen and (min-width: 992px) {
-        column-count: 3;
-      }
-      column-count: 1;
-      column-gap: 20px;
-      word-break: break-word;
-
-      .term {
-        // so definition doesn't split between columns
-        display: inline-block;
-      }
-    }
-  }
  
   .policy-table, .kp-table, .demographics-table {
+    margin: 0 $table-margin/2 $table-margin; // update $max-width if L/R margin tweaked
+    padding-bottom: $table-margin;
     td, th:not(:first-of-type) {
       text-align: right;
     }
@@ -488,8 +476,9 @@ $nav-height: 64px;
     td {
       font-weight: 400;
     }
-    .tooltip-container {
-      top: 20px;
+    .tooltip-container.open {
+      // top: 20px;
+      font-size: 16px; // less text than the charts (PLHIV_POS) 
     }
     h2 {
       padding-top: 25px;
@@ -502,21 +491,85 @@ $nav-height: 64px;
     }
   }
 
-  .other-source-section {
+  .resources-section {
+    padding: 70px 30px;
+    margin-top: 70px;
+    background: white;
     display: block;
-    a, h3 {
+
+    h3 {
       display: block;
+      // color: $near-black;
+      margin-bottom: 40px;
     }
+    .sources {
+      a {
+        display: block;
+        color: $link-color;
+      }
+    }
+
     @media screen and (min-width: 992px) {
       .sources {
         display: flex;
         justify-content: space-around;
+        a {
+          display: inline-block;
+        }
+      }
+    }
+
+    .terms {
+      column-count: 1;
+      @media screen and (min-width: 768px) {
+        column-count: 2;
+      }
+      @media screen and (min-width: 1200px) {
+        column-count: 3;
+      }
+      column-gap: 30px;
+      word-break: break-word;
+
+      .term {
+        // so definition doesn't split between columns
+        display: inline-block;
+        line-height: 1.5;
+
+        .name {
+          // color: $near-black;
+          font-weight: 600;
+          font-size: 16px;
+          margin-bottom: 6px;
+        }
+        .definition {
+          color: $sirocco;
+          font-weight: 500;
+          font-size: 14px;
+          margin-bottom: 17px;
+        }
       }
       a {
-        display: inline-block;
+        color: $link-color;
       }
     }
   }  
+}
+
+// MOBILE FIXES
+@media screen and (max-width: 576px) {
+  .dashboard {
+  
+    // .prog-95 {
+    //   .card-stock {
+    //     overflow: hidden; // in case p95 outgrows mobile screen
+    //     .content {
+          
+    //       transform: scale(.8);
+    //       padding: 20px 0px !important;
+    //     }
+    //   }
+    // }
+  }
 }
 
 #direct-query {

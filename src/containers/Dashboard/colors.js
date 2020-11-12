@@ -31,6 +31,7 @@ const pirateGold88 = '#E2BD78'
 const rum = '#7F6A93'
 const steelBlue = '#4997AE'
 const cuttySark = '#4D7469'
+const cuttySark75 = '#7A978F'
 const jungleGreen = '#30A86E'
 const charm = '#DE869B'
 
@@ -45,6 +46,7 @@ const midGray = '#676471'
 const stormGray = '#6D7383'
 // const stormGray = '#6D7383DD'
 const opal = '#9FBCC0'
+const opal80 = '#B2C9CD'
 // const opal = '#9FBCC0DD'
 const botticelli = '#C5DDE2'
 // const botticelli = '#C5DDE2DD'
@@ -65,10 +67,10 @@ const maleColor = pirateGold
 // const P95ColorB = 'rgb(151, 204, 166)'
 const P95ColorB = 'rgb(179, 158, 198)'
 // const P95ColorD = 'rgb(182, 227, 234)'
-const P95ColorA = cuttySark + '' //
+const P95ColorC = opal80
 const P95ColorD = pirateGold88 //
 // const P95ColorC = rum + 'DD'
-const P95ColorC = opal + ''
+const P95ColorA = cuttySark75
 
 export default [
   stormGray, // 0
@@ -115,6 +117,7 @@ export {
   nutmeg,
   buddhaGold,
   putty,
+  froly,
 
   femaleColor,
   maleColor,

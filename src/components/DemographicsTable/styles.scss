@@ -2,19 +2,36 @@
 
 .dashboard {
 
+  // TABLE FIXES
+  .table {
+    // otherwise table overflows screen width
+    max-width: $max-width;
+    @media screen and (max-width: 576px) {
+      // max-width: $max-width-mobile;
+    }
+    @media screen and (min-width: 768px) {
+      // otherwise table doesn't take up screen width
+      &.table-responsive {
+        display: table;
+      }
+    }
+  }
+
   .demographics-table {
     position: relative;
     background-color: white;
     padding-bottom: $table-margin;
+    // margin-left: $table-margin;
     
     .table {
       @media screen and (min-width: 992px) {
         display: table !important; // allows it to grow
       }
       
-      max-width: $max-width;
-      margin-left: $table-margin;
-      
+      // max-width: $max-width;
+      th[scope="row"] {
+        cursor: pointer;
+      }
       td {
         white-space: nowrap;
       }
@@ -32,23 +49,31 @@
       font-weight: bold;
     }
     
-    .token {
+    .token { // ALL
+      box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
       margin: 3px 2px;
       border-radius: 6px;
       border: 1px solid;
       display: inline-block;
+      text-align: center;
       cursor: pointer;
     }
     
     .group-toggles {
       max-width: $max-width;
       display: flex;
-      justify-content: space-around;
+      justify-content: center;
+      @media screen and (max-width: 376px) {
+        flex-wrap: wrap;
+      }
       
-      .token {
-        padding: 3px 8px;
+      .token { // group
+        padding: 5px 10px;
         font-weight: bold;
         font-size: 16px;
+        &:not(:last-of-type) {
+          margin-right: 8px;
+        }
         
         &.hide-all {
           background: black;
@@ -101,44 +126,47 @@
           }
         }
         
-        .token {
-          border: 3px solid;
-          // color: white;
-          padding: 2px 5px;
+        .token { // individual row
           font-size: 13px;
           font-weight: lighter;
           background: #f2f2f2;
-          text-align: center;
+          border-left: 15px solid;
+          border-right: 2px solid;
+          // color: white;
+          padding: 4px 10px 4px 4px;
+          &:not(:last-of-type) {
+            margin-right: 5px;
+          }
           
-          &.women {
+          &.f15-99 {
             border-color: $women;
           }
-          &.men {
+          &.m15-99 {
             border-color: $men;
           }
-          &.women50 {
-            border-color: rgba($women, .85);
+          &.f50-99 {
+            border-color: rgba($women, .76);
           }
-          &.men50 {
-            border-color: rgba($men, .85);
+          &.m50-99 {
+            border-color: rgba($men, .76);
           }
-          &.women35 {
-            border-color: rgba($women, .7);
+          &.f35-49 {
+            border-color: rgba($women, .59);
           }
-          &.men35 {
-            border-color: rgba($men, .7);
+          &.m35-49 {
+            border-color: rgba($men, .59);
           }
-          &.women25 {
-            border-color: rgba($women, .55);
+          &.f25-34 {
+            border-color: rgba($women, .43);
           }
-          &.men25 {
-            border-color: rgba($men, .55);
+          &.m25-34 {
+            border-color: rgba($men, .43);
           }
-          &.women15 {
-          border-color: rgba($women, .4);
+          &.f15-24 {
+            border-color: rgba($women, .27);
           }
-          &.men15 {
-            border-color: rgba($men, .4);
+          &.m15-24 {
+            border-color: rgba($men, .27);
           }
         }
       }

@@ -84,14 +84,13 @@ class DemographicsTable extends Component {
   constructor(props) {
     super(props)
     
-    // console.log('MAD PROPS : ', props)
     this.allWomen = []
     this.allMen = []
     this.everyone = []
     props.config.includedDemographics.forEach(dem => {
       const demObj = _.get(demoMap, dem)
       if (!demObj) {
-        console.error('no demographic found for: ', dem)
+        // console.error('no demographic found for: ', dem)
         return
       }
       this.everyone.push(demObj)
@@ -155,8 +154,12 @@ class DemographicsTable extends Component {
         </thead>
         <tbody>
           {visibleGroups.map(dem => (
-            <tr key={dem.id} onClick={this.hideRow.bind(this, dem.id)}>
-              <th scope='row'>{dem.display}</th>
+            <tr key={dem.id}>
+              <th
+                scope='row'
+                onClick={this.hideRow.bind(this, dem.id)}
+                title='Click to hide row'
+              >{dem.display}</th>
               
               {indicators.map(({ id }) => {
                 const data = _.get(this.props.config, ['dataMap', dem.id, id], {})
@@ -217,7 +220,7 @@ class DemographicsTable extends Component {
       ) : (
         <div className='title all-visible'>
           <b>No hidden rows</b>
-          <i>(click a row to hide)</i>
+          <i>(click a row header to hide)</i>
         </div>
       )
 
@@ -241,9 +244,9 @@ class DemographicsTable extends Component {
   getGroupToggles() {
     return(
       <div className='group-toggles mt-3'>
-        <span onClick={this.toggleGroup.bind(this, 'show-all')} className='token group show-all'>Show All</span>
         <span onClick={this.toggleGroup.bind(this, 'show-women')} className='token group show-women'>Only Women</span>
         <span onClick={this.toggleGroup.bind(this, 'show-men')} className='token group show-men'>Only Men</span>
+        <span onClick={this.toggleGroup.bind(this, 'show-all')} className='token group show-all'>Show All</span>
         <span onClick={this.toggleGroup.bind(this, 'hide-all')} className='token group hide-all'>Hide All</span>
       </div>
     )
@@ -259,7 +262,7 @@ class DemographicsTable extends Component {
         <Tooltip className='table-tooltip'>
           <div>
             Data from multiple sources and time periods. Hover a data value for more information.
-            Click a row to hide that row, or use filters below the table to tailor your view.
+            Click a row header to hide that row, or use filters below the table to tailor your view.
           </div>
         </Tooltip>
         <h2 className='table-title'>Population Groups </h2>

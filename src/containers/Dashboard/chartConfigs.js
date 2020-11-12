@@ -1,8 +1,13 @@
-import colors, { femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty } from "./colors"
+import colors, { femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty, froly } from "./colors"
 import _ from 'lodash'
 import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
 import { CHARTS, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP, ALL_CHARTS, CSV_FIELDS } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
+
+// TODO: move
+const WITH_CUSTOM_HEADER_CHART_HEIGHT = 300 // keep in sync with styles.scss with-custom-header height
+// reduces chart top spacing (first number) by ~15 to give custom-header charts proper distance from header
+const WITH_CUSTOM_HEADER_CHART_SPACING = [15, 30, 25, 25] // keep in sync with baseStyle spacing
 
 // __________________________ HELPERS ____________________________________
 
@@ -29,8 +34,6 @@ const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2020)'
 const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2020)'
 
 function adjustPercentage({ row, toDisplay=false, decimals=0, returnRow=false }) {
-
-
   
   if (!row) {
     console.warn('No % to adjust')
@@ -97,6 +100,9 @@ function displayNumber({ v, unrounded=false }) {
     return null
   }
 
+  if (v > 1000000000) {
+    return _.round(v/1000000000, 1).toString() + ' billion'
+  }
   if (v > 1000000) {
     return _.round(v/1000000, 1).toString() + ' million'
   }
@@ -188,25 +194,36 @@ function getLineChartSubtitle(shinyCountry) {
   return ({ useHTML: true, text: subtitle })
 }
 
-function getColumnChartSubtitle(total, pTotal) {
+function getColumnChartCustomHeader(totalRow, averageRow, title) {
   const {
-    [FIELD_MAP.SOURCE_DATABASE]: source,
-    [FIELD_MAP.YEAR]: year,
-  } = total
-  const tooltip = `Source: ${SOURCE_DISPLAY_MAP[source]||source}\nYear: ${year}`
+    [FIELD_MAP.SOURCE_DATABASE]: totalSource,
+    [FIELD_MAP.YEAR]: totalYear,
+  } = totalRow
+  // const tooltip = `Source: ${SOURCE_DISPLAY_MAP[source]||source}\nYear: ${year}`
 
   const {
-    [FIELD_MAP.SOURCE_DATABASE]: pSource,
-    [FIELD_MAP.YEAR]: pYear,
-  } = pTotal
-  const pTooltip = `Source: ${SOURCE_DISPLAY_MAP[pSource]||pSource}\nYear: ${pYear}`
+    [FIELD_MAP.SOURCE_DATABASE]: averageSource,
+    [FIELD_MAP.YEAR]: averageYear,
+  } = averageRow
+  // const pTooltip = `Source: ${SOURCE_DISPLAY_MAP[pSource]||pSource}\nYear: ${pYear}`
 
-  const formattedTotal = displayNumber({ v: total.value, unrounded: true })
-  const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
+  // const formattedTotal = displayNumber({ v: total.value, unrounded: true })
+  // const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
   
-  const subtitle = `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span> 
-  <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme data</span></div>`
-  return ({ useHTML: true, text: subtitle })
+  // const subtitle = `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span> 
+  // <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme data</span></div>`
+  return ({
+    columnChartHeader: true,
+    title,
+    subtitle: {
+      totalTests: displayNumber({ v: totalRow.value, unrounded: true }),
+      totalSource: SOURCE_DISPLAY_MAP[totalSource] || totalSource,
+      totalYear,
+      averagePositivity: adjustPercentage({ row: averageRow, toDisplay: true, decimals: 1 }),
+      averageSource: SOURCE_DISPLAY_MAP[averageSource] || averageSource,
+      averageYear,
+    }
+   })
 }
 
 function getPlotPoints({ row, year, adjust=false, decimals=0, forExport=false }) {
@@ -247,7 +264,8 @@ function getPlotPoints({ row, year, adjust=false, decimals=0, forExport=false })
     })
   }
   
-  const rPoint = [l, u]
+  // https://api.highcharts.com/highcharts/series.arearange.data
+  const rPoint = [x, l, u]
   return [point, rPoint]
 }
 
@@ -347,15 +365,20 @@ const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCo
     result[ind] = mapper(ranges, (range, ri) => {
       const count = sourceCountMap[ind] || sourceCount
 
-      for (let i = 1; i <= count; i++) {
+      for (let i = 1; i <= (count+2); i++) { // go to count+2 in case sourceCountMap wasn't updated
         // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
         const selector = mappedData ? range : ri
         const indicatorResult = _.get(data, [ind+i, selector], null)
         if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
+
+          if (i > count) {
+            console.error('!!! Update sourceCountMap to reflect added sources to prevent data from being dropped !!!')
+          }
+          
           return indicatorResult
         } else if (i === count) {
-          _.set(result.missingIndicatorMap, [ind, range], true)
-          return { value: null, [rangedField]: range, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'N/A', [FIELD_MAP.YEAR]: 'N/A' }
+          _.setWith(result.missingIndicatorMap, [ind, range], true, Object)
+          return { value: null, [rangedField]: range, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'N/A', [FIELD_MAP.YEAR]: (rangedField === 'year' ? range : 'N/A') }
         }
       }
 
@@ -429,13 +452,28 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
     if (plhivPoint && plhivPoint.y) {
       if (knowPoint && knowPoint.y) {
         // cannibalize knowPoint for its year, source etc
-        undiagnosedPoint = knowPoint
-        undiagnosedPoint.y = (plhivPoint.y - knowPoint.y)
-      }
-      if (onArtPoint && onArtPoint.y) {
-        // cannibalize plhivPoint for its year, source etc
-        notArtPoint = plhivPoint
-        notArtPoint.y = (plhivPoint.y - onArtPoint.y)
+        const undiagnosedValue = (plhivPoint.y - knowPoint.y)
+        undiagnosedPoint = _.extend({}, knowPoint, {
+          [FIELD_MAP.VALUE_UPPER]: null,
+          u: null,
+          [FIELD_MAP.VALUE_LOWER]: null,
+          l: null,
+          [FIELD_MAP.VALUE]: undiagnosedValue,
+          y: undiagnosedValue,
+        })
+
+        if (onArtPoint && onArtPoint.y) {
+          // cannibalize plhivPoint for its year, source etc
+          const notArtValue = (knowPoint.y - onArtPoint.y)
+          notArtPoint = _.extend({}, plhivPoint, {
+            [FIELD_MAP.VALUE_UPPER]: null,
+            u: null,
+            [FIELD_MAP.VALUE_LOWER]: null,
+            l: null,
+            [FIELD_MAP.VALUE]: notArtValue,
+            y: notArtValue,
+          })
+        }
       }
     }
     
@@ -534,7 +572,7 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
       zIndex: 1
     }, {
       name: 'Men range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: rMPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -554,7 +592,7 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
       zIndex: 1
     }, {
       name: 'Women range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: rFPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -621,7 +659,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
     },
     {
       name: '15 - 24 range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: dataMap['15-24'].rPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -642,7 +680,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
     },
     {
       name: '25 - 34 range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: dataMap['25-34'].rPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -663,7 +701,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
     },
     {
       name: '35 - 49 range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: dataMap['35-49'].rPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -684,7 +722,7 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
     },
     {
       name: '50+ range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: dataMap['50-99'].rPoints,
       type: 'arearange',
       enableMouseTracking: false,
@@ -734,14 +772,14 @@ const getHivNegative = (data, shinyCountry=false, forExport=false) => {
     {
       name: 'Retest',
       description: TERM_MAP.retest.definition,
-      color: steelBlue,
+      color: nandor,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.retests.points,
     },
     {
       name: 'First test',
       description: TERM_MAP.firstTest.definition,
-      color: nandor,
+      color: steelBlue,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
       data: dataMap.firsts.points,
     },
@@ -751,7 +789,7 @@ const getHivNegative = (data, shinyCountry=false, forExport=false) => {
     xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
     yAxis: { title: { text: 'HIV Negative Tests' } },
     subtitle: getLineChartSubtitle(shinyCountry),
-    plotOptions: { series: { pointStart: 2015 } }
+    // plotOptions: { series: { pointStart: 2015 } }
     // tooltip: { valueSuffix: ' thousand' },
   }
   return _.merge({}, getArea({ title, series, options }))
@@ -759,19 +797,48 @@ const getHivNegative = (data, shinyCountry=false, forExport=false) => {
 
 const getHivPositive = (data, shinyCountry=false, forExport=false) => {
   const { yearRange } = CHARTS.HIV_POSITIVE
-  const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and retests'
+  const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and re-diagnoses'
 
   const dataMap = {
-    ['arts']: { points: [] },
-    ['awares']: { points: [] },
-    ['firsts']: { points: [] },
+    ['retests']: { points: [] },
+    // ['arts']: { points: [] },
+    // ['awares']: { points: [] },
+    ['news']: { points: [] },
   }
 
   _.each(dataMap, (obj, ind) => {
-    const rows = data[ind]
+    const rows = data[ind] // only for 'news'
 
     yearRange.forEach((y, i) => {
-      const row = rows[i]
+      let row = _.get(rows, i)
+
+      if (ind === 'retests') {
+        const artRow = _.get(data, ['arts', i])
+        const awareRow = _.get(data, ['awares', i])
+        const artRowVal = _.get(artRow, FIELD_MAP.VALUE, 0)
+        const awareRowVal = _.get(awareRow, FIELD_MAP.VALUE, 0)
+        // console.log('artRow: ', artRowVal)
+        // console.log('awareRow: ', awareRowVal)
+
+        if (artRow && awareRow) {
+          row = _.extend({}, artRow, {
+            [FIELD_MAP.INDICATOR]: 'retests',
+            [FIELD_MAP.VALUE]: artRowVal + awareRowVal,
+            [FIELD_MAP.VALUE_UPPER]: undefined,
+            [FIELD_MAP.VALUE_LOWER]: undefined,
+            [FIELD_MAP.SOURCE_DATABASE]: '(calculated)',
+            [FIELD_MAP.NOTES]: 'based on retests_aware and retests_art'
+,
+          })
+        } else if (artRow) {
+          row = artRow
+        } else if (awareRow) {
+          row = awareRow
+        }
+
+        // console.log('RETEST VALUE: ', _.get(row, 'value'))
+      }
+
       const [point] = getPlotPoints({ row, year: y, forExport })
       if (point) {
         obj.points.push(point)
@@ -796,11 +863,11 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
   }
   const series = [
     {
-      name: 'Retest - know status on ART',
-      description: TERM_MAP.retest.definition,
+      name: 'Re-diagnosis',
+      description: TERM_MAP.reDiagnosis.definition,
       color: stormGray,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
-      data: dataMap.arts.points,
+      data: dataMap.retests.points,
       zIndex: 1,
     },
     // {
@@ -816,14 +883,14 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
     //   zIndex: 0,
     //   marker: { enabled: false }
     // },
-    {
-      name: 'Retest - know status not on ART',
-      description: TERM_MAP.retest.definition,
-      color: botticelli,
-      tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
-      data: dataMap.awares.points,
-      zIndex: 1,
-    },
+    // {
+    //   name: 'Retest - know status not on ART',
+    //   description: TERM_MAP.retest.definition,
+    //   color: botticelli,
+    //   tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
+    //   data: dataMap.awares.points,
+    //   zIndex: 1,
+    // },
     // {
     //   name: 'Retest - know status not on ART range',
     //   data: dataMap.awares.rPoints,
@@ -842,12 +909,12 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
       description: TERM_MAP.newDiagnosis.definition,
       color: copper,
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
-      data: dataMap.firsts.points,
+      data: dataMap.news.points,
       zIndex: 1,
     },
     // {
     //   name: 'New diagnosis15+) range',
-    //   data: dataMap.firsts.rPoints,
+    //   data: dataMap.news.rPoints,
     //   pointStart: 2015,
     //   type: 'arearange',
     //   enableMouseTracking: false,
@@ -894,9 +961,10 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
     const populationValue = _.get(data, ['population', i, [FIELD_MAP.VALUE]])
     const onArtValue = _.get(data, ['onArt', i, [FIELD_MAP.VALUE]])
     const plhivValue = _.get(data, ['plhiv', i, [FIELD_MAP.VALUE]])
+    const isCameroon = _.get(data, ['plhiv', i, [FIELD_MAP.COUNTRY_ISO_CODE]]) === 'CMR'
 
     let adjPrevValue
-    if (populationValue && onArtValue && plhivValue) {
+    if (populationValue && onArtValue && plhivValue && !isCameroon) {
       adjPrevValue = (
         (plhivValue - onArtValue) * 100 /
         (populationValue - onArtValue)
@@ -908,6 +976,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
         adjPrevPoint[FIELD_MAP.VALUE] = adjPrevValue
         adjPrevPoint[FIELD_MAP.INDICATOR] = 'Treatment adjusted Prevalence'
         adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = '(calculated)',
+        adjPrevPoint[FIELD_MAP.YEAR] = y,
         adjPrevPoint[FIELD_MAP.NOTES] = 'based on population, estimated PLHIV, and estimated PLHIV on ART data values'
       }
       adjPrevData.push(adjPrevPoint)
@@ -951,7 +1020,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       data: prevalenceData,
     }, {
       name: 'Prevalence range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: rPrevalenceData,
       type: 'arearange',
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
@@ -962,15 +1031,20 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       zIndex: 0,
       marker: { enabled: false }
     },
-    {
-      name: 'Treatment adjusted prevalence',
-      description: TERM_MAP.treatmentAdjustedPrevalence.definition,
-      zIndex: 1,
-      color: buddhaGold,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-      data: adjPrevData
-    },
   ]
+
+  if (adjPrevData.length) {
+    series.push(
+      {
+        name: 'Treatment adjusted prevalence',
+        description: TERM_MAP.treatmentAdjustedPrevalence.definition,
+        zIndex: 1,
+        color: buddhaGold,
+        tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
+        data: adjPrevData
+      },
+    )
+  }
 
   if (shinyCountry) {
     const shinyAdditions = [{
@@ -982,7 +1056,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       data: positivityData
     }, {
       name: 'Positivity range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: rPositivityData,
       type: 'arearange',
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
@@ -1001,7 +1075,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       data: dYieldData
     }, {
       name: 'Diagnostic yield range',
-      pointStart: 2015,
+      // pointStart: 2015,
       data: rDYieldData,
       type: 'arearange',
       enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
@@ -1105,9 +1179,13 @@ const getAdults = (data, shinyCountry=false, forExport=false) => {
   const categories = ['Women (15+)', 'Men (15+)']
 
   const options = {
-    subtitle: getColumnChartSubtitle(total, pTotal)
+    customHeader: getColumnChartCustomHeader(total, pTotal, title),
+    chart: {
+      height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
+    }
   }
-  return _.merge({}, getColumnScat({ title, series, options, categories }))
+  return _.merge({}, getColumnScat({ series, options, categories }))
 }
 
 const getCommunity = (data, shinyCountry=false, forExport=false) => {
@@ -1165,10 +1243,14 @@ const getCommunity = (data, shinyCountry=false, forExport=false) => {
   ]
 
   const options = {
-    subtitle: getColumnChartSubtitle(total, pTotal)
+    customHeader: getColumnChartCustomHeader(total, pTotal, title),
+    chart: {
+      height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
+    }
   }
   const categories = ['Mobile Testing', 'VCT', 'Other']
-  return _.merge({}, getColumnScat({ title, series, options, categories }))
+  return _.merge({}, getColumnScat({ series, options, categories }))
 }
 
 const getFacility = (data, shinyCountry=false, forExport=false) => {
@@ -1251,11 +1333,15 @@ const getFacility = (data, shinyCountry=false, forExport=false) => {
   ]
 
   const options = {
-    subtitle: getColumnChartSubtitle(total, pTotal)
+    customHeader: getColumnChartCustomHeader(total, pTotal, title),
+    chart: {
+      height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
+    }
   }
   const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other']
   // const options = { xAxis: { categories: ['Community', 'Facility']} }
-  return _.merge({}, getColumnScat({ title, options, categories, series }))
+  return _.merge({}, getColumnScat({ options, categories, series }))
 }
 
 const getIndex = (data, shinyCountry=false, forExport=false) => {
@@ -1314,10 +1400,14 @@ const getIndex = (data, shinyCountry=false, forExport=false) => {
     }
   ]
   const options = {
-    subtitle: getColumnChartSubtitle(total, pTotal)
+    customHeader: getColumnChartCustomHeader(total, pTotal, title),
+    chart: {
+      height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
+    }
   }
   const categories = ['Community', 'Facility']
-  return _.merge({}, getColumnScat({ title, options, categories, series }))
+  return _.merge({}, getColumnScat({ options, categories, series }))
 }
 
 const getForecast = (data, shinyCountry=false, forExport=false) => {
@@ -1338,30 +1428,56 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
 
   const missingIndicators = Object.keys(missingIndicatorMap)
 
-  // console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
+  console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
 
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
   }
 
-  const distributedNumData = distributed.map(d => ({
+  const distributedNumData = distributed.filter(r => !r.noData).map(r => {
+    const {
+      [FIELD_MAP.VALUE]: y,
+      [FIELD_MAP.SOURCE_DATABASE]: source,
+      [FIELD_MAP.YEAR]: year,
+    } = r
+    
+
+    const point = {
+      y, x: Number(year), source, year, mismatched: true,
+    }
+
+    if (forExport) {
+      CSV_FIELDS.forEach(({ fieldId }) => {
+        if (_.isUndefined(point[fieldId])) {
+          point[fieldId] = r[fieldId] || ''
+        }
+      })
+    }
+
+    return point
+  })
+  //   ({
+  //   x: Number(d.year),
+  //   y: d.value,
+  //   source: d[FIELD_MAP.SOURCE_DATABASE]
+  // }))
+
+  const demandNumData = demand.filter(r => !r.noData).map(d => ({
+    x: Number(d.year),
+    y: d.value,
+  }))
+
+  const needNumData = need.filter(r => !r.noData).map(d => ({
     x: Number(d.year),
     y: d.value,
     source: d[FIELD_MAP.SOURCE_DATABASE]
   }))
 
-  const demandNumData = demand.map(d => ({
-    x: Number(d.year),
-    y: d.value,
-  }))
+  if (forExport) {
+    return [...distributedNumData, ...demandNumData, ...needNumData]
+  }
 
-  const needNumData = need.map(d => ({
-    x: Number(d.year),
-    y: d.value,
-    source: d[FIELD_MAP.SOURCE_DATABASE]
-  }))
-
-  if (distributedNumData.length <= 1 && demandNumData.length <= 1 && needNumData.length <= 1) {
+  if (!distributedNumData.length && !demandNumData.length && !needNumData.length) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1376,24 +1492,24 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
       name: 'HIVSTs distributed',
       data: distributedNumData,
       tooltip: {
-        // pointFormat: sourceTooltipFormat // TODO: use formatter?
+        pointFormatter: sourceTooltipFormatter // TODO: use formatter?
       },
     },
-    {
-      name: 'HIVST forecast demand',
-      data: demandNumData,
-    },
-    {
-      name: 'HIVST forecast need',
-      type: 'line',
-      data: needNumData,
-      tooltip: {
-        // pointFormat: sourceTooltipFormat // TODO: use formatter?
-      },
-    }
+    // {
+    //   name: 'HIVST forecast demand',
+    //   data: demandNumData,
+    // },
+    // {
+    //   name: 'HIVST forecast need',
+    //   type: 'line',
+    //   data: needNumData,
+    //   tooltip: {
+    //     // pointFormat: sourceTooltipFormat // TODO: use formatter?
+    //   },
+    // }
   ]
 
-  return _.merge({}, getColumnLine({ title, series, options }))
+  return _.merge({}, getColumn({ title, series, options }))
 }
 
 const getKpTable = (data, shinyCountry=false, forExport=false) => {
@@ -1486,14 +1602,16 @@ const getPolicyTable = (data, shinyCountry=false, forExport=false) => {
   } = data
 
   if (forExport) {
+    // NOTE: ** conditional tweak ** 
+    // for some indicators WHO wants to display the SOURCE_YEAR as the YEAR
     return [
       age,
-      provider,
-      community,
-      lay,
+      _.extend({}, provider, { [FIELD_MAP.YEAR]: provider[FIELD_MAP.SOURCE_YEAR] }),
+      _.extend({}, community, { [FIELD_MAP.YEAR]: community[FIELD_MAP.SOURCE_YEAR] }),
+      _.extend({}, lay, { [FIELD_MAP.YEAR]: lay[FIELD_MAP.SOURCE_YEAR] }),
       hivst,
-      assisted,
-      social,
+      _.extend({}, assisted, { [FIELD_MAP.YEAR]: assisted[FIELD_MAP.SOURCE_YEAR] }),
+      _.extend({}, social, { [FIELD_MAP.YEAR]: social[FIELD_MAP.SOURCE_YEAR] }),
       compliance,
       verification,
     ]
@@ -1502,7 +1620,7 @@ const getPolicyTable = (data, shinyCountry=false, forExport=false) => {
   const config = {
     title,
     data: [{ 
-        rowName: 'Age of consent for HIV testing',
+      rowName: 'Laws requiring parental consent for adolescents to access HIV testing',
         value: _.get(age, [FIELD_MAP.VALUE_COMMENT])
       },{ 
         rowName: 'Provider-initiated testing',
@@ -1557,19 +1675,22 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
     let { 
       [FIELD_MAP.VALUE]: awareVal,
       [FIELD_MAP.SOURCE_DATABASE]: awareSource, // for adjustment
-      [FIELD_MAP.SEX]: awareSex, // forExport
-      [FIELD_MAP.AGE]: awareAge, // forExport
+      // forExport
+      [FIELD_MAP.YEAR]: awareYear,
+      [FIELD_MAP.SEX]: awareSex,
+      [FIELD_MAP.AGE]: awareAge,
     } = _.get(allData, ['aware', dem], {})
-
+    
     let { 
       [FIELD_MAP.VALUE]: plhivVal,
+      [FIELD_MAP.YEAR]: plhivYear,
       // [FIELD_MAP.SOURCE_DATABASE]: plhivSource
     } = _.get(allData, ['plhiv', dem], {})
-
+    
     if (!awareVal || !plhivVal) {
       return { noData: true }
     }
-
+    
     // not a source tweak, just for our own calc
     if (awareSource === SOURCE_DB_MAP.SPEC20) {
       awareVal/=100
@@ -1581,6 +1702,7 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
       [FIELD_MAP.SEX]: awareSex,
       [FIELD_MAP.INDICATOR]: 'Undiagnosed PLHIV',
       [FIELD_MAP.AGE]: awareAge,
+      [FIELD_MAP.YEAR]: (awareYear === plhivYear) ? plhivYear : '',
       [FIELD_MAP.SOURCE_DATABASE]: '(calculated)',
       [FIELD_MAP.NOTES]: 'based on the estimated PLHIV and % aware data values',
     }
@@ -1722,7 +1844,7 @@ const getExportData = (data, counttryCode, shinyCountry=false) => {
     // https://stackoverflow.com/questions/55267116/how-to-download-csv-using-a-href-with-a-number-sign-in-chrome
     hiddenElement.href = 'data:text/csvcharset=UTF-8,' + encodeURIComponent(csv)
     hiddenElement.target = '_blank'
-    hiddenElement.download = `Who HTS Data - ${counttryCode}.csv`
+    hiddenElement.download = `WHO HTS Data - ${counttryCode}.csv`
     hiddenElement.click()
     hiddenElement.remove()
   } catch (error) {

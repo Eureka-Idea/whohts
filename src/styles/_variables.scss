@@ -12,9 +12,6 @@ $accent-blue-x-dark: #1a2c39;
 $subtle-wheat: #F9F8EF;
 // $accent-blue-dark: #17325B;
 
-$women: $who-brown;
-$men: $accent-blue-dark;
-
 $scorpion: #595959; // slatey
 $froly: #F8766D; // salmonish
 $olive: #A3A500;
@@ -26,10 +23,13 @@ $purple: #995cb8;
 // ________ NEW COLORS ______________
 // background:
 $vista-white: #FCFAF7;
+$saturated-vista-white: #FDF5E9;
 $pampas: #F9F8F6;
 
 $deep-sea-green: #084D3E;
 
+$near-black: #313534;
+$sirocco: #6E7272;
 $cape-cod: #424746;
 $gun-smoke: #7E8382;
 $nandor: #545A59;
@@ -51,7 +51,16 @@ $opal: #9FBCC0DD;
 $botticelli: #C5DDE2DD;
 $copper: #B2793DDD;
 
+$women: $cutty-sark;
+$men: $pirate-gold;
+
+// $link-color: $deep-sea-green;
+$link-color: #956837;
+// $link-hover-color: $cutty-sark;
+
 // TODO set better paramaters
-$max-width: calc(100vw - 80px);
+// $max-width-mobile: calc(100vw - 65px);
 $table-margin: 15px;
+$gutter: 15px; // just for below calc
+$max-width: calc(100vw - (2 * #{$gutter} + #{$table-margin} + 15px)); // ...
 $buffer: 10px;

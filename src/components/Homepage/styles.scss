@@ -16,10 +16,26 @@
     margin-right: auto;
   }
 
-  section {
+  section.header {
     padding-top: 50px;
-    padding-bottom: 75px;
-    border-bottom: solid 1px $accent-blue-dark;
-    margin-bottom: 75px;
+  }
+
+  section.overview {
+    text-align: justify;
+    max-width: 740px;
+    padding-top: 75px;
+    border-top: solid 1px $accent-blue-dark;
+    margin-top: 75px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 3*$buffer;
+    padding-right: 3*$buffer;
+
+    @media screen and (max-width: 376px) {
+      margin-top: 50px;
+      padding-top: 50px;
+      padding-left: $buffer;
+      padding-right: $buffer;
+    }
   }
 }
