@@ -1,26 +1,27 @@
-# React Example - Product Compare Page :tada: :fireworks:
+# WHO HIV self-testing data dashboard
 
-Product comparison page build using **React** + **Redux** + **Bootstrap** + **SASS**
-
-It's build on top of [`create-react-app`](http://www.google.lt)
+Built using **React** + **Redux** + **Bootstrap** + **SASS** on top of [`create-react-app`](https://create-react-app.dev/). 
 
 Usage
 -
-Documentation how to *run*, *build* and *test* app
+// clone repo
+`git checkout master`
+`npm install`
+`npm start` // ---> localhost:3000/
 
-> https://github.com/facebookincubator/create-react-app#npm-start-or-yarn-start
-
-Demo
+Deployment
 -
-> http://react-compare-app.surge.sh
+The production site is deployed at [whohts.web.app](whohts.web.app), which is kept as a build of the latest `master` commit, hosted through [Firebase](https://console.firebase.google.com/u/0/project/whohts/overview). After being added to the Firebase project (and assuming you have [Firebase CLI](https://firebase.google.com/docs/cli) set up locally), updates to the site are made by the following:
+`git checkout master`
+`git pull` // be sure to deploy the latest version of master (TODO: make updates to master trigger auto-deployment)
+// make some changes
+`npm run-script build && firebase deploy` // the latest build will be deployed, so failing to build before deploying would not deploy your latest changes
+`git commit`
+`git push` // otherwise future deployments by anyone else will omit your changes
 
-Contributing
--
-Thank you for considering contributing!
-Please use GitHub issues and Pull Requests for Contributing.
+To preview changes:
+`npm run-script build && firebase hosting:channel:deploy your-name-here` // generates a unique URL that expires in 7 days
 
 License
 -
 The MIT License (MIT). Please see License File for more information.
-
-[![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/Rhymond/product-compare-react)
