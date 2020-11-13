@@ -4,23 +4,23 @@ Built using **React** + **Redux** + **Bootstrap** + **SASS** on top of [`create-
 
 Usage
 -
-// clone repo
-`git checkout master`
-`npm install`
+// clone repo\
+`git checkout master`\
+`npm install`\
 `npm start` // ---> localhost:3000/
 
 Deployment
 -
-The production site is deployed at [whohts.web.app](whohts.web.app), which is kept as a build of the latest `master` commit, hosted through [Firebase](https://console.firebase.google.com/u/0/project/whohts/overview). After being added to the Firebase project (and assuming you have [Firebase CLI](https://firebase.google.com/docs/cli) set up locally), updates to the site are made by the following:
-`git checkout master`
-`git pull` // be sure to deploy the latest version of master (TODO: make updates to master trigger auto-deployment)
-// make some changes
-`npm run-script build && firebase deploy` // the latest build will be deployed, so failing to build before deploying would not deploy your latest changes
-`git commit`
-`git push` // otherwise future deployments by anyone else will omit your changes
+The production site is deployed at [whohts.web.app](whohts.web.app), which is kept as a build of the latest `master` commit, hosted through [Firebase](https://console.firebase.google.com/u/0/project/whohts/overview). After being added to the Firebase project (and assuming you have [Firebase CLI](https://firebase.google.com/docs/cli) set up locally), updates to the site are made by the following:\
+`git checkout master`\
+`git pull` // be sure to deploy the latest version of master (TODO: make updates to master trigger auto-deployment)\
+// make some changes\
+`npm run-script build && firebase deploy` // the latest build will be deployed, so failing to build before deploying would not deploy your latest changes\
+`git commit`\
+`git push` // otherwise future deployments by anyone else will omit your changes\
 
-To preview changes:
-`npm run-script build && firebase hosting:channel:deploy your-name-here` // generates a unique URL that expires in 7 days
+To preview changes:\
+`npm run-script build && firebase hosting:channel:deploy preview-name` // generates a unique URL that expires in 7 days
 
 License
 -
