@@ -141,7 +141,7 @@ const mismatchedData = !this.mismatched ? '' : `
 
 return `
     <span style="color:${this.color}">●</span>
-    ${this.series.name}: <b>${displayNumber({ v: this.y, unrounded: true })}</b><br/>
+    ${this.series.name}: <b>${displayNumber({ v: this.y, unrounded: !this.round })}</b><br/>
     ${mismatchedData}
     `
 }
@@ -1464,13 +1464,17 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
 
   const demandNumData = demand.filter(r => !r.noData).map(d => ({
     x: Number(d.year),
-    y: d.value,
+    y: d[FIELD_MAP.VALUE],
+    round: true,
   }))
-
+  
   const needNumData = need.filter(r => !r.noData).map(d => ({
     x: Number(d.year),
-    y: d.value,
-    source: d[FIELD_MAP.SOURCE_DATABASE]
+    y: d[FIELD_MAP.VALUE],
+    source: d[FIELD_MAP.SOURCE_DATABASE],
+    year: d[FIELD_MAP.YEAR],
+    mismatched: true,
+    round: true,
   }))
 
   if (forExport) {
@@ -1485,29 +1489,37 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
   // COLORS: explore previous - cerulean, purple etc
   const options = {
     subtitle: { text: 'Programme data and modelled estimates' },
+    plotOptions: { column: { grouping: false } }
     // plotOptions: { series: { pointStart: 2019 } }
   }
   const series = [
     {
-      name: 'HIVSTs distributed',
-      data: distributedNumData,
-      tooltip: {
-        pointFormatter: sourceTooltipFormatter, // TODO: use formatter?
-      },
-    },
-    {
       name: 'HIVST forecast demand',
+      pointPlacement: 0,
       data: demandNumData,
+      tooltip: {
+        pointFormatter: sourceTooltipFormatter
+      },
     },
     {
       name: 'HIVST forecast need',
       type: 'line',
       data: needNumData,
       tooltip: {
-        // pointFormat: sourceTooltipFormat // TODO: use formatter?
+        pointFormatter: sourceTooltipFormatter
       },
     },
   ];
+  if (distributedNumData.length) {
+    series.push({
+      name: 'HIVSTs distributed',
+      pointPlacement: 0,
+      data: distributedNumData,
+      tooltip: {
+        pointFormatter: sourceTooltipFormatter,
+      },
+    })
+  }
 
   return _.merge({}, getColumn({ title, series, options }))
 }

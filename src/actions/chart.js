@@ -35,7 +35,7 @@ const debugList = {
   // [CHARTS.ADULTS.id]: true,
   // [CHARTS.COMMUNITY.id]: true,
   // [CHARTS.FACILITY.id]: true,
-  // [CHARTS.FORECAST.id]: true,
+  [CHARTS.FORECAST.id]: true,
   // [CHARTS.INDEX.id]: true,
   // [CHARTS.PLHIV_AGE.id]: true,
   // [CHARTS.PLHIV_SEX.id]: true,

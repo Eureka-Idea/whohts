@@ -125,6 +125,9 @@ const column = {
       } },
     }
   },
+  tooltip: {
+    shared: true
+  },
   xAxis: {
     type: 'category',
     labels: {
