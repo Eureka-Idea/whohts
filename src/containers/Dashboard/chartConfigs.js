@@ -1492,22 +1492,22 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
       name: 'HIVSTs distributed',
       data: distributedNumData,
       tooltip: {
-        pointFormatter: sourceTooltipFormatter // TODO: use formatter?
+        pointFormatter: sourceTooltipFormatter, // TODO: use formatter?
       },
     },
-    // {
-    //   name: 'HIVST forecast demand',
-    //   data: demandNumData,
-    // },
-    // {
-    //   name: 'HIVST forecast need',
-    //   type: 'line',
-    //   data: needNumData,
-    //   tooltip: {
-    //     // pointFormat: sourceTooltipFormat // TODO: use formatter?
-    //   },
-    // }
-  ]
+    {
+      name: 'HIVST forecast demand',
+      data: demandNumData,
+    },
+    {
+      name: 'HIVST forecast need',
+      type: 'line',
+      data: needNumData,
+      tooltip: {
+        // pointFormat: sourceTooltipFormat // TODO: use formatter?
+      },
+    },
+  ];
 
   return _.merge({}, getColumn({ title, series, options }))
 }

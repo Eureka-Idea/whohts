@@ -230,7 +230,7 @@ class Dashboard extends Component {
     )
   }
 
-  getChart(id, tt) {
+  getChart(id, { tooltip, doubleWide } = {}) {
     if (_.isEmpty(this.props.chartData)) {
       // console.log('No chart data (perhaps awaiting API response)')
       return
@@ -307,14 +307,15 @@ class Dashboard extends Component {
     }
 
     const containerClasses = `chart-container ${id} ${(header ? 'with-custom-header' : '')}`
+    const classes = doubleWide ? 'col-xl-8 col-lg-12 col-sm-12' : 'col-xl-4 col-lg-6 col-sm-12'
     
     return (
-      <div className='col-xl-4 col-lg-6 col-sm-12'>
+      <div className={classes}>
         <div className='card-stock'>
           {header}
           <div className={containerClasses}>
             {chart}
-            {tt}
+            {tooltip}
           </div>
         </div>
       </div>
@@ -452,13 +453,13 @@ class Dashboard extends Component {
     const PLHIVAge = this.getChart(CHARTS.PLHIV_AGE.id)
     const PLHIVSex = this.getChart(CHARTS.PLHIV_SEX.id)
     const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
-    const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
+    const positive = this.getChart(CHARTS.HIV_POSITIVE.id, { tooltip: ptt })
     const prevalence = this.getChart(CHARTS.PREVALENCE.id)
     const adults = this.getChart(CHARTS.ADULTS.id)
     const community = this.getChart(CHARTS.COMMUNITY.id)
     const facility = this.getChart(CHARTS.FACILITY.id)
     const index = this.getChart(CHARTS.INDEX.id)
-    const forecast = this.getChart(CHARTS.FORECAST.id)
+    const forecast = this.getChart(CHARTS.FORECAST.id, { doubleWide: true })
     
     const kp = this.getTable(CHARTS.KP_TABLE.id)
     const policy = this.getTable(CHARTS.POLICY_TABLE.id)

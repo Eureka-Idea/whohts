@@ -78,6 +78,8 @@ const SOURCE_DB_MAP = {
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
   UNAIDS: 'UNAIDS', // also a source organization
   WB: 'World Bank', // also a source organization
+
+  EIC: 'Eureka Idea Co.', // just a source organization
 }
 const SOURCE_DISPLAY_MAP = {
   ['AIDS (AIM)']: 'Spectrum estimates 2020 (UNAIDS/WHO)',
@@ -551,14 +553,16 @@ const forecastWME = {
   id: 'WME',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WME,
-    }
+      // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WME, // "WHO and Unitaid HIVST Landscape Report ____"
+      [F.SOURCE_ORGANIZATION]: SOURCE_DB_MAP.EIC,
+      [F.AREA_NAME]: '',
+    },
   },
   indicators: {
-    demand1: 'HIVST forecast demand',
-    need1: 'HIVST forecast need',
-  }
-}
+    demand1: 'HIVST Forecasting Demand Estimate',
+    need1: 'HIVST Forecasting Need Estimate',
+  },
+};
 
 const kpKP20 = {
   id: 'KP20',
@@ -1304,7 +1308,6 @@ const getIndicatorMap = (isShiny) => {
         return _.extend({}, s.filters.ALL, s.filters[indId], {
           id: indId,
           [F.INDICATOR]: indVal,
-          [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
           getter: results => {
 

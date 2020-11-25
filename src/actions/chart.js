@@ -29,20 +29,17 @@ const debugList = {
   // [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
-  
-  [CHARTS.GROUPS_TABLE.id]: true,
+  // [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.POLICY_TABLE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
-
   // [CHARTS.ADULTS.id]: true,
   // [CHARTS.COMMUNITY.id]: true,
   // [CHARTS.FACILITY.id]: true,
   // [CHARTS.FORECAST.id]: true,
   // [CHARTS.INDEX.id]: true,
-
   // [CHARTS.PLHIV_AGE.id]: true,
   // [CHARTS.PLHIV_SEX.id]: true,
-}
+};
 // like the above, but to mark charts to omit
 const debugSkipList = {
   // [CHARTS.FORECAST.id]: true,
@@ -52,6 +49,7 @@ const debugSkipList = {
 export const getChartData = (countryCode) =>
   dispatch => {
     const isShiny = _.get(COUNTRY_MAP, [countryCode, 'shiny'], false)
+    const forecastOn = _.get(COUNTRY_MAP, [countryCode, "forecastOn"], false);
     let indicatorMap = getIndicatorMap(isShiny)
 
     if (DEV && !_.isEmpty(debugList)) {
@@ -61,6 +59,9 @@ export const getChartData = (countryCode) =>
     }
     
     const allChartQueryPs = _.map(indicatorMap, (indicators, chartName) => {
+      if (chartName === CHARTS.FORECAST.id && !forecastOn) {
+        return Promise.resolve([]);
+      }
     
       const getIndicatorP = indicator => {
         let url = BASE_URL
