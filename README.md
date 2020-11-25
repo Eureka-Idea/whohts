@@ -20,7 +20,7 @@ The production site is deployed at [whohts.web.app](whohts.web.app), which is ke
 `git push` // otherwise future deployments by anyone else will omit your changes
 
 To preview changes:\
-`npm run-script build && firebase hosting:channel:deploy preview-name` // generates a unique URL that expires in 7 days
+`npm run-script build && firebase hosting:channel:deploy test --expires 30d` // generates a unique URL that includes "test", expires in 30 days\
 
 License
 -
