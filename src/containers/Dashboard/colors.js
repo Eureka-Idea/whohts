@@ -12,6 +12,7 @@ const olive = '#A3A500'
 const torquoise = '#00BF7D'
 const cerulean = '#00B0F6'
 const heliotrope = '#E76BF3' // pink
+const seance = '#791ca8'
 const purple = '#995cb8'
 
 // background:
@@ -88,12 +89,25 @@ export default [
   gunSmoke, // 12
   nandor, // 13
   snowDrift, // 14
-   //
+  //
   capeCod, // 15
   cuttySark, // 16
   pirateGold, // 17
   nutmeg, // 18
-]
+  froly, // 19
+  cerulean, //20
+  scorpion, // 21
+  olive, // 22
+  torquoise, // 23
+  heliotrope, // 24
+  purple, // 25
+  whoBlu, // 26
+  whoBrown, // 27
+  accentBlue, // 28
+  accentBlueDark, // 29
+  accentBlueXDark, // 30
+  seance, // 31
+];
 export {
   deepSeaGreen,
   capeCod,
@@ -118,7 +132,12 @@ export {
   buddhaGold,
   putty,
   froly,
-
+  seance,
+  scorpion,
+  olive,
+  accentBlueDark,
+  whoBrown,
+  
   femaleColor,
   maleColor,
   barChartColor,

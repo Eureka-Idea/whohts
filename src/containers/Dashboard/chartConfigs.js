@@ -1,7 +1,7 @@
-import colors, { femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty, froly } from "./colors"
+import { femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, nandor, putty, scorpion, purple, olive, froly, whoBlu, whoBrown, accentBlueDark, seance} from "./colors"
 import _ from 'lodash'
-import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import { CHARTS, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP, ALL_CHARTS, CSV_FIELDS } from "../../constants/charts";
+import { getArea, getColumn, getLine, getColumnScat } from './genericConfigs'
+import { CHARTS, FIELD_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP, ALL_CHARTS, CSV_FIELDS } from "../../constants/charts";
 import { TERM_MAP } from "../../constants/glossary";
 
 // TODO: move
@@ -1421,10 +1421,8 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
 
 
   if (forExport) {
-    // TODO
-    // return []
+    return [...distributed, ...demand, ...need]
   }
-
 
   const missingIndicators = Object.keys(missingIndicatorMap)
 
@@ -1446,21 +1444,8 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
       y, x: Number(year), source, year, mismatched: true,
     }
 
-    if (forExport) {
-      CSV_FIELDS.forEach(({ fieldId }) => {
-        if (_.isUndefined(point[fieldId])) {
-          point[fieldId] = r[fieldId] || ''
-        }
-      })
-    }
-
     return point
   })
-  //   ({
-  //   x: Number(d.year),
-  //   y: d.value,
-  //   source: d[FIELD_MAP.SOURCE_DATABASE]
-  // }))
 
   const demandNumData = demand.filter(r => !r.noData).map(d => ({
     x: Number(d.year),
@@ -1477,10 +1462,6 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
     round: true,
   }))
 
-  if (forExport) {
-    return [...distributedNumData, ...demandNumData, ...needNumData]
-  }
-
   if (!distributedNumData.length && !demandNumData.length && !needNumData.length) {
     console.warn(title + ' has all empty series.')
     return null
@@ -1492,33 +1473,39 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
     plotOptions: { column: { grouping: false } }
     // plotOptions: { series: { pointStart: 2019 } }
   }
-  const series = [
-    {
-      name: 'HIVST forecast demand',
-      pointPlacement: 0,
-      data: demandNumData,
-      tooltip: {
-        pointFormatter: sourceTooltipFormatter
-      },
-    },
-    {
-      name: 'HIVST forecast need',
-      type: 'line',
-      data: needNumData,
-      tooltip: {
-        pointFormatter: sourceTooltipFormatter
-      },
-    },
-  ];
+  const series = [];
   if (distributedNumData.length) {
     series.push({
       name: 'HIVSTs distributed',
       pointPlacement: 0,
       data: distributedNumData,
+      color: seance,
       tooltip: {
         pointFormatter: sourceTooltipFormatter,
       },
     })
+  }
+  if (demandNumData.length) {
+    series.push({
+      name: 'HIVST forecast demand',
+      pointPlacement: 0,
+      data: demandNumData,
+      color: accentBlueDark,
+      tooltip: {
+        pointFormatter: sourceTooltipFormatter
+      },
+    },)
+  }
+  if (needNumData.length) {
+    series.push({
+      name: 'HIVST forecast need',
+      type: 'line',
+      data: needNumData,
+      color: whoBrown,
+      tooltip: {
+        pointFormatter: sourceTooltipFormatter
+      },
+    },)
   }
 
   return _.merge({}, getColumn({ title, series, options }))

@@ -64,7 +64,7 @@ const SOURCE_DB_MAP = {
   // PEPFAR_SDE: 'PEPFAR System Data Extract',
   PEPFAR: 'PEPFAR',
 
-  WME: 'WHO model estimates',
+  WME: 'WHO and Unitaid HIVST Landscape Report',
   WSR: 'WHO special review',
   WNCPI: 'WHO NCPI dataset',
   HIVST20: 'HIVST policy 2020 data set',
@@ -553,7 +553,7 @@ const forecastWME = {
   id: 'WME',
   filters: {
     ALL: {
-      // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WME, // "WHO and Unitaid HIVST Landscape Report ____"
+      // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WME,
       [F.SOURCE_ORGANIZATION]: SOURCE_DB_MAP.EIC,
       [F.AREA_NAME]: '',
     },
