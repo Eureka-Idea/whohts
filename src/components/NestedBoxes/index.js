@@ -40,11 +40,21 @@ const NestedBoxes = ({
     const colorInner = colors[i+1]
 
     // add outer box
-    rects.push(<rect x={resolveOrientation(x, y)} y={resolveOrientation(y, x)} width={side} height={side} fill={colorOuter} />)
+    rects.push(
+      <rect
+        key={'rect-o-' + i}
+        x={resolveOrientation(x, y)}
+        y={resolveOrientation(y, x)}
+        width={side}
+        height={side}
+        fill={colorOuter}
+      />
+    )
 
     const { inner, below = [] } = _.get(content, i, {})
     const text = (
       <text
+        key={'text-' + i}
         fontSize={fontSize}
         // set the initial y for all tspans
         // the x we set on each individually so they don't try to go one after another
@@ -57,12 +67,16 @@ const NestedBoxes = ({
         >
           {inner || 'Unknown '}%
         </tspan>
-        {below.map(txt =>
+        {below.map((txt) => (
           <tspan
+            key={txt}
             className='description'
             x={resolveOrientation(textBufferDistance, y)}
             dy={fontSize * lineHeight}
-          >{txt}</tspan>)}
+          >
+            {txt}
+          </tspan>
+        ))}
       </text>
     )
     texts.push(text)
@@ -75,7 +89,8 @@ const NestedBoxes = ({
     
     // add inner box
     rects.push(
-      <rect 
+      <rect
+        key={'rect-i-' + i}
         x={resolveOrientation(x, y)}
         y={resolveOrientation(y, x)}
         width={side}
@@ -91,6 +106,7 @@ const NestedBoxes = ({
     // if there's another box coming, add lines to it
     const line1 = (
       <line
+        key={'line-1-' + i}
         stroke={colorInner}
         x1={resolveOrientation(x, y+side)}
         x2={resolveOrientation(x, y+bufferDistance)}
@@ -101,6 +117,7 @@ const NestedBoxes = ({
     )
     const line2 = (
       <line
+        key={'line-2-' + i}
         stroke={colorInner}
         x1={resolveOrientation(x+side, y+side)}
         x2={resolveOrientation(x+side, y+bufferDistance)}

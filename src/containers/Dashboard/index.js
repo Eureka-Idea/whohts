@@ -459,7 +459,8 @@ class Dashboard extends Component {
     const community = this.getChart(CHARTS.COMMUNITY.id)
     const facility = this.getChart(CHARTS.FACILITY.id)
     const index = this.getChart(CHARTS.INDEX.id)
-    const forecast = this.getChart(CHARTS.FORECAST.id, { doubleWide: true })
+    const self = this.getChart(CHARTS.SELF.id);
+    const forecast = this.getChart(CHARTS.FORECAST.id);
     
     const kp = this.getTable(CHARTS.KP_TABLE.id)
     const policy = this.getTable(CHARTS.POLICY_TABLE.id)
@@ -488,17 +489,27 @@ class Dashboard extends Component {
           <a className='who-logo' href='https://who.int/' target='_blank'>
             <img src='images/who_logo.png' alt='WHO logo' />
           </a>
-          <span className='title text-center desktop'>HIV Testing Services Dashboard</span>
+          <span className='title text-center desktop'>
+            HIV Testing Services Dashboard
+          </span>
           <span className='title text-center mobile'>HIV Testing Services</span>
           <div className='input-group'>
-            <select defaultValue={this.props.chartData.countryCode} onChange={this.goToCountry} className='custom-select'>
-              {COUNTRIES.map(c => {
-                return <option value={c.ISO} to={'/'+c.ISO} key={c.ISO}>{c.name}</option>
+            <select
+              defaultValue={this.props.chartData.countryCode}
+              onChange={this.goToCountry}
+              className='custom-select'
+            >
+              {COUNTRIES.map((c) => {
+                return (
+                  <option value={c.ISO} to={'/' + c.ISO} key={c.ISO}>
+                    {c.name}
+                  </option>
+                );
               })}
             </select>
           </div>
           <span className='export' onClick={this.exportData}>
-              Export
+            Export
           </span>
           <Link className='link-home' to='/'>
             Home
@@ -507,14 +518,14 @@ class Dashboard extends Component {
 
         <div className='charts container-fluid mt-4 p-0'>
           <div className='row mb-4'>
-          {/* <div className='row no-gutters mb-4'> */}
+            {/* <div className='row no-gutters mb-4'> */}
 
             {this.getCountryContext()}
             {this.getP95()}
           </div>
 
           <div className='row'>
-          {/* <div className='row no-gutters'> */}
+            {/* <div className='row no-gutters'> */}
             {diagnosis}
             {PLHIVSex}
             {PLHIVAge}
@@ -526,6 +537,7 @@ class Dashboard extends Component {
             {community}
             {facility}
             {index}
+            {self}
             {forecast}
             <div className='col-12 mt-2'>&nbsp;</div>
             {kp}
@@ -535,11 +547,10 @@ class Dashboard extends Component {
         </div>
 
         {this.getResourcesSection()}
-      
-        {this.getDevSection()}
 
+        {this.getDevSection()}
       </div>
-    )
+    );
   }
 
   // dev form

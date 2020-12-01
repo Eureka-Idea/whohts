@@ -295,6 +295,7 @@ const getConfig = (chartId, chartData, shinyCountry=false, forExport=false) => {
     [CHARTS.COMMUNITY.id]: getCommunity,
     [CHARTS.FACILITY.id]: getFacility,
     [CHARTS.INDEX.id]: getIndex,
+    [CHARTS.SELF.id]: getSelf,
     [CHARTS.FORECAST.id]: getForecast,
     [CHARTS.KP_TABLE.id]: getKpTable,
     [CHARTS.POLICY_TABLE.id]: getPolicyTable,
@@ -1410,23 +1411,22 @@ const getIndex = (data, shinyCountry=false, forExport=false) => {
   return _.merge({}, getColumnScat({ options, categories, series }))
 }
 
-const getForecast = (data, shinyCountry=false, forExport=false) => {
-  const { title, indicatorIds, indicatorYears, sources } = CHARTS.FORECAST
+const getSelf = (data, shinyCountry=false, forExport=false) => {
+  const { title, indicatorIds, indicatorYears, sources } = CHARTS.SELF
 
   const {
-    distributed, demand, need, missingIndicatorMap
+    distributed, missingIndicatorMap
   } = extractPrioritizedRangeData(
     { data, indicatorIds, sourceCount: sources.length, indicatorRangeMap: indicatorYears }
   )
 
-
   if (forExport) {
-    return [...distributed, ...demand, ...need]
+    return [...distributed]
   }
 
   const missingIndicators = Object.keys(missingIndicatorMap)
 
-  console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
+  console.log('distributed: ', distributed, 'missingIndicators: ', missingIndicators)
 
   if (missingIndicators.length) {
     console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
@@ -1439,13 +1439,57 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
       [FIELD_MAP.YEAR]: year,
     } = r
     
-
     const point = {
       y, x: Number(year), source, year, mismatched: true,
     }
 
     return point
   })
+
+  if (!distributedNumData.length) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
+
+  const options = {
+    subtitle: { text: 'Programme data' },
+    // plotOptions: { column: { grouping: false } }
+    // plotOptions: { series: { pointStart: 2019 } }
+  }
+  const series = [{
+    name: 'HIVSTs distributed',
+    // pointPlacement: 0,
+    data: distributedNumData,
+    color: seance,
+    tooltip: {
+      pointFormatter: sourceTooltipFormatter,
+    }
+  }]
+
+  return _.merge({}, getColumn({ title, series, options }))
+}
+
+const getForecast = (data, shinyCountry=false, forExport=false) => {
+  const { title, indicatorIds, indicatorYears, sources } = CHARTS.FORECAST
+
+  const {
+    demand, need, missingIndicatorMap
+  } = extractPrioritizedRangeData(
+    { data, indicatorIds, sourceCount: sources.length, indicatorRangeMap: indicatorYears }
+  )
+
+
+  if (forExport) {
+    return [...demand, ...need]
+  }
+
+  const missingIndicators = Object.keys(missingIndicatorMap)
+
+  console.log('demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
+
+  if (missingIndicators.length) {
+    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+  }
 
   const demandNumData = demand.filter(r => !r.noData).map(d => ({
     x: Number(d.year),
@@ -1462,29 +1506,17 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
     round: true,
   }))
 
-  if (!distributedNumData.length && !demandNumData.length && !needNumData.length) {
+  if (!demandNumData.length && !needNumData.length) {
     console.warn(title + ' has all empty series.')
     return null
   }
 
-  // COLORS: explore previous - cerulean, purple etc
   const options = {
-    subtitle: { text: 'Programme data and modelled estimates' },
-    plotOptions: { column: { grouping: false } }
+    subtitle: { text: 'Modelled estimates' },
+    // plotOptions: { column: { grouping: false } }
     // plotOptions: { series: { pointStart: 2019 } }
   }
   const series = [];
-  if (distributedNumData.length) {
-    series.push({
-      name: 'HIVSTs distributed',
-      pointPlacement: 0,
-      data: distributedNumData,
-      color: seance,
-      tooltip: {
-        pointFormatter: sourceTooltipFormatter,
-      },
-    })
-  }
   if (demandNumData.length) {
     series.push({
       name: 'HIVST forecast demand',

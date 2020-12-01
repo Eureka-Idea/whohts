@@ -882,13 +882,24 @@ const CHARTS = {
     sources: [indexPEPFAR],
     indicatorIds: ['total', 'community', 'facility', 'pTotal', 'pCommunity', 'pFacility']
   },
-  FORECAST: {
-    title: 'HIV self-tests',
-    id: 'FORECAST',
-    sources: [forecastGAM20, forecastGAM19, forecastNPD19, forecastPEPFAR, forecastWME],
-    indicatorIds: ['distributed', 'demand', 'need'],
+  SELF: {
+    title: 'HIV self-tests distributed',
+    id: 'SELF',
+    sources: [forecastGAM20, forecastGAM19, forecastNPD19, forecastPEPFAR],
+    indicatorIds: ['distributed'],
     indicatorYears: {
       distributed: R_2018_2019,
+      // demand: R_2020_2025,
+      // need: R_2020_2025,
+    }
+  },
+  FORECAST: {
+    title: 'HIV self-tests forecast need',
+    id: 'FORECAST',
+    sources: [forecastWME],
+    indicatorIds: ['demand', 'need'],
+    indicatorYears: {
+      // distributed: R_2018_2019,
       demand: R_2020_2025,
       need: R_2020_2025,
     }
@@ -1002,6 +1013,7 @@ const ALL_CHARTS = [ //population/country context?
   C.COMMUNITY,
   C.FACILITY,
   C.INDEX,
+  C.SELF,
   C.FORECAST,
   C.KP_TABLE,
   C.POLICY_TABLE,
@@ -1298,6 +1310,30 @@ const getIndicatorMap = (isShiny) => {
               `,'rs:', results)
             }
             return _.maxBy(results, 'year')
+          }
+        })
+      })
+    }),
+    [C.SELF.id]: _.flatMap(C.SELF.sources, s => {
+      return _.map(s.indicators, (indVal, indId) => {
+        
+        return _.extend({}, s.filters.ALL, s.filters[indId], {
+          id: indId,
+          [F.INDICATOR]: indVal,
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: results => {
+
+            const genericIndId = getGenericIndId(indId)
+            return C.SELF.indicatorYears[genericIndId].map(y => {
+              const fResults = _.filter(results, r => r.year === y)
+              if (fResults.length > 1) {
+                // debugger
+                console.error(`**LOOKOUT! Taking first result for: * ', indI
+                `, fResults[0].indicator, 'R:', _.maxBy(fResults, 'year'), `
+                `,'rs:', fResults)
+              }
+              return _.maxBy(fResults, 'year')
+            })
           }
         })
       })
