@@ -74,8 +74,6 @@ class Dashboard extends Component {
   // }
   
   componentWillReceiveProps(newProps) {
-    const d = new Date()
-    
     const dataCountry = newProps.chartData.countryCode
     const paramCountry = _.get(newProps, 'match.params.countryCode').toUpperCase()
     const loading = paramCountry !== dataCountry
@@ -83,12 +81,20 @@ class Dashboard extends Component {
     
     if (loading) {
       this.props.actions.getChartData(paramCountry)
+    } else {
+      this.registerGAEvent("event", "view_item", {
+        value: paramCountry,
+      })
     }
 
     // if (_.isEqual(newProps.chartData.countryCode, this.props.chartData.countryCode)) {
     //   console.error('what changed?')
     //   return
     // }
+  }
+
+  registerGAEvent() {
+    window.dataLayer.push(arguments)
   }
 
   getCountryContext() {
