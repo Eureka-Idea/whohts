@@ -894,7 +894,7 @@ const CHARTS = {
     }
   },
   FORECAST: {
-    title: 'HIV self-tests forecast need',
+    title: 'HIV self-tests forecast',
     id: 'FORECAST',
     sources: [forecastWME],
     indicatorIds: ['demand', 'need'],
