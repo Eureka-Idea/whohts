@@ -439,6 +439,9 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
   const undiagnosedData = []
   const notArtData = []
   const onArtData = []
+  // for export
+  const knowData = []
+  const plhivData = []
   
   yearRange.forEach((y, i) => {
     const onArtRow = _.get(data, ['onArt', i])
@@ -488,11 +491,14 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
       onArtData.push(onArtPoint)
       notArtData.push(notArtPoint)
       undiagnosedData.push(undiagnosedPoint)
+      // for export
+      knowData.push(knowPoint)
+      plhivData.push(plhivPoint)
     }
   })
 
   if (forExport) {
-    return [...onArtData, ...notArtData, ...undiagnosedData]
+    return [...onArtData, ...notArtData, ...undiagnosedData, ...knowData, ...plhivData]
   }
 
   // just check one series, since points only get added when they exist for all indicators
