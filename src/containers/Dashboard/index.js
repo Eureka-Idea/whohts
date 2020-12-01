@@ -94,7 +94,11 @@ class Dashboard extends Component {
   }
 
   registerGAEvent() {
-    window.dataLayer.push(arguments)
+    try {
+      window.dataLayer.push(arguments)
+    } catch (error) {
+      console.warn('gtag failed: ', error)
+    }
   }
 
   getCountryContext() {
