@@ -32,6 +32,7 @@ const barChartsPositivityName = 'Positivity' // TODO: acceptable?
 // const barChartsPositivityNameTooltip = 'Positivity'
 const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2020)'
 const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2020)'
+const calculatedDb = '(calculated)'
 
 function adjustPercentage({ row, toDisplay=false, decimals=0, returnRow=false }) {
   
@@ -459,8 +460,11 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
           [FIELD_MAP.VALUE_LOWER]: null,
           l: null,
           [FIELD_MAP.VALUE]: undiagnosedValue,
+          [FIELD_MAP.INDICATOR]: 'Undiagnosed PLHIV',
           y: undiagnosedValue,
-        })
+          [FIELD_MAP.SOURCE_DATABASE]: calculatedDb,
+          [FIELD_MAP.NOTES]: `based on ${plhivPoint[FIELD_MAP.INDICATOR]} and ${knowPoint[FIELD_MAP.INDICATOR]} indicator values`,
+        });
 
         if (onArtPoint && onArtPoint.y) {
           // cannibalize plhivPoint for its year, source etc
@@ -471,8 +475,11 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
             [FIELD_MAP.VALUE_LOWER]: null,
             l: null,
             [FIELD_MAP.VALUE]: notArtValue,
+            [FIELD_MAP.INDICATOR]: 'PLHIV know status not on ART',
             y: notArtValue,
-          })
+            [FIELD_MAP.SOURCE_DATABASE]: calculatedDb,
+            [FIELD_MAP.NOTES]: `based on ${knowPoint[FIELD_MAP.INDICATOR]} and ${onArtPoint[FIELD_MAP.INDICATOR]} indicator values`,
+          });
         }
       }
     }
@@ -826,8 +833,8 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
             [FIELD_MAP.VALUE]: artRowVal + awareRowVal,
             [FIELD_MAP.VALUE_UPPER]: undefined,
             [FIELD_MAP.VALUE_LOWER]: undefined,
-            [FIELD_MAP.SOURCE_DATABASE]: '(calculated)',
-            [FIELD_MAP.NOTES]: 'based on retests_aware and retests_art'
+            [FIELD_MAP.SOURCE_DATABASE]: calculatedDb,
+            [FIELD_MAP.NOTES]: `based on ${awareRow[FIELD_MAP.INDICATOR]} and ${artRow[FIELD_MAP.INDICATOR]} indicator values`
 ,
           })
         } else if (artRow) {
@@ -964,6 +971,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
     const isCameroon = _.get(data, ['plhiv', i, [FIELD_MAP.COUNTRY_ISO_CODE]]) === 'CMR'
 
     let adjPrevValue
+    // NOTE ** conditional country tweak **
     if (populationValue && onArtValue && plhivValue && !isCameroon) {
       adjPrevValue = (
         (plhivValue - onArtValue) * 100 /
@@ -975,7 +983,7 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       if (forExport) {
         adjPrevPoint[FIELD_MAP.VALUE] = adjPrevValue
         adjPrevPoint[FIELD_MAP.INDICATOR] = 'Treatment adjusted Prevalence'
-        adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = '(calculated)',
+        adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = calculatedDb,
         adjPrevPoint[FIELD_MAP.YEAR] = y,
         adjPrevPoint[FIELD_MAP.NOTES] = 'based on population, estimated PLHIV, and estimated PLHIV on ART data values'
       }
@@ -1703,7 +1711,7 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
       [FIELD_MAP.INDICATOR]: 'Undiagnosed PLHIV',
       [FIELD_MAP.AGE]: awareAge,
       [FIELD_MAP.YEAR]: (awareYear === plhivYear) ? plhivYear : '',
-      [FIELD_MAP.SOURCE_DATABASE]: '(calculated)',
+      [FIELD_MAP.SOURCE_DATABASE]: calculatedDb,
       [FIELD_MAP.NOTES]: 'based on the estimated PLHIV and % aware data values',
     }
   })
