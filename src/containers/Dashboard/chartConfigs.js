@@ -54,7 +54,7 @@ function adjustPercentage({ row, toDisplay=false, decimals=0, returnRow=false })
   }
 
   // NOTE: ** conditional source tweak **
-  const adjust = description === 'PEPFAR Calculated Indicator'
+  const adjust = (description === 'PEPFAR Calculated Indicator') && (v <= 1)
   if (adjust) {
     v *= 100
   }
@@ -1775,7 +1775,7 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
           const percentages = ['aware', 'prev', 'ever']
           if (percentages.includes(ind)) {
             // NOTE: ** conditional source tweak **
-            const adjust = source === SOURCE_DB_MAP.S90
+            const adjust = (source === SOURCE_DB_MAP.S90) && (v <= 1)
             if (forExport) {
               v = adjust ? (v * 100) : v
             } else {
