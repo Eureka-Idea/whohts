@@ -1,4 +1,6 @@
 import _ from 'lodash'
+import { COUNTRY_MAP } from '../components/Homepage/countries'
+import { FEATURE_FLAGS } from './flags'
 
 // const BASE_URL = 'https://status.y-x.ch/query?'
 const BASE_URL = 'https://eic-database-290813.ew.r.appspot.com/query?'
@@ -2106,7 +2108,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: 'tests_total',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.YEAR]: '2019',
-        [F.AREA_NAME]: 'NULL',
+        [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.INDICATOR_DESCRIPTION]: 'all',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2114,10 +2116,47 @@ const getIndicatorMap = (isShiny) => {
           R_SEXES.forEach(sex => {
 
             [...R_ADULT_AGES, ALL_ADULTS].forEach(ageRange => {
-              const result = _.find(results, r =>
-                r[F.SEX] === sex && r[F.AGE] === ageRange)
 
-              resultMap[`${sex[0]}${ageRange}`] = result
+              const countryCode = _.get(results, [0, F.COUNTRY_ISO_CODE])
+              const countryApplies = _.get(
+                COUNTRY_MAP,
+                [countryCode, 'sumFix'],
+                false
+              )
+              if (FEATURE_FLAGS.SHINY_SUM && countryApplies) {
+                const fResults = _.filter(results, r =>
+                  r[F.SEX] === sex && r[F.AGE] === ageRange)
+                  
+                const firstRow = fResults[0]
+                const sumRow = { ...firstRow }
+                sumRow[F.AREA_NAME] = 'NULL' // let's pretend
+                sumRow[F.VALUE_UPPER] = undefined
+                sumRow[F.VALUE_LOWER] = undefined
+                sumRow[F.VALUE] = 0
+                const areaMap = {}
+                fResults.forEach((r) => {
+                  if (r[F.VALUE]) {
+                    const rowArea = r[F.AREA_NAME]
+                    if (areaMap[rowArea] || r[F.AREA_NAME] === 'NULL') {
+                      console.warn(
+                        `$$$$ duplicate (or NULL) area_name for tests_total ${sex} ${ageRange}: `, r
+                      )
+                    } else {
+                      areaMap[rowArea] = true
+                      sumRow[F.VALUE] += Number(r[F.VALUE])
+                    }
+                  }
+                })
+                resultMap[`${sex[0]}${ageRange}`] = sumRow
+                console.log(`$$$$ USING SUMMED ROW FOR tests_total ${sex} ${ageRange} `)
+                console.log('$$$$: ', sumRow)
+                console.log('$$$$ SUMMED OVER: ', fResults)
+
+              } else {
+                const result = _.find(results, r =>
+                  r[F.SEX] === sex && r[F.AGE] === ageRange)
+                resultMap[`${sex[0]}${ageRange}`] = result 
+              }
             })
           })
           return resultMap
@@ -2482,14 +2521,44 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR_DESCRIPTION]: 'negative',
         [F.AGE]: '15-99',
         [F.SEX]: 'both',
-        [F.AREA_NAME]: 'NULL',
+        [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.HIV_NEGATIVE.yearRange.map(y => {
             const fResults = _.filter(results, r => r.year === y)
 
-            if (fResults.length > 1) {
+            let fixing = false
+            const firstRow = fResults[0]
+            const countryCode = _.get(firstRow, F.COUNTRY_ISO_CODE)
+            const countryApplies = _.get(
+              COUNTRY_MAP,
+              [countryCode, 'sumFix'],
+              false
+            )
+            if (FEATURE_FLAGS.SHINY_SUM && countryApplies) {
+              fixing = true
+              const sumRow = { ...firstRow }
+              sumRow[F.AREA_NAME] = 'NULL' // let's pretend
+              sumRow[F.VALUE_UPPER] = undefined
+              sumRow[F.VALUE_LOWER] = undefined
+              sumRow[F.VALUE] = 0
+              fResults.forEach((r) => {
+                if (r[F.VALUE]) {
+                  if (r[F.AREA_NAME] !== 'NULL') {
+                    sumRow[F.VALUE] += Number(r[F.VALUE])
+                  } else {
+                    console.log('$$$$ skipping NULL AREA_NAME: ', r)
+                  }
+                }
+              })
+              console.log(`$$$$ USING SUMMED ROW FOR ${v} ${y}`)
+              console.log('$$$$ USING SUMMED ROW: ', sumRow)
+              console.log('$$$$ SUMMED OVER: ', fResults)
+              fResults.unshift(sumRow)
+            }
+            
+            if (fResults.length > 1 && !fixing) {
               console.warn('## should not be multi results##')
             }
             return fResults[0]
@@ -2504,14 +2573,44 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR_DESCRIPTION]: 'positive',
         [F.AGE]: '15-99',
         [F.SEX]: 'both',
-        [F.AREA_NAME]: 'NULL',
+        [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
           return C.HIV_POSITIVE.yearRange.map(y => {
             const fResults = _.filter(results, r => r.year === y)
 
-            if (fResults.length > 1) {
+            let fixing = false
+            const firstRow = fResults[0]
+            const countryCode = _.get(firstRow, F.COUNTRY_ISO_CODE)
+            const countryApplies = _.get(
+              COUNTRY_MAP,
+              [countryCode, 'sumFix'],
+              false
+            )
+            if (FEATURE_FLAGS.SHINY_SUM && countryApplies) {
+              fixing = true
+              const sumRow = { ...firstRow }
+              sumRow[F.AREA_NAME] = 'NULL' // let's pretend
+              sumRow[F.VALUE_UPPER] = undefined
+              sumRow[F.VALUE_LOWER] = undefined
+              sumRow[F.VALUE] = 0
+              fResults.forEach(r => {
+                if (r[F.VALUE]) {
+                  if (r[F.AREA_NAME] !== 'NULL') {
+                    sumRow[F.VALUE] += Number(r[F.VALUE])
+                  } else {
+                    console.log('$$$$ skipping NULL AREA_NAME: ', r)
+                  }
+                }
+              })
+              console.log(`$$$$ USING SUMMED ROW FOR ${v} ${y}`)
+              console.log('$$$$ USING SUMMED ROW: ', sumRow)
+              console.log('$$$$ SUMMED OVER: ', fResults)
+              fResults.unshift(sumRow)
+            }
+            
+            if (fResults.length > 1 && !fixing) {
               console.warn('## should not be multi results##')
             }
             return fResults[0]
@@ -2550,7 +2649,7 @@ const getIndicatorMap = (isShiny) => {
 
 export {
   BASE_URL,
-  CHARTS, // TODO: rename "CHART_MAP"
+  CHARTS, // TODO: rename 'CHART_MAP'
   ALL_CHARTS,
   FIELD_MAP,
   CSV_FIELDS,

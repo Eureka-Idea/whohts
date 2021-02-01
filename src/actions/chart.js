@@ -1,4 +1,5 @@
 import * as types from '../constants/types'
+import { FEATURE_FLAGS } from '../constants/flags'
 import _ from 'lodash'
 import { getIndicatorMap, AGGREGATE_GETTER, FIELD_MAP, CHARTS, BASE_URL } from '../constants/charts'
 import { COUNTRY_MAP } from '../components/Homepage/countries'
@@ -73,10 +74,24 @@ export const getChartData = (countryCode) =>
             chartValue = chartValue || '‼️suppressed'
           }
 
-          if (f === FIELD_MAP.AREA_NAME && indicator[FIELD_MAP.INDICATOR !== 'Income Group']) {
-            // unless we want a specific area name, every query should request national-level data
-            // Income Group rows lists region (Sub-Saharan Africa) for area name, so skip those
-            chartValue = chartValue || 'NULL'
+          if (f === FIELD_MAP.AREA_NAME) {
+            // SUMFIX
+            if (chartValue === 'NULL_OR_ALL') {
+              const countryApplies = _.get(
+                COUNTRY_MAP,
+                [countryCode, 'sumFix'],
+                false
+              )
+              if (FEATURE_FLAGS.SHINY_SUM && countryApplies) {
+                chartValue = undefined // DON'T LIMIT BY 'NULL' AREA_NAME
+              } else {
+                chartValue = 'NULL' // OVERWRITE 'NULL_OR_ALL'
+              }
+            } else if (indicator[FIELD_MAP.INDICATOR !== 'Income Group']) {
+              // unless we want a specific area name, every query should request national-level data
+              // Income Group rows lists region (Sub-Saharan Africa) for area name, so skip those
+              chartValue = chartValue || 'NULL'
+            }
           }
           
           if (chartValue) {
