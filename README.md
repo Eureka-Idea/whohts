@@ -6,7 +6,7 @@ Usage
 -
 // clone repo\
 `git checkout master`\
-`npm install`\
+`npm install`\ // currently optimized for use with node version 14.16.1
 `npm start` // ---> localhost:3000/
 
 Deployment

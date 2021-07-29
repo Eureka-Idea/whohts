@@ -9,15 +9,16 @@ const BASE_URL = 'https://2021-app-dot-eic-database-290813.ew.r.appspot.com/quer
 // indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
 const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
 
-const R_2015_2019 = [
-  '2015', '2016', '2017', '2018', '2019',
+const R_2015_ON = [
+  '2015', '2016', '2017', '2018', '2019', '2020'
 ]
-const R_2018_2019 = [
-  '2018', '2019',
+const R_2018_ON = [
+  '2018', '2019', '2020'
 ]
 const R_2020_2025 = [
   '2020', '2021', '2022', '2023', '2024', '2025',
 ]
+const LATEST_YEAR = '2020'
 
 const ADULTS15 = '15-24'
 const ADULTS25 = '25-34'
@@ -782,7 +783,7 @@ const CHARTS = {
   PLHIV_DIAGNOSIS: {
     title: 'PLHIV by diagnosis and treatment status',
     id: 'PLHIV_DIAGNOSIS',
-    yearRange: R_2015_2019,
+    yearRange: R_2015_ON,
     indicators: {
       plhiv: 'People living with HIV - adults (aged 15+)',
       know: 'People living with HIV who know their status',
@@ -792,7 +793,7 @@ const CHARTS = {
   PLHIV_SEX: {
     title: 'PLHIV who know status - by sex',
     id: 'PLHIV_SEX',
-    yearRange: R_2015_2019,
+    yearRange: R_2015_ON,
     indicators: {
       status: 'Percent of people living with HIV who know their status',
     }
@@ -800,7 +801,7 @@ const CHARTS = {
   PLHIV_AGE: {
     title: 'PLHIV who know status - by age',
     id: 'PLHIV_AGE',
-    yearRange: R_2015_2019,
+    yearRange: R_2015_ON,
     shinyOnly: true,
     indicators: {
       aware: 'aware',
@@ -809,7 +810,7 @@ const CHARTS = {
   HIV_NEGATIVE: {
     title: 'HIV-negative tests - first-time testers and repeat testers',
     id: 'HIV_NEGATIVE',
-    yearRange: R_2015_2019,
+    yearRange: R_2015_ON,
     shinyOnly: true,
     indicators: {
       retests: 'retests_total',
@@ -819,7 +820,7 @@ const CHARTS = {
   HIV_POSITIVE: {
     title: 'HIV-positive tests - new diagnoses and retests',
     id: 'HIV_POSITIVE',
-    yearRange: R_2015_2019,
+    yearRange: R_2015_ON,
     shinyOnly: true,
     indicators: {
       arts: 'retests_art',
@@ -830,7 +831,7 @@ const CHARTS = {
   PREVALENCE: {
     title: 'Prevalence and positivity',
     nonShinyTitle: 'Prevalence',
-    yearRange: R_2015_2019,
+    yearRange: R_2015_ON,
     id: 'PREVALENCE',
     shinyOnlyIndicators: {
       positivity: 'positivity',
@@ -887,7 +888,7 @@ const CHARTS = {
     sources: [forecastGAM20, forecastGAM19, forecastNPD19, forecastPEPFAR, forecastWME],
     indicatorIds: ['distributed', 'demand', 'need'],
     indicatorYears: {
-      distributed: R_2018_2019,
+      distributed: R_2018_ON,
       demand: R_2020_2025,
       need: R_2020_2025,
     }
@@ -1644,7 +1645,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'aware2',
         [F.INDICATOR]: 'aware',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-        [F.YEAR]: '2019',
+        [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.INDICATOR_DESCRIPTION]: 'positive',
         [F.COUNTRY_ISO_CODE]: true,
@@ -2108,7 +2109,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year1',
         [F.INDICATOR]: 'tests_total',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-        [F.YEAR]: '2019',
+        [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.INDICATOR_DESCRIPTION]: 'all',
         [F.COUNTRY_ISO_CODE]: true,
@@ -2168,7 +2169,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
-        [F.YEAR]: '2019',
+        [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2187,7 +2188,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: 'Den Age-Male Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
-        [F.YEAR]: '2019',
+        [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2205,7 +2206,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year4',
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-        // [F.YEAR]: '2019',
+        // [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2220,7 +2221,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year5',
         [F.INDICATOR]: 'Den Age-Male Gte 15',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-        // [F.YEAR]: '2019',
+        // [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2235,7 +2236,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year6',
         [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-        // [F.YEAR]: '2019',
+        // [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2250,7 +2251,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year7',
         [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-        // [F.YEAR]: '2019',
+        // [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2402,7 +2403,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'ever1',
         [F.INDICATOR]: 'evertest',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-        [F.YEAR]: '2019',
+        [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: results => {
@@ -2655,7 +2656,7 @@ export {
   FIELD_MAP,
   CSV_FIELDS,
   AGGREGATE_GETTER,
-  R_2015_2019,
+  R_2015_ON,
   R_ADULT_AGES,
   AGE_MAP,
   R_SEXES,
