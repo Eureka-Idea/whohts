@@ -1,6 +1,6 @@
 # WHO HIV self-testing data dashboard
 
-Built using **React** + **Redux** + **Bootstrap** + **SASS** on top of [`create-react-app`](https://create-react-app.dev/). 
+Built using **React** + **Redux** + **Bootstrap** + **SASS** on top of [Rhymond's wrapper](https://github.com/Rhymond/product-compare-react) of [`create-react-app`](https://create-react-app.dev/). 
 
 Usage
 -
