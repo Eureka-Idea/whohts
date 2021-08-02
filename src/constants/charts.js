@@ -50,6 +50,7 @@ const R_LIMITED_DEMO_GROUPS = _.flatMap([
 
 const SOURCE_DB_MAP = {
   S90: 'Shiny90',
+  GAM21: 'Global AIDS Monitoring 2021',
   GAM20: 'Global AIDS Monitoring 2020',
   GAM19: 'Global AIDS Monitoring 2019',
   GAM: 'Global AIDS Monitoring',
@@ -2168,7 +2169,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year2',
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         [F.VALUE_COMMENT]: 'validated',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
         [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
@@ -2187,7 +2188,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year3',
         [F.INDICATOR]: 'Den Age-Male Gte 15',
         [F.VALUE_COMMENT]: 'validated',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
         [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
