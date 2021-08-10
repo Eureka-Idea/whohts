@@ -81,6 +81,7 @@ const SOURCE_DB_MAP = {
   DHS: 'The DHS Program',
   MICS: 'MICS UNICEF',
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
+  SPEC21: 'Spectrum estimates 2021 (UNAIDS/WHO)',
   UNAIDS: 'UNAIDS', // also a source organization
   WB: 'World Bank', // also a source organization
 }
@@ -151,6 +152,24 @@ const CSV_FIELDS = [
 ]
 
 // SOURCE objects for source prio charts
+const adultsGAM21 = {
+  id: 'GAM21',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
+      [F.VALUE_COMMENT]: 'validated',
+    }
+  },
+  indicators: {
+    total1: 'Den Age-All',
+    men1: 'Den Age-Male Gte 15',
+    women1: 'Den Age-Female Gte 15',
+
+    pTotal1: 'Per Age-All',
+    pMen1: 'Per Age-Male Gte 15',
+    pWomen1: 'Per Age-Female Gte 15',
+  }
+}
 const adultsGAM20 = {
   id: 'GAM20',
   filters: {
@@ -323,6 +342,26 @@ const adultsPEPFAR = {
   }
 }
 
+const communityGAM21 = {
+  id: 'GAM21',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
+      [F.VALUE_COMMENT]: 'validated',
+    }
+  },
+  indicators: {
+    total1: 'Den Community-Community All',
+    mobile1: 'Den Community-Community Mobile',
+    VCT1: 'Den Community-Community Vct',
+    other1: 'Den Community-Community Other',
+
+    pTotal1: 'Per Community-Community All',
+    pMobile1: 'Per Community-Community Mobile',
+    pVCT1: 'Per Community-Community Vct',
+    pOther1: 'Per Community-Community Other',
+  }
+}
 const communityGAM20 = {
   id: 'GAM20',
   filters: {
@@ -401,6 +440,30 @@ const communityPEPFAR = {
   }
 }
 
+const facilityGAM21 = {
+  id: 'GAM21',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
+      [F.VALUE_COMMENT]: 'validated',
+    }
+  },
+  indicators: {
+    total1: 'Den Facility-Facility All',
+    PITC1: 'Den Facility-Facility Provider Init',
+    ANC1: 'Den Facility-Facility Anc',
+    VCT1: 'Den Facility-Facility Vct',
+    family1: 'Den Facility-Facility Fp Clinic',
+    other1: 'Den Facility-Facility Other',
+
+    pTotal1: 'Per Facility-Facility All',
+    pPITC1: 'Per Facility-Facility Provider Init',
+    pANC1: 'Per Facility-Facility Anc',
+    pVCT1: 'Per Facility-Facility Vct',
+    pFamily1: 'Per Facility-Facility Fp Clinic',
+    pOther1: 'Per Facility-Facility Other',
+  }
+}
 const facilityGAM20 = {
   id: 'GAM20',
   filters: {
@@ -507,6 +570,18 @@ const indexPEPFAR = {
   }
 }
 
+const forecastGAM21 = {
+  id: 'GAM21',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
+      [F.VALUE_COMMENT]: 'validated',
+    }
+  },
+  indicators: {
+    distributed1: 'Self Test Distributed-Data Value'
+  }
+}
 const forecastGAM20 = {
   id: 'GAM20',
   filters: {
@@ -590,11 +665,11 @@ const kpKP20 = {
     awareTrans1: 'Transgender (PLHIV who know status (%))',
   }
 }
-const kpGAM20 = {
-  id: 'GAM20',
+const kpGAM21 = {
+  id: 'GAM21',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
       [F.AREA_NAME]: 'NULL',
     }
   },
@@ -770,7 +845,7 @@ const kpTGF = {
 const CHARTS = {
   CONTEXT: {
     // title: 'context',
-    id: 'CONTEXT'
+    id: 'CONTEXT',
   },
   P95: {
     title: 'Progress towards 95-95-95',
@@ -779,7 +854,7 @@ const CHARTS = {
       status: 'Percent of people living with HIV who know their status',
       art: 'Percent of people who know their status who are on ART',
       suppression: 'Percent of people on ART who achieve viral suppression',
-    }
+    },
   },
   PLHIV_DIAGNOSIS: {
     title: 'PLHIV by diagnosis and treatment status',
@@ -789,7 +864,7 @@ const CHARTS = {
       plhiv: 'People living with HIV - adults (aged 15+)',
       know: 'People living with HIV who know their status',
       onArt: 'People receiving antiretroviral therapy',
-    }
+    },
   },
   PLHIV_SEX: {
     title: 'PLHIV who know status - by sex',
@@ -797,7 +872,7 @@ const CHARTS = {
     yearRange: R_2015_ON,
     indicators: {
       status: 'Percent of people living with HIV who know their status',
-    }
+    },
   },
   PLHIV_AGE: {
     title: 'PLHIV who know status - by age',
@@ -806,7 +881,7 @@ const CHARTS = {
     shinyOnly: true,
     indicators: {
       aware: 'aware',
-    }
+    },
   },
   HIV_NEGATIVE: {
     title: 'HIV-negative tests - first-time testers and repeat testers',
@@ -815,8 +890,8 @@ const CHARTS = {
     shinyOnly: true,
     indicators: {
       retests: 'retests_total',
-      firsts: 'tests_first'
-    }
+      firsts: 'tests_first',
+    },
   },
   HIV_POSITIVE: {
     title: 'HIV-positive tests - new diagnoses and retests',
@@ -827,7 +902,7 @@ const CHARTS = {
       arts: 'retests_art',
       awares: 'retests_aware',
       news: 'new_diagnoses',
-    }
+    },
   },
   PREVALENCE: {
     title: 'Prevalence and positivity',
@@ -845,13 +920,14 @@ const CHARTS = {
       plhiv: 'People living with HIV - adults (aged 15+)',
       onArt: 'People receiving antiretroviral therapy',
       population: 'Population adults 15+', // TODO: 15+
-    }
+    },
   },
 
   ADULTS: {
     title: 'HIV tests conducted and positivity, by sex',
     id: 'ADULTS',
     sources: [
+      adultsGAM21,
       adultsGAM20,
       adultsGAM19,
       adultsNPD19,
@@ -861,56 +937,122 @@ const CHARTS = {
       adultsPROP19,
       adultsPCOP1718,
       adultsPROP17,
-      adultsPEPFAR
+      adultsPEPFAR,
     ],
-    indicatorIds: ['total', 'men', 'women', 'pTotal', 'pMen', 'pWomen']
+    indicatorIds: ['total', 'men', 'women', 'pTotal', 'pMen', 'pWomen'],
   },
   COMMUNITY: {
     title: 'HIV tests conducted and positivity at community level',
     id: 'COMMUNITY',
-    sources: [communityGAM20, communityGAM19, communityNPD19, communityPEPFAR],
-    indicatorIds: ['total', 'mobile', 'VCT', 'other', 'pTotal', 'pMobile', 'pVCT', 'pOther']
+    sources: [
+      communityGAM21,
+      communityGAM20,
+      communityGAM19,
+      communityNPD19,
+      communityPEPFAR,
+    ],
+    indicatorIds: [
+      'total',
+      'mobile',
+      'VCT',
+      'other',
+      'pTotal',
+      'pMobile',
+      'pVCT',
+      'pOther',
+    ],
   },
   FACILITY: {
     title: 'HIV tests conducted and positivity at facility level',
     id: 'FACILITY',
-    sources: [facilityGAM20, facilityGAM19, facilityNPD19, facilityPEPFAR],
-    indicatorIds: ['total', 'PITC', 'ANC', 'VCT', 'family', 'other', 'pTotal', 'pPITC', 'pANC', 'pVCT', 'pFamily', 'pOther']
+    sources: [
+      facilityGAM21,
+      facilityGAM20,
+      facilityGAM19,
+      facilityNPD19,
+      facilityPEPFAR,
+    ],
+    indicatorIds: [
+      'total',
+      'PITC',
+      'ANC',
+      'VCT',
+      'family',
+      'other',
+      'pTotal',
+      'pPITC',
+      'pANC',
+      'pVCT',
+      'pFamily',
+      'pOther',
+    ],
   },
   INDEX: {
-    title: 'HIV tests conducted and positivity for provider-assisted referral / index testing',
+    title:
+      'HIV tests conducted and positivity for provider-assisted referral / index testing',
     id: 'INDEX',
     sources: [indexPEPFAR],
-    indicatorIds: ['total', 'community', 'facility', 'pTotal', 'pCommunity', 'pFacility']
+    indicatorIds: [
+      'total',
+      'community',
+      'facility',
+      'pTotal',
+      'pCommunity',
+      'pFacility',
+    ],
   },
   FORECAST: {
     title: 'HIV self-tests',
     id: 'FORECAST',
-    sources: [forecastGAM20, forecastGAM19, forecastNPD19, forecastPEPFAR, forecastWME],
+    sources: [
+      forecastGAM21,
+      forecastGAM20,
+      forecastGAM19,
+      forecastNPD19,
+      forecastPEPFAR,
+      forecastWME,
+    ],
     indicatorIds: ['distributed', 'demand', 'need'],
     indicatorYears: {
       distributed: R_2018_ON,
       demand: R_2020_2025,
       need: R_2020_2025,
-    }
+    },
   },
 
   KP_TABLE: {
     title: 'Key Populations',
     id: 'KP_TABLE',
     sources: [
-      kpKP20, kpGAM20, kpPCOP20, kpPROP20, kpPCOP19, kpPROP19, kpPCOP1718, kpPROP17, kpTGF
+      kpKP20,
+      kpGAM21,
+      kpPCOP20,
+      kpPROP20,
+      kpPCOP19,
+      kpPROP19,
+      kpPCOP1718,
+      kpPROP17,
+      kpTGF,
     ],
     filters: {
-      prev: {
-        
-      },
+      prev: {},
     },
     indicatorIds: [
-      'prevMsm', 'prevPwid', 'prevPris', 'prevSw', 'prevTrans',
-      'awareMsm', 'awarePwid', 'awarePris', 'awareSw', 'awareTrans',
-      'yearMsm', 'yearPwid', 'yearPris', 'yearSw', 'yearTrans',
-
+      'prevMsm',
+      'prevPwid',
+      'prevPris',
+      'prevSw',
+      'prevTrans',
+      'awareMsm',
+      'awarePwid',
+      'awarePris',
+      'awareSw',
+      'awareTrans',
+      'yearMsm',
+      'yearPwid',
+      'yearPris',
+      'yearSw',
+      'yearTrans',
     ],
   },
   POLICY_TABLE: {
@@ -959,15 +1101,13 @@ const CHARTS = {
       social: 'Social network-based testing',
       compliance: 'Compliance with WHO testing strategy',
       verification: 'Verification testing before ART',
-    }
+    },
   },
   GROUPS_TABLE: {
     title: 'Population Groups',
     id: 'GROUPS_TABLE',
     // sources: [],
-    indicatorIds: [
-      'plhiv', 'aware', 'prev', 'newly', 'year', 'ever',
-    ],
+    indicatorIds: ['plhiv', 'aware', 'prev', 'newly', 'year', 'ever'],
     // NOTE: this MUST be updated if an additional source is added for an indicator
     // TODO: calculate dynamically
     sourceCountMap: {
@@ -980,11 +1120,11 @@ const CHARTS = {
     },
     // calculatedIndicatorIds: ['undiagnosed'],
     indicatorDemographics: {
-      ALL: R_ALL_DEMO_GROUPS
+      ALL: R_ALL_DEMO_GROUPS,
     },
     indicatorDemographicsNoShiny: {
-      ALL: R_LIMITED_DEMO_GROUPS
-    }
+      ALL: R_LIMITED_DEMO_GROUPS,
+    },
     // indicator query objects spelled out manually, given their complexity
     // indicatorSourceDbMap: {
     // }
