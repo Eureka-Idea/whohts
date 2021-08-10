@@ -100,7 +100,7 @@ const SOURCE_DISPLAY_MAP = {
   // ['PEPFAR ROP 2017']: 'PEPFAR ROP 2017',
   // ['PEPFAR ROP 2019']: 'PEPFAR ROP 2019',
   // ['PEPFAR']: 'PEPFAR',
-  [SOURCE_DB_MAP.S90]: 'Spectrum/Shiny90 estimates 2020 (UNAIDS/WHO)',
+  [SOURCE_DB_MAP.S90]: 'Spectrum/Shiny90 estimates 2021 (UNAIDS/WHO)',
   // ['Spectrum estimates 2020(UNAIDS / WHO)']: 'Spectrum estimates 2020 (UNAIDS/WHO)',
   [SOURCE_DB_MAP.UNAIDS]: 'Spectrum estimates 2020 (UNAIDS/WHO)',
   // ['UNAIDS KP - Atlas 2020']: 'UNAIDS KP-Atlas 2020',

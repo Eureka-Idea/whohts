@@ -30,8 +30,8 @@ const WITH_CUSTOM_HEADER_CHART_SPACING = [15, 30, 25, 25] // keep in sync with b
 const barChartsTestsName = 'Number of tests conducted'
 const barChartsPositivityName = 'Positivity' // TODO: acceptable?
 // const barChartsPositivityNameTooltip = 'Positivity'
-const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2020)'
-const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2020)'
+const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2021)'
+const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2021)'
 const calculatedDb = '(calculated)'
 
 function adjustPercentage({ row, toDisplay=false, decimals=0, returnRow=false }) {
