@@ -3,21 +3,17 @@ import { COUNTRY_MAP } from '../components/Homepage/countries'
 import { FEATURE_FLAGS } from './flags'
 
 // const BASE_URL = 'https://status.y-x.ch/query?'
-const BASE_URL = 'https://2021-app-dot-eic-database-290813.ew.r.appspot.com/query?'
+const BASE_URL =
+  'https://2021-app-dot-eic-database-290813.ew.r.appspot.com/query?'
 // const BASE_URL = 'https://eic-database-290813.ew.r.appspot.com/query?'
 
 // indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
 const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
 
-const R_2015_ON = [
-  '2015', '2016', '2017', '2018', '2019', '2020'
-]
-const R_2018_ON = [
-  '2018', '2019', '2020'
-]
-const R_2020_2025 = [
-  '2020', '2021', '2022', '2023', '2024', '2025',
-]
+const R_2015_2019 = ['2015', '2016', '2017', '2018', '2019']
+const R_2015_ON = ['2015', '2016', '2017', '2018', '2019', '2020']
+const R_2018_ON = ['2018', '2019', '2020']
+const R_2020_2025 = ['2020', '2021', '2022', '2023', '2024', '2025']
 const LATEST_YEAR = '2020'
 
 const ADULTS15 = '15-24'
@@ -40,12 +36,12 @@ const R_SEXES = [FEMALE, MALE]
 
 // ['f15-24', 'm15-24', 'f24-34' ... 'm15-99']
 const R_ALL_DEMO_GROUPS = _.flatMap([
-  [ALL_ADULTS, ...R_ADULT_AGES].map(y => FEMALE[0]+y),
-  [ALL_ADULTS, ...R_ADULT_AGES].map(y => MALE[0]+y)
+  [ALL_ADULTS, ...R_ADULT_AGES].map((y) => FEMALE[0] + y),
+  [ALL_ADULTS, ...R_ADULT_AGES].map((y) => MALE[0] + y),
 ])
 const R_LIMITED_DEMO_GROUPS = _.flatMap([
-  [ALL_ADULTS, ADULTS15].map(y => FEMALE[0]+y),
-  [ALL_ADULTS, ADULTS15].map(y => MALE[0]+y)
+  [ALL_ADULTS, ADULTS15].map((y) => FEMALE[0] + y),
+  [ALL_ADULTS, ADULTS15].map((y) => MALE[0] + y),
 ])
 
 const SOURCE_DB_MAP = {
@@ -139,7 +135,7 @@ const FIELD_MAP = {
   VALUE_LOWER: 'value_lower',
 }
 const F = FIELD_MAP
-const CSV_FIELDS = [ 
+const CSV_FIELDS = [
   // NOTE: for now we're displaying the fieldId in the CSV, so displayName is irrelevant
   { fieldId: FIELD_MAP.INDICATOR, displayName: 'Indicator' },
   { fieldId: FIELD_MAP.VALUE, displayName: 'Value' },
@@ -161,7 +157,7 @@ const adultsGAM21 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
       [F.VALUE_COMMENT]: 'validated',
-    }
+    },
   },
   indicators: {
     total1: 'Den Age-All',
@@ -171,7 +167,7 @@ const adultsGAM21 = {
     pTotal1: 'Per Age-All',
     pMen1: 'Per Age-Male Gte 15',
     pWomen1: 'Per Age-Female Gte 15',
-  }
+  },
 }
 const adultsGAM20 = {
   id: 'GAM20',
@@ -179,7 +175,7 @@ const adultsGAM20 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
       [F.VALUE_COMMENT]: 'validated',
-    }
+    },
   },
   indicators: {
     total1: 'Den Age-All',
@@ -189,14 +185,14 @@ const adultsGAM20 = {
     pTotal1: 'Per Age-All',
     pMen1: 'Per Age-Male Gte 15',
     pWomen1: 'Per Age-Female Gte 15',
-  }
+  },
 }
 const adultsGAM19 = {
   id: 'GAM19',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM19,
-    }
+    },
   },
   indicators: {
     total2: 'Total volume of tests conducted in past year',
@@ -206,16 +202,17 @@ const adultsGAM19 = {
     pTotal2: 'Total aggregate positivity',
     pMen2: 'Men (15+) -  Positivity',
     pWomen2: 'Women (15+) -  Positivity',
-  }
+  },
 }
 const adultsNPD19 = {
   id: 'NPD19',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD19,
-    }
+    },
   },
-  indicators: { // NOTE: same as GAM
+  indicators: {
+    // NOTE: same as GAM
     total3: 'Total volume of tests conducted in past year',
     men3: 'Men (15+) - Number of tests',
     women3: 'Women (15+) - Number of tests',
@@ -223,14 +220,14 @@ const adultsNPD19 = {
     pTotal3: 'Total aggregate positivity',
     pMen3: 'Men (15+) -  Positivity',
     pWomen3: 'Women (15+) -  Positivity',
-  }
+  },
 }
 const adultsPCOP20 = {
   id: 'PCOP20',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
-    }
+    },
   },
   indicators: {
     total4: 'Den Age-All',
@@ -240,14 +237,14 @@ const adultsPCOP20 = {
     pTotal4: 'Per Age-All',
     pMen4: 'Per Age-Male Gte 15',
     pWomen4: 'Per Age-Female Gte 15',
-  }
+  },
 }
 const adultsPROP20 = {
   id: 'PROP20',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP20,
-    }
+    },
   },
   indicators: {
     total5: 'Den Age-All',
@@ -257,14 +254,14 @@ const adultsPROP20 = {
     pTotal5: 'Per Age-All',
     pMen5: 'Per Age-Male Gte 15',
     pWomen5: 'Per Age-Female Gte 15',
-  }
+  },
 }
 const adultsPCOP19 = {
   id: 'PCOP19',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP19,
-    }
+    },
   },
   indicators: {
     total6: 'People Tested in Past Year',
@@ -274,14 +271,14 @@ const adultsPCOP19 = {
     pTotal6: 'Aggregate Positivity - Tests conducted and positivity, by sex',
     pMen6: 'Men -  Positivity',
     pWomen6: 'Women -  Positivity',
-  }
+  },
 }
 const adultsPROP19 = {
   id: 'PROP19',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP19,
-    }
+    },
   },
   indicators: {
     total7: 'People Tested in Past Year',
@@ -291,14 +288,14 @@ const adultsPROP19 = {
     pTotal7: 'Aggregate Positivity - Tests conducted and positivity, by sex',
     pMen7: 'Men -  Positivity',
     pWomen7: 'Women -  Positivity',
-  }
+  },
 }
 const adultsPCOP1718 = {
   id: 'PCOP1718',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP1718,
-    }
+    },
   },
   indicators: {
     total10: 'People Tested in Past Year',
@@ -308,14 +305,14 @@ const adultsPCOP1718 = {
     pTotal10: 'Aggregate Positivity - Tests conducted and positivity, by sex',
     pMen10: 'Men -  Positivity',
     pWomen10: 'Women -  Positivity',
-  }
+  },
 }
 const adultsPROP17 = {
   id: 'PROP17',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP17,
-    }
+    },
   },
   indicators: {
     total11: 'People Tested in Past Year',
@@ -325,14 +322,14 @@ const adultsPROP17 = {
     pTotal11: 'Aggregate Positivity - Tests conducted and positivity, by sex',
     pMen11: 'Men -  Positivity',
     pWomen11: 'Women -  Positivity',
-  }
+  },
 }
 const adultsPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
-    }
+    },
   },
   indicators: {
     total4: 'People Tested in Past Year',
@@ -342,7 +339,7 @@ const adultsPEPFAR = {
     pTotal4: 'Total positivity',
     pMen4: 'Positivity - Men (15+)',
     pWomen4: 'Positivity - Women (15+)',
-  }
+  },
 }
 
 const communityGAM21 = {
@@ -351,7 +348,7 @@ const communityGAM21 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
       [F.VALUE_COMMENT]: 'validated',
-    }
+    },
   },
   indicators: {
     total1: 'Den Community-Community All',
@@ -363,7 +360,7 @@ const communityGAM21 = {
     pMobile1: 'Per Community-Community Mobile',
     pVCT1: 'Per Community-Community Vct',
     pOther1: 'Per Community-Community Other',
-  }
+  },
 }
 const communityGAM20 = {
   id: 'GAM20',
@@ -371,7 +368,7 @@ const communityGAM20 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
       [F.VALUE_COMMENT]: 'validated',
-    }
+    },
   },
   indicators: {
     total1: 'Den Community-Community All',
@@ -383,14 +380,14 @@ const communityGAM20 = {
     pMobile1: 'Per Community-Community Mobile',
     pVCT1: 'Per Community-Community Vct',
     pOther1: 'Per Community-Community Other',
-  }
+  },
 }
 const communityGAM19 = {
   id: 'GAM19',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM19,
-    }
+    },
   },
   indicators: {
     total2: 'Total Volume - Tests conducted and positivity at community level',
@@ -398,37 +395,40 @@ const communityGAM19 = {
     VCT2: 'VCT - Number of tests - Community',
     other2: 'Other - Number of tests - Community',
 
-    pTotal2: 'Aggregate Positivity - Tests conducted and positivity at community level',
+    pTotal2:
+      'Aggregate Positivity - Tests conducted and positivity at community level',
     pMobile2: 'Mobile testing - Positivity - Community',
     pVCT2: 'VCT - Positivity - Community',
     pOther2: 'Other - Positivity - Community',
-  }
+  },
 }
 const communityNPD19 = {
   id: 'NPD19',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD19,
-    }
+    },
   },
-  indicators: { // same as GAM19
+  indicators: {
+    // same as GAM19
     total3: 'Total Volume - Tests conducted and positivity at community level',
     mobile3: 'Mobile testing - Number of tests - Community',
     VCT3: 'VCT - Number of tests - Community',
     other3: 'Other - Number of tests - Community',
 
-    pTotal3: 'Aggregate Positivity - Tests conducted and positivity at community level',
+    pTotal3:
+      'Aggregate Positivity - Tests conducted and positivity at community level',
     pMobile3: 'Mobile testing - Positivity - Community',
     pVCT3: 'VCT - Positivity - Community',
     pOther3: 'Other - Positivity - Community',
-  }
+  },
 }
 const communityPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
-    }
+    },
   },
   indicators: {
     total4: 'Total Community Tests',
@@ -440,7 +440,7 @@ const communityPEPFAR = {
     pMobile4: 'Positivity - Community Mobile Testing',
     pVCT4: 'Positivity - Community VCT Testing',
     pOther4: 'Positivity - Community Other Testing',
-  }
+  },
 }
 
 const facilityGAM21 = {
@@ -449,7 +449,7 @@ const facilityGAM21 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
       [F.VALUE_COMMENT]: 'validated',
-    }
+    },
   },
   indicators: {
     total1: 'Den Facility-Facility All',
@@ -465,7 +465,7 @@ const facilityGAM21 = {
     pVCT1: 'Per Facility-Facility Vct',
     pFamily1: 'Per Facility-Facility Fp Clinic',
     pOther1: 'Per Facility-Facility Other',
-  }
+  },
 }
 const facilityGAM20 = {
   id: 'GAM20',
@@ -473,7 +473,7 @@ const facilityGAM20 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
       [F.VALUE_COMMENT]: 'validated',
-    }
+    },
   },
   indicators: {
     total1: 'Den Facility-Facility All',
@@ -489,14 +489,14 @@ const facilityGAM20 = {
     pVCT1: 'Per Facility-Facility Vct',
     pFamily1: 'Per Facility-Facility Fp Clinic',
     pOther1: 'Per Facility-Facility Other',
-  }
+  },
 }
 const facilityGAM19 = {
   id: 'GAM19',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM19,
-    }
+    },
   },
   indicators: {
     total2: 'Total Volume - Tests conducted and positivity at facility level',
@@ -505,42 +505,46 @@ const facilityGAM19 = {
     VCT2: 'VCT - Number of tests - Facility',
     other2: 'Other - Number of tests - Facility',
 
-    pTotal2: 'Aggregate Positivity - Tests conducted and positivity at facility level',
+    pTotal2:
+      'Aggregate Positivity - Tests conducted and positivity at facility level',
     pPITC2: 'PITC - Positivity - Facility',
     pANC2: 'ANC - Positivity - Facility',
     pVCT2: 'VCT - Positivity - Facility',
     pOther2: 'Other - Positivity - Facility',
-  }
+  },
 }
 const facilityNPD19 = {
   id: 'NPD19',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD19,
-    }
+    },
   },
-  indicators: { // same as GAM19
+  indicators: {
+    // same as GAM19
     total3: 'Total Volume - Tests conducted and positivity at facility level',
     PITC3: 'PITC - Number of tests - Facility',
     ANC3: 'ANC - Number of tests - Facility',
     VCT3: 'VCT - Number of tests - Facility',
     other3: 'Other - Number of tests - Facility',
-    
-    pTotal3: 'Aggregate Positivity - Tests conducted and positivity at facility level',
+
+    pTotal3:
+      'Aggregate Positivity - Tests conducted and positivity at facility level',
     pPITC3: 'PITC - Positivity - Facility',
     pANC3: 'ANC - Positivity - Facility',
     pVCT3: 'VCT - Positivity - Facility',
     pOther3: 'Other - Positivity - Facility',
-  }
+  },
 }
 const facilityPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
-    }
+    },
   },
-  indicators: { // TODO: fix calculated values
+  indicators: {
+    // TODO: fix calculated values
     total4: 'Total Facility Tests',
     PITC4: 'PITC - Number of tests - Facility',
     ANC4: 'ANC - Number of tests - Facility',
@@ -552,7 +556,7 @@ const facilityPEPFAR = {
     pANC4: 'Positivity - Facility ANC Testing',
     pVCT4: 'Positivity - Facility VCT Testing',
     pOther4: 'Positivity - Facility Other Testing',
-  }
+  },
 }
 
 const indexPEPFAR = {
@@ -560,7 +564,7 @@ const indexPEPFAR = {
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
-    }
+    },
   },
   indicators: {
     total1: 'Total Index Tests',
@@ -570,7 +574,7 @@ const indexPEPFAR = {
     pTotal1: 'Positivity- Index Testing Total',
     pCommunity1: 'Positivity - Community Index testing',
     pFacility1: 'Positivity - Facility Index Testing',
-  }
+  },
 }
 
 const forecastGAM21 = {
@@ -579,11 +583,11 @@ const forecastGAM21 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
       [F.VALUE_COMMENT]: 'validated',
-    }
+    },
   },
   indicators: {
-    distributed1: 'Self Test Distributed-Data Value'
-  }
+    distributed1: 'Self Test Distributed-Data Value',
+  },
 }
 const forecastGAM20 = {
   id: 'GAM20',
@@ -591,56 +595,57 @@ const forecastGAM20 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM20,
       [F.VALUE_COMMENT]: 'validated',
-    }
+    },
   },
   indicators: {
-    distributed1: 'Self Test Distributed-Data Value'
-  }
+    distributed1: 'Self Test Distributed-Data Value',
+  },
 }
 const forecastGAM19 = {
   id: 'GAM19',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM19,
-    }
+    },
   },
   indicators: {
-    distributed2: 'HIVSTs distributed'
-  }
+    distributed2: 'HIVSTs distributed',
+  },
 }
 const forecastNPD19 = {
   id: 'NPD19',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.NPD19,
-    }
+    },
   },
-  indicators: { // same as GAM19
-    distributed3: 'HIVSTs distributed'
-  }
+  indicators: {
+    // same as GAM19
+    distributed3: 'HIVSTs distributed',
+  },
 }
 const forecastPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
-    }
+    },
   },
   indicators: {
-    distributed4: 'HIV self-tests distributed'
-  }
+    distributed4: 'HIV self-tests distributed',
+  },
 }
 const forecastWME = {
   id: 'WME',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WME,
-    }
+    },
   },
   indicators: {
     demand1: 'HIVST forecast demand',
     need1: 'HIVST forecast need',
-  }
+  },
 }
 
 const kpKP20 = {
@@ -649,7 +654,7 @@ const kpKP20 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.KP20,
       [F.AREA_NAME]: 'NULL',
-    }
+    },
   },
   indicators: {
     prevMsm1: 'HIV prevalence among men who have sex with men',
@@ -666,7 +671,7 @@ const kpKP20 = {
 
     prevTrans1: 'HIV prevalence among transgender people',
     awareTrans1: 'Transgender (PLHIV who know status (%))',
-  }
+  },
 }
 const kpGAM21 = {
   id: 'GAM21',
@@ -674,24 +679,27 @@ const kpGAM21 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
       [F.AREA_NAME]: 'NULL',
-    }
+    },
   },
-  indicators: { // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
+  indicators: {
+    // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
     prevMsm2: 'HIV prevalence among men who have sex with men',
-    awareMsm2: 'HIV testing and status awareness among men who have sex with men',
+    awareMsm2:
+      'HIV testing and status awareness among men who have sex with men',
 
     prevPwid2: 'HIV prevalence among people who inject drugs',
-    awarePwid2: 'HIV testing and status awareness among people who inject drugs',
+    awarePwid2:
+      'HIV testing and status awareness among people who inject drugs',
 
     prevPris2: 'HIV prevalence among prisoners',
     // awarePris2: '',
 
     prevSw2: 'HIV prevalence among sex workers',
     awareSw2: 'HIV testing and status awareness among sex workers',
-    
+
     prevTrans2: 'HIV prevalence among transgender people',
     awareTrans2: 'HIV testing and status awareness among transgender people',
-  }
+  },
 }
 const kpPCOP20 = {
   id: 'PCOP20',
@@ -699,7 +707,7 @@ const kpPCOP20 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
       [F.AREA_NAME]: 'NULL',
-    }
+    },
   },
   indicators: {
     yearMsm1: 'MSM (Tested in past year)',
@@ -707,7 +715,7 @@ const kpPCOP20 = {
     yearPwid1: 'PWID (Tested in past year)',
     yearPris1: 'People in prisons (Tested in past year)',
     yearTrans1: 'Transgender (Tested in past year)',
-  }
+  },
 }
 const kpPROP20 = {
   id: 'PROP20',
@@ -715,7 +723,7 @@ const kpPROP20 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP20,
       [F.AREA_NAME]: 'NULL',
-    }
+    },
   },
   indicators: {
     yearMsm2: 'MSM (Tested in past year)',
@@ -723,7 +731,7 @@ const kpPROP20 = {
     yearPwid2: 'PWID (Tested in past year)',
     yearPris2: 'People in prisons (Tested in past year)',
     yearTrans2: 'Transgender (Tested in past year)',
-  }
+  },
 }
 const kpPCOP19 = {
   id: 'PCOP19',
@@ -731,7 +739,7 @@ const kpPCOP19 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP19,
       [F.AREA_NAME]: 'NULL',
-    }
+    },
   },
   indicators: {
     yearMsm3: 'MSM (Tested in past year)',
@@ -739,7 +747,7 @@ const kpPCOP19 = {
     yearPwid3: 'PWID (Tested in past year)',
     yearPris3: 'People in prisons (Tested in past year)',
     yearTrans3: 'Transgender (Tested in past year)',
-  }
+  },
 }
 const kpPROP19 = {
   id: 'PROP19',
@@ -747,7 +755,7 @@ const kpPROP19 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP19,
       [F.AREA_NAME]: 'NULL',
-    }
+    },
   },
   indicators: {
     yearMsm4: 'MSM (Tested in past year)',
@@ -755,7 +763,7 @@ const kpPROP19 = {
     yearPwid4: 'PWID (Tested in past year)',
     yearPris4: 'People in prisons (Tested in past year)',
     yearTrans4: 'Transgender (Tested in past year)',
-  }
+  },
 }
 const kpPCOP1718 = {
   id: 'PCOP1718',
@@ -763,7 +771,7 @@ const kpPCOP1718 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP1718,
       [F.AREA_NAME]: 'NULL',
-    }
+    },
   },
   indicators: {
     yearMsm5: 'MSM (Tested in past year)',
@@ -771,7 +779,7 @@ const kpPCOP1718 = {
     yearPwid5: 'PWID (Tested in past year)',
     yearPris5: 'People in prisons (Tested in past year)',
     yearTrans5: 'Transgender (Tested in past year)',
-  }
+  },
 }
 const kpPROP17 = {
   id: 'PROP17',
@@ -779,7 +787,7 @@ const kpPROP17 = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP17,
       [F.AREA_NAME]: 'NULL',
-    }
+    },
   },
   indicators: {
     yearMsm6: 'MSM (Tested in past year)',
@@ -787,7 +795,7 @@ const kpPROP17 = {
     yearPwid6: 'PWID (Tested in past year)',
     yearPris6: 'People in prisons (Tested in past year)',
     yearTrans6: 'Transgender (Tested in past year)',
-  }
+  },
 }
 const kpTGF = {
   id: 'TGF',
@@ -795,14 +803,14 @@ const kpTGF = {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.TGF,
       [F.AREA_NAME]: 'NULL',
-    }
+    },
   },
   indicators: {
     yearMsm7: 'Number of HIV tests taken among men who have sex with men',
     yearSw7: 'Number of HIV tests taken among sex workers',
     yearPwid7: 'Number of HIV tests taken among people who use drugs',
     yearTrans7: 'Number of HIV tests taken among transgender population',
-  }
+  },
 }
 
 // const groupsGAM20 = {
@@ -843,7 +851,6 @@ const kpTGF = {
 //     year: 'Women 15-24 (Tested in past year)',
 //   }
 // }
-
 
 const CHARTS = {
   CONTEXT: {
@@ -1134,7 +1141,8 @@ const CHARTS = {
   },
 }
 const C = CHARTS
-const ALL_CHARTS = [ //population/country context?
+const ALL_CHARTS = [
+  //population/country context?
   C.P95,
   C.PLHIV_DIAGNOSIS,
   C.PLHIV_SEX,
@@ -1152,12 +1160,17 @@ const ALL_CHARTS = [ //population/country context?
   C.GROUPS_TABLE,
 ]
 
-const getGenericIndId = indId => {
+const getGenericIndId = (indId) => {
   return indId.replace(/\d+$/, '')
 }
 
-const allSexVariations = ['all sexes', 'both', 'males, females', 'males, females, unknown']
-const isAllSex = r => {
+const allSexVariations = [
+  'all sexes',
+  'both',
+  'males, females',
+  'males, females, unknown',
+]
+const isAllSex = (r) => {
   const sex = r[FIELD_MAP.SEX]
 
   const is = !sex || allSexVariations.includes(sex.toLowerCase())
@@ -1167,7 +1180,7 @@ const isAllSex = r => {
   return is
 }
 const allAgeVariations = ['all ages', '15+, <15, unknown']
-const isAllAge = r => {
+const isAllAge = (r) => {
   const age = r[FIELD_MAP.AGE]
 
   const is = !age || allAgeVariations.includes(age.toLowerCase())
@@ -1192,15 +1205,22 @@ const isAllAge = r => {
 //   })
 // }
 
-const findPrioritizedResult = ({ results, dbHierarchy, resultCriteria = {}, allSexCheck, allAgeCheck }) => {
-  return _.find(dbHierarchy, db => {
-    
-    const fResults = _.filter(results, r => {
+const findPrioritizedResult = ({
+  results,
+  dbHierarchy,
+  resultCriteria = {},
+  allSexCheck,
+  allAgeCheck,
+}) => {
+  return _.find(dbHierarchy, (db) => {
+    const fResults = _.filter(results, (r) => {
       if (r[F.SOURCE_DATABASE] !== db) {
         return false
       }
-      const matchesCriteria = _.every(resultCriteria,
-        ({ value, field }) => r[field] === value)
+      const matchesCriteria = _.every(
+        resultCriteria,
+        ({ value, field }) => r[field] === value
+      )
       if (!matchesCriteria) {
         return false
       }
@@ -1227,7 +1247,6 @@ const findPrioritizedResult = ({ results, dbHierarchy, resultCriteria = {}, allS
 
 // this map specifies which records need to be pulled to cover the indicators relevant to each chart
 const getIndicatorMap = (isShiny) => {
-
   const indicatorMap = {
     [C.CONTEXT.id]: [
       {
@@ -1236,70 +1255,68 @@ const getIndicatorMap = (isShiny) => {
         [F.UNIT_FORMAT]: 'NUMBER',
         [F.SOURCE_ORGANIZATION]: SOURCE_DB_MAP.UNAIDS,
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           return _.maxBy(results, 'year')
-        }
+        },
       },
       {
         id: 'classification',
         [F.INDICATOR]: 'Income Group',
         [F.SOURCE_ORGANIZATION]: SOURCE_DB_MAP.WB,
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           return _.maxBy(results, 'year')
-        }
+        },
       },
     ],
-    [C.P95.id]: _.map(C.P95.indicators, (v, k) =>
-      ({
-        id: k,
-        [F.INDICATOR]: v,
-        [F.COUNTRY_ISO_CODE]: true,
-        [F.AGE]: 'all ages',
-        [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        getter: results => {
-          return _.maxBy(results, 'year')
-        }
-      })
-    ),
-    [C.PLHIV_DIAGNOSIS.id]: _.map(C.PLHIV_DIAGNOSIS.indicators, (v, k) => (
-      {
-        id: k,
-        [F.INDICATOR]: v,
-        [F.AGE]: '15+',
-        [F.SEX]: 'NULL',
-        [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return C.PLHIV_DIAGNOSIS.yearRange.map(y => {
-            const fResults = _.filter(results, r => r.year === y)
-            
-            if (fResults.length > 1) {
-              console.warn('## should not be multi results##')
-            }
-            return fResults[0]
-          })
-        }
-      }
-    )),
-    [C.PLHIV_SEX.id]: ['Females', 'Males'].map(sex => ( // TODO: standardize
-      {
+    [C.P95.id]: _.map(C.P95.indicators, (v, k) => ({
+      id: k,
+      [F.INDICATOR]: v,
+      [F.COUNTRY_ISO_CODE]: true,
+      [F.AGE]: 'all ages',
+      [F.AREA_NAME]: 'NULL',
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+      getter: (results) => {
+        return _.maxBy(results, 'year')
+      },
+    })),
+    [C.PLHIV_DIAGNOSIS.id]: _.map(C.PLHIV_DIAGNOSIS.indicators, (v, k) => ({
+      id: k,
+      [F.INDICATOR]: v,
+      [F.AGE]: '15+',
+      [F.SEX]: 'NULL',
+      [F.AREA_NAME]: 'NULL',
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+      [F.COUNTRY_ISO_CODE]: true,
+      getter: (results) => {
+        return C.PLHIV_DIAGNOSIS.yearRange.map((y) => {
+          const fResults = _.filter(results, (r) => r.year === y)
+
+          if (fResults.length > 1) {
+            console.warn('## should not be multi results##')
+          }
+          return fResults[0]
+        })
+      },
+    })),
+    [C.PLHIV_SEX.id]: ['Females', 'Males'].map(
+      (
+        sex // TODO: standardize
+      ) => ({
         id: sex,
         [F.INDICATOR]: C.PLHIV_SEX.indicators.status,
         [F.AGE]: '15+',
         [F.SEX]: sex,
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,        
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return C.PLHIV_SEX.yearRange.map(y => {
-            return _.find(results, r => (r.year === y))
+        getter: (results) => {
+          return C.PLHIV_SEX.yearRange.map((y) => {
+            return _.find(results, (r) => r.year === y)
           })
-        }
-      }
-    )),
+        },
+      })
+    ),
     [C.PREVALENCE.id]: [
       {
         id: 'prevalence',
@@ -1309,16 +1326,16 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return C.PREVALENCE.yearRange.map(y => {
-            const fResults = _.filter(results, r => r.year === y)
+        getter: (results) => {
+          return C.PREVALENCE.yearRange.map((y) => {
+            const fResults = _.filter(results, (r) => r.year === y)
 
             if (fResults.length > 1) {
               console.warn('## should not be multi results##')
             }
             return fResults[0]
           })
-        }
+        },
       },
       {
         id: 'plhiv',
@@ -1328,16 +1345,16 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return C.PREVALENCE.yearRange.map(y => {
-            const fResults = _.filter(results, r => r.year === y)
-            
+        getter: (results) => {
+          return C.PREVALENCE.yearRange.map((y) => {
+            const fResults = _.filter(results, (r) => r.year === y)
+
             if (fResults.length > 1) {
               console.warn('## should not be multi results##')
             }
             return fResults[0]
           })
-        }
+        },
       },
       {
         id: 'onArt',
@@ -1347,11 +1364,11 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return C.PREVALENCE.yearRange.map(y => {
-            return _.find(results, r => (r.year === y))
+        getter: (results) => {
+          return C.PREVALENCE.yearRange.map((y) => {
+            return _.find(results, (r) => r.year === y)
           })
-        }
+        },
       },
       {
         id: 'population',
@@ -1359,126 +1376,159 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return C.PREVALENCE.yearRange.map(y => {
-            return _.find(results, r => (r.year === y))
+        getter: (results) => {
+          return C.PREVALENCE.yearRange.map((y) => {
+            return _.find(results, (r) => r.year === y)
           })
-        }
+        },
       },
     ],
-    [C.ADULTS.id]: _.flatMap(C.ADULTS.sources, s => {
+    [C.ADULTS.id]: _.flatMap(C.ADULTS.sources, (s) => {
       return _.map(s.indicators, (indVal, indId) => {
-        
         return _.extend({}, s.filters.ALL, s.filters[indId], {
           id: indId,
           [F.INDICATOR]: indVal,
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
+          getter: (results) => {
             if (results.length > 1) {
               // debugger
-              console.error(`**LOOKOUT! Taking first result for: * ', indI
-              `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-              `,'rs:', results)
+              console.error(
+                `**LOOKOUT! Taking first result for: * ', indI
+              `,
+                results[0].indicator,
+                'R:',
+                _.maxBy(results, 'year'),
+                `
+              `,
+                'rs:',
+                results
+              )
             }
             return _.maxBy(results, 'year')
-          }
+          },
         })
       })
     }),
-    [C.COMMUNITY.id]: _.flatMap(C.COMMUNITY.sources, s => {
+    [C.COMMUNITY.id]: _.flatMap(C.COMMUNITY.sources, (s) => {
       return _.map(s.indicators, (indVal, indId) => {
-        
         return _.extend({}, s.filters.ALL, s.filters[indId], {
           id: indId,
           [F.INDICATOR]: indVal,
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
+          getter: (results) => {
             if (results.length > 1) {
               // debugger
-              console.error(`**LOOKOUT! Taking first result for: * ', indI
-              `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-              `,'rs:', results)
+              console.error(
+                `**LOOKOUT! Taking first result for: * ', indI
+              `,
+                results[0].indicator,
+                'R:',
+                _.maxBy(results, 'year'),
+                `
+              `,
+                'rs:',
+                results
+              )
             }
             return _.maxBy(results, 'year')
-          }
+          },
         })
       })
     }),
-    [C.FACILITY.id]: _.flatMap(C.FACILITY.sources, s => {
+    [C.FACILITY.id]: _.flatMap(C.FACILITY.sources, (s) => {
       return _.map(s.indicators, (indVal, indId) => {
-        
         return _.extend({}, s.filters.ALL, s.filters[indId], {
           id: indId,
           [F.INDICATOR]: indVal,
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
+          getter: (results) => {
             if (results.length > 1) {
               // debugger
-              console.error(`**LOOKOUT! Taking first result for: * ', indI
-              `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-              `,'rs:', results)
+              console.error(
+                `**LOOKOUT! Taking first result for: * ', indI
+              `,
+                results[0].indicator,
+                'R:',
+                _.maxBy(results, 'year'),
+                `
+              `,
+                'rs:',
+                results
+              )
             }
             return _.maxBy(results, 'year')
-          }
+          },
         })
       })
     }),
-    [C.INDEX.id]: _.flatMap(C.INDEX.sources, s => {
+    [C.INDEX.id]: _.flatMap(C.INDEX.sources, (s) => {
       return _.map(s.indicators, (indVal, indId) => {
-        
         return _.extend({}, s.filters.ALL, s.filters[indId], {
           id: indId,
           [F.INDICATOR]: indVal,
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
+          getter: (results) => {
             if (results.length > 1) {
               // debugger
-              console.error(`**LOOKOUT! Taking first result for: * ', indI
-              `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-              `,'rs:', results)
+              console.error(
+                `**LOOKOUT! Taking first result for: * ', indI
+              `,
+                results[0].indicator,
+                'R:',
+                _.maxBy(results, 'year'),
+                `
+              `,
+                'rs:',
+                results
+              )
             }
             return _.maxBy(results, 'year')
-          }
+          },
         })
       })
     }),
-    [C.FORECAST.id]: _.flatMap(C.FORECAST.sources, s => {
+    [C.FORECAST.id]: _.flatMap(C.FORECAST.sources, (s) => {
       return _.map(s.indicators, (indVal, indId) => {
-        
         return _.extend({}, s.filters.ALL, s.filters[indId], {
           id: indId,
           [F.INDICATOR]: indVal,
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
-
+          getter: (results) => {
             const genericIndId = getGenericIndId(indId)
-            return C.FORECAST.indicatorYears[genericIndId].map(y => {
-              const fResults = _.filter(results, r => r.year === y)
+            return C.FORECAST.indicatorYears[genericIndId].map((y) => {
+              const fResults = _.filter(results, (r) => r.year === y)
               if (fResults.length > 1) {
                 // debugger
-                console.error(`**LOOKOUT! Taking first result for: * ', indI
-                `, fResults[0].indicator, 'R:', _.maxBy(fResults, 'year'), `
-                `,'rs:', fResults)
+                console.error(
+                  `**LOOKOUT! Taking first result for: * ', indI
+                `,
+                  fResults[0].indicator,
+                  'R:',
+                  _.maxBy(fResults, 'year'),
+                  `
+                `,
+                  'rs:',
+                  fResults
+                )
               }
               return _.maxBy(fResults, 'year')
             })
-          }
+          },
         })
       })
     }),
-    [C.KP_TABLE.id]: _.flatMap(C.KP_TABLE.sources, s => {
+    [C.KP_TABLE.id]: _.flatMap(C.KP_TABLE.sources, (s) => {
       return _.map(s.indicators, (indVal, indId) => {
-        
         return _.extend({}, s.filters.ALL, s.filters[indId], {
           id: indId,
           [F.INDICATOR]: indVal,
           [F.COUNTRY_ISO_CODE]: true,
-          getter: results => {
+          getter: (results) => {
             // if (fResults.length > 1) {
             // debugger
             //   console.error(`**LOOKOUT! Taking first result for: * ', indI
@@ -1487,7 +1537,7 @@ const getIndicatorMap = (isShiny) => {
             // }
             // don't allSexCheck msm results, which are all males
             const allSexCheck = !indId.toLowerCase().includes('msm')
-            const fResults = results.filter(r => {
+            const fResults = results.filter((r) => {
               return isAllAge(r) && (!allSexCheck || isAllSex(r))
             })
 
@@ -1496,10 +1546,9 @@ const getIndicatorMap = (isShiny) => {
               console.log('@indicator: ', indId)
               console.log('@@@@: ', fResults)
               console.log('!!!!', results)
-
             }
             return result
-          }
+          },
         })
       })
     }),
@@ -1508,18 +1557,25 @@ const getIndicatorMap = (isShiny) => {
         id: k,
         [F.INDICATOR]: v,
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           if (results.length > 1) {
             // debugger
-            console.error(`**LOOKOUT! Taking first result for: ', 
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking first result for: ', 
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return _.maxBy(results, 'year')
-        }
-      }
-    )),
+        },
+      })
+    ),
     [C.GROUPS_TABLE.id]: [
       // ESTIMATED NUMBER OF PLHIV
       {
@@ -1528,16 +1584,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'plhiv2',
@@ -1545,16 +1611,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'plhiv3',
@@ -1562,16 +1638,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'plhiv4',
@@ -1579,16 +1665,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       // {
       //   id: 'plhiv5',
@@ -1664,17 +1760,30 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
-          console.log('!!!!! People living with HIV - females aged 25-34: ', results)
+          console.log(
+            '!!!!! People living with HIV - females aged 25-34: ',
+            results
+          )
           return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'plhiv6',
@@ -1682,17 +1791,30 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
-          console.log('!!!!! People living with HIV - males aged 25-34: ', results)
+          console.log(
+            '!!!!! People living with HIV - males aged 25-34: ',
+            results
+          )
           return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'plhiv7',
@@ -1700,17 +1822,30 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
-          console.log('!!!!! People living with HIV - females aged 35-49: ', results)
+          console.log(
+            '!!!!! People living with HIV - females aged 35-49: ',
+            results
+          )
           return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'plhiv8',
@@ -1718,17 +1853,30 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
-          console.log('!!!!! People living with HIV - males aged 35-49: ', results)
+          console.log(
+            '!!!!! People living with HIV - males aged 35-49: ',
+            results
+          )
           return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'plhiv9',
@@ -1736,16 +1884,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'plhiv10',
@@ -1753,37 +1911,51 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       // [ UNDIAGNOSED PLHIV = (1 - PLHIV WHO KNOW STATUS) * ESTIMATED # PLHIV]
       // PLHIV WHO KNOW STATUS (%)
       {
         id: 'aware1',
-        [F.INDICATOR]: 'Percent of people living with HIV who know their status',
+        [F.INDICATOR]:
+          'Percent of people living with HIV who know their status',
         [F.AGE]: '15+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const resultMap = {}
 
-          _.each(['Females', 'Males'], sex => {
-            const fResults = _.filter(results, r => r[F.SEX] === sex)
+          _.each(['Females', 'Males'], (sex) => {
+            const fResults = _.filter(results, (r) => r[F.SEX] === sex)
 
-            resultMap[`${sex[0].toLowerCase()}${ALL_ADULTS}`] = _.maxBy(fResults, 'year')
+            resultMap[`${sex[0].toLowerCase()}${ALL_ADULTS}`] = _.maxBy(
+              fResults,
+              'year'
+            )
           })
 
           return resultMap
-        }
+        },
       },
       {
         id: 'aware2',
@@ -1793,19 +1965,20 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.INDICATOR_DESCRIPTION]: 'positive',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const resultMap = {}
-          R_SEXES.forEach(sex => {
-
-            [...R_ADULT_AGES, ALL_ADULTS].forEach(ageRange => {
-              const result = _.find(results, r =>
-                r[F.SEX] === sex && r[F.AGE] === ageRange)
+          R_SEXES.forEach((sex) => {
+            ;[...R_ADULT_AGES, ALL_ADULTS].forEach((ageRange) => {
+              const result = _.find(
+                results,
+                (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
+              )
 
               resultMap[`${sex[0]}${ageRange}`] = result
             })
           })
           return resultMap
-        }
+        },
       },
       // HIV PREVALENCE
       {
@@ -1814,16 +1987,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'prev2',
@@ -1831,16 +2014,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'prev3',
@@ -1848,16 +2041,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'prev4',
@@ -1865,16 +2068,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       // {
       //   id: 'prev5',
@@ -1902,17 +2115,27 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           console.log('!!!!! HIV Prevalence - females aged 25-34: ', results)
           return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'prev6',
@@ -1920,17 +2143,27 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           console.log('!!!!! HIV Prevalence - males aged 25-34: ', results)
           return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'prev7',
@@ -1938,17 +2171,27 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           console.log('!!!!! HIV Prevalence - females aged 35-49: ', results)
           return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'prev8',
@@ -1956,17 +2199,27 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           console.log('!!!!! HIV Prevalence - males aged 35-49: ', results)
           return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'prev9',
@@ -1974,17 +2227,27 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           console.log('!!!!! HIV Prevalence - females aged 50+: ', results)
           return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'prev10',
@@ -1992,17 +2255,27 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           console.log('!!!!! HIV Prevalence - males aged 50+: ', results)
           return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       // NEW HIV INFECTIONS
       {
@@ -2011,17 +2284,27 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
 
           return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'newly2',
@@ -2029,16 +2312,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'newly3',
@@ -2046,16 +2339,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'newly4',
@@ -2063,16 +2366,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       // {
       //   id: 'newly5',
@@ -2148,17 +2461,30 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
-          console.log('!!!!! new HIV infections - females aged 25-34: ', results)
+          console.log(
+            '!!!!! new HIV infections - females aged 25-34: ',
+            results
+          )
           return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'newly6',
@@ -2166,17 +2492,27 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           console.log('!!!!! new HIV infections - males aged 25-34: ', results)
           return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'newly7',
@@ -2184,17 +2520,30 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
-          console.log('!!!!! new HIV infections - females aged 35-49: ', results)
+          console.log(
+            '!!!!! new HIV infections - females aged 35-49: ',
+            results
+          )
           return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'newly8',
@@ -2202,17 +2551,27 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           console.log('!!!!! new HIV infections - males aged 35-49: ', results)
           return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'newly9',
@@ -2220,16 +2579,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'newly10',
@@ -2237,16 +2606,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       // TESTED IN PAST YEAR
       {
@@ -2257,12 +2636,10 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.INDICATOR_DESCRIPTION]: 'all',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const resultMap = {}
-          R_SEXES.forEach(sex => {
-
-            [...R_ADULT_AGES, ALL_ADULTS].forEach(ageRange => {
-
+          R_SEXES.forEach((sex) => {
+            ;[...R_ADULT_AGES, ALL_ADULTS].forEach((ageRange) => {
               const countryCode = _.get(results, [0, F.COUNTRY_ISO_CODE])
               const countryApplies = _.get(
                 COUNTRY_MAP,
@@ -2270,9 +2647,11 @@ const getIndicatorMap = (isShiny) => {
                 false
               )
               if (FEATURE_FLAGS.SHINY_SUM && countryApplies) {
-                const fResults = _.filter(results, r =>
-                  r[F.SEX] === sex && r[F.AGE] === ageRange)
-                  
+                const fResults = _.filter(
+                  results,
+                  (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
+                )
+
                 const firstRow = fResults[0]
                 const sumRow = { ...firstRow }
                 sumRow[F.AREA_NAME] = 'NULL' // let's pretend
@@ -2298,19 +2677,22 @@ const getIndicatorMap = (isShiny) => {
                   }
                 })
                 resultMap[`${sex[0]}${ageRange}`] = sumRow
-                console.log(`$$$$ USING SUMMED ROW FOR tests_total ${sex} ${ageRange} `)
+                console.log(
+                  `$$$$ USING SUMMED ROW FOR tests_total ${sex} ${ageRange} `
+                )
                 console.log('$$$$: ', sumRow)
                 console.log('$$$$ SUMMED OVER: ', fResults)
-
               } else {
-                const result = _.find(results, r =>
-                  r[F.SEX] === sex && r[F.AGE] === ageRange)
-                resultMap[`${sex[0]}${ageRange}`] = result 
+                const result = _.find(
+                  results,
+                  (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
+                )
+                resultMap[`${sex[0]}${ageRange}`] = result
               }
             })
           })
           return resultMap
-        }
+        },
       },
       {
         id: 'year2',
@@ -2320,16 +2702,26 @@ const getIndicatorMap = (isShiny) => {
         [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking highest firstesult for:
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking highest firstesult for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'year3',
@@ -2339,16 +2731,26 @@ const getIndicatorMap = (isShiny) => {
         [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking first result.**
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking first result.**
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'year4',
@@ -2357,13 +2759,12 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
           const result = findPrioritizedResult({ results, dbHierarchy })
 
-
           return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
-        }
+        },
       },
       {
         id: 'year5',
@@ -2372,13 +2773,12 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
           const result = findPrioritizedResult({ results, dbHierarchy })
 
-
           return { [`${MALE[0]}${ALL_ADULTS}`]: result }
-        }
+        },
       },
       {
         id: 'year6',
@@ -2387,13 +2787,12 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
           const result = findPrioritizedResult({ results, dbHierarchy })
 
-
           return { [`${FEMALE[0]}${ADULTS15}`]: result }
-        }
+        },
       },
       {
         id: 'year7',
@@ -2402,13 +2801,12 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const dbHierarchy = [SOURCE_DB_MAP.PCOP20, SOURCE_DB_MAP.PROP20]
           const result = findPrioritizedResult({ results, dbHierarchy })
 
-
           return { [`${MALE[0]}${ADULTS15}`]: result }
-        }
+        },
       },
       {
         id: 'year8',
@@ -2417,12 +2815,12 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const dbHierarchy = [SOURCE_DB_MAP.GAM, SOURCE_DB_MAP.NPD]
           const result = findPrioritizedResult({ results, dbHierarchy })
 
           return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
-        }
+        },
       },
       {
         id: 'year9',
@@ -2431,12 +2829,12 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const dbHierarchy = [SOURCE_DB_MAP.GAM, SOURCE_DB_MAP.NPD]
           const result = findPrioritizedResult({ results, dbHierarchy })
 
           return { [`${MALE[0]}${ALL_ADULTS}`]: result }
-        }
+        },
       },
       {
         id: 'year10',
@@ -2445,16 +2843,14 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          const {
-            PCOP19, PROP19, PCOP1718, PROP17,
-          } = SOURCE_DB_MAP
+        getter: (results) => {
+          const { PCOP19, PROP19, PCOP1718, PROP17 } = SOURCE_DB_MAP
           const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
 
           const result = findPrioritizedResult({ results, dbHierarchy })
 
           return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
-        }
+        },
       },
       {
         id: 'year11',
@@ -2463,16 +2859,14 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          const {
-            PCOP19, PROP19, PCOP1718, PROP17,
-          } = SOURCE_DB_MAP
+        getter: (results) => {
+          const { PCOP19, PROP19, PCOP1718, PROP17 } = SOURCE_DB_MAP
           const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
 
           const result = findPrioritizedResult({ results, dbHierarchy })
 
           return { [`${MALE[0]}${ALL_ADULTS}`]: result }
-        }
+        },
       },
       {
         id: 'year12',
@@ -2481,16 +2875,14 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          const {
-            PCOP19, PROP19, PCOP1718, PROP17,
-          } = SOURCE_DB_MAP
+        getter: (results) => {
+          const { PCOP19, PROP19, PCOP1718, PROP17 } = SOURCE_DB_MAP
           const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
 
           const result = findPrioritizedResult({ results, dbHierarchy })
 
           return { [`${FEMALE[0]}${ADULTS15}`]: result }
-        }
+        },
       },
       {
         id: 'year13',
@@ -2499,16 +2891,14 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          const {
-            PCOP19, PROP19, PCOP1718, PROP17,
-          } = SOURCE_DB_MAP
+        getter: (results) => {
+          const { PCOP19, PROP19, PCOP1718, PROP17 } = SOURCE_DB_MAP
           const dbHierarchy = [PCOP19, PROP19, PCOP1718, PROP17]
 
           const result = findPrioritizedResult({ results, dbHierarchy })
 
           return { [`${MALE[0]}${ADULTS15}`]: result }
-        }
+        },
       },
       {
         id: 'year14',
@@ -2517,16 +2907,26 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking first result.**
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking first result.**
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'year15',
@@ -2535,16 +2935,26 @@ const getIndicatorMap = (isShiny) => {
         // [F.YEAR]: '2018',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking first result.**
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `,'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking first result.**
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       // EVER TESTED (%)
       {
@@ -2554,19 +2964,20 @@ const getIndicatorMap = (isShiny) => {
         [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const resultMap = {}
-          R_SEXES.forEach(sex => {
-
-            [...R_ADULT_AGES, ALL_ADULTS].forEach(ageRange => {
-              const result = _.find(results, r =>
-                r[F.SEX] === sex && r[F.AGE] === ageRange)
+          R_SEXES.forEach((sex) => {
+            ;[...R_ADULT_AGES, ALL_ADULTS].forEach((ageRange) => {
+              const result = _.find(
+                results,
+                (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
+              )
 
               resultMap[`${sex[0]}${ageRange}`] = result
             })
           })
           return resultMap
-        }
+        },
       },
       {
         id: 'ever2',
@@ -2574,16 +2985,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.DHS,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking first result.**
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking first result.**
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'ever3',
@@ -2591,16 +3012,26 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.DHS,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
             // debugger
-            console.error(`**LOOKOUT! Taking first result.**
-            `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-            `, 'rs:', results)
-
+            console.error(
+              `**LOOKOUT! Taking first result.**
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
           }
           return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
-        }
+        },
       },
       {
         id: 'ever4',
@@ -2608,17 +3039,21 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.MICS,
         // [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const resultMap = {}
-          R_SEXES.forEach(sex => {
-            resultMap[`${sex[0]}${ADULTS15}`] = 
-              _.find(results, r => r[F.SEX] === sex && r[F.AGE] === ADULTS15)
+          R_SEXES.forEach((sex) => {
+            resultMap[`${sex[0]}${ADULTS15}`] = _.find(
+              results,
+              (r) => r[F.SEX] === sex && r[F.AGE] === ADULTS15
+            )
 
-            resultMap[`${sex[0]}${ALL_ADULTS}`] = 
-              _.find(results, r => r[F.SEX] === sex && r[F.AGE] === '15-49')
+            resultMap[`${sex[0]}${ALL_ADULTS}`] = _.find(
+              results,
+              (r) => r[F.SEX] === sex && r[F.AGE] === '15-49'
+            )
           })
           return resultMap
-        }
+        },
       },
       {
         id: 'ever5',
@@ -2626,46 +3061,49 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.MICS,
         // [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
+        getter: (results) => {
           const resultMap = {}
-          R_SEXES.forEach(sex => {
-            resultMap[`${sex[0]}${ADULTS15}`] = 
-              _.find(results, r => r[F.SEX] === sex && r[F.AGE] === ADULTS15)
+          R_SEXES.forEach((sex) => {
+            resultMap[`${sex[0]}${ADULTS15}`] = _.find(
+              results,
+              (r) => r[F.SEX] === sex && r[F.AGE] === ADULTS15
+            )
 
-            resultMap[`${sex[0]}${ALL_ADULTS}`] = 
-              _.find(results, r => r[F.SEX] === sex && r[F.AGE] === '15-49')
+            resultMap[`${sex[0]}${ALL_ADULTS}`] = _.find(
+              results,
+              (r) => r[F.SEX] === sex && r[F.AGE] === '15-49'
+            )
           })
           return resultMap
-        }
+        },
       },
     ],
   }
 
   if (isShiny) {
     // add shiny90-only charts
-    indicatorMap[C.PLHIV_AGE.id] = R_ADULT_AGES.map(ageRange => (
-      {
-        id: ageRange,
-        [F.INDICATOR]: C.PLHIV_AGE.indicators.aware,
-        [F.AGE]: ageRange,
-        [F.SEX]: 'both',
-        [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return C.PLHIV_AGE.yearRange.map(y => {
-            const fResults = _.filter(results, r => r.year === y)
+    indicatorMap[C.PLHIV_AGE.id] = R_ADULT_AGES.map((ageRange) => ({
+      id: ageRange,
+      [F.INDICATOR]: C.PLHIV_AGE.indicators.aware,
+      [F.AGE]: ageRange,
+      [F.SEX]: 'both',
+      [F.AREA_NAME]: 'NULL',
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+      [F.COUNTRY_ISO_CODE]: true,
+      getter: (results) => {
+        return C.PLHIV_AGE.yearRange.map((y) => {
+          const fResults = _.filter(results, (r) => r.year === y)
 
-            if (fResults.length > 1) {
-              console.warn('## should not be multi results##')
-            }
-            return fResults[0]
-          })
-        }
-      }
-    ))
-    indicatorMap[C.HIV_NEGATIVE.id] = _.map(C.HIV_NEGATIVE.indicators, (v, k) => (
-      {
+          if (fResults.length > 1) {
+            console.warn('## should not be multi results##')
+          }
+          return fResults[0]
+        })
+      },
+    }))
+    indicatorMap[C.HIV_NEGATIVE.id] = _.map(
+      C.HIV_NEGATIVE.indicators,
+      (v, k) => ({
         id: k,
         [F.INDICATOR]: v,
         [F.INDICATOR_DESCRIPTION]: 'negative',
@@ -2674,9 +3112,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return C.HIV_NEGATIVE.yearRange.map(y => {
-            const fResults = _.filter(results, r => r.year === y)
+        getter: (results) => {
+          return C.HIV_NEGATIVE.yearRange.map((y) => {
+            const fResults = _.filter(results, (r) => r.year === y)
 
             let fixing = false
             const firstRow = fResults[0]
@@ -2709,17 +3147,18 @@ const getIndicatorMap = (isShiny) => {
               console.log('$$$$ SUMMED OVER: ', fResults)
               fResults.unshift(sumRow)
             }
-            
+
             if (fResults.length > 1 && !fixing) {
               console.warn('## should not be multi results##')
             }
             return fResults[0]
           })
-        }
-      }
-    ))
-    indicatorMap[C.HIV_POSITIVE.id] =  _.map(C.HIV_POSITIVE.indicators, (v, k) => (
-      {
+        },
+      })
+    )
+    indicatorMap[C.HIV_POSITIVE.id] = _.map(
+      C.HIV_POSITIVE.indicators,
+      (v, k) => ({
         id: k,
         [F.INDICATOR]: v,
         [F.INDICATOR_DESCRIPTION]: 'positive',
@@ -2728,9 +3167,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return C.HIV_POSITIVE.yearRange.map(y => {
-            const fResults = _.filter(results, r => r.year === y)
+        getter: (results) => {
+          return C.HIV_POSITIVE.yearRange.map((y) => {
+            const fResults = _.filter(results, (r) => r.year === y)
 
             let fixing = false
             const firstRow = fResults[0]
@@ -2747,7 +3186,7 @@ const getIndicatorMap = (isShiny) => {
               sumRow[F.VALUE_UPPER] = undefined
               sumRow[F.VALUE_LOWER] = undefined
               sumRow[F.VALUE] = 0
-              fResults.forEach(r => {
+              fResults.forEach((r) => {
                 if (r[F.VALUE]) {
                   // we're summing over regional values. if there's also a country-wide
                   // value (ie AREA_NAME = NULL), it should not be included in sum.
@@ -2763,15 +3202,15 @@ const getIndicatorMap = (isShiny) => {
               console.log('$$$$ SUMMED OVER: ', fResults)
               fResults.unshift(sumRow)
             }
-            
+
             if (fResults.length > 1 && !fixing) {
               console.warn('$$$$ ## should not be multi results##')
             }
             return fResults[0]
           })
-        }
-      }
-    ))
+        },
+      })
+    )
 
     // add shiny90-only fields for PREVALENCE
     const shinyPrevInds = _.map(C.PREVALENCE.shinyOnlyIndicators, (v, k) => ({
@@ -2782,18 +3221,17 @@ const getIndicatorMap = (isShiny) => {
       [F.AREA_NAME]: 'NULL',
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
       [F.COUNTRY_ISO_CODE]: true,
-        getter: results => {
-          return C.PREVALENCE.yearRange.map(y => {
-            const fResults = _.filter(results, r => r.year === y)
+      getter: (results) => {
+        return C.PREVALENCE.yearRange.map((y) => {
+          const fResults = _.filter(results, (r) => r.year === y)
 
-            if (fResults.length > 1) {
-              console.warn('## should not be multi results##')
-            }
-            return fResults[0]
-          })
-        }
-      })
-    )
+          if (fResults.length > 1) {
+            console.warn('## should not be multi results##')
+          }
+          return fResults[0]
+        })
+      },
+    }))
 
     indicatorMap[C.PREVALENCE.id].push(...shinyPrevInds)
   }
@@ -2816,5 +3254,5 @@ export {
   MALE,
   SOURCE_DB_MAP,
   SOURCE_DISPLAY_MAP,
-  getIndicatorMap
+  getIndicatorMap,
 }

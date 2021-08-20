@@ -1,8 +1,40 @@
-import colors, { femaleColor, maleColor, buddhaGold, charm, copper, botticelli, stormGray, casablanca, steelBlue, midGray, gunSmoke, jungleGreen, jungleMist, snowDrift, nandor, putty, froly } from "./colors"
+import colors, {
+  femaleColor,
+  maleColor,
+  buddhaGold,
+  charm,
+  copper,
+  botticelli,
+  stormGray,
+  casablanca,
+  steelBlue,
+  midGray,
+  gunSmoke,
+  jungleGreen,
+  jungleMist,
+  snowDrift,
+  nandor,
+  putty,
+  froly,
+} from './colors'
 import _ from 'lodash'
-import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
-import { CHARTS, FIELD_MAP, AGE_MAP, SOURCE_DB_MAP, SOURCE_DISPLAY_MAP, ALL_CHARTS, CSV_FIELDS } from "../../constants/charts";
-import { TERM_MAP } from "../../constants/glossary";
+import {
+  getArea,
+  getColumn,
+  getLine,
+  getColumnScat,
+  getColumnLine,
+} from './genericConfigs'
+import {
+  CHARTS,
+  FIELD_MAP,
+  AGE_MAP,
+  SOURCE_DB_MAP,
+  SOURCE_DISPLAY_MAP,
+  ALL_CHARTS,
+  CSV_FIELDS,
+} from '../../constants/charts'
+import { TERM_MAP } from '../../constants/glossary'
 
 // TODO: move
 const WITH_CUSTOM_HEADER_CHART_HEIGHT = 300 // keep in sync with styles.scss with-custom-header height
@@ -25,7 +57,7 @@ const WITH_CUSTOM_HEADER_CHART_SPACING = [15, 30, 25, 25] // keep in sync with b
 //   Year: <b>{point.year}</b><br/>
 //   Source: <b>{point.source}</b><br/>
 //   `
-  // Source year: <b>{point.sourceYear}</b><br/>
+// Source year: <b>{point.sourceYear}</b><br/>
 
 const barChartsTestsName = 'Number of tests conducted'
 const barChartsPositivityName = 'Positivity' // TODO: acceptable?
@@ -34,13 +66,17 @@ const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2021)'
 const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2021)'
 const calculatedDb = '(calculated)'
 
-function adjustPercentage({ row, toDisplay=false, decimals=0, returnRow=false }) {
-  
+function adjustPercentage({
+  row,
+  toDisplay = false,
+  decimals = 0,
+  returnRow = false,
+}) {
   if (!row) {
     console.warn('No % to adjust')
     return null
   }
-  
+
   let {
     [FIELD_MAP.VALUE]: v,
     // [FIELD_MAP.INDICATOR]: indicator,
@@ -54,7 +90,7 @@ function adjustPercentage({ row, toDisplay=false, decimals=0, returnRow=false })
   }
 
   // NOTE: ** conditional source tweak **
-  const adjust = (description === 'PEPFAR Calculated Indicator') && (v <= 1)
+  const adjust = description === 'PEPFAR Calculated Indicator' && v <= 1
   if (adjust) {
     v *= 100
   }
@@ -73,20 +109,20 @@ function adjustPercentage({ row, toDisplay=false, decimals=0, returnRow=false })
   }
   return v
 }
-function displayPercent({ v, adjust=false, decimals=0 }) {
+function displayPercent({ v, adjust = false, decimals = 0 }) {
   if (!_.isNumber(v)) {
     console.warn('NaN fed to displayPercent: ', v)
     return null
   }
-  const val = adjust ? (v * 100) : v
+  const val = adjust ? v * 100 : v
 
   if (val > 100) {
     console.warn('Incorrect %')
   }
-  if (val < .1) {
+  if (val < 0.1) {
     return '<0.1%'
   }
-  if (val < .5 && !decimals) {
+  if (val < 0.5 && !decimals) {
     return '<0.5%'
   }
   let str = _.round(val, decimals).toString()
@@ -95,17 +131,17 @@ function displayPercent({ v, adjust=false, decimals=0 }) {
   }
   return str + '%'
 }
-function displayNumber({ v, unrounded=false }) {
+function displayNumber({ v, unrounded = false }) {
   if (!_.isNumber(v)) {
     console.warn('NaN fed to displayNumber: ', v)
     return null
   }
 
   if (v > 1000000000) {
-    return _.round(v/1000000000, 1).toString() + ' billion'
+    return _.round(v / 1000000000, 1).toString() + ' billion'
   }
   if (v > 1000000) {
-    return _.round(v/1000000, 1).toString() + ' million'
+    return _.round(v / 1000000, 1).toString() + ' million'
   }
   if (v < 100) {
     return '<100'
@@ -119,9 +155,11 @@ function displayNumber({ v, unrounded=false }) {
   if (v < 1000) {
     return '<1000'
   }
-  
+
   // still make sure unrounded # is an integer
-  let str = unrounded ? _.round(v).toString() : Number(v.toPrecision(2)).toString()
+  let str = unrounded
+    ? _.round(v).toString()
+    : Number(v.toPrecision(2)).toString()
   let spaced = ''
   let spacer = ''
   let slStart
@@ -134,21 +172,26 @@ function displayNumber({ v, unrounded=false }) {
   return spaced
 }
 
-function sourceTooltipFormatter () {
-const mismatchedData = !this.mismatched ? '' : `
+function sourceTooltipFormatter() {
+  const mismatchedData = !this.mismatched
+    ? ''
+    : `
   Year: <b>${this.year}</b><br/>
   Source: <b>${this.source}</b>
 `
 
-return `
+  return `
     <span style="color:${this.color}">●</span>
-    ${this.series.name}: <b>${displayNumber({ v: this.y, unrounded: true })}</b><br/>
+    ${this.series.name}: <b>${displayNumber({
+    v: this.y,
+    unrounded: true,
+  })}</b><br/>
     ${mismatchedData}
     `
 }
-function percentSourceTooltipFormatter () {
+function percentSourceTooltipFormatter() {
   const decimals = this.decimals || 1 // intended for column charts (positivity gets 1)
-  
+
   return `
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br/>
@@ -156,12 +199,16 @@ function percentSourceTooltipFormatter () {
     ${!this.source ? '' : `Source: <b>${this.source}</b>`}
   `
 }
-function getUncertaintyTooltipFormatter (shinyCountry) {
-  
+function getUncertaintyTooltipFormatter(shinyCountry) {
   const source = shinyCountry ? shinySource : spectrumSource
 
-  return function() {
-    const uncertaintyLine = (!this.l || !this.u) ? '' : `Uncertainty range: <b>${displayNumber({ v: this.l })} - ${displayNumber({ v: this.u })}</b><br />`
+  return function () {
+    const uncertaintyLine =
+      !this.l || !this.u
+        ? ''
+        : `Uncertainty range: <b>${displayNumber({
+            v: this.l,
+          })} - ${displayNumber({ v: this.u })}</b><br />`
     return `
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br />
@@ -170,16 +217,15 @@ function getUncertaintyTooltipFormatter (shinyCountry) {
     `
   }
 }
-function getPercentUncertaintyTooltipFormatter (shinyCountry) {
-
+function getPercentUncertaintyTooltipFormatter(shinyCountry) {
   const source = shinyCountry ? shinySource : spectrumSource
-  
-  return function() {
 
+  return function () {
     const decimals = this.decimals || 0
     const lVal = displayPercent({ v: this.l, decimals })
     const uVal = displayPercent({ v: this.u, decimals })
-    const uncertaintyLine = (!lVal || !uVal) ? '' : `Uncertainty range: <b>${lVal} - ${uVal}</b><br />`
+    const uncertaintyLine =
+      !lVal || !uVal ? '' : `Uncertainty range: <b>${lVal} - ${uVal}</b><br />`
     return `
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br />
@@ -192,7 +238,7 @@ function getPercentUncertaintyTooltipFormatter (shinyCountry) {
 function getLineChartSubtitle(shinyCountry) {
   const tooltip = 'Source: ' + (shinyCountry ? shinySource : spectrumSource)
   const subtitle = `<span title="${tooltip}">Modelled estimates</span>`
-  return ({ useHTML: true, text: subtitle })
+  return { useHTML: true, text: subtitle }
 }
 
 function getColumnChartCustomHeader(totalRow, averageRow, title) {
@@ -210,24 +256,34 @@ function getColumnChartCustomHeader(totalRow, averageRow, title) {
 
   // const formattedTotal = displayNumber({ v: total.value, unrounded: true })
   // const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
-  
-  // const subtitle = `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span> 
+
+  // const subtitle = `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span>
   // <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme data</span></div>`
-  return ({
+  return {
     columnChartHeader: true,
     title,
     subtitle: {
       totalTests: displayNumber({ v: totalRow.value, unrounded: true }),
       totalSource: SOURCE_DISPLAY_MAP[totalSource] || totalSource,
       totalYear,
-      averagePositivity: adjustPercentage({ row: averageRow, toDisplay: true, decimals: 1 }),
+      averagePositivity: adjustPercentage({
+        row: averageRow,
+        toDisplay: true,
+        decimals: 1,
+      }),
       averageSource: SOURCE_DISPLAY_MAP[averageSource] || averageSource,
       averageYear,
-    }
-   })
+    },
+  }
 }
 
-function getPlotPoints({ row, year, adjust=false, decimals=0, forExport=false }) {
+function getPlotPoints({
+  row,
+  year,
+  adjust = false,
+  decimals = 0,
+  forExport = false,
+}) {
   const x = Number(year || _.get(row, [FIELD_MAP.YEAR]))
   if (!row || !row.value) {
     return [null, null]
@@ -264,13 +320,13 @@ function getPlotPoints({ row, year, adjust=false, decimals=0, forExport=false })
       }
     })
   }
-  
+
   // https://api.highcharts.com/highcharts/series.arearange.data
   const rPoint = [x, l, u]
   return [point, rPoint]
 }
 
-function isDataMapEmpty (dataMap) {
+function isDataMapEmpty(dataMap) {
   return _.every(dataMap, (obj, ind) => {
     return obj.points.length <= 1
   })
@@ -278,12 +334,17 @@ function isDataMapEmpty (dataMap) {
 
 // __________________________________________________________________
 
-const getConfig = (chartId, chartData, shinyCountry=false, forExport=false) => {
+const getConfig = (
+  chartId,
+  chartData,
+  shinyCountry = false,
+  forExport = false
+) => {
   if (_.isEmpty(chartData)) {
     console.log('No chart data (perhaps awaiting API response)')
     return
   }
-  
+
   const getterMap = {
     [CHARTS.P95.id]: getP95,
     [CHARTS.PLHIV_DIAGNOSIS.id]: getPlhivDiagnosis,
@@ -323,15 +384,19 @@ const getConfig = (chartId, chartData, shinyCountry=false, forExport=false) => {
   } catch (error) {
     console.error(chartId, ' unable to generate config: ', error)
     return
-  }  
+  }
 }
 
-const extractPrioritizedData = (data, indicatorIds, sourceCount, defaultValue=undefined) => {
+const extractPrioritizedData = (
+  data,
+  indicatorIds,
+  sourceCount,
+  defaultValue = undefined
+) => {
   const result = { missingIndicators: [] }
-  _.each(indicatorIds, ind => {
-
+  _.each(indicatorIds, (ind) => {
     for (let i = 1; i <= sourceCount; i++) {
-      const indicatorResult = _.get(data, ind+i, null)
+      const indicatorResult = _.get(data, ind + i, null)
       if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
         result[ind] = indicatorResult
         break
@@ -345,16 +410,22 @@ const extractPrioritizedData = (data, indicatorIds, sourceCount, defaultValue=un
         result.missingIndicators.push(ind)
       }
     }
-    
   })
 
   return result
 }
 
-const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCountMap={}, indicatorRangeMap, mappedData=false, rangedField='year' }) => {
+const extractPrioritizedRangeData = ({
+  data,
+  indicatorIds,
+  sourceCount,
+  sourceCountMap = {},
+  indicatorRangeMap,
+  mappedData = false,
+  rangedField = 'year',
+}) => {
   const result = { missingIndicatorMap: {} }
-  _.each(indicatorIds, ind => {
-
+  _.each(indicatorIds, (ind) => {
     let ranges = indicatorRangeMap[ind] || indicatorRangeMap.ALL
     if (!ranges) {
       console.error('No ranges provided for indicator: ', ind)
@@ -366,39 +437,45 @@ const extractPrioritizedRangeData = ({ data, indicatorIds, sourceCount, sourceCo
     result[ind] = mapper(ranges, (range, ri) => {
       const count = sourceCountMap[ind] || sourceCount
 
-      for (let i = 1; i <= (count+2); i++) { // go to count+2 in case sourceCountMap wasn't updated
+      for (let i = 1; i <= count + 2; i++) {
+        // go to count+2 in case sourceCountMap wasn't updated
         // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
         const selector = mappedData ? range : ri
-        const indicatorResult = _.get(data, [ind+i, selector], null)
+        const indicatorResult = _.get(data, [ind + i, selector], null)
         if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
-
           if (i > count) {
-            console.error('!!! Update sourceCountMap to reflect added sources to prevent data from being dropped !!!')
+            console.error(
+              '!!! Update sourceCountMap to reflect added sources to prevent data from being dropped !!!'
+            )
           }
-          
+
           return indicatorResult
         } else if (i === count) {
           _.setWith(result.missingIndicatorMap, [ind, range], true, Object)
-          return { value: null, [rangedField]: range, noData: true, [FIELD_MAP.SOURCE_DATABASE]: 'N/A', [FIELD_MAP.YEAR]: (rangedField === 'year' ? range : 'N/A') }
+          return {
+            value: null,
+            [rangedField]: range,
+            noData: true,
+            [FIELD_MAP.SOURCE_DATABASE]: 'N/A',
+            [FIELD_MAP.YEAR]: rangedField === 'year' ? range : 'N/A',
+          }
         }
       }
-
     })
-
   })
 
   return result
 }
 
-const getP95 = (data, shinyCountry=false, forExport=false) => {
+const getP95 = (data, shinyCountry = false, forExport = false) => {
   const indicatorNames = ['status', 'art', 'suppression']
   if (forExport) {
-    return indicatorNames.map(ind => _.get(data, ind))
+    return indicatorNames.map((ind) => _.get(data, ind))
   }
 
   let source
   const years = []
-  const config = indicatorNames.map(ind => {
+  const config = indicatorNames.map((ind) => {
     const indData = _.get(data, [ind], {})
     const {
       [FIELD_MAP.SOURCE_DATABASE]: indSource,
@@ -420,7 +497,7 @@ const getP95 = (data, shinyCountry=false, forExport=false) => {
   return config
 }
 
-const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
+const getPlhivDiagnosis = (data, shinyCountry = false, forExport = false) => {
   const { title, yearRange } = CHARTS.PLHIV_DIAGNOSIS
 
   // colors: 17 11 5
@@ -442,7 +519,7 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
   // for export
   const knowData = []
   const plhivData = []
-  
+
   yearRange.forEach((y, i) => {
     const onArtRow = _.get(data, ['onArt', i])
     const [onArtPoint] = getPlotPoints({ row: onArtRow, year: y, forExport })
@@ -456,7 +533,7 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
     if (plhivPoint && plhivPoint.y) {
       if (knowPoint && knowPoint.y) {
         // cannibalize knowPoint for its year, source etc
-        const undiagnosedValue = (plhivPoint.y - knowPoint.y)
+        const undiagnosedValue = plhivPoint.y - knowPoint.y
         undiagnosedPoint = _.extend({}, knowPoint, {
           [FIELD_MAP.VALUE_UPPER]: null,
           u: null,
@@ -466,12 +543,14 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
           [FIELD_MAP.INDICATOR]: 'Undiagnosed PLHIV',
           y: undiagnosedValue,
           [FIELD_MAP.SOURCE_DATABASE]: calculatedDb,
-          [FIELD_MAP.NOTES]: `based on ${plhivPoint[FIELD_MAP.INDICATOR]} and ${knowPoint[FIELD_MAP.INDICATOR]} indicator values`,
-        });
+          [FIELD_MAP.NOTES]: `based on ${plhivPoint[FIELD_MAP.INDICATOR]} and ${
+            knowPoint[FIELD_MAP.INDICATOR]
+          } indicator values`,
+        })
 
         if (onArtPoint && onArtPoint.y) {
           // cannibalize plhivPoint for its year, source etc
-          const notArtValue = (knowPoint.y - onArtPoint.y)
+          const notArtValue = knowPoint.y - onArtPoint.y
           notArtPoint = _.extend({}, plhivPoint, {
             [FIELD_MAP.VALUE_UPPER]: null,
             u: null,
@@ -481,12 +560,14 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
             [FIELD_MAP.INDICATOR]: 'PLHIV know status not on ART',
             y: notArtValue,
             [FIELD_MAP.SOURCE_DATABASE]: calculatedDb,
-            [FIELD_MAP.NOTES]: `based on ${knowPoint[FIELD_MAP.INDICATOR]} and ${onArtPoint[FIELD_MAP.INDICATOR]} indicator values`,
-          });
+            [FIELD_MAP.NOTES]: `based on ${
+              knowPoint[FIELD_MAP.INDICATOR]
+            } and ${onArtPoint[FIELD_MAP.INDICATOR]} indicator values`,
+          })
         }
       }
     }
-    
+
     if ((onArtPoint && notArtPoint && undiagnosedPoint) || forExport) {
       onArtData.push(onArtPoint)
       notArtData.push(notArtPoint)
@@ -498,7 +579,13 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
   })
 
   if (forExport) {
-    return [...onArtData, ...notArtData, ...undiagnosedData, ...knowData, ...plhivData]
+    return [
+      ...onArtData,
+      ...notArtData,
+      ...undiagnosedData,
+      ...knowData,
+      ...plhivData,
+    ]
   }
 
   // just check one series, since points only get added when they exist for all indicators
@@ -506,7 +593,7 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
     console.warn(title + ' has all empty series.')
     return null
   }
-  
+
   const series = [
     {
       name: 'Undiagnosed PLHIV',
@@ -533,16 +620,16 @@ const getPlhivDiagnosis = (data, shinyCountry=false, forExport=false) => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
+const getPlhivSex = (data, shinyCountry = false, forExport = false) => {
   const { title, yearRange } = CHARTS.PLHIV_SEX
   const options = {
     legend: { symbolWidth: 40 },
     subtitle: getLineChartSubtitle(shinyCountry),
     xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
     yAxis: { max: 100, min: 0 },
-    plotOptions: { 
+    plotOptions: {
       // series: { pointStart: 2015 },
-    }
+    },
   }
 
   const fPoints = []
@@ -558,8 +645,8 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
       rFPoints.push(rFPoint)
     }
 
-    const mRow  = _.get(data, ['Males', i])
-    const [mPoint, rMPoint] =  getPlotPoints({ row: mRow, year: y, forExport })
+    const mRow = _.get(data, ['Males', i])
+    const [mPoint, rMPoint] = getPlotPoints({ row: mRow, year: y, forExport })
     if (mPoint) {
       mPoints.push(mPoint)
       rMPoints.push(rMPoint)
@@ -569,7 +656,6 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
   if (forExport) {
     return [...fPoints, ...mPoints]
   }
-
 
   if (mPoints.length <= 1 && fPoints.length <= 1) {
     console.warn(title + ' has all empty series.')
@@ -581,9 +667,12 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
       color: maleColor,
       dashStyle: 'solid',
       data: mPoints,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-      zIndex: 1
-    }, {
+      tooltip: {
+        pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
+      },
+      zIndex: 1,
+    },
+    {
       name: 'Men range',
       // pointStart: 2015,
       data: rMPoints,
@@ -594,16 +683,19 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
       color: maleColor,
       fillOpacity: 0.2,
       zIndex: 0,
-      marker: { enabled: false }
+      marker: { enabled: false },
     },
     {
       name: 'Women',
       color: femaleColor,
       dashStyle: 'Solid',
       data: fPoints,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-      zIndex: 1
-    }, {
+      tooltip: {
+        pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
+      },
+      zIndex: 1,
+    },
+    {
       name: 'Women range',
       // pointStart: 2015,
       data: rFPoints,
@@ -614,13 +706,13 @@ const getPlhivSex = (data, shinyCountry=false, forExport=false) => {
       color: femaleColor,
       fillOpacity: 0.2,
       zIndex: 0,
-      marker: { enabled: false }
+      marker: { enabled: false },
     },
   ]
   return _.merge({}, getLine({ title, series, options }))
 }
 
-const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
+const getPlhivAge = (data, shinyCountry = false, forExport = false) => {
   const { title, yearRange } = CHARTS.PLHIV_AGE
 
   const options = {
@@ -643,7 +735,12 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
 
     yearRange.forEach((y, i) => {
       const row = rows[i]
-      const [point, rPoint] = getPlotPoints({ row, year: y, adjust: true, forExport })
+      const [point, rPoint] = getPlotPoints({
+        row,
+        year: y,
+        adjust: true,
+        forExport,
+      })
       if (point) {
         obj.points.push(point)
         obj.rPoints.push(rPoint)
@@ -654,7 +751,6 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
   if (forExport) {
     return _.flatMap(dataMap, 'points')
   }
-
 
   if (isDataMapEmpty(dataMap)) {
     console.warn(title + ' has all empty series.')
@@ -667,8 +763,10 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
       dashStyle: 'ShortDot',
       color: jungleGreen,
       data: dataMap['15-24'].points,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-      zIndex: 1
+      tooltip: {
+        pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
+      },
+      zIndex: 1,
     },
     {
       name: '15 - 24 range',
@@ -681,15 +779,17 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
       color: jungleGreen,
       fillOpacity: 0.2,
       zIndex: 0,
-      marker: { enabled: false }
+      marker: { enabled: false },
     },
     {
       name: '25 - 34',
       dashStyle: 'DashDot',
       color: stormGray,
       data: dataMap['25-34'].points,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-      zIndex: 1
+      tooltip: {
+        pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
+      },
+      zIndex: 1,
     },
     {
       name: '25 - 34 range',
@@ -702,15 +802,17 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
       color: stormGray,
       fillOpacity: 0.2,
       zIndex: 0,
-      marker: { enabled: false }
+      marker: { enabled: false },
     },
     {
       name: '35 - 49',
       dashStyle: 'LongDash',
       color: casablanca, // steelBlue,
       data: dataMap['35-49'].points,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-      zIndex: 1
+      tooltip: {
+        pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
+      },
+      zIndex: 1,
     },
     {
       name: '35 - 49 range',
@@ -723,15 +825,17 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
       color: casablanca, // steelBlue,
       fillOpacity: 0.2,
       zIndex: 0,
-      marker: { enabled: false }
+      marker: { enabled: false },
     },
     {
       name: '50+',
       dashStyle: 'Solid',
       color: charm,
       data: dataMap['50-99'].points,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-      zIndex: 1
+      tooltip: {
+        pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
+      },
+      zIndex: 1,
     },
     {
       name: '50+ range',
@@ -744,16 +848,17 @@ const getPlhivAge = (data, shinyCountry=false, forExport=false) => {
       fillOpacity: 0.2,
       color: charm,
       zIndex: 0,
-      marker: { enabled: false }
+      marker: { enabled: false },
     },
   ]
 
   return _.merge({}, getLine({ title, series, options }))
 }
 
-const getHivNegative = (data, shinyCountry=false, forExport=false) => {
+const getHivNegative = (data, shinyCountry = false, forExport = false) => {
   const { yearRange } = CHARTS.HIV_NEGATIVE
-  const title = '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
+  const title =
+    '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
 
   const dataMap = {
     ['retests']: { points: [] },
@@ -780,7 +885,7 @@ const getHivNegative = (data, shinyCountry=false, forExport=false) => {
     console.warn(title + ' has all empty series.')
     return null
   }
-  
+
   const series = [
     {
       name: 'Retest',
@@ -808,9 +913,10 @@ const getHivNegative = (data, shinyCountry=false, forExport=false) => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getHivPositive = (data, shinyCountry=false, forExport=false) => {
+const getHivPositive = (data, shinyCountry = false, forExport = false) => {
   const { yearRange } = CHARTS.HIV_POSITIVE
-  const title = '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and re-diagnoses'
+  const title =
+    '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and re-diagnoses'
 
   const dataMap = {
     ['retests']: { points: [] },
@@ -840,8 +946,9 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
             [FIELD_MAP.VALUE_UPPER]: undefined,
             [FIELD_MAP.VALUE_LOWER]: undefined,
             [FIELD_MAP.SOURCE_DATABASE]: calculatedDb,
-            [FIELD_MAP.NOTES]: `based on ${awareRow[FIELD_MAP.INDICATOR]} and ${artRow[FIELD_MAP.INDICATOR]} indicator values`
-,
+            [FIELD_MAP.NOTES]: `based on ${awareRow[FIELD_MAP.INDICATOR]} and ${
+              artRow[FIELD_MAP.INDICATOR]
+            } indicator values`,
           })
         } else if (artRow) {
           row = artRow
@@ -867,7 +974,7 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
     console.warn(title + ' has all empty series.')
     return null
   }
-  
+
   const options = {
     title: { useHTML: true },
     xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
@@ -942,15 +1049,17 @@ const getHivPositive = (data, shinyCountry=false, forExport=false) => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getPrevalence = (data, shinyCountry=false, forExport=false) => {
+const getPrevalence = (data, shinyCountry = false, forExport = false) => {
   let { title, nonShinyTitle, yearRange } = CHARTS.PREVALENCE
   title = shinyCountry ? title : nonShinyTitle
 
   const options = {
-    plotOptions: { series: {
-      marker: { radius: 3 },
-      softThreshold: true
-    } },
+    plotOptions: {
+      series: {
+        marker: { radius: 3 },
+        softThreshold: true,
+      },
+    },
     subtitle: getLineChartSubtitle(shinyCountry),
     xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
     yAxis: { min: 0 },
@@ -965,7 +1074,12 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
   const adjPrevData = []
   yearRange.forEach((y, i) => {
     const prevalenceRow = _.get(data, ['prevalence', i])
-    const [prevalencePoint, rPrevalencePoint] = getPlotPoints({ row: prevalenceRow, year: y, decimals: 1, forExport })
+    const [prevalencePoint, rPrevalencePoint] = getPlotPoints({
+      row: prevalenceRow,
+      year: y,
+      decimals: 1,
+      forExport,
+    })
     if (prevalencePoint) {
       prevalenceData.push(prevalencePoint)
       rPrevalenceData.push(rPrevalencePoint)
@@ -974,24 +1088,24 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
     const populationValue = _.get(data, ['population', i, [FIELD_MAP.VALUE]])
     const onArtValue = _.get(data, ['onArt', i, [FIELD_MAP.VALUE]])
     const plhivValue = _.get(data, ['plhiv', i, [FIELD_MAP.VALUE]])
-    const isCameroon = _.get(data, ['plhiv', i, [FIELD_MAP.COUNTRY_ISO_CODE]]) === 'CMR'
+    const isCameroon =
+      _.get(data, ['plhiv', i, [FIELD_MAP.COUNTRY_ISO_CODE]]) === 'CMR'
 
     let adjPrevValue
     // NOTE ** conditional country tweak **
     if (populationValue && onArtValue && plhivValue && !isCameroon) {
-      adjPrevValue = (
-        (plhivValue - onArtValue) * 100 /
-        (populationValue - onArtValue)
-      )
+      adjPrevValue =
+        ((plhivValue - onArtValue) * 100) / (populationValue - onArtValue)
     }
     if (adjPrevValue) {
       const adjPrevPoint = { x: Number(y), y: adjPrevValue, decimals: 1 }
       if (forExport) {
         adjPrevPoint[FIELD_MAP.VALUE] = adjPrevValue
         adjPrevPoint[FIELD_MAP.INDICATOR] = 'Treatment adjusted Prevalence'
-        adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = calculatedDb,
-        adjPrevPoint[FIELD_MAP.YEAR] = y,
-        adjPrevPoint[FIELD_MAP.NOTES] = 'based on population, estimated PLHIV, and estimated PLHIV on ART data values'
+        ;(adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = calculatedDb),
+          (adjPrevPoint[FIELD_MAP.YEAR] = y),
+          (adjPrevPoint[FIELD_MAP.NOTES] =
+            'based on population, estimated PLHIV, and estimated PLHIV on ART data values')
       }
       adjPrevData.push(adjPrevPoint)
     }
@@ -999,12 +1113,24 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
     if (shinyCountry) {
       const positivityRow = _.get(data, ['positivity', i])
       const dYieldRow = _.get(data, ['dYield', i])
-      const [positivityPoint, rPositivityPoint] = getPlotPoints({ row: positivityRow, year: y, adjust: true, decimals: 1, forExport })
+      const [positivityPoint, rPositivityPoint] = getPlotPoints({
+        row: positivityRow,
+        year: y,
+        adjust: true,
+        decimals: 1,
+        forExport,
+      })
       if (positivityPoint) {
         positivityData.push(positivityPoint)
         rPositivityData.push(rPositivityPoint)
       }
-      const [dYieldPoint, rDYieldPoint] = getPlotPoints({ row: dYieldRow, year: y, adjust: true, decimals: 1, forExport })
+      const [dYieldPoint, rDYieldPoint] = getPlotPoints({
+        row: dYieldRow,
+        year: y,
+        adjust: true,
+        decimals: 1,
+        forExport,
+      })
       if (dYieldPoint) {
         dYieldData.push(dYieldPoint)
         rDYieldData.push(rDYieldPoint)
@@ -1016,7 +1142,11 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
     return [...prevalenceData, ...positivityData, ...dYieldData, ...adjPrevData]
   }
 
-  if ([prevalenceData, adjPrevData, positivityData, dYieldData].every(s => s.length <= 1)) {
+  if (
+    [prevalenceData, adjPrevData, positivityData, dYieldData].every(
+      (s) => s.length <= 1
+    )
+  ) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1026,13 +1156,16 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       name: 'HIV prevalence',
       description: TERM_MAP.hivPrevalence.definition,
       zIndex: 1,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
+      tooltip: {
+        pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
+      },
       color: gunSmoke,
       dashStyle: 'ShortDot',
       marker: { radius: 1 },
       lineType: 'line',
       data: prevalenceData,
-    }, {
+    },
+    {
       name: 'Prevalence range',
       // pointStart: 2015,
       data: rPrevalenceData,
@@ -1043,123 +1176,137 @@ const getPrevalence = (data, shinyCountry=false, forExport=false) => {
       color: gunSmoke,
       fillOpacity: 0.2,
       zIndex: 0,
-      marker: { enabled: false }
+      marker: { enabled: false },
     },
   ]
 
   if (adjPrevData.length) {
-    series.push(
-      {
-        name: 'Treatment adjusted prevalence',
-        description: TERM_MAP.treatmentAdjustedPrevalence.definition,
-        zIndex: 1,
-        color: buddhaGold,
-        tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-        data: adjPrevData
+    series.push({
+      name: 'Treatment adjusted prevalence',
+      description: TERM_MAP.treatmentAdjustedPrevalence.definition,
+      zIndex: 1,
+      color: buddhaGold,
+      tooltip: {
+        pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
       },
-    )
+      data: adjPrevData,
+    })
   }
 
   if (shinyCountry) {
-    const shinyAdditions = [{
-      name: 'Positivity',
-      description: TERM_MAP.positivity.definition,
-      zIndex: 1,
-      color: putty,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-      data: positivityData
-    }, {
-      name: 'Positivity range',
-      // pointStart: 2015,
-      data: rPositivityData,
-      type: 'arearange',
-      enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
-      lineWidth: 0,
-      linkedTo: ':previous',
-      color: putty,
-      fillOpacity: 0.2,
-      zIndex: 0,
-      marker: { enabled: false }
-    }, {
-      name: 'Diagnostic yield',
-      description: TERM_MAP.diagnosticYield.definition,
-      zIndex: 1,
-      color: jungleMist,
-      tooltip: { pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry) },
-      data: dYieldData
-    }, {
-      name: 'Diagnostic yield range',
-      // pointStart: 2015,
-      data: rDYieldData,
-      type: 'arearange',
-      enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
-      lineWidth: 0,
-      linkedTo: ':previous',
-      color: jungleMist,
-      fillOpacity: 0.2,
-      zIndex: 0,
-      marker: { enabled: false }
-    }]
+    const shinyAdditions = [
+      {
+        name: 'Positivity',
+        description: TERM_MAP.positivity.definition,
+        zIndex: 1,
+        color: putty,
+        tooltip: {
+          pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
+        },
+        data: positivityData,
+      },
+      {
+        name: 'Positivity range',
+        // pointStart: 2015,
+        data: rPositivityData,
+        type: 'arearange',
+        enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
+        lineWidth: 0,
+        linkedTo: ':previous',
+        color: putty,
+        fillOpacity: 0.2,
+        zIndex: 0,
+        marker: { enabled: false },
+      },
+      {
+        name: 'Diagnostic yield',
+        description: TERM_MAP.diagnosticYield.definition,
+        zIndex: 1,
+        color: jungleMist,
+        tooltip: {
+          pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
+        },
+        data: dYieldData,
+      },
+      {
+        name: 'Diagnostic yield range',
+        // pointStart: 2015,
+        data: rDYieldData,
+        type: 'arearange',
+        enableMouseTracking: false, // tooltip formatter: find these values to add to + TT
+        lineWidth: 0,
+        linkedTo: ':previous',
+        color: jungleMist,
+        fillOpacity: 0.2,
+        zIndex: 0,
+        marker: { enabled: false },
+      },
+    ]
     series.push(...shinyAdditions)
   }
 
   return _.merge({}, getLine({ series, options, title, spline: false }))
 }
 
-
 function getColumnPoints(numData, posData) {
-  
   const {
     [FIELD_MAP.VALUE]: y,
     [FIELD_MAP.SOURCE_DATABASE]: source,
     [FIELD_MAP.YEAR]: year,
-    noData
+    noData,
   } = numData
 
   const {
     [FIELD_MAP.SOURCE_DATABASE]: pSource,
     [FIELD_MAP.YEAR]: pYear,
-    noData: pNoData
+    noData: pNoData,
   } = posData
-  
-  const numPoint = noData ? null : {
-    y,
-    source,
-    year,
-    mismatched: (source !== pSource) || (year !== pYear)
-  }
+
+  const numPoint = noData
+    ? null
+    : {
+        y,
+        source,
+        year,
+        mismatched: source !== pSource || year !== pYear,
+      }
 
   // don't show positivity if there's no nonzero num value, or no posData
-  const posPoint = (!y || pNoData) ? null : {
-    y: adjustPercentage({ row: posData }),
-    source: SOURCE_DISPLAY_MAP[pSource] || pSource,
-    year: pYear,
-  }
+  const posPoint =
+    !y || pNoData
+      ? null
+      : {
+          y: adjustPercentage({ row: posData }),
+          source: SOURCE_DISPLAY_MAP[pSource] || pSource,
+          year: pYear,
+        }
 
   return [numPoint, posPoint]
 }
 
-const getAdults = (data, shinyCountry=false, forExport=false) => {
+const getAdults = (data, shinyCountry = false, forExport = false) => {
   const { title, indicatorIds, sources } = CHARTS.ADULTS
 
-  const { 
-    total, men, women,
-    pTotal, pMen, pWomen, missingIndicators
-  } = extractPrioritizedData(data, indicatorIds, sources.length)
+  const { total, men, women, pTotal, pMen, pWomen, missingIndicators } =
+    extractPrioritizedData(data, indicatorIds, sources.length)
 
   if (forExport) {
-    return [women, pWomen, men, pMen, total, pTotal].map(row =>
-      adjustPercentage({ row, returnRow: true }))
+    return [women, pWomen, men, pMen, total, pTotal].map((row) =>
+      adjustPercentage({ row, returnRow: true })
+    )
   }
 
   // console.log('total: ',total, 'men: ',men, 'women: ',women, 'pTotal: ',pTotal, 'pMen: ',pMen, 'pWomen: ',pWomen, 'missingIndicators: ',missingIndicators)
 
   if (missingIndicators.length) {
-    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+    console.warn(
+      '**INCOMPLETE RESULTS. missing: ',
+      missingIndicators.join(', ')
+    )
   }
-  
-  const [ wNumData, wPosData ] = getColumnPoints(women, pWomen)
-  const [ mNumData, mPosData ] = getColumnPoints(men, pMen)
+
+  const [wNumData, wPosData] = getColumnPoints(women, pWomen)
+  const [mNumData, mPosData] = getColumnPoints(men, pMen)
 
   if (
     men[FIELD_MAP.SOURCE_DATABASE] !== pMen[FIELD_MAP.SOURCE_DATABASE] ||
@@ -1168,7 +1315,14 @@ const getAdults = (data, shinyCountry=false, forExport=false) => {
     console.error('**SOURCE MISMATCH**')
   }
 
-  if (!wNumData && !wPosData && !mNumData && !mPosData && total.noData && pTotal.noData) {
+  if (
+    !wNumData &&
+    !wPosData &&
+    !mNumData &&
+    !mPosData &&
+    total.noData &&
+    pTotal.noData
+  ) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1177,18 +1331,18 @@ const getAdults = (data, shinyCountry=false, forExport=false) => {
     {
       name: barChartsTestsName,
       tooltip: {
-        pointFormatter: sourceTooltipFormatter
+        pointFormatter: sourceTooltipFormatter,
       },
-      data: [wNumData, mNumData]
+      data: [wNumData, mNumData],
     },
     {
       name: barChartsPositivityName,
       type: 'line',
       tooltip: {
-        pointFormatter: percentSourceTooltipFormatter
+        pointFormatter: percentSourceTooltipFormatter,
       },
-      data: [wPosData, mPosData]
-    }
+      data: [wPosData, mPosData],
+    },
   ]
   const categories = ['Women (15+)', 'Men (15+)']
 
@@ -1196,102 +1350,146 @@ const getAdults = (data, shinyCountry=false, forExport=false) => {
     customHeader: getColumnChartCustomHeader(total, pTotal, title),
     chart: {
       height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
-      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
-    }
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING,
+    },
   }
   return _.merge({}, getColumnScat({ series, options, categories }))
 }
 
-const getCommunity = (data, shinyCountry=false, forExport=false) => {
+const getCommunity = (data, shinyCountry = false, forExport = false) => {
   const { title, indicatorIds, sources } = CHARTS.COMMUNITY
 
   const {
-    total, mobile, VCT, other,
-    pTotal, pMobile, pVCT, pOther, missingIndicators
+    total,
+    mobile,
+    VCT,
+    other,
+    pTotal,
+    pMobile,
+    pVCT,
+    pOther,
+    missingIndicators,
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
   // console.log('total: ', total, 'mobile: ', mobile, 'VCT: ', VCT, 'other: ', other, 'pTotal: ', pTotal, 'pMobile: ', pMobile, 'pVCT: ', pVCT, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
 
   if (forExport) {
-    return [mobile, pMobile, VCT, pVCT, other, pOther, total, pTotal].map(row =>
-      adjustPercentage({ row, returnRow: true }))
+    return [mobile, pMobile, VCT, pVCT, other, pOther, total, pTotal].map(
+      (row) => adjustPercentage({ row, returnRow: true })
+    )
   }
 
   if (missingIndicators.length) {
-    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+    console.warn(
+      '**INCOMPLETE RESULTS. missing: ',
+      missingIndicators.join(', ')
+    )
   }
 
-  const [ mobileNumData, mobilePosData ] = getColumnPoints(mobile, pMobile)
-  const [ vctNumData, vctPosData ] = getColumnPoints(VCT, pVCT)
-  const [ otherNumData, otherPosData ] = getColumnPoints(other, pOther)
-  
+  const [mobileNumData, mobilePosData] = getColumnPoints(mobile, pMobile)
+  const [vctNumData, vctPosData] = getColumnPoints(VCT, pVCT)
+  const [otherNumData, otherPosData] = getColumnPoints(other, pOther)
+
   if (
     mobile[FIELD_MAP.SOURCE_DATABASE] !== pMobile[FIELD_MAP.SOURCE_DATABASE] ||
-    VCT[FIELD_MAP.SOURCE_DATABASE] !== pVCT[FIELD_MAP.SOURCE_DATABASE] || 
+    VCT[FIELD_MAP.SOURCE_DATABASE] !== pVCT[FIELD_MAP.SOURCE_DATABASE] ||
     other[FIELD_MAP.SOURCE_DATABASE] !== pOther[FIELD_MAP.SOURCE_DATABASE]
   ) {
     console.error('**SOURCE MISMATCH**')
   }
 
-  if (!mobileNumData && !mobilePosData && !vctNumData && !vctPosData && !otherNumData && !otherPosData && total.noData && pTotal.noData) {
+  if (
+    !mobileNumData &&
+    !mobilePosData &&
+    !vctNumData &&
+    !vctPosData &&
+    !otherNumData &&
+    !otherPosData &&
+    total.noData &&
+    pTotal.noData
+  ) {
     console.warn(title + ' has all empty series.')
     return null
   }
-  
+
   const series = [
     {
       name: barChartsTestsName,
       tooltip: {
-        pointFormatter: sourceTooltipFormatter
+        pointFormatter: sourceTooltipFormatter,
       },
-      data: [mobileNumData, vctNumData, otherNumData]
+      data: [mobileNumData, vctNumData, otherNumData],
     },
     {
       name: barChartsPositivityName,
       type: 'line',
       tooltip: {
-        pointFormatter: percentSourceTooltipFormatter
+        pointFormatter: percentSourceTooltipFormatter,
       },
-      data: [mobilePosData, vctPosData, otherPosData]
-    }
+      data: [mobilePosData, vctPosData, otherPosData],
+    },
   ]
 
   const options = {
     customHeader: getColumnChartCustomHeader(total, pTotal, title),
     chart: {
       height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
-      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
-    }
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING,
+    },
   }
   const categories = ['Mobile Testing', 'VCT', 'Other']
   return _.merge({}, getColumnScat({ series, options, categories }))
 }
 
-const getFacility = (data, shinyCountry=false, forExport=false) => {
+const getFacility = (data, shinyCountry = false, forExport = false) => {
   const { title, indicatorIds, sources } = CHARTS.FACILITY
 
   const {
-    total, PITC, ANC, VCT, family, other,
-    pTotal, pPITC, pANC, pVCT, pFamily, pOther, missingIndicators
+    total,
+    PITC,
+    ANC,
+    VCT,
+    family,
+    other,
+    pTotal,
+    pPITC,
+    pANC,
+    pVCT,
+    pFamily,
+    pOther,
+    missingIndicators,
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
   if (forExport) {
-    return [PITC, pPITC, ANC, pANC, VCT, pVCT, family, pFamily, total, pTotal].map(row =>
-      adjustPercentage({ row, returnRow: true }))
+    return [
+      PITC,
+      pPITC,
+      ANC,
+      pANC,
+      VCT,
+      pVCT,
+      family,
+      pFamily,
+      total,
+      pTotal,
+    ].map((row) => adjustPercentage({ row, returnRow: true }))
   }
 
   // console.log('total: ', total, 'PITC: ', PITC, 'ANC: ', ANC, 'VCT: ', VCT, 'family: ', family, 'other: ', other,
-    // 'pTotal: ', pTotal, 'pPITC: ', pPITC, 'pANC: ', pANC, 'pVCT: ', pVCT, 'pFamily: ', pFamily, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
+  // 'pTotal: ', pTotal, 'pPITC: ', pPITC, 'pANC: ', pANC, 'pVCT: ', pVCT, 'pFamily: ', pFamily, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
 
   if (missingIndicators.length) {
-    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+    console.warn(
+      '**INCOMPLETE RESULTS. missing: ',
+      missingIndicators.join(', ')
+    )
   }
 
-  const [ pitcNumData, pitcPosData ] = getColumnPoints(PITC, pPITC)
-  const [ ancNumData, ancPosData ] = getColumnPoints(ANC, pANC)
-  const [ vctNumData, vctPosData ] = getColumnPoints(VCT, pVCT)
-  const [ familyNumData, familyPosData ] = getColumnPoints(family, pFamily)
-  const [ otherNumData, otherPosData ] = getColumnPoints(other, pOther)
+  const [pitcNumData, pitcPosData] = getColumnPoints(PITC, pPITC)
+  const [ancNumData, ancPosData] = getColumnPoints(ANC, pANC)
+  const [vctNumData, vctPosData] = getColumnPoints(VCT, pVCT)
+  const [familyNumData, familyPosData] = getColumnPoints(family, pFamily)
+  const [otherNumData, otherPosData] = getColumnPoints(other, pOther)
 
   if (
     PITC[FIELD_MAP.SOURCE_DATABASE] !== pPITC[FIELD_MAP.SOURCE_DATABASE] ||
@@ -1303,25 +1501,31 @@ const getFacility = (data, shinyCountry=false, forExport=false) => {
     console.error('**SOURCE MISMATCH**')
   }
 
-  if (!pitcNumData && !pitcPosData && !ancNumData && !ancPosData && !vctNumData && !vctPosData && 
-    !familyNumData && !familyPosData && !otherNumData && !otherPosData && total.noData && pTotal.noData) {
+  if (
+    !pitcNumData &&
+    !pitcPosData &&
+    !ancNumData &&
+    !ancPosData &&
+    !vctNumData &&
+    !vctPosData &&
+    !familyNumData &&
+    !familyPosData &&
+    !otherNumData &&
+    !otherPosData &&
+    total.noData &&
+    pTotal.noData
+  ) {
     console.warn(title + ' has all empty series.')
     return null
   }
-  
+
   const series = [
     {
       name: barChartsTestsName,
       tooltip: {
-        pointFormatter: sourceTooltipFormatter
+        pointFormatter: sourceTooltipFormatter,
       },
-      data: [
-        pitcNumData,
-        ancNumData,
-        vctNumData,
-        familyNumData,
-        otherNumData,
-      ],
+      data: [pitcNumData, ancNumData, vctNumData, familyNumData, otherNumData],
     },
     {
       name: barChartsPositivityName,
@@ -1333,7 +1537,7 @@ const getFacility = (data, shinyCountry=false, forExport=false) => {
       // },
       type: 'line',
       tooltip: {
-        pointFormatter: percentSourceTooltipFormatter
+        pointFormatter: percentSourceTooltipFormatter,
       },
       data: [
         pitcPosData,
@@ -1343,34 +1547,38 @@ const getFacility = (data, shinyCountry=false, forExport=false) => {
         otherPosData,
         // { y: 11, tooltipAddition: 'Description: something you should know about Other' }
       ],
-    }
+    },
   ]
 
   const options = {
     customHeader: getColumnChartCustomHeader(total, pTotal, title),
     chart: {
       height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
-      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
-    }
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING,
+    },
   }
   const categories = ['PITC', 'ANC', 'VCT', 'Family Planning Clinic', 'Other']
   // const options = { xAxis: { categories: ['Community', 'Facility']} }
   return _.merge({}, getColumnScat({ options, categories, series }))
 }
 
-const getIndex = (data, shinyCountry=false, forExport=false) => {
-
+const getIndex = (data, shinyCountry = false, forExport = false) => {
   const { title, indicatorIds, sources } = CHARTS.INDEX
 
   const {
-    total, community, facility,
-    pTotal, pCommunity, pFacility, missingIndicators
+    total,
+    community,
+    facility,
+    pTotal,
+    pCommunity,
+    pFacility,
+    missingIndicators,
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
-
   if (forExport) {
-    return [community, pCommunity, facility, pFacility, total, pTotal].map(row =>
-      adjustPercentage({ row, returnRow: true }))
+    return [community, pCommunity, facility, pFacility, total, pTotal].map(
+      (row) => adjustPercentage({ row, returnRow: true })
+    )
   }
 
   // console.log('total: ', total, 'community', community, 'facility', facility,
@@ -1378,120 +1586,162 @@ const getIndex = (data, shinyCountry=false, forExport=false) => {
   //  'missingIndicators: ', missingIndicators)
 
   if (missingIndicators.length) {
-    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+    console.warn(
+      '**INCOMPLETE RESULTS. missing: ',
+      missingIndicators.join(', ')
+    )
   }
 
   if (
-    community[FIELD_MAP.SOURCE_DATABASE] !== pCommunity[FIELD_MAP.SOURCE_DATABASE] ||
+    community[FIELD_MAP.SOURCE_DATABASE] !==
+      pCommunity[FIELD_MAP.SOURCE_DATABASE] ||
     facility[FIELD_MAP.SOURCE_DATABASE] !== pFacility[FIELD_MAP.SOURCE_DATABASE]
   ) {
     console.error('**SOURCE MISMATCH**')
   }
 
-  const [ communityNumData, communityPosData ] = getColumnPoints(community, pCommunity)
-  const [ facilityNumData, facilityPosData ] = getColumnPoints(facility, pFacility)
-  
-  if (!communityNumData && !communityPosData && !facilityNumData && !facilityPosData && total.noData && pTotal.noData) {
+  const [communityNumData, communityPosData] = getColumnPoints(
+    community,
+    pCommunity
+  )
+  const [facilityNumData, facilityPosData] = getColumnPoints(
+    facility,
+    pFacility
+  )
+
+  if (
+    !communityNumData &&
+    !communityPosData &&
+    !facilityNumData &&
+    !facilityPosData &&
+    total.noData &&
+    pTotal.noData
+  ) {
     console.warn(title + ' has all empty series.')
     return null
   }
-  
+
   const series = [
     {
       name: barChartsTestsName,
       tooltip: {
-        pointFormatter: sourceTooltipFormatter
+        pointFormatter: sourceTooltipFormatter,
       },
-      data: [communityNumData, facilityNumData]
+      data: [communityNumData, facilityNumData],
     },
     {
       name: barChartsPositivityName,
       type: 'line',
       tooltip: {
-        pointFormatter: percentSourceTooltipFormatter
+        pointFormatter: percentSourceTooltipFormatter,
       },
-      data: [communityPosData, facilityPosData]
-    }
+      data: [communityPosData, facilityPosData],
+    },
   ]
   const options = {
     customHeader: getColumnChartCustomHeader(total, pTotal, title),
     chart: {
       height: WITH_CUSTOM_HEADER_CHART_HEIGHT,
-      spacing: WITH_CUSTOM_HEADER_CHART_SPACING
-    }
+      spacing: WITH_CUSTOM_HEADER_CHART_SPACING,
+    },
   }
   const categories = ['Community', 'Facility']
   return _.merge({}, getColumnScat({ options, categories, series }))
 }
 
-const getForecast = (data, shinyCountry=false, forExport=false) => {
+const getForecast = (data, shinyCountry = false, forExport = false) => {
   const { title, indicatorIds, indicatorYears, sources } = CHARTS.FORECAST
 
-  const {
-    distributed, demand, need, missingIndicatorMap
-  } = extractPrioritizedRangeData(
-    { data, indicatorIds, sourceCount: sources.length, indicatorRangeMap: indicatorYears }
-  )
-
+  const { distributed, demand, need, missingIndicatorMap } =
+    extractPrioritizedRangeData({
+      data,
+      indicatorIds,
+      sourceCount: sources.length,
+      indicatorRangeMap: indicatorYears,
+    })
 
   if (forExport) {
     // TODO
     // return []
   }
 
-
   const missingIndicators = Object.keys(missingIndicatorMap)
 
-  console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
+  console.log(
+    'distributed: ',
+    distributed,
+    'demand: ',
+    demand,
+    'need: ',
+    need,
+    'missingIndicators: ',
+    missingIndicators
+  )
 
   if (missingIndicators.length) {
-    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+    console.warn(
+      '**INCOMPLETE RESULTS. missing: ',
+      missingIndicators.join(', ')
+    )
   }
 
-  const distributedNumData = distributed.filter(r => !r.noData).map(r => {
-    const {
-      [FIELD_MAP.VALUE]: y,
-      [FIELD_MAP.SOURCE_DATABASE]: source,
-      [FIELD_MAP.YEAR]: year,
-    } = r
-    
+  const distributedNumData = distributed
+    .filter((r) => !r.noData)
+    .map((r) => {
+      const {
+        [FIELD_MAP.VALUE]: y,
+        [FIELD_MAP.SOURCE_DATABASE]: source,
+        [FIELD_MAP.YEAR]: year,
+      } = r
 
-    const point = {
-      y, x: Number(year), source, year, mismatched: true,
-    }
+      const point = {
+        y,
+        x: Number(year),
+        source,
+        year,
+        mismatched: true,
+      }
 
-    if (forExport) {
-      CSV_FIELDS.forEach(({ fieldId }) => {
-        if (_.isUndefined(point[fieldId])) {
-          point[fieldId] = r[fieldId] || ''
-        }
-      })
-    }
+      if (forExport) {
+        CSV_FIELDS.forEach(({ fieldId }) => {
+          if (_.isUndefined(point[fieldId])) {
+            point[fieldId] = r[fieldId] || ''
+          }
+        })
+      }
 
-    return point
-  })
+      return point
+    })
   //   ({
   //   x: Number(d.year),
   //   y: d.value,
   //   source: d[FIELD_MAP.SOURCE_DATABASE]
   // }))
 
-  const demandNumData = demand.filter(r => !r.noData).map(d => ({
-    x: Number(d.year),
-    y: d.value,
-  }))
+  const demandNumData = demand
+    .filter((r) => !r.noData)
+    .map((d) => ({
+      x: Number(d.year),
+      y: d.value,
+    }))
 
-  const needNumData = need.filter(r => !r.noData).map(d => ({
-    x: Number(d.year),
-    y: d.value,
-    source: d[FIELD_MAP.SOURCE_DATABASE]
-  }))
+  const needNumData = need
+    .filter((r) => !r.noData)
+    .map((d) => ({
+      x: Number(d.year),
+      y: d.value,
+      source: d[FIELD_MAP.SOURCE_DATABASE],
+    }))
 
   if (forExport) {
     return [...distributedNumData, ...demandNumData, ...needNumData]
   }
 
-  if (!distributedNumData.length && !demandNumData.length && !needNumData.length) {
+  if (
+    !distributedNumData.length &&
+    !demandNumData.length &&
+    !needNumData.length
+  ) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -1506,7 +1756,7 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
       name: 'HIVSTs distributed',
       data: distributedNumData,
       tooltip: {
-        pointFormatter: sourceTooltipFormatter // TODO: use formatter?
+        pointFormatter: sourceTooltipFormatter, // TODO: use formatter?
       },
     },
     // {
@@ -1526,14 +1776,26 @@ const getForecast = (data, shinyCountry=false, forExport=false) => {
   return _.merge({}, getColumn({ title, series, options }))
 }
 
-const getKpTable = (data, shinyCountry=false, forExport=false) => {
+const getKpTable = (data, shinyCountry = false, forExport = false) => {
   const { title, indicatorIds, sources } = CHARTS.KP_TABLE
-  
+
   const {
-    prevMsm, prevPwid, prevPris, prevSw, prevTrans,
-    awareMsm, awarePwid, awarePris, awareSw, awareTrans,
-    yearMsm, yearPwid, yearPris, yearSw, yearTrans,
-    missingIndicators
+    prevMsm,
+    prevPwid,
+    prevPris,
+    prevSw,
+    prevTrans,
+    awareMsm,
+    awarePwid,
+    awarePris,
+    awareSw,
+    awareTrans,
+    yearMsm,
+    yearPwid,
+    yearPris,
+    yearSw,
+    yearTrans,
+    missingIndicators,
   } = extractPrioritizedData(data, indicatorIds, sources.length)
 
   // console.log(
@@ -1557,28 +1819,48 @@ const getKpTable = (data, shinyCountry=false, forExport=false) => {
 
   if (forExport) {
     return [
-      prevSw, awareSw, yearSw,
-      prevMsm, awareMsm, yearMsm,
-      prevPwid, awarePwid, yearPwid,
-      prevTrans, awareTrans, yearTrans,
-      prevPris, awarePris, yearPris, 
+      prevSw,
+      awareSw,
+      yearSw,
+      prevMsm,
+      awareMsm,
+      yearMsm,
+      prevPwid,
+      awarePwid,
+      yearPwid,
+      prevTrans,
+      awareTrans,
+      yearTrans,
+      prevPris,
+      awarePris,
+      yearPris,
     ]
   }
 
   const sw = {
-    prev: prevSw, aware: awareSw, year: yearSw, 
+    prev: prevSw,
+    aware: awareSw,
+    year: yearSw,
   }
   const msm = {
-    prev: prevMsm, aware: awareMsm, year: yearMsm, 
+    prev: prevMsm,
+    aware: awareMsm,
+    year: yearMsm,
   }
   const pwid = {
-    prev: prevPwid, aware: awarePwid, year: yearPwid, 
+    prev: prevPwid,
+    aware: awarePwid,
+    year: yearPwid,
   }
   const trans = {
-    prev: prevTrans, aware: awareTrans, year: yearTrans, 
+    prev: prevTrans,
+    aware: awareTrans,
+    year: yearTrans,
   }
   const pris = {
-    prev: prevPris, aware: awarePris, year: yearPris, 
+    prev: prevPris,
+    aware: awarePris,
+    year: yearPris,
   }
 
   // const inds = ['']
@@ -1594,15 +1876,15 @@ const getKpTable = (data, shinyCountry=false, forExport=false) => {
       pwid,
       trans,
       pris,
-    }
+    },
   }
 
   return config
 }
 
-const getPolicyTable = (data, shinyCountry=false, forExport=false) => {
+const getPolicyTable = (data, shinyCountry = false, forExport = false) => {
   const { title } = CHARTS.POLICY_TABLE
-  
+
   const {
     age,
     provider,
@@ -1616,15 +1898,21 @@ const getPolicyTable = (data, shinyCountry=false, forExport=false) => {
   } = data
 
   if (forExport) {
-    // NOTE: ** conditional tweak ** 
+    // NOTE: ** conditional tweak **
     // for some indicators WHO wants to display the SOURCE_YEAR as the YEAR
     return [
       age,
-      _.extend({}, provider, { [FIELD_MAP.YEAR]: provider[FIELD_MAP.SOURCE_YEAR] }),
-      _.extend({}, community, { [FIELD_MAP.YEAR]: community[FIELD_MAP.SOURCE_YEAR] }),
+      _.extend({}, provider, {
+        [FIELD_MAP.YEAR]: provider[FIELD_MAP.SOURCE_YEAR],
+      }),
+      _.extend({}, community, {
+        [FIELD_MAP.YEAR]: community[FIELD_MAP.SOURCE_YEAR],
+      }),
       _.extend({}, lay, { [FIELD_MAP.YEAR]: lay[FIELD_MAP.SOURCE_YEAR] }),
       hivst,
-      _.extend({}, assisted, { [FIELD_MAP.YEAR]: assisted[FIELD_MAP.SOURCE_YEAR] }),
+      _.extend({}, assisted, {
+        [FIELD_MAP.YEAR]: assisted[FIELD_MAP.SOURCE_YEAR],
+      }),
       _.extend({}, social, { [FIELD_MAP.YEAR]: social[FIELD_MAP.SOURCE_YEAR] }),
       compliance,
       verification,
@@ -1633,44 +1921,62 @@ const getPolicyTable = (data, shinyCountry=false, forExport=false) => {
 
   const config = {
     title,
-    data: [{ 
-      rowName: 'Laws requiring parental consent for adolescents to access HIV testing',
-        value: _.get(age, [FIELD_MAP.VALUE_COMMENT])
-      },{ 
+    data: [
+      {
+        rowName:
+          'Laws requiring parental consent for adolescents to access HIV testing',
+        value: _.get(age, [FIELD_MAP.VALUE_COMMENT]),
+      },
+      {
         rowName: 'Provider-initiated testing',
-        value: _.get(provider, [FIELD_MAP.VALUE_COMMENT])
-      },{ 
+        value: _.get(provider, [FIELD_MAP.VALUE_COMMENT]),
+      },
+      {
         rowName: 'Community-based testing',
-        value: _.get(community, [FIELD_MAP.VALUE_COMMENT])
-      },{ 
+        value: _.get(community, [FIELD_MAP.VALUE_COMMENT]),
+      },
+      {
         rowName: 'Lay provider testing',
-        value: _.get(lay, [FIELD_MAP.VALUE_COMMENT])
-      },{ 
+        value: _.get(lay, [FIELD_MAP.VALUE_COMMENT]),
+      },
+      {
         rowName: 'Self-testing',
-        value: _.get(hivst, [FIELD_MAP.VALUE_COMMENT])
-      },{ 
+        value: _.get(hivst, [FIELD_MAP.VALUE_COMMENT]),
+      },
+      {
         rowName: 'Provider-assisted referral/index testing',
-        value: _.get(assisted, [FIELD_MAP.VALUE_COMMENT])
-      },{ 
+        value: _.get(assisted, [FIELD_MAP.VALUE_COMMENT]),
+      },
+      {
         rowName: 'Social network-based testing',
-        value: _.get(social, [FIELD_MAP.VALUE_COMMENT])
-      },{ 
+        value: _.get(social, [FIELD_MAP.VALUE_COMMENT]),
+      },
+      {
         rowName: 'Compliance with WHO testing strategy',
-        value: _.get(compliance, [FIELD_MAP.VALUE_COMMENT])
-      },{ 
+        value: _.get(compliance, [FIELD_MAP.VALUE_COMMENT]),
+      },
+      {
         rowName: 'Verification testing before ART',
-        value: _.get(verification, [FIELD_MAP.VALUE_COMMENT])
-      },]
+        value: _.get(verification, [FIELD_MAP.VALUE_COMMENT]),
+      },
+    ],
   }
 
   return config
 }
 
-const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
-  const { title, indicatorIds, indicatorDemographics, indicatorDemographicsNoShiny, sourceCountMap } = CHARTS.GROUPS_TABLE
+const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
+  const {
+    title,
+    indicatorIds,
+    indicatorDemographics,
+    indicatorDemographicsNoShiny,
+    sourceCountMap,
+  } = CHARTS.GROUPS_TABLE
 
-  const indicatorRangeMap = shinyCountry ?
-    indicatorDemographics : indicatorDemographicsNoShiny
+  const indicatorRangeMap = shinyCountry
+    ? indicatorDemographics
+    : indicatorDemographicsNoShiny
 
   // const indicatorIds = ['year']
 
@@ -1680,13 +1986,13 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
     sourceCountMap,
     indicatorRangeMap,
     mappedData: true,
-    rangedField: 'demo'
+    rangedField: 'demo',
   })
 
   const missingIndicators = Object.keys(allData.missingIndicatorMap)
 
   const undiagnosed = _.mapValues(allData.aware, (v, dem) => {
-    let { 
+    let {
       [FIELD_MAP.VALUE]: awareVal,
       [FIELD_MAP.SOURCE_DATABASE]: awareSource, // for adjustment
       // forExport
@@ -1694,47 +2000,50 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
       [FIELD_MAP.SEX]: awareSex,
       [FIELD_MAP.AGE]: awareAge,
     } = _.get(allData, ['aware', dem], {})
-    
-    let { 
+
+    let {
       [FIELD_MAP.VALUE]: plhivVal,
       [FIELD_MAP.YEAR]: plhivYear,
       // [FIELD_MAP.SOURCE_DATABASE]: plhivSource
     } = _.get(allData, ['plhiv', dem], {})
-    
+
     if (!awareVal || !plhivVal) {
       return { noData: true }
     }
-    
+
     // not a source tweak, just for our own calc
     if (SOURCE_DB_MAP.SPEC_REG.test(awareSource)) {
       awareVal /= 100
     }
-    
-    return { 
-      value: ((1-awareVal) * plhivVal),
+
+    return {
+      value: (1 - awareVal) * plhivVal,
       // forExport
       [FIELD_MAP.SEX]: awareSex,
       [FIELD_MAP.INDICATOR]: 'Undiagnosed PLHIV',
       [FIELD_MAP.AGE]: awareAge,
-      [FIELD_MAP.YEAR]: (awareYear === plhivYear) ? plhivYear : '',
+      [FIELD_MAP.YEAR]: awareYear === plhivYear ? plhivYear : '',
       [FIELD_MAP.SOURCE_DATABASE]: calculatedDb,
       [FIELD_MAP.NOTES]: 'based on the estimated PLHIV and % aware data values',
     }
   })
   allData.undiagnosed = undiagnosed
-  
+
   // console.log('distributed: ', distributed, 'demand: ', demand, 'need: ', need, 'missingIndicators: ', missingIndicators)
   // console.log(
-    // '\nPLHIV || ', allData.plhiv,
-    // '\nAWARE || ', allData.aware,
-    // '\nPREV || ', allData.prev,
-    // '\nNEWLY || ', allData.newly,
-    // '\nYEAR || ', allData.year,
-    // '\nEVER || ', allData.ever,
-    // )
+  // '\nPLHIV || ', allData.plhiv,
+  // '\nAWARE || ', allData.aware,
+  // '\nPREV || ', allData.prev,
+  // '\nNEWLY || ', allData.newly,
+  // '\nYEAR || ', allData.year,
+  // '\nEVER || ', allData.ever,
+  // )
 
   if (missingIndicators.length) {
-    console.warn('**INCOMPLETE RESULTS. missing: ', missingIndicators.join(', '))
+    console.warn(
+      '**INCOMPLETE RESULTS. missing: ',
+      missingIndicators.join(', ')
+    )
   }
 
   const config = {
@@ -1743,11 +2052,11 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
     dataMap: {},
   }
 
-  _.each(config.includedDemographics, dem => {
+  _.each(config.includedDemographics, (dem) => {
     const rowData = {}
     config.dataMap[dem] = rowData
-    
-    _.each([...indicatorIds, 'undiagnosed'], ind => {
+
+    _.each([...indicatorIds, 'undiagnosed'], (ind) => {
       const indDemoData = _.get(allData, [ind, dem], undefined)
       if (!indDemoData) {
         console.log('No group table data for ', ind, ' for ', dem)
@@ -1758,10 +2067,10 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
         [FIELD_MAP.VALUE]: value,
         [FIELD_MAP.VALUE_LOWER]: valueLower,
         [FIELD_MAP.VALUE_UPPER]: valueUpper,
-        [FIELD_MAP.SOURCE_DATABASE]: source, 
-        noData
+        [FIELD_MAP.SOURCE_DATABASE]: source,
+        noData,
       } = indDemoData
-      
+
       const vMap = { value, valueLower, valueUpper }
       rowData[ind] = {}
 
@@ -1775,24 +2084,27 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
           const percentages = ['aware', 'prev', 'ever']
           if (percentages.includes(ind)) {
             // NOTE: ** conditional source tweak **
-            const adjust = (source === SOURCE_DB_MAP.S90) && (v <= 1)
+            const adjust = source === SOURCE_DB_MAP.S90 && v <= 1
             if (forExport) {
-              v = adjust ? (v * 100) : v
+              v = adjust ? v * 100 : v
             } else {
               const decimals = ind === 'prev' ? 1 : 0
               v = displayPercent({ v, adjust, decimals })
             }
           } else if (!forExport) {
             // NOTE: ** conditional source tweak **
-            const unrounded = (ind === 'year' && source !== SOURCE_DB_MAP.S90)
+            const unrounded = ind === 'year' && source !== SOURCE_DB_MAP.S90
             v = displayNumber({ v, unrounded })
           }
           vMap[vId] = v
         }
       })
-      
+
       rowData[ind] = {
-        source, year, noData, ...vMap
+        source,
+        year,
+        noData,
+        ...vMap,
       }
       if (forExport) {
         // IMPORTANT - we copy over values from vMap (rather than from row directly) as they may have been tweaked
@@ -1809,18 +2121,18 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
   })
 
   if (forExport) {
-    return _.flatMap(config.dataMap, ind => _.flatMap(ind))
+    return _.flatMap(config.dataMap, (ind) => _.flatMap(ind))
   }
-  
+
   return config
 }
 
-const getExportData = (data, counttryCode, shinyCountry=false) => {
+const getExportData = (data, counttryCode, shinyCountry = false) => {
   const headers = _.map(CSV_FIELDS, 'fieldId')
   const valueArrays = [['chart', ...headers]]
 
   try {
-    _.each(ALL_CHARTS, chart => {
+    _.each(ALL_CHARTS, (chart) => {
       if (chart.shinyOnly && !shinyCountry) {
         return
       }
@@ -1828,12 +2140,12 @@ const getExportData = (data, counttryCode, shinyCountry=false) => {
       // the "export config" is an array of the data rows used to build the chart
       const chartExportConfig = getConfig(chart.id, data, shinyCountry, true)
 
-      _.each(chartExportConfig, row => {
+      _.each(chartExportConfig, (row) => {
         if (!row || row.noData) {
           return
         }
-        
-        const rowValues = _.map(CSV_FIELDS, f => {
+
+        const rowValues = _.map(CSV_FIELDS, (f) => {
           let v = row[f.fieldId]
           // seems new lines are fine
           // v = v.replace(/\n/gm, '')
@@ -1848,7 +2160,7 @@ const getExportData = (data, counttryCode, shinyCountry=false) => {
     })
 
     let csv = ''
-    _.each(valueArrays, r => {
+    _.each(valueArrays, (r) => {
       csv += r.join(',')
       csv += '\n'
     })
