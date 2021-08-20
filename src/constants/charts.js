@@ -2285,7 +2285,7 @@ const getIndicatorMap = (isShiny) => {
                     const rowArea = r[F.AREA_NAME]
                     // we're summing over regional values. if there's also a country-wide
                     // value (ie AREA_NAME = NULL), it should not be included in sum.
-                    if (areaMap[rowArea] || r[F.AREA_NAME] === 'NULL') {
+                    if (areaMap[rowArea] || !r[F.AREA_NAME]) {
                       console.warn(
                         `$$$$ duplicate (or NULL) area_name for tests_total ${sex} ${ageRange}: `,
                         r
@@ -2697,7 +2697,7 @@ const getIndicatorMap = (isShiny) => {
                 if (r[F.VALUE]) {
                   // we're summing over regional values. if there's also a country-wide
                   // value (ie AREA_NAME = NULL), it should not be included in sum.
-                  if (r[F.AREA_NAME] !== 'NULL') {
+                  if (r[F.AREA_NAME]) {
                     sumRow[F.VALUE] += Number(r[F.VALUE])
                   } else {
                     console.log('$$$$ skipping NULL AREA_NAME: ', r)
@@ -2751,7 +2751,7 @@ const getIndicatorMap = (isShiny) => {
                 if (r[F.VALUE]) {
                   // we're summing over regional values. if there's also a country-wide
                   // value (ie AREA_NAME = NULL), it should not be included in sum.
-                  if (r[F.AREA_NAME] !== 'NULL') {
+                  if (r[F.AREA_NAME]) {
                     sumRow[F.VALUE] += Number(r[F.VALUE])
                   } else {
                     console.log('$$$$ skipping NULL AREA_NAME: ', r)
@@ -2765,7 +2765,7 @@ const getIndicatorMap = (isShiny) => {
             }
             
             if (fResults.length > 1 && !fixing) {
-              console.warn('## should not be multi results##')
+              console.warn('$$$$ ## should not be multi results##')
             }
             return fResults[0]
           })
