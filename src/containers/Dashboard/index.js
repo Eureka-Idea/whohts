@@ -376,44 +376,78 @@ class Dashboard extends Component {
 
   getResourcesSection() {
     return (
-      <div className='row resources-section'>
-
-        <div className='col-12'>
+      <div className="row resources-section">
+        <div className="col-12">
           <h3>Links to other sources</h3>
-          <div className='sources'>
+          <div className="sources">
             {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
               Shiny 90 Modelling Methodology
             </a> */}
-            <a target='_blank' rel='noopener noreferrer' href='https://cfs.hivci.org/'>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://cfs.hivci.org/"
+            >
               WHO HIV Country Profiles
             </a>
-            <a target='_blank' rel='noopener noreferrer' href='https://aidsinfo.unaids.org/'>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://aidsinfo.unaids.org/"
+            >
               UNAIDS AIDSinfo
-            </a>
-            <a target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
-              UNAIDS - Laws and Policies
             </a>
             {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
             WHO Paediatric HIV Testing
           </a> */}
-            <a target='_blank' rel='noopener noreferrer' href='https://www.who.int/hiv/prep/global-prep-coalition/en/'>
-              Global PrEP Coalition
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://www.who.int/groups/global-prep-network"
+            >
+              Global PrEP Network
             </a>
-            {DEV && <a target='_blank' rel='noopener noreferrer' href='https://master.dv1i2lva39jkq.amplifyapp.com/'>
-              PROTOTYPE DASHBOARD (fake data)
-            </a>}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://data.unicef.org/topic/hivaids/covid-19/ "
+            >
+              UNICEF
+            </a>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://phia-data.icap.columbia.edu/visualization"
+            >
+              PHIA Project
+            </a>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://data.pepfar.gov/"
+            >
+              PEPFAR Panorama Spotlight
+            </a>
+            {DEV && (
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://master.dv1i2lva39jkq.amplifyapp.com/"
+              >
+                PROTOTYPE DASHBOARD (fake data)
+              </a>
+            )}
           </div>
-
         </div>
 
-        <div className='col-12 pt-5'>
+        <div className="col-12 pt-5">
           <h3>Glossary</h3>
-          <div className='terms'>
-            {TERMS.map(t => {
+          <div className="terms">
+            {TERMS.map((t) => {
               return (
-                <div key={t.term} className='term py-1'>
-                  <p className='name'>{t.term}</p>
-                  <p className='definition'>{t.definition}</p>
+                <div key={t.term} className="term py-1">
+                  <p className="name">{t.term}</p>
+                  <p className="definition">{t.definition}</p>
                 </div>
               )
             })}

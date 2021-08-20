@@ -105,6 +105,16 @@ const undiagnosedPlhiv = {
   term: 'Undiagnosed PLHIV',
   definition: 'A person living with HIV who is unaware of their HIV infection'
 }
+const syphilisAnc = {
+  term: 'Syphilis testing in ANC',
+  definition:
+    'Proportion of women accessing antenatal care (ANC) services who were tested for syphilis',
+}
+const pregnantKnowStatus = {
+  term: 'Pregnant women with known HIV status',
+  definition:
+    'Proportion of pregnant women who already know they are HIV positive or receive an HIV test during antenatal care (ANC)',
+}
 
 const TERMS = [
   diagnosticYield,
@@ -119,11 +129,13 @@ const TERMS = [
   plhivWhoKnowStatusNotOnArt,
   plhivKnowStatusOnArt,
   positivity,
+  pregnantKnowStatus,
   reDiagnosis,
   retest,
   shiny90,
+  syphilisAnc,
   treatmentAdjustedPrevalence,
-  undiagnosedPlhiv
+  undiagnosedPlhiv,
 ]
 
 const TERM_MAP = {
@@ -144,6 +156,8 @@ const TERM_MAP = {
   shiny90,
   treatmentAdjustedPrevalence,
   undiagnosedPlhiv,
+  syphilisAnc,
+  pregnantKnowStatus,
 }
 
 export { TERMS, TERM_MAP }
