@@ -498,6 +498,7 @@ class Dashboard extends Component {
     const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
     const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
     const prevalence = this.getChart(CHARTS.PREVALENCE.id)
+    const pregnancy = this.getChart(CHARTS.PREGNANCY.id)
     const adults = this.getChart(CHARTS.ADULTS.id)
     const community = this.getChart(CHARTS.COMMUNITY.id)
     const facility = this.getChart(CHARTS.FACILITY.id)
@@ -564,6 +565,7 @@ class Dashboard extends Component {
             {negative}
             {positive}
             {prevalence}
+            {pregnancy}
             <div className='col-12 mt-2'>&nbsp;</div>
             {adults}
             {community}

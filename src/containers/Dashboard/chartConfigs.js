@@ -353,6 +353,7 @@ const getConfig = (
     [CHARTS.HIV_NEGATIVE.id]: getHivNegative,
     [CHARTS.HIV_POSITIVE.id]: getHivPositive,
     [CHARTS.PREVALENCE.id]: getPrevalence,
+    [CHARTS.PREGNANCY.id]: getPregnancy,
     [CHARTS.ADULTS.id]: getAdults,
     [CHARTS.COMMUNITY.id]: getCommunity,
     [CHARTS.FACILITY.id]: getFacility,
@@ -1246,6 +1247,102 @@ const getPrevalence = (data, shinyCountry = false, forExport = false) => {
   }
 
   return _.merge({}, getLine({ series, options, title, spline: false }))
+}
+
+const getPregnancy = (data, shinyCountry = false, forExport = false) => {
+  const { title, yearRange } = CHARTS.PREGNANCY
+
+  const options = {
+    legend: { symbolWidth: 40 },
+    subtitle: getLineChartSubtitle(shinyCountry),
+    xAxis: { ceiling: Number(_.last(yearRange)), floor: Number(yearRange[0]) },
+    yAxis: { max: 100, min: 0 },
+    // plotOptions: { series: { pointStart: 2015 } }
+  }
+
+  const dataMap = {
+    perAnc: { points: [], rPoints: [] },
+    perPregKnown: { points: [], rPoints: [] },
+  }
+
+  _.each(dataMap, (obj, ind) => {
+    const rows = data[ind]
+
+    yearRange.forEach((y, i) => {
+      const row = rows[i]
+      console.log('%%', row)
+      const [point, rPoint] = getPlotPoints({
+        row,
+        year: y,
+        adjust: false,
+        forExport,
+      })
+      if (point) {
+        obj.points.push(point)
+        // obj.rPoints.push(rPoint)
+      }
+    })
+  })
+
+  if (forExport) {
+    return _.flatMap(dataMap, 'points')
+  }
+
+  if (isDataMapEmpty(dataMap)) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
+
+  const series = [
+    {
+      name: 'Syphilis testing in ANC',
+      dashStyle: 'Solid',
+      color: '#CA3935',
+      data: dataMap.perAnc.points,
+      tooltip: {
+        pointFormatter: percentSourceTooltipFormatter,
+      },
+      zIndex: 1,
+    },
+    // {
+    //   name: 'Syphilis testing in ANC range',
+    //   // pointStart: 2015,
+    //   data: dataMap.perAnc.rPoints,
+    //   type: 'arearange',
+    //   enableMouseTracking: false,
+    //   lineWidth: 0,
+    //   linkedTo: ':previous',
+    //   color: '#CA3935',
+    //   fillOpacity: 0.2,
+    //   zIndex: 0,
+    //   marker: { enabled: false },
+    // },
+    {
+      name: 'Pregnant women with known HIV status',
+      dashStyle: 'Solid',
+      color: '#35C6CA',
+      data: dataMap.perPregKnown.points,
+      tooltip: {
+        pointFormatter: percentSourceTooltipFormatter,
+      },
+      zIndex: 1,
+    },
+    // {
+    //   name: 'Pregnant women with known HIV status range',
+    //   // pointStart: 2015,
+    //   data: dataMap.perPregKnown.rPoints,
+    //   type: 'arearange',
+    //   enableMouseTracking: false,
+    //   lineWidth: 0,
+    //   linkedTo: ':previous',
+    //   color: '#35C6CA',
+    //   fillOpacity: 0.2,
+    //   zIndex: 0,
+    //   marker: { enabled: false },
+    // },
+  ]
+
+  return _.merge({}, getLine({ title, series, options }))
 }
 
 function getColumnPoints(numData, posData) {

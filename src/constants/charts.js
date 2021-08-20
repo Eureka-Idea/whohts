@@ -81,6 +81,7 @@ const SOURCE_DB_MAP = {
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
   SPEC21: 'Spectrum estimates 2021 (UNAIDS/WHO)',
   SPEC_REG: /Spectrum estimates .+ \(UNAIDS\/WHO\)/,
+  WGHO: 'WHO Global Health Observatory',
   UNAIDS: 'UNAIDS', // also a source organization
   WB: 'World Bank', // also a source organization
 }
@@ -932,6 +933,15 @@ const CHARTS = {
       population: 'Population adults 15+', // TODO: 15+
     },
   },
+  PREGNANCY: {
+    title: 'Pregnant Woman',
+    yearRange: R_2015_2019,
+    id: 'PREGNANCY',
+    indicators: {
+      perAnc: 'PerctestedANC',
+      perPregKnown: 'HIV testing in pregnant women',
+    },
+  },
 
   ADULTS: {
     title: 'HIV tests conducted and positivity, by sex',
@@ -1150,6 +1160,7 @@ const ALL_CHARTS = [
   C.HIV_NEGATIVE,
   C.HIV_POSITIVE,
   C.PREVALENCE,
+  C.PREGNANCY,
   C.ADULTS,
   C.COMMUNITY,
   C.FACILITY,
@@ -1378,6 +1389,36 @@ const getIndicatorMap = (isShiny) => {
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {
+            return _.find(results, (r) => r.year === y)
+          })
+        },
+      },
+    ],
+    [C.PREGNANCY.id]: [
+      {
+        id: 'perAnc',
+        [F.INDICATOR]: C.PREGNANCY.indicators.perAnc,
+        // [F.AGE]: '15+',
+        // [F.SEX]: 'NULL',
+        [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WGHO,
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          return C.PREGNANCY.yearRange.map((y) => {
+            return _.find(results, (r) => r.year === y)
+          })
+        },
+      },
+      {
+        id: 'perPregKnown',
+        [F.INDICATOR]: C.PREGNANCY.indicators.perPregKnown,
+        // [F.AGE]: '15+',
+        // [F.SEX]: 'NULL',
+        [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          return C.PREGNANCY.yearRange.map((y) => {
             return _.find(results, (r) => r.year === y)
           })
         },
