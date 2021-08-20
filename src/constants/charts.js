@@ -56,7 +56,7 @@ const SOURCE_DB_MAP = {
   GAM: 'Global AIDS Monitoring',
   NPD19: 'National Programme Data 2019',
   NPD: 'National Programme Data',
-  
+
   PCOP20: 'PEPFAR COP 2020',
   PCOP19: 'PEPFAR COP 2019',
   // PCOP18: 'PEPFAR COP 2018',
@@ -71,17 +71,20 @@ const SOURCE_DB_MAP = {
 
   WME: 'WHO model estimates',
   WSR: 'WHO special review',
-  WNCPI: 'WHO NCPI dataset',
+  WHTS: 'WHO HIV testing strategy',
+  WNCPI: 'WHO NCPI',
   HIVST20: 'HIVST policy 2020 data set',
+  HIVST21: 'HIVST policy 2021 data set',
   KP20: 'UNAIDS KP-Atlas 2020',
   // UNGAM20: 'UNAIDS Global AIDS Monitoring 2020',
   TGF: 'The Global Fund',
-  
+
   ULP: 'UNAIDS Laws and Policies',
   DHS: 'The DHS Program',
   MICS: 'MICS UNICEF',
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
   SPEC21: 'Spectrum estimates 2021 (UNAIDS/WHO)',
+  SPEC_REG: /Spectrum estimates .+ \(UNAIDS\/WHO\)/,
   UNAIDS: 'UNAIDS', // also a source organization
   WB: 'World Bank', // also a source organization
 }
@@ -1076,7 +1079,7 @@ const CHARTS = {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
       },
       hivst: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.HIVST20,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.HIVST21,
       },
       assisted: {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
@@ -1085,7 +1088,7 @@ const CHARTS = {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
       },
       compliance: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WHTS,
       },
       verification: {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
@@ -2280,13 +2283,17 @@ const getIndicatorMap = (isShiny) => {
                 fResults.forEach((r) => {
                   if (r[F.VALUE]) {
                     const rowArea = r[F.AREA_NAME]
+                    // we're summing over regional values. if there's also a country-wide
+                    // value (ie AREA_NAME = NULL), it should not be included in sum.
                     if (areaMap[rowArea] || r[F.AREA_NAME] === 'NULL') {
                       console.warn(
-                        `$$$$ duplicate (or NULL) area_name for tests_total ${sex} ${ageRange}: `, r
+                        `$$$$ duplicate (or NULL) area_name for tests_total ${sex} ${ageRange}: `,
+                        r
                       )
                     } else {
                       areaMap[rowArea] = true
                       sumRow[F.VALUE] += Number(r[F.VALUE])
+                      console.log('$$$: ', rowArea, r[F.VALUE], sumRow[F.VALUE])
                     }
                   }
                 })
@@ -2688,6 +2695,8 @@ const getIndicatorMap = (isShiny) => {
               sumRow[F.VALUE] = 0
               fResults.forEach((r) => {
                 if (r[F.VALUE]) {
+                  // we're summing over regional values. if there's also a country-wide
+                  // value (ie AREA_NAME = NULL), it should not be included in sum.
                   if (r[F.AREA_NAME] !== 'NULL') {
                     sumRow[F.VALUE] += Number(r[F.VALUE])
                   } else {
@@ -2740,6 +2749,8 @@ const getIndicatorMap = (isShiny) => {
               sumRow[F.VALUE] = 0
               fResults.forEach(r => {
                 if (r[F.VALUE]) {
+                  // we're summing over regional values. if there's also a country-wide
+                  // value (ie AREA_NAME = NULL), it should not be included in sum.
                   if (r[F.AREA_NAME] !== 'NULL') {
                     sumRow[F.VALUE] += Number(r[F.VALUE])
                   } else {

@@ -1706,8 +1706,8 @@ const getGroupsTable = (data, shinyCountry=false, forExport=false) => {
     }
     
     // not a source tweak, just for our own calc
-    if (awareSource === SOURCE_DB_MAP.SPEC20) {
-      awareVal/=100
+    if (SOURCE_DB_MAP.SPEC_REG.test(awareSource)) {
+      awareVal /= 100
     }
     
     return { 
