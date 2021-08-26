@@ -67,7 +67,7 @@ const SOURCE_DB_MAP = {
 
   WME: 'WHO model estimates',
   WSR: 'WHO special review',
-  WHTS: 'WHO HIV testing strategy',
+  // WHTS: 'WHO HIV testing strategy',
   WNCPI: 'WHO NCPI',
   HIVST20: 'HIVST policy 2020 data set',
   HIVST21: 'HIVST policy 2021 data set',
@@ -1105,7 +1105,7 @@ const CHARTS = {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
       },
       compliance: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WHTS,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
       },
       verification: {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
