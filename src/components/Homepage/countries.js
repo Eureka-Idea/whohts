@@ -45,7 +45,7 @@ const COUNTRIES = [
   // { ISO: 'UKR', name: 'Ukraine', shiny: false },
   { ISO: 'TZA', name: 'United Republic of Tanzania', shiny: true },
   { ISO: 'VNM', name: 'Viet Nam', shiny: false },
-  { ISO: 'ZMB', name: 'Zambia', shiny: true, sumFix: true },
+  { ISO: 'ZMB', name: 'Zambia', shiny: true },
   { ISO: 'ZWE', name: 'Zimbabwe', shiny: true, sumFix: true },
 ]
 

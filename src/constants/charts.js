@@ -930,11 +930,11 @@ const CHARTS = {
       // 15+
       plhiv: 'People living with HIV - adults (aged 15+)',
       onArt: 'People receiving antiretroviral therapy',
-      population: 'Population adults 15+', // TODO: 15+
+      population: 'Population - people aged 15+',
     },
   },
   PREGNANCY: {
-    title: 'Pregnant Woman',
+    title: 'Pregnant women',
     yearRange: R_2015_2019,
     id: 'PREGNANCY',
     indicators: {
@@ -1385,7 +1385,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'population',
         [F.INDICATOR]: C.PREVALENCE.indicators.population,
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {
