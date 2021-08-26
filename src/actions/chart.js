@@ -34,6 +34,7 @@ const debugList = {
   // [CHARTS.CONTEXT.id]: true,
   // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
   // [CHARTS.PREVALENCE.id]: true,
+  // [CHARTS.PREGNANCY.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
   // [CHARTS.GROUPS_TABLE.id]: true,
@@ -88,7 +89,7 @@ export const getChartData = (countryCode) => (dispatch) => {
             } else {
               chartValue = 'NULL' // OVERWRITE 'NULL_OR_ALL'
             }
-          } else if (indicator[FIELD_MAP.INDICATOR !== 'Income Group']) {
+          } else if (indicator[FIELD_MAP.INDICATOR] !== 'Income Group') {
             // unless we want a specific area name, every query should request national-level data
             // Income Group rows lists region (Sub-Saharan Africa) for area name, so skip those
             chartValue = chartValue || 'NULL'
