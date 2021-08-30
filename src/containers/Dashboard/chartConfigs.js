@@ -534,7 +534,9 @@ const getPlhivDiagnosis = (data, shinyCountry = false, forExport = false) => {
     if (plhivPoint && plhivPoint.y) {
       if (knowPoint && knowPoint.y) {
         // cannibalize knowPoint for its year, source etc
-        const undiagnosedValue = plhivPoint.y - knowPoint.y
+        let undiagnosedValue = plhivPoint.y - knowPoint.y
+        // fix negative
+        undiagnosedValue = _.max([undiagnosedValue, 0])
         undiagnosedPoint = _.extend({}, knowPoint, {
           [FIELD_MAP.VALUE_UPPER]: null,
           u: null,
