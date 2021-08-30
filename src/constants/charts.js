@@ -1087,22 +1087,22 @@ const CHARTS = {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       provider: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       community: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       lay: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       hivst: {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.HIVST21,
       },
       assisted: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       social: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       compliance: {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
@@ -1117,7 +1117,7 @@ const CHARTS = {
       community: 'Community-based testing',
       lay: 'Lay provider testing',
       hivst: 'HIVST policy category',
-      assisted: 'Provider-assisted referral / Index testing',
+      assisted: 'Provider-assisted referral/index testing',
       social: 'Social network-based testing',
       compliance: 'Compliance with WHO testing strategy',
       verification: 'Verification testing before ART',
