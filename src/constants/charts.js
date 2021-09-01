@@ -1117,7 +1117,7 @@ const CHARTS = {
       community: 'Community-based testing',
       lay: 'Lay provider testing',
       hivst: 'HIVST policy category',
-      assisted: 'Provider-assisted referral/index testing',
+      assisted: 'Provider-assisted referral / Index testing',
       social: 'Social network-based testing',
       compliance: 'Compliance with WHO testing strategy',
       verification: 'Verification testing before ART',
