@@ -73,7 +73,7 @@ export const getChartData = (countryCode) => (dispatch) => {
 
         if (f === FIELD_MAP.VALUE_COMMENT) {
           // unless we want a specific value comment, every query should request non-suppressed data values
-          chartValue = chartValue || '‼️suppressed'
+          chartValue = chartValue || '!!suppressed'
         }
 
         if (f === FIELD_MAP.AREA_NAME) {
