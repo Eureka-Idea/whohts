@@ -71,9 +71,11 @@ export const getChartData = (countryCode) => (dispatch) => {
       _.each(FIELD_MAP, (f) => {
         let chartValue = indicator[f]
 
-        if (f === FIELD_MAP.VALUE_COMMENT) {
-          // unless we want a specific value comment, every query should request non-suppressed data values
-          chartValue = chartValue || '!!suppressed'
+        // unless we want a specific value comment, every query should request non-suppressed data values
+        if (f === FIELD_MAP.VALUE_COMMENT && !chartValue) {
+          url += `${char}${f}=‼suppressed`
+          char = '&'
+          return true
         }
 
         if (f === FIELD_MAP.AREA_NAME) {
@@ -100,6 +102,7 @@ export const getChartData = (countryCode) => (dispatch) => {
           if (f === FIELD_MAP.COUNTRY_ISO_CODE) {
             chartValue = countryCode
           }
+
           let chunk = `${char}${f}=${chartValue}`
           chunk = encodeURI(chunk)
           chunk = chunk.replace('+', '%2B') // TODO - figure out why not encoded properly
