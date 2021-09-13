@@ -424,6 +424,7 @@ const extractPrioritizedRangeData = ({
   indicatorRangeMap,
   mappedData = false,
   rangedField = 'year',
+  // capMap = {},
 }) => {
   const result = { missingIndicatorMap: {} }
   _.each(indicatorIds, (ind) => {
@@ -485,8 +486,8 @@ const getP95 = (data, shinyCountry = false, forExport = false) => {
     } = indData
     // source/year should be same for all. just make sure to get one (in case one is missing)
     source = source || indSource
-    console.log('indsrc: ', indSource)
-    console.log('indyr: ', indYear)
+    // console.log('indsrc: ', indSource)
+    // console.log('indyr: ', indYear)
     years.push(indYear)
 
     return value / 100
@@ -1994,6 +1995,8 @@ const getPolicyTable = (data, shinyCountry = false, forExport = false) => {
     social,
     compliance,
     verification,
+    antenatal,
+    dual,
   } = data
 
   if (forExport) {
@@ -2058,6 +2061,14 @@ const getPolicyTable = (data, shinyCountry = false, forExport = false) => {
         rowName: 'Verification testing before ART',
         value: _.get(verification, [FIELD_MAP.VALUE_COMMENT]),
       },
+      {
+        rowName: 'Dual HIV/syphilis tests in antenatal care',
+        value: _.get(antenatal, [FIELD_MAP.VALUE_COMMENT]),
+      },
+      {
+        rowName: 'Dual HIV/syphilis tests for key populations',
+        value: _.get(dual, [FIELD_MAP.VALUE_COMMENT]),
+      },
     ],
   }
 
@@ -2086,6 +2097,7 @@ const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
     indicatorRangeMap,
     mappedData: true,
     rangedField: 'demo',
+    capMap: { plhiv: 0.95 },
   })
 
   const missingIndicators = Object.keys(allData.missingIndicatorMap)

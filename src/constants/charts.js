@@ -1110,6 +1110,12 @@ const CHARTS = {
       verification: {
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
       },
+      antenatal: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+      },
+      dual: {
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+      },
     },
     indicators: {
       age: 'Laws requiring parental consent for adolescents to access HIV testing',
@@ -1121,6 +1127,8 @@ const CHARTS = {
       social: 'Social network-based testing',
       compliance: 'Compliance with WHO testing strategy',
       verification: 'Verification testing before ART',
+      antenatal: 'Dual HIV/syphilis tests in antenatal care',
+      dual: 'Dual HIV/syphilis tests for key populations',
     },
   },
   GROUPS_TABLE: {
