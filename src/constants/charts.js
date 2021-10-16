@@ -1209,6 +1209,8 @@ const isAllAge = (r) => {
   return is
 }
 
+const isFemale = (str) => str.toLowerCase().includes('female')
+
 // const findPrioritizedResult = ({ results, dbHierarchy, resultCriteria = {} }) => {
 //   let prioritizedResult = null
 
@@ -1442,8 +1444,8 @@ const getIndicatorMap = (isShiny) => {
           getter: (results) => {
             if (results.length > 1) {
               // debugger
-              console.error(
-                `**LOOKOUT! Taking first result for: * ', indI
+              console.warn(
+                `**LOOKOUT! Taking highest year result for: * ', indI
               `,
                 results[0].indicator,
                 'R:',
@@ -1469,8 +1471,8 @@ const getIndicatorMap = (isShiny) => {
           getter: (results) => {
             if (results.length > 1) {
               // debugger
-              console.error(
-                `**LOOKOUT! Taking first result for: * ', indI
+              console.warn(
+                `**LOOKOUT! Taking highest year result for: * ', indI
               `,
                 results[0].indicator,
                 'R:',
@@ -1496,8 +1498,8 @@ const getIndicatorMap = (isShiny) => {
           getter: (results) => {
             if (results.length > 1) {
               // debugger
-              console.error(
-                `**LOOKOUT! Taking first result for: * ', indI
+              console.warn(
+                `**LOOKOUT! Taking highest year result for: * ', indI
               `,
                 results[0].indicator,
                 'R:',
@@ -1523,8 +1525,8 @@ const getIndicatorMap = (isShiny) => {
           getter: (results) => {
             if (results.length > 1) {
               // debugger
-              console.error(
-                `**LOOKOUT! Taking first result for: * ', indI
+              console.warn(
+                `**LOOKOUT! Taking highest year result for: * ', indI
               `,
                 results[0].indicator,
                 'R:',
@@ -1553,8 +1555,8 @@ const getIndicatorMap = (isShiny) => {
               const fResults = _.filter(results, (r) => r.year === y)
               if (fResults.length > 1) {
                 // debugger
-                console.error(
-                  `**LOOKOUT! Taking first result for: * ', indI
+                console.warn(
+                  `**LOOKOUT! Taking highest year result for: * ', indI
                 `,
                   fResults[0].indicator,
                   'R:',
@@ -1580,7 +1582,7 @@ const getIndicatorMap = (isShiny) => {
           getter: (results) => {
             // if (fResults.length > 1) {
             // debugger
-            //   console.error(`**LOOKOUT! Taking first result for: * ', indI
+            //   console.warn(`**LOOKOUT! Taking highest year result for: * ', indI
             //   `, fResults[0].indicator, 'R:', _.maxBy(fResults, 'year'), `
             //   `,'rs:', fResults)
             // }
@@ -1591,11 +1593,11 @@ const getIndicatorMap = (isShiny) => {
             })
 
             const result = _.maxBy(fResults, 'year')
-            if (!result && results.length > 1) {
-              console.log('@indicator: ', indId)
-              console.log('@@@@: ', fResults)
-              console.log('!!!!', results)
-            }
+            // if (!result && results.length > 1) {
+              // console.log('@indicator: ', indId)
+              // console.log('@@@@: ', fResults)
+              // console.log('!!!!', results)
+            // }
             return result
           },
         })
@@ -1609,8 +1611,8 @@ const getIndicatorMap = (isShiny) => {
         getter: (results) => {
           if (results.length > 1) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking first result for: ', 
+            console.warn(
+              `**LOOKOUT! Taking highest year result for: ', 
             `,
               results[0].indicator,
               'R:',
@@ -1639,8 +1641,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -1666,8 +1668,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -1693,8 +1695,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -1720,8 +1722,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -1744,7 +1746,7 @@ const getIndicatorMap = (isShiny) => {
       //   getter: results => {
       //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
       //       // debugger
-      //       console.error(`**LOOKOUT! Taking highest firstesult for:
+      //       console.warn(`**LOOKOUT! Taking highest year result for:
       //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
       //       `,'rs:', results)
 
@@ -1761,7 +1763,7 @@ const getIndicatorMap = (isShiny) => {
       //   getter: results => {
       //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
       //       // debugger
-      //       console.error(`**LOOKOUT! Taking highest firstesult for:
+      //       console.warn(`**LOOKOUT! Taking highest year result for:
       //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
       //       `,'rs:', results)
 
@@ -1778,7 +1780,7 @@ const getIndicatorMap = (isShiny) => {
       //   getter: results => {
       //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
       //       // debugger
-      //       console.error(`**LOOKOUT! Taking highest firstesult for:
+      //       console.warn(`**LOOKOUT! Taking highest year result for:
       //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
       //       `,'rs:', results)
 
@@ -1795,7 +1797,7 @@ const getIndicatorMap = (isShiny) => {
       //   getter: results => {
       //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
       //       // debugger
-      //       console.error(`**LOOKOUT! Taking highest firstesult for:
+      //       console.warn(`**LOOKOUT! Taking highest year result for:
       //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
       //       `,'rs:', results)
 
@@ -1815,8 +1817,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -1846,8 +1848,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -1877,8 +1879,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -1908,8 +1910,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -1939,8 +1941,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -1966,8 +1968,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2042,8 +2044,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2069,8 +2071,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2096,8 +2098,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2123,8 +2125,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2170,8 +2172,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2182,7 +2184,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log('!!!!! HIV Prevalence - females aged 25-34: ', results)
+          // console.log('!!!!! HIV Prevalence - females aged 25-34: ', results)
           return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2198,8 +2200,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2210,7 +2212,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log('!!!!! HIV Prevalence - males aged 25-34: ', results)
+          // console.log('!!!!! HIV Prevalence - males aged 25-34: ', results)
           return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2226,8 +2228,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2238,7 +2240,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log('!!!!! HIV Prevalence - females aged 35-49: ', results)
+          // console.log('!!!!! HIV Prevalence - females aged 35-49: ', results)
           return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2254,8 +2256,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2266,7 +2268,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log('!!!!! HIV Prevalence - males aged 35-49: ', results)
+          // console.log('!!!!! HIV Prevalence - males aged 35-49: ', results)
           return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2282,8 +2284,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2294,7 +2296,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log('!!!!! HIV Prevalence - females aged 50+: ', results)
+          // console.log('!!!!! HIV Prevalence - females aged 50+: ', results)
           return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2310,8 +2312,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2322,7 +2324,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log('!!!!! HIV Prevalence - males aged 50+: ', results)
+          // console.log('!!!!! HIV Prevalence - males aged 50+: ', results)
           return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2339,8 +2341,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2367,8 +2369,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2394,8 +2396,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2421,8 +2423,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2445,7 +2447,7 @@ const getIndicatorMap = (isShiny) => {
       //   getter: results => {
       //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
       //       // debugger
-      //       console.error(`**LOOKOUT! Taking highest firstesult for:
+      //       console.warn(`**LOOKOUT! Taking highest year result for:
       //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
       //       `, 'rs:', results)
 
@@ -2462,7 +2464,7 @@ const getIndicatorMap = (isShiny) => {
       //   getter: results => {
       //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
       //       // debugger
-      //       console.error(`**LOOKOUT! Taking highest firstesult for:
+      //       console.warn(`**LOOKOUT! Taking highest year result for:
       //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
       //       `, 'rs:', results)
 
@@ -2479,7 +2481,7 @@ const getIndicatorMap = (isShiny) => {
       //   getter: results => {
       //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
       //       // debugger
-      //       console.error(`**LOOKOUT! Taking highest firstesult for:
+      //       console.warn(`**LOOKOUT! Taking highest year result for:
       //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
       //       `, 'rs:', results)
 
@@ -2496,7 +2498,7 @@ const getIndicatorMap = (isShiny) => {
       //   getter: results => {
       //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
       //       // debugger
-      //       console.error(`**LOOKOUT! Taking highest firstesult for:
+      //       console.warn(`**LOOKOUT! Taking highest year result for:
       //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
       //       `, 'rs:', results)
 
@@ -2516,8 +2518,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2547,8 +2549,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2559,7 +2561,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log('!!!!! new HIV infections - males aged 25-34: ', results)
+          // console.log('!!!!! new HIV infections - males aged 25-34: ', results)
           return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2575,8 +2577,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2606,8 +2608,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2618,7 +2620,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log('!!!!! new HIV infections - males aged 35-49: ', results)
+          // console.log('!!!!! new HIV infections - males aged 35-49: ', results)
           return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2634,8 +2636,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2661,8 +2663,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2757,8 +2759,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking highest firstesult for:
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
             `,
               results[0].indicator,
               'R:',
@@ -2786,8 +2788,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking first result.**
+            console.warn(
+              `**LOOKOUT! Taking highest year result.**
             `,
               results[0].indicator,
               'R:',
@@ -2962,8 +2964,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking first result.**
+            console.warn(
+              `**LOOKOUT! Taking highest year result.**
             `,
               results[0].indicator,
               'R:',
@@ -2990,8 +2992,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking first result.**
+            console.warn(
+              `**LOOKOUT! Taking highest year result.**
             `,
               results[0].indicator,
               'R:',
@@ -3040,8 +3042,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking first result.**
+            console.warn(
+              `**LOOKOUT! Taking highest year result.**
             `,
               results[0].indicator,
               'R:',
@@ -3067,8 +3069,8 @@ const getIndicatorMap = (isShiny) => {
             _.uniqBy(results, 'year').length !== results.length
           ) {
             // debugger
-            console.error(
-              `**LOOKOUT! Taking first result.**
+            console.warn(
+              `**LOOKOUT! Taking highest year result.**
             `,
               results[0].indicator,
               'R:',
@@ -3304,4 +3306,5 @@ export {
   SOURCE_DB_MAP,
   SOURCE_DISPLAY_MAP,
   getIndicatorMap,
+  isFemale,
 }

@@ -167,68 +167,72 @@ class Dashboard extends Component {
       return
     }
 
-    const [status, art, suppression] = config.map(n => 
-      Math.round((n)*100)
-    )
+    // const [status, art, suppression] = config.map(n =>
+    //   Math.round((n)*100)
+    // )
 
     const tooltipId = this.props.chartData.countryCode + 'p95-tooltip'
-    
+
     const tooltip = (
-      <ReactTooltip id={tooltipId} className='td-tooltip' type='dark' effect='solid'>
+      <ReactTooltip
+        id={tooltipId}
+        className="td-tooltip"
+        type="dark"
+        effect="solid"
+      >
         <div>Source: {config.source}</div>
         <div>Year: {config.year}</div>
       </ReactTooltip>
     )
 
     const getBoxes = (xl) => {
-
       return (
         <NestedBoxes
           // circle={true}
           classes={xl ? 'xl' : ''}
           title={title}
-          bufferRatio={xl ? .8 : .2}
+          bufferRatio={xl ? 0.8 : 0.2}
           lineHeight={xl ? 1.4 : 1.1}
-          textBufferRatio={.2}
+          textBufferRatio={0.2}
           firstSide={20}
           horizontal={xl}
           ratios={config}
           colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
           content={[
             {
-              inner: status,
-              below: [
-                'of people living with',
-                'HIV know their status'
-              ]
+              // inner: status,
+              below: ['of people living with', 'HIV know their status'],
             },
             {
-              inner: art,
+              // inner: art,
               below: [
                 'of people living with',
                 'HIV who know their status',
-                'are on treatment'
-              ]
+                'are on treatment',
+              ],
             },
             {
-              inner: suppression,
-              below: [
-                'of people on treatment',
-                'are virally suppressed'
-              ]
+              // inner: suppression,
+              below: ['of people on treatment', 'are virally suppressed'],
             },
           ]}
         />
       )
     }
-    
+
     return (
-      <div className='col-xl-7 col-md-6 col-xs-12 prog-95'>
-        <div className='card-stock'>
-          <div className='content'>
-            <p className='title vertical'>{title}</p>
-            <p className='title stacked'>Progress<br/>towards<br/>95-95-95</p>
-            <p className='title xl'>{title}</p>
+      <div className="col-xl-7 col-md-6 col-xs-12 prog-95">
+        <div className="card-stock">
+          <div className="content">
+            <p className="title vertical">{title}</p>
+            <p className="title stacked">
+              Progress
+              <br />
+              towards
+              <br />
+              95-95-95
+            </p>
+            <p className="title xl">{title}</p>
             <a data-tip data-for={tooltipId}>
               {getBoxes()}
               {getBoxes(true)}

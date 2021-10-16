@@ -33,9 +33,12 @@ import {
   SOURCE_DISPLAY_MAP,
   ALL_CHARTS,
   CSV_FIELDS,
+  isFemale,
 } from '../../constants/charts'
 import { TERM_MAP } from '../../constants/glossary'
+import { FEATURE_FLAGS } from '../../constants/flags'
 
+const { APPLY_CAP, FORCE_VALUE } = FEATURE_FLAGS
 // TODO: move
 const WITH_CUSTOM_HEADER_CHART_HEIGHT = 300 // keep in sync with styles.scss with-custom-header height
 // reduces chart top spacing (first number) by ~15 to give custom-header charts proper distance from header
@@ -211,7 +214,9 @@ function getUncertaintyTooltipFormatter(shinyCountry) {
           })} - ${displayNumber({ v: this.u })}</b><br />`
     return `
     <span style="color:${this.color}">●</span>
-    ${this.series.name}: <b>${displayNumber({ v: this.y })}</b><br />
+    ${this.series.name}: <b>${
+      this.displayValue || displayNumber({ v: this.y })
+    }</b><br />
     ${uncertaintyLine}
     Source: <b>${source}</b>
     `
@@ -228,7 +233,9 @@ function getPercentUncertaintyTooltipFormatter(shinyCountry) {
       !lVal || !uVal ? '' : `Uncertainty range: <b>${lVal} - ${uVal}</b><br />`
     return `
     <span style="color:${this.color}">●</span>
-    ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br />
+    ${this.series.name}: <b>${
+      this.displayValue || displayPercent({ v: this.y, decimals })
+    }</b><br />
     ${uncertaintyLine}
     Source: <b>${source}</b>
     `
@@ -283,6 +290,9 @@ function getPlotPoints({
   adjust = false,
   decimals = 0,
   forExport = false,
+  cap,
+  capDisplayValue,
+  // capUpper,
 }) {
   const x = Number(year || _.get(row, [FIELD_MAP.YEAR]))
   if (!row || !row.value) {
@@ -308,7 +318,19 @@ function getPlotPoints({
     }
   }
 
+  let displayValue
+  if (cap) {
+    if (y > cap) {
+      y = cap
+      displayValue = capDisplayValue
+    }
+    if (l > cap) l = capDisplayValue
+    // if (capUpper) u = _.min([u, capUpper])
+    if (u > cap) u = capDisplayValue
+  }
+
   const point = { x, year: x, y, l, u, source, decimals }
+  if (displayValue) point.displayValue = displayValue
 
   if (forExport) {
     point[FIELD_MAP.VALUE] = y
@@ -490,6 +512,8 @@ const getP95 = (data, shinyCountry = false, forExport = false) => {
     // console.log('indyr: ', indYear)
     years.push(indYear)
 
+    // if (APPLY_CAP && value > 95) value = 95
+
     return value / 100
   })
 
@@ -538,6 +562,14 @@ const getPlhivDiagnosis = (data, shinyCountry = false, forExport = false) => {
         let undiagnosedValue = plhivPoint.y - knowPoint.y
         // fix negative
         undiagnosedValue = _.max([undiagnosedValue, 0])
+
+        const isEswatinni = _.get(knowRow, FIELD_MAP.COUNTRY_ISO_CODE) === 'SWZ'
+        let displayValue
+        if (FORCE_VALUE && isEswatinni && y === '2020') {
+          undiagnosedValue = 100
+          displayValue = '<4 400'
+        }
+
         undiagnosedPoint = _.extend({}, knowPoint, {
           [FIELD_MAP.VALUE_UPPER]: null,
           u: null,
@@ -551,6 +583,7 @@ const getPlhivDiagnosis = (data, shinyCountry = false, forExport = false) => {
             knowPoint[FIELD_MAP.INDICATOR]
           } indicator values`,
         })
+        if (displayValue) undiagnosedPoint.displayValue = displayValue
 
         if (onArtPoint && onArtPoint.y) {
           // cannibalize plhivPoint for its year, source etc
@@ -643,14 +676,28 @@ const getPlhivSex = (data, shinyCountry = false, forExport = false) => {
 
   yearRange.forEach((y, i) => {
     const fRow = _.get(data, ['Females', i])
-    const [fPoint, rFPoint] = getPlotPoints({ row: fRow, year: y, forExport })
+    const [fPoint, rFPoint] = getPlotPoints({
+      row: fRow,
+      year: y,
+      forExport,
+      cap: APPLY_CAP && 95,
+      capDisplayValue: APPLY_CAP && '>95%',
+      // capUpper: APPLY_CAP && 100,
+    })
     if (fPoint) {
       fPoints.push(fPoint)
       rFPoints.push(rFPoint)
     }
 
     const mRow = _.get(data, ['Males', i])
-    const [mPoint, rMPoint] = getPlotPoints({ row: mRow, year: y, forExport })
+    const [mPoint, rMPoint] = getPlotPoints({
+      row: mRow,
+      year: y,
+      forExport,
+      cap: APPLY_CAP && 95,
+      capDisplayValue: APPLY_CAP && '>95%',
+      // capUpper: APPLY_CAP && 100,
+    })
     if (mPoint) {
       mPoints.push(mPoint)
       rMPoints.push(rMPoint)
@@ -743,6 +790,9 @@ const getPlhivAge = (data, shinyCountry = false, forExport = false) => {
         row,
         year: y,
         adjust: true,
+        cap: APPLY_CAP && 95,
+        capDisplayValue: APPLY_CAP && '>95%',
+        // capUpper: APPLY_CAP && 100,
         forExport,
       })
       if (point) {
@@ -770,7 +820,7 @@ const getPlhivAge = (data, shinyCountry = false, forExport = false) => {
       tooltip: {
         pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
       },
-      zIndex: 1,
+      zIndex: 4,
     },
     {
       name: '15 - 24 range',
@@ -793,7 +843,7 @@ const getPlhivAge = (data, shinyCountry = false, forExport = false) => {
       tooltip: {
         pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
       },
-      zIndex: 1,
+      zIndex: 3,
     },
     {
       name: '25 - 34 range',
@@ -816,7 +866,7 @@ const getPlhivAge = (data, shinyCountry = false, forExport = false) => {
       tooltip: {
         pointFormatter: getPercentUncertaintyTooltipFormatter(shinyCountry),
       },
-      zIndex: 1,
+      zIndex: 2,
     },
     {
       name: '35 - 49 range',
@@ -1092,6 +1142,7 @@ const getPrevalence = (data, shinyCountry = false, forExport = false) => {
     const populationValue = _.get(data, ['population', i, [FIELD_MAP.VALUE]])
     const onArtValue = _.get(data, ['onArt', i, [FIELD_MAP.VALUE]])
     const plhivValue = _.get(data, ['plhiv', i, [FIELD_MAP.VALUE]])
+
     const isCameroon =
       _.get(data, ['plhiv', i, [FIELD_MAP.COUNTRY_ISO_CODE]]) === 'CMR'
 
@@ -1103,6 +1154,11 @@ const getPrevalence = (data, shinyCountry = false, forExport = false) => {
     }
     if (adjPrevValue) {
       const adjPrevPoint = { x: Number(y), y: adjPrevValue, decimals: 1 }
+      if (APPLY_CAP && adjPrevValue < 0.1) {
+        adjPrevValue = 0.1
+        adjPrevPoint.y = adjPrevValue
+        adjPrevPoint.displayValue = '<0.1%'
+      }
       if (forExport) {
         adjPrevPoint[FIELD_MAP.VALUE] = adjPrevValue
         adjPrevPoint[FIELD_MAP.INDICATOR] = 'Treatment adjusted Prevalence'
@@ -2110,6 +2166,7 @@ const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
       [FIELD_MAP.YEAR]: awareYear,
       [FIELD_MAP.SEX]: awareSex,
       [FIELD_MAP.AGE]: awareAge,
+      [FIELD_MAP.COUNTRY_ISO_CODE]: awareIso, // for force_value
     } = _.get(allData, ['aware', dem], {})
 
     let {
@@ -2127,8 +2184,14 @@ const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
       awareVal /= 100
     }
 
+    let value = (1 - awareVal) * plhivVal
+    if (FORCE_VALUE && isFemale(awareSex)) {
+      if (awareIso === 'KEN') value = '<19 000'
+      if (awareIso === 'SWZ') value = '<2 900'
+      if (awareIso === 'NGA') value = '<50 000'
+    }
     return {
-      value: (1 - awareVal) * plhivVal,
+      value,
       // forExport
       [FIELD_MAP.SEX]: awareSex,
       [FIELD_MAP.INDICATOR]: 'Undiagnosed PLHIV',
@@ -2196,11 +2259,13 @@ const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
           if (percentages.includes(ind)) {
             // NOTE: ** conditional source tweak **
             const adjust = source === SOURCE_DB_MAP.S90 && v <= 1
-            if (forExport) {
-              v = adjust ? v * 100 : v
-            } else {
+            v = adjust ? v * 100 : v
+
+            if (APPLY_CAP && ind === 'aware' && v > 95) {
+              v = forExport ? 95 : '>95%'
+            } else if (!forExport) {
               const decimals = ind === 'prev' ? 1 : 0
-              v = displayPercent({ v, adjust, decimals })
+              v = displayPercent({ v, adjust: false, decimals })
             }
           } else if (!forExport) {
             // NOTE: ** conditional source tweak **
