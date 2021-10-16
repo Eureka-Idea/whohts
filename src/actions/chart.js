@@ -30,14 +30,14 @@ if (!DEV) {
 // NOTE: exclusively for dev use, if any charts are marked true only those will appear on dashboard
 // (speeds load time and narrows code scope when debugging)
 const debugList = {
-  // [CHARTS.P95.id]: true,
+  [CHARTS.P95.id]: true,
   // [CHARTS.CONTEXT.id]: true,
   // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
   // [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.PREGNANCY.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
-  // [CHARTS.GROUPS_TABLE.id]: true,
+  [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.POLICY_TABLE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
   // [CHARTS.ADULTS.id]: true,
@@ -45,8 +45,8 @@ const debugList = {
   // [CHARTS.FACILITY.id]: true,
   // [CHARTS.FORECAST.id]: true,
   // [CHARTS.INDEX.id]: true,
-  // [CHARTS.PLHIV_AGE.id]: true,
-  // [CHARTS.PLHIV_SEX.id]: true,
+  [CHARTS.PLHIV_AGE.id]: true,
+  [CHARTS.PLHIV_SEX.id]: true,
 }
 // like the above, but to mark charts to omit
 const debugSkipList = {
