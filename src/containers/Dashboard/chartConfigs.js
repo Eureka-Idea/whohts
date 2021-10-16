@@ -206,12 +206,10 @@ function getUncertaintyTooltipFormatter(shinyCountry) {
   const source = shinyCountry ? shinySource : spectrumSource
 
   return function () {
+    const lVal = this.lDisplayValue || displayNumber({ v: this.l })
+    const uVal = this.uDisplayValue || displayNumber({ v: this.u })
     const uncertaintyLine =
-      !this.l || !this.u
-        ? ''
-        : `Uncertainty range: <b>${displayNumber({
-            v: this.l,
-          })} - ${displayNumber({ v: this.u })}</b><br />`
+      !lVal || !uVal ? '' : `Uncertainty range: <b>${lVal} - ${uVal}</b><br />`
     return `
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${
@@ -227,8 +225,8 @@ function getPercentUncertaintyTooltipFormatter(shinyCountry) {
 
   return function () {
     const decimals = this.decimals || 0
-    const lVal = displayPercent({ v: this.l, decimals })
-    const uVal = displayPercent({ v: this.u, decimals })
+    const lVal = this.lDisplayValue || displayPercent({ v: this.l, decimals })
+    const uVal = this.uDisplayValue || displayPercent({ v: this.u, decimals })
     const uncertaintyLine =
       !lVal || !uVal ? '' : `Uncertainty range: <b>${lVal} - ${uVal}</b><br />`
     return `
@@ -319,18 +317,21 @@ function getPlotPoints({
   }
 
   let displayValue
+  let lDisplayValue
+  let uDisplayValue
   if (cap) {
     if (y > cap) {
       y = cap
       displayValue = capDisplayValue
     }
-    if (l > cap) l = capDisplayValue
-    // if (capUpper) u = _.min([u, capUpper])
-    if (u > cap) u = capDisplayValue
+    if (l > cap) lDisplayValue = capDisplayValue
+    if (u > cap) uDisplayValue = capDisplayValue
   }
 
   const point = { x, year: x, y, l, u, source, decimals }
   if (displayValue) point.displayValue = displayValue
+  if (lDisplayValue) point.lDisplayValue = lDisplayValue
+  if (uDisplayValue) point.uDisplayValue = uDisplayValue
 
   if (forExport) {
     point[FIELD_MAP.VALUE] = y
