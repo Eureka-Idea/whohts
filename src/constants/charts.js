@@ -640,12 +640,12 @@ const forecastWME = {
   id: 'WME',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WME,
+      // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WME, // now "WHO HIVST Forecast 2021"
     },
   },
   indicators: {
-    demand1: 'HIVST forecast demand',
-    need1: 'HIVST forecast need',
+    demand1: 'HIVST Forecasting Demand Estimate',
+    need1: 'HIVST Forecasting Need Estimate',
   },
 }
 
@@ -1021,20 +1021,27 @@ const CHARTS = {
       'pFacility',
     ],
   },
-  FORECAST: {
+  SELF_TESTS: {
     title: 'HIV self-tests',
-    id: 'FORECAST',
+    id: 'SELF_TESTS',
     sources: [
       forecastGAM21,
       forecastGAM20,
       forecastGAM19,
       forecastNPD19,
       forecastPEPFAR,
-      forecastWME,
     ],
-    indicatorIds: ['distributed', 'demand', 'need'],
+    indicatorIds: ['distributed'],
     indicatorYears: {
       distributed: R_2018_ON,
+    },
+  },
+  FORECAST: {
+    title: 'HIV forecast',
+    id: 'FORECAST',
+    sources: [forecastWME],
+    indicatorIds: ['demand', 'need'],
+    indicatorYears: {
       demand: R_2020_2025,
       need: R_2020_2025,
     },
@@ -1173,6 +1180,7 @@ const ALL_CHARTS = [
   C.COMMUNITY,
   C.FACILITY,
   C.INDEX,
+  C.SELF_TESTS,
   C.FORECAST,
   C.KP_TABLE,
   C.POLICY_TABLE,
@@ -1542,6 +1550,37 @@ const getIndicatorMap = (isShiny) => {
         })
       })
     }),
+    [C.SELF_TESTS.id]: _.flatMap(C.SELF_TESTS.sources, (s) => {
+      return _.map(s.indicators, (indVal, indId) => {
+        return _.extend({}, s.filters.ALL, s.filters[indId], {
+          id: indId,
+          [F.INDICATOR]: indVal,
+          [F.AREA_NAME]: 'NULL',
+          [F.COUNTRY_ISO_CODE]: true,
+          getter: (results) => {
+            const genericIndId = getGenericIndId(indId)
+            return C.SELF_TESTS.indicatorYears[genericIndId].map((y) => {
+              const fResults = _.filter(results, (r) => r.year === y)
+              if (fResults.length > 1) {
+                // debugger
+                console.warn(
+                  `**LOOKOUT! Taking highest year result for: * ', indI
+                `,
+                  fResults[0].indicator,
+                  'R:',
+                  _.maxBy(fResults, 'year'),
+                  `
+                `,
+                  'rs:',
+                  fResults
+                )
+              }
+              return _.maxBy(fResults, 'year')
+            })
+          },
+        })
+      })
+    }),
     [C.FORECAST.id]: _.flatMap(C.FORECAST.sources, (s) => {
       return _.map(s.indicators, (indVal, indId) => {
         return _.extend({}, s.filters.ALL, s.filters[indId], {
@@ -1594,9 +1633,9 @@ const getIndicatorMap = (isShiny) => {
 
             const result = _.maxBy(fResults, 'year')
             // if (!result && results.length > 1) {
-              // console.log('@indicator: ', indId)
-              // console.log('@@@@: ', fResults)
-              // console.log('!!!!', results)
+            // console.log('@indicator: ', indId)
+            // console.log('@@@@: ', fResults)
+            // console.log('!!!!', results)
             // }
             return result
           },

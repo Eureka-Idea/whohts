@@ -507,8 +507,9 @@ class Dashboard extends Component {
     const community = this.getChart(CHARTS.COMMUNITY.id)
     const facility = this.getChart(CHARTS.FACILITY.id)
     const index = this.getChart(CHARTS.INDEX.id)
+    const self = this.getChart(CHARTS.SELF_TESTS.id)
     const forecast = this.getChart(CHARTS.FORECAST.id)
-    
+
     const kp = this.getTable(CHARTS.KP_TABLE.id)
     const policy = this.getTable(CHARTS.POLICY_TABLE.id)
     const groups = this.getTable(CHARTS.GROUPS_TABLE.id)
@@ -517,52 +518,62 @@ class Dashboard extends Component {
       const countryCode = _.get(this, 'props.match.params.countryCode', null)
       const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
       return (
-        <div className='loading-mask'>
-          <p className='name'>{name}</p>
-          <div className='squares'>
+        <div className="loading-mask">
+          <p className="name">{name}</p>
+          <div className="squares">
             <span style={{ backgroundColor: P95ColorA }} />
             <span style={{ backgroundColor: P95ColorB }} />
             <span style={{ backgroundColor: P95ColorC }} />
             <span style={{ backgroundColor: P95ColorD }} />
           </div>
-          <p className='loading'>Loading...</p>
+          <p className="loading">Loading...</p>
         </div>
       )
     }
 
     return (
-      <div className='dashboard'>
-        <div className='nav'>
-          <a className='who-logo' href='https://who.int/' target='_blank'>
-            <img src='images/who_logo.png' alt='WHO logo' />
+      <div className="dashboard">
+        <div className="nav">
+          <a className="who-logo" href="https://who.int/" target="_blank">
+            <img src="images/who_logo.png" alt="WHO logo" />
           </a>
-          <span className='title text-center desktop'>HIV Testing Services Dashboard</span>
-          <span className='title text-center mobile'>HIV Testing Services</span>
-          <div className='input-group'>
-            <select defaultValue={this.props.chartData.countryCode} onChange={this.goToCountry} className='custom-select'>
-              {COUNTRIES.map(c => {
-                return <option value={c.ISO} to={'/'+c.ISO} key={c.ISO}>{c.name}</option>
+          <span className="title text-center desktop">
+            HIV Testing Services Dashboard
+          </span>
+          <span className="title text-center mobile">HIV Testing Services</span>
+          <div className="input-group">
+            <select
+              defaultValue={this.props.chartData.countryCode}
+              onChange={this.goToCountry}
+              className="custom-select"
+            >
+              {COUNTRIES.map((c) => {
+                return (
+                  <option value={c.ISO} to={'/' + c.ISO} key={c.ISO}>
+                    {c.name}
+                  </option>
+                )
               })}
             </select>
           </div>
-          <span className='export' onClick={this.exportData}>
-              Export
+          <span className="export" onClick={this.exportData}>
+            Export
           </span>
-          <Link className='link-home' to='/'>
+          <Link className="link-home" to="/">
             Home
           </Link>
         </div>
 
-        <div className='charts container-fluid mt-4 p-0'>
-          <div className='row mb-4'>
-          {/* <div className='row no-gutters mb-4'> */}
+        <div className="charts container-fluid mt-4 p-0">
+          <div className="row mb-4">
+            {/* <div className='row no-gutters mb-4'> */}
 
             {this.getCountryContext()}
             {this.getP95()}
           </div>
 
-          <div className='row'>
-          {/* <div className='row no-gutters'> */}
+          <div className="row">
+            {/* <div className='row no-gutters'> */}
             {diagnosis}
             {PLHIVSex}
             {PLHIVAge}
@@ -570,13 +581,14 @@ class Dashboard extends Component {
             {positive}
             {prevalence}
             {pregnancy}
-            <div className='col-12 mt-2'>&nbsp;</div>
+            <div className="col-12 mt-2">&nbsp;</div>
             {adults}
             {community}
             {facility}
             {index}
+            {self}
             {forecast}
-            <div className='col-12 mt-2'>&nbsp;</div>
+            <div className="col-12 mt-2">&nbsp;</div>
             {kp}
             {policy}
             {groups}
@@ -584,9 +596,8 @@ class Dashboard extends Component {
         </div>
 
         {this.getResourcesSection()}
-      
-        {this.getDevSection()}
 
+        {this.getDevSection()}
       </div>
     )
   }

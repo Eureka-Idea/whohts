@@ -83,13 +83,15 @@ const columnLine = {
   chart: { type: 'column' },
   plotOptions: {
     line: {
-      marker: { radius: 5 }
+      marker: { radius: 5 },
     },
     column: {
-      states: { hover: { 
-        borderColor: 'black'
-      } },
-    }
+      states: {
+        hover: {
+          borderColor: 'black',
+        },
+      },
+    },
   },
   legend: { enabled: true },
   xAxis: {
@@ -98,21 +100,21 @@ const columnLine = {
       rotation: 0,
       style: {
         fontSize: '10px',
-      }
-    }
+      },
+    },
   },
   tooltip: {
-    shared: true
+    shared: true,
   },
 
   series: [
     {
-      color: gunSmoke,
+      color: barChartColor,
     },
     {
       color: copper,
     },
-  ]
+  ],
 }
 
 const column = {
@@ -120,10 +122,12 @@ const column = {
 
   plotOptions: {
     column: {
-      states: { hover: { 
-        borderColor: 'black'
-      } },
-    }
+      states: {
+        hover: {
+          borderColor: 'black',
+        },
+      },
+    },
   },
   xAxis: {
     type: 'category',
@@ -131,12 +135,15 @@ const column = {
       rotation: 0,
       style: {
         fontSize: '10px',
-      }
-    }
+      },
+    },
   },
 
   yAxis: {
     min: 0,
+  },
+  tooltip: {
+    shared: true,
   },
 }
 

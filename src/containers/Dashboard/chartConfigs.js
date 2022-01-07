@@ -176,13 +176,17 @@ function displayNumber({ v, unrounded = false }) {
 }
 
 function sourceTooltipFormatter() {
-  const mismatchedData = !this.mismatched
-    ? ''
-    : `
+  // used mainly for the SHARED tooltips of the columnScat charts
+  // so only show year/source if it's distinct from the values that
+  // will be showed by the percent portion (or when it's not a shared tooltip)
+  const mismatchedData =
+    !this.mismatched && !this.forceShowDetails
+      ? ''
+      : `
   Year: <b>${this.year}</b><br/>
   Source: <b>${this.source}</b>
 `
-
+  console.log(this.mismatched, this.year, this.source)
   return `
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayNumber({
@@ -381,6 +385,7 @@ const getConfig = (
     [CHARTS.COMMUNITY.id]: getCommunity,
     [CHARTS.FACILITY.id]: getFacility,
     [CHARTS.INDEX.id]: getIndex,
+    [CHARTS.SELF_TESTS.id]: getSelfTests,
     [CHARTS.FORECAST.id]: getForecast,
     [CHARTS.KP_TABLE.id]: getKpTable,
     [CHARTS.POLICY_TABLE.id]: getPolicyTable,
@@ -1806,34 +1811,17 @@ const getIndex = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getColumnScat({ options, categories, series }))
 }
 
-const getForecast = (data, shinyCountry = false, forExport = false) => {
-  const { title, indicatorIds, indicatorYears, sources } = CHARTS.FORECAST
+const getSelfTests = (data, shinyCountry = false, forExport = false) => {
+  const { title, indicatorIds, indicatorYears, sources } = CHARTS.SELF_TESTS
 
-  const { distributed, demand, need, missingIndicatorMap } =
-    extractPrioritizedRangeData({
-      data,
-      indicatorIds,
-      sourceCount: sources.length,
-      indicatorRangeMap: indicatorYears,
-    })
-
-  if (forExport) {
-    // TODO
-    // return []
-  }
+  const { distributed, missingIndicatorMap } = extractPrioritizedRangeData({
+    data,
+    indicatorIds,
+    sourceCount: sources.length,
+    indicatorRangeMap: indicatorYears,
+  })
 
   const missingIndicators = Object.keys(missingIndicatorMap)
-
-  console.log(
-    'distributed: ',
-    distributed,
-    'demand: ',
-    demand,
-    'need: ',
-    need,
-    'missingIndicators: ',
-    missingIndicators
-  )
 
   if (missingIndicators.length) {
     console.warn(
@@ -1875,37 +1863,32 @@ const getForecast = (data, shinyCountry = false, forExport = false) => {
   //   source: d[FIELD_MAP.SOURCE_DATABASE]
   // }))
 
-  const demandNumData = demand
-    .filter((r) => !r.noData)
-    .map((d) => ({
-      x: Number(d.year),
-      y: d.value,
-    }))
+  // const demandNumData = demand
+  //   .filter((r) => !r.noData)
+  //   .map((d) => ({
+  //     x: Number(d.year),
+  //     y: d.value,
+  //   }))
 
-  const needNumData = need
-    .filter((r) => !r.noData)
-    .map((d) => ({
-      x: Number(d.year),
-      y: d.value,
-      source: d[FIELD_MAP.SOURCE_DATABASE],
-    }))
+  // const needNumData = need
+  //   .filter((r) => !r.noData)
+  //   .map((d) => ({
+  //     x: Number(d.year),
+  //     y: d.value,
+  //     source: d[FIELD_MAP.SOURCE_DATABASE],
+  //   }))
 
   if (forExport) {
-    return [...distributedNumData, ...demandNumData, ...needNumData]
+    return [...distributedNumData]
   }
 
-  if (
-    !distributedNumData.length &&
-    !demandNumData.length &&
-    !needNumData.length
-  ) {
+  if (!distributedNumData.length) {
     console.warn(title + ' has all empty series.')
     return null
   }
 
-  // COLORS: explore previous - cerulean, purple etc
   const options = {
-    subtitle: { text: 'Programme data and modelled estimates' },
+    subtitle: { text: 'Programme data' },
     // plotOptions: { series: { pointStart: 2019 } }
   }
   const series = [
@@ -1913,7 +1896,7 @@ const getForecast = (data, shinyCountry = false, forExport = false) => {
       name: 'HIVSTs distributed',
       data: distributedNumData,
       tooltip: {
-        pointFormatter: sourceTooltipFormatter, // TODO: use formatter?
+        pointFormatter: sourceTooltipFormatter,
       },
     },
     // {
@@ -1931,6 +1914,112 @@ const getForecast = (data, shinyCountry = false, forExport = false) => {
   ]
 
   return _.merge({}, getColumn({ title, series, options }))
+}
+
+const getForecast = (data, shinyCountry = false, forExport = false) => {
+  const { title, indicatorIds, indicatorYears, sources } = CHARTS.FORECAST
+
+  const extractedData = extractPrioritizedRangeData({
+    data,
+    indicatorIds,
+    sourceCount: sources.length,
+    indicatorRangeMap: indicatorYears,
+  })
+
+  // const { missingIndicatorMap } = extractedData
+
+  // const missingIndicators = Object.keys(missingIndicatorMap)
+
+  // console.log(
+  //   'distributed: ',
+  //   distributed,
+  //   'demand: ',
+  //   demand,
+  //   'need: ',
+  //   need,
+  //   'missingIndicators: ',
+  //   missingIndicators
+  // )
+
+  // if (missingIndicators.length) {
+  //   console.warn(
+  //     '**INCOMPLETE RESULTS. missing: ',
+  //     missingIndicators.join(', ')
+  //   )
+  // }
+
+  const [demandNumData, needNumData] = ['demand', 'need'].map((k) =>
+    extractedData[k]
+      .filter((r) => !r.noData)
+      .map((r) => {
+        const {
+          [FIELD_MAP.VALUE]: y,
+          [FIELD_MAP.SOURCE_DATABASE]: source,
+          [FIELD_MAP.YEAR]: year,
+        } = r
+
+        const point = {
+          y,
+          x: Number(year),
+          source,
+          year,
+          forceShowDetails: k !== 'demand', // demand is in a shared tooltip with need
+        }
+
+        if (forExport) {
+          CSV_FIELDS.forEach(({ fieldId }) => {
+            if (_.isUndefined(point[fieldId])) {
+              point[fieldId] = r[fieldId] || ''
+            }
+          })
+        }
+
+        return point
+      })
+  )
+
+  // console.log(demandNumData, needNumData)
+
+  if (forExport) {
+    return [...demandNumData, ...needNumData]
+  }
+
+  if (!demandNumData.length && !needNumData.length) {
+    console.warn(title + ' has all empty series.')
+    return null
+  }
+
+  // COLORS: explore previous - cerulean, purple etc
+  const options = {
+    subtitle: { text: 'Modelled estimates' },
+    // plotOptions: { series: { pointStart: 2019 } }
+  }
+  const series = [
+    // {
+    //   name: 'HIVSTs distributed',
+    //   data: distributedNumData,
+    //   tooltip: {
+    //     pointFormatter: sourceTooltipFormatter,
+    //   },
+    // },
+    {
+      name: 'HIVST forecast demand',
+      data: demandNumData,
+      tooltip: {
+        pointFormatter: sourceTooltipFormatter,
+      },
+    },
+    {
+      name: 'HIVST forecast need',
+      type: 'line',
+      data: needNumData,
+      tooltip: {
+        pointFormatter: sourceTooltipFormatter,
+      },
+    },
+  ]
+
+  return _.merge({}, getColumnLine({ title, series, options }))
 }
 
 const getKpTable = (data, shinyCountry = false, forExport = false) => {
