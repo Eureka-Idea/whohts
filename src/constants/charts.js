@@ -578,7 +578,7 @@ const indexPEPFAR = {
   },
 }
 
-const forecastGAM21 = {
+const selfGAM21 = {
   id: 'GAM21',
   filters: {
     ALL: {
@@ -590,7 +590,7 @@ const forecastGAM21 = {
     distributed1: 'Self Test Distributed-Data Value',
   },
 }
-const forecastGAM20 = {
+const selfGAM20 = {
   id: 'GAM20',
   filters: {
     ALL: {
@@ -602,7 +602,7 @@ const forecastGAM20 = {
     distributed1: 'Self Test Distributed-Data Value',
   },
 }
-const forecastGAM19 = {
+const selfGAM19 = {
   id: 'GAM19',
   filters: {
     ALL: {
@@ -613,7 +613,7 @@ const forecastGAM19 = {
     distributed2: 'HIVSTs distributed',
   },
 }
-const forecastNPD19 = {
+const selfNPD19 = {
   id: 'NPD19',
   filters: {
     ALL: {
@@ -625,7 +625,7 @@ const forecastNPD19 = {
     distributed3: 'HIVSTs distributed',
   },
 }
-const forecastPEPFAR = {
+const selfPEPFAR = {
   id: 'PEPFAR',
   filters: {
     ALL: {
@@ -1024,20 +1024,14 @@ const CHARTS = {
   SELF_TESTS: {
     title: 'HIV self-tests',
     id: 'SELF_TESTS',
-    sources: [
-      forecastGAM21,
-      forecastGAM20,
-      forecastGAM19,
-      forecastNPD19,
-      forecastPEPFAR,
-    ],
+    sources: [selfGAM21, selfGAM20, selfGAM19, selfNPD19, selfPEPFAR],
     indicatorIds: ['distributed'],
     indicatorYears: {
       distributed: R_2018_ON,
     },
   },
   FORECAST: {
-    title: 'HIV forecast',
+    title: 'HIVST forecast',
     id: 'FORECAST',
     sources: [forecastWME],
     indicatorIds: ['demand', 'need'],
