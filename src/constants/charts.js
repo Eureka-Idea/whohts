@@ -11,10 +11,10 @@ const BASE_URL =
 const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
 
 const R_2015_2019 = ['2015', '2016', '2017', '2018', '2019']
-const R_2015_ON = ['2015', '2016', '2017', '2018', '2019', '2020']
-const R_2018_ON = ['2018', '2019', '2020']
+const LATEST_YEAR = '2021'
+const R_2015_ON = _.range('2015', Number(LATEST_YEAR) + 1).map(String)
+const R_2018_ON = _.range('2018', Number(LATEST_YEAR) + 1).map(String)
 const R_2020_2025 = ['2020', '2021', '2022', '2023', '2024', '2025']
-const LATEST_YEAR = '2020'
 
 const ADULTS15 = '15-24'
 const ADULTS25 = '25-34'
