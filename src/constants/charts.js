@@ -80,6 +80,7 @@ const SOURCE_DB_MAP = {
   MICS: 'MICS UNICEF',
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
   SPEC21: 'Spectrum estimates 2021 (UNAIDS/WHO)',
+  SPEC22: 'Spectrum estimates 2022 (UNAIDS/WHO)',
   SPEC_REG: /Spectrum estimates .+ \(UNAIDS\/WHO\)/,
   WGHO: 'WHO Global Health Observatory',
   UNAIDS: 'UNAIDS', // also a source organization
@@ -1298,7 +1299,7 @@ const getIndicatorMap = (isShiny) => {
       [F.COUNTRY_ISO_CODE]: true,
       [F.AGE]: 'all ages',
       [F.AREA_NAME]: 'NULL',
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
       getter: (results) => {
         return _.maxBy(results, 'year')
       },
@@ -1309,7 +1310,7 @@ const getIndicatorMap = (isShiny) => {
       [F.AGE]: '15+',
       [F.SEX]: 'NULL',
       [F.AREA_NAME]: 'NULL',
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
       [F.COUNTRY_ISO_CODE]: true,
       getter: (results) => {
         return C.PLHIV_DIAGNOSIS.yearRange.map((y) => {
@@ -1331,7 +1332,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: sex,
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PLHIV_SEX.yearRange.map((y) => {

@@ -1,31 +1,5 @@
-# WHO HIV self-testing data dashboard
+# Annual update instructions
 
-Built using **React** + **Redux** + **Bootstrap** + **SASS** on top of [`create-react-app`](https://create-react-app.dev/). 
+Assuming new datasets take the same shape as previous years, the integration of a new year of data should not take too much work. Once the data is added to the DB, tweak the `constants/charts.js` consts as follows: 1) add the year (e.g. '2021') to the year range arrays (`R_2015_ON` and `R_2018_ON`), 2) update the `LATEST_YEAR` variable, 3) update charts' `SOURCE_DATABASE` as necessary (mainly charts with a `YEAR` of `LATEST_YEAR`); for instance, if `LATEST_YEAR` is updated -> 2021 a chart with a source db of `GAM20` might need to be updated to `GAM21`. 
 
-Usage
--
-// clone repo\
-`git checkout master`\
-`npm install`\ // currently optimized for use with node version 14.16.1
-`npm start` // ---> localhost:3000/
-
-Deployment
--
-The production site is deployed at [whohts.web.app](whohts.web.app), which is kept as a build of the latest `master` commit, hosted through [Firebase](https://console.firebase.google.com/u/0/project/whohts/overview). After being added to the Firebase project (and assuming you have [Firebase CLI](https://firebase.google.com/docs/cli) set up locally), updates to the site are made by the following workflow:\
-`git checkout master`\
-`git pull` // be sure to deploy the latest version of master (TODO: make updates to master trigger auto-deployment)\
-// make some changes\
-`npm run-script build && firebase deploy` // the latest build will be deployed, so failing to build before deploying would not deploy your latest changes\
-`git commit`\
-`git push` // otherwise future deployments by anyone else will omit your changes
-
-To preview changes:\
-`npm run-script build && firebase hosting:channel:deploy test --expires 30d` // generates a unique URL that includes "test", expires in 30 days\
-
-Annual Update
-_
-see UPDATE.md
-
-License
--
-The MIT License (MIT). Please see License File for more information.
+See commit ****

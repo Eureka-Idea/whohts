@@ -653,7 +653,7 @@ const getPlhivDiagnosis = (data, shinyCountry = false, forExport = false) => {
       tooltip: { pointFormatter: getUncertaintyTooltipFormatter(shinyCountry) },
     },
     {
-      name: 'PLHIV know status on ART',
+      name: 'People receiving antiretroviral therapy',
       description: TERM_MAP.plhivKnowStatusOnArt.definition,
       color: stormGray,
       data: onArtData,
