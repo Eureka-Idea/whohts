@@ -38,7 +38,7 @@ const debugList = {
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
   // [CHARTS.GROUPS_TABLE.id]: true,
-  // [CHARTS.POLICY_TABLE.id]: true,
+  [CHARTS.POLICY_TABLE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
   // [CHARTS.ADULTS.id]: true,
   // [CHARTS.COMMUNITY.id]: true,
@@ -107,7 +107,7 @@ export const getChartData = (countryCode) => (dispatch) => {
 
           let chunk = `${char}${f}=${chartValue}`
           chunk = encodeURI(chunk)
-          chunk = chunk.replace('+', '%2B') // TODO - figure out why not encoded properly
+          chunk = chunk.replaceAll('+', '%2B') // TODO - figure out why not encoded properly
           url += chunk
           char = '&'
         }

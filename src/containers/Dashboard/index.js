@@ -659,7 +659,7 @@ class Dashboard extends Component {
     fields.forEach(f => {
       if (this.state[f]) {
         let chunk = encodeURI(`${char}${f}=${this.state[f]}`)
-        chunk = chunk.replace('+', '%2B') // TODO - figure out why not encoded properly
+        chunk = chunk.replaceAll('+', '%2B') // TODO - figure out why not encoded properly
         url += chunk
         char = '&'
       }

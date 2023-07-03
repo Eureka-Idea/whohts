@@ -65,8 +65,8 @@ const WITH_CUSTOM_HEADER_CHART_SPACING = [15, 30, 25, 25] // keep in sync with b
 const barChartsTestsName = 'Number of tests conducted'
 const barChartsPositivityName = 'Positivity' // TODO: acceptable?
 // const barChartsPositivityNameTooltip = 'Positivity'
-const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2021)'
-const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2021)'
+const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2022)'
+const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2022)'
 const calculatedDb = '(calculated)'
 
 function adjustPercentage({
@@ -2176,11 +2176,11 @@ const getPolicyTable = (data, shinyCountry = false, forExport = false) => {
         value: _.get(age, [FIELD_MAP.VALUE_COMMENT]),
       },
       {
-        rowName: 'Provider-initiated testing',
+        rowName: 'Provider-initiated testing and counselling',
         value: _.get(provider, [FIELD_MAP.VALUE_COMMENT]),
       },
       {
-        rowName: 'Community-based testing',
+        rowName: 'Community-based testing and counselling',
         value: _.get(community, [FIELD_MAP.VALUE_COMMENT]),
       },
       {
@@ -2192,27 +2192,29 @@ const getPolicyTable = (data, shinyCountry = false, forExport = false) => {
         value: _.get(hivst, [FIELD_MAP.VALUE_COMMENT]),
       },
       {
-        rowName: 'Provider-assisted referral/index testing',
+        rowName: 'Assisted partner notification',
         value: _.get(assisted, [FIELD_MAP.VALUE_COMMENT]),
       },
       {
-        rowName: 'Social network-based testing',
+        rowName: 'Social network-based HIV testing',
         value: _.get(social, [FIELD_MAP.VALUE_COMMENT]),
       },
       {
-        rowName: 'Compliance with WHO testing strategy',
+        rowName: '3-test strategy/algorithm for an HIV-positive diagnosis used',
         value: _.get(compliance, [FIELD_MAP.VALUE_COMMENT]),
       },
+      // {
+      //   rowName: 'Verification testing before ART',
+      //   value: _.get(verification, [FIELD_MAP.VALUE_COMMENT]),
+      // },
       {
-        rowName: 'Verification testing before ART',
-        value: _.get(verification, [FIELD_MAP.VALUE_COMMENT]),
-      },
-      {
-        rowName: 'Dual HIV/syphilis tests in antenatal care',
+        rowName:
+          'Dual HIV/syphilis rapid diagnostic tests for pregnant women in antenatal care',
         value: _.get(antenatal, [FIELD_MAP.VALUE_COMMENT]),
       },
       {
-        rowName: 'Dual HIV/syphilis tests for key populations',
+        rowName:
+          'Dual HIV/syphilis rapid diagnostic tests for any key population group',
         value: _.get(dual, [FIELD_MAP.VALUE_COMMENT]),
       },
     ],

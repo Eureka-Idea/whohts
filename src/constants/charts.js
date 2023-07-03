@@ -71,6 +71,7 @@ const SOURCE_DB_MAP = {
   WNCPI: 'WHO NCPI',
   HIVST20: 'HIVST policy 2020 data set',
   HIVST21: 'HIVST policy 2021 data set',
+  KP22: 'UNAIDS KP-Atlas 2022',
   KP20: 'UNAIDS KP-Atlas 2020',
   // UNGAM20: 'UNAIDS Global AIDS Monitoring 2020',
   TGF: 'The Global Fund',
@@ -85,6 +86,8 @@ const SOURCE_DB_MAP = {
   WGHO: 'WHO Global Health Observatory',
   UNAIDS: 'UNAIDS', // also a source organization
   WB: 'World Bank', // also a source organization
+  // to match any DB name including the value (rather than strict match)
+  _NCPI_: 'NCPI',
 }
 const SOURCE_DISPLAY_MAP = {
   ['AIDS (AIM)']: 'Spectrum estimates 2020 (UNAIDS/WHO)',
@@ -645,11 +648,38 @@ const forecastWME = {
     },
   },
   indicators: {
-    demand1: 'HIVST Forecasting Demand Estimate',
+    demand1: 'HIV RDT Demand Forecast - Total Volume',
     need1: 'HIVST Forecasting Need Estimate',
   },
 }
 
+const kpKP22 = {
+  id: 'KP22',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.KP22,
+      [F.AREA_NAME]: 'NULL',
+    },
+  },
+  indicators: {
+    prevMsm1: 'HIV prevalence among men who have sex with men',
+    awareMsm1:
+      'HIV testing and status awareness among men who have sex with men',
+
+    prevPwid1: 'HIV prevalence among people who inject drugs',
+    awarePwid1:
+      'HIV testing and status awareness among people who inject drugs',
+
+    prevPris1: 'HIV prevalence among prisoners',
+    // awarePris1: '',
+
+    prevSw1: 'HIV prevalence among sex workers',
+    awareSw1: 'HIV testing and status awareness among sex workers',
+
+    prevTrans1: 'HIV prevalence among transgender people',
+    awareTrans1: 'HIV testing and status awareness among transgender people',
+  },
+}
 const kpKP20 = {
   id: 'KP20',
   filters: {
@@ -659,20 +689,20 @@ const kpKP20 = {
     },
   },
   indicators: {
-    prevMsm1: 'HIV prevalence among men who have sex with men',
-    awareMsm1: 'MSM (PLHIV who know status (%))',
+    prevMsm2: 'HIV prevalence among men who have sex with men',
+    awareMsm2: 'MSM (PLHIV who know status (%))',
 
-    prevPwid1: 'HIV prevalence among people who inject drugs',
-    awarePwid1: 'PWID (PLHIV who know status (%))',
+    prevPwid2: 'HIV prevalence among people who inject drugs',
+    awarePwid2: 'PWID (PLHIV who know status (%))',
 
-    prevPris1: 'HIV prevalence among prisoners',
-    // awarePris1: '',
+    prevPris2: 'HIV prevalence among prisoners',
+    // awarePris2: '',
 
-    prevSw1: 'HIV prevalence among sex workers',
-    awareSw1: 'SW (PLHIV who know status (%))',
+    prevSw2: 'HIV prevalence among sex workers',
+    awareSw2: 'SW (PLHIV who know status (%))',
 
-    prevTrans1: 'HIV prevalence among transgender people',
-    awareTrans1: 'Transgender (PLHIV who know status (%))',
+    prevTrans2: 'HIV prevalence among transgender people',
+    awareTrans2: 'Transgender (PLHIV who know status (%))',
   },
 }
 const kpGAM21 = {
@@ -685,22 +715,22 @@ const kpGAM21 = {
   },
   indicators: {
     // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
-    prevMsm2: 'HIV prevalence among men who have sex with men',
-    awareMsm2:
+    prevMsm3: 'HIV prevalence among men who have sex with men',
+    awareMsm3:
       'HIV testing and status awareness among men who have sex with men',
 
-    prevPwid2: 'HIV prevalence among people who inject drugs',
-    awarePwid2:
+    prevPwid3: 'HIV prevalence among people who inject drugs',
+    awarePwid3:
       'HIV testing and status awareness among people who inject drugs',
 
-    prevPris2: 'HIV prevalence among prisoners',
-    // awarePris2: '',
+    prevPris3: 'HIV prevalence among prisoners',
+    // awarePris3: '',
 
-    prevSw2: 'HIV prevalence among sex workers',
-    awareSw2: 'HIV testing and status awareness among sex workers',
+    prevSw3: 'HIV prevalence among sex workers',
+    awareSw3: 'HIV testing and status awareness among sex workers',
 
-    prevTrans2: 'HIV prevalence among transgender people',
-    awareTrans2: 'HIV testing and status awareness among transgender people',
+    prevTrans3: 'HIV prevalence among transgender people',
+    awareTrans3: 'HIV testing and status awareness among transgender people',
   },
 }
 const kpPCOP20 = {
@@ -875,7 +905,7 @@ const CHARTS = {
     indicators: {
       plhiv: 'People living with HIV - adults (aged 15+)',
       know: 'People living with HIV who know their status',
-      onArt: 'People receiving antiretroviral therapy',
+      onArt: 'PLHIV know status on ART',
     },
   },
   PLHIV_SEX: {
@@ -926,7 +956,9 @@ const CHARTS = {
       dYield: 'yldnew',
     },
     indicators: {
-      prevalence: 'HIV Prevalence - adults (15-49)',
+      // prevalence: 'HIV Prevalence - adults (15-49)',
+      // prevalence: 'M- Adult prevalence (15+) (Percent) Male+Female',
+      prevalence: 'Adult prevalence (15+) (Percent) Male+Female',
 
       // 15+
       plhiv: 'People living with HIV - adults (aged 15+)',
@@ -1032,7 +1064,7 @@ const CHARTS = {
     },
   },
   FORECAST: {
-    title: 'HIVST forecast',
+    title: 'Integrated HIV RDT forecast',
     id: 'FORECAST',
     sources: [forecastWME],
     indicatorIds: ['demand', 'need'],
@@ -1046,6 +1078,7 @@ const CHARTS = {
     title: 'Key Populations',
     id: 'KP_TABLE',
     sources: [
+      kpKP22,
       kpKP20,
       kpGAM21,
       kpPCOP20,
@@ -1082,55 +1115,61 @@ const CHARTS = {
     id: 'POLICY_TABLE',
     filters: {
       ALL: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
+        // query can only filter by strict match, so instead check for match in results
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP._NCPI_
         [F.AREA_NAME]: 'NULL',
       },
       age: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       provider: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       community: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       lay: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       hivst: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.HIVST21,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.HIVST21,
       },
       assisted: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       social: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
       },
       compliance: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
       },
+      // no longer displays on table
       verification: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
       },
       antenatal: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
       },
       dual: {
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
+        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
       },
     },
     indicators: {
       age: 'Laws requiring parental consent for adolescents to access HIV testing',
-      provider: 'Provider-initiated testing',
-      community: 'Community-based testing',
-      lay: 'Lay provider testing',
-      hivst: 'HIVST policy category',
-      assisted: 'Provider-assisted referral / Index testing',
-      social: 'Social network-based testing',
-      compliance: 'Compliance with WHO testing strategy',
+      provider:
+        'From national authorities Provider-initiated testing and counselling',
+      community:
+        'From national authorities Community-based testing and counselling',
+      lay: 'From national authorities Lay provider testing',
+      hivst: 'From national authorities Self-testing',
+      assisted: 'From national authorities Assisted partner notification',
+      social: 'From national authorities Social network-based HIV testing',
+      compliance:
+        '3-test strategy/algorithm for an HIV-positive diagnosis used',
       verification: 'Verification testing before ART',
-      antenatal: 'Dual HIV/syphilis tests in antenatal care',
-      dual: 'Dual HIV/syphilis tests for key populations',
+      antenatal:
+        'From national authorities Dual HIV/syphilis rapid diagnostic tests for pregnant women in antenatal care',
+      dual: 'From national authorities Dual HIV/syphilis rapid diagnostic tests for any key population group',
     },
   },
   GROUPS_TABLE: {
@@ -1308,7 +1347,7 @@ const getIndicatorMap = (isShiny) => {
       id: k,
       [F.INDICATOR]: v,
       [F.AGE]: '15+',
-      [F.SEX]: 'NULL',
+      // [F.SEX]: 'NULL',
       [F.AREA_NAME]: 'NULL',
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
       [F.COUNTRY_ISO_CODE]: true,
@@ -1348,7 +1387,7 @@ const getIndicatorMap = (isShiny) => {
         // [F.AGE]: '15-99', // TODO: 15-49 ok?
         // [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {
@@ -1657,7 +1696,14 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          return _.maxBy(results, 'year')
+          return _.maxBy(
+            results,
+            // in case we want to filter by source db
+            // results.filter((r) =>
+            //   r[FIELD_MAP.SOURCE_DATABASE].includes(SOURCE_DB_MAP._NCPI_)
+            // ),
+            'year'
+          )
         },
       })
     ),
