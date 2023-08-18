@@ -649,7 +649,7 @@ const forecastWME = {
   },
   indicators: {
     demand1: 'HIV RDT Demand Forecast - Total Volume',
-    need1: 'HIVST Forecasting Need Estimate',
+    // need1: 'HIVST Forecasting Need Estimate',
   },
 }
 
@@ -1067,10 +1067,10 @@ const CHARTS = {
     title: 'Integrated HIV RDT forecast',
     id: 'FORECAST',
     sources: [forecastWME],
-    indicatorIds: ['demand', 'need'],
+    indicatorIds: ['demand'],
     indicatorYears: {
       demand: R_2020_2025,
-      need: R_2020_2025,
+      // need: R_2020_2025,
     },
   },
 

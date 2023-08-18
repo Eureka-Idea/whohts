@@ -37,6 +37,7 @@ import {
 } from '../../constants/charts'
 import { TERM_MAP } from '../../constants/glossary'
 import { FEATURE_FLAGS } from '../../constants/flags'
+import { barChartColor } from './colors'
 
 const { APPLY_CAP, FORCE_VALUE } = FEATURE_FLAGS
 // TODO: move
@@ -1948,7 +1949,7 @@ const getForecast = (data, shinyCountry = false, forExport = false) => {
   //   )
   // }
 
-  const [demandNumData, needNumData] = ['demand', 'need'].map((k) =>
+  const [demandNumData] = ['demand'].map((k) =>
     extractedData[k]
       .filter((r) => !r.noData)
       .map((r) => {
@@ -1981,10 +1982,10 @@ const getForecast = (data, shinyCountry = false, forExport = false) => {
   // console.log(demandNumData, needNumData)
 
   if (forExport) {
-    return [...demandNumData, ...needNumData]
+    return [...demandNumData]
   }
 
-  if (!demandNumData.length && !needNumData.length) {
+  if (!demandNumData.length) {
     console.warn(title + ' has all empty series.')
     return null
   }
@@ -2005,21 +2006,22 @@ const getForecast = (data, shinyCountry = false, forExport = false) => {
     {
       name: 'HIVST forecast demand',
       data: demandNumData,
+      color: barChartColor,
       tooltip: {
         pointFormatter: sourceTooltipFormatter,
       },
     },
-    {
-      name: 'HIVST forecast need',
-      type: 'line',
-      data: needNumData,
-      tooltip: {
-        pointFormatter: sourceTooltipFormatter,
-      },
-    },
+    // {
+    //   name: 'HIVST forecast need',
+    //   type: 'line',
+    //   data: needNumData,
+    //   tooltip: {
+    //     pointFormatter: sourceTooltipFormatter,
+    //   },
+    // },
   ]
 
-  return _.merge({}, getColumnLine({ title, series, options }))
+  return _.merge({}, getColumn({ title, series, options }))
 }
 
 const getKpTable = (data, shinyCountry = false, forExport = false) => {
