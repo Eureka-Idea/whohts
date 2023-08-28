@@ -1177,16 +1177,6 @@ const CHARTS = {
     id: 'GROUPS_TABLE',
     // sources: [],
     indicatorIds: ['plhiv', 'aware', 'prev', 'newly', 'year', 'ever'],
-    // NOTE: this MUST be updated if an additional source is added for an indicator
-    // TODO: calculate dynamically
-    sourceCountMap: {
-      plhiv: 10,
-      aware: 2,
-      prev: 10,
-      newly: 18,
-      year: 15,
-      ever: 5,
-    },
     // calculatedIndicatorIds: ['undiagnosed'],
     indicatorDemographics: {
       ALL: R_ALL_DEMO_GROUPS,
@@ -2168,6 +2158,33 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'prev3',
+        [F.INDICATOR]: 'Adult prevalence (15+) (Percent) Female',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'prev4',
         [F.INDICATOR]: 'HIV Prevalence - female adults (15-49)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -2194,7 +2211,34 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'prev4',
+        id: 'prev5',
+        [F.INDICATOR]: 'Adult prevalence (15+) (Percent) Male',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'prev6',
         [F.INDICATOR]: 'HIV Prevalence - male adults (15-49)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -2241,7 +2285,35 @@ const getIndicatorMap = (isShiny) => {
       //   }
       // },
       {
-        id: 'prev5',
+        id: 'prev7',
+        [F.INDICATOR]: 'Adult prevalence (25-34) (Percent) Female',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          // console.log('!!!!! HIV Prevalence - females aged 25-34: ', results)
+          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'prev8',
         [F.INDICATOR]: 'HIV Prevalence - females aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -2269,7 +2341,35 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'prev6',
+        id: 'prev9',
+        [F.INDICATOR]: 'Adult prevalence (25-34) (Percent) Male',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          // console.log('!!!!! HIV Prevalence - males aged 25-34: ', results)
+          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'prev10',
         [F.INDICATOR]: 'HIV Prevalence - males aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -2297,7 +2397,35 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'prev7',
+        id: 'prev11',
+        [F.INDICATOR]: 'Adult prevalence (35-49) (Percent) Female',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          // console.log('!!!!! HIV Prevalence - females aged 35-49: ', results)
+          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'prev12',
         [F.INDICATOR]: 'HIV Prevalence - females aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -2325,7 +2453,35 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'prev8',
+        id: 'prev13',
+        [F.INDICATOR]: 'Adult prevalence (35-49) (Percent) Male',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          // console.log('!!!!! HIV Prevalence - males aged 35-49: ', results)
+          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'prev14',
         [F.INDICATOR]: 'HIV Prevalence - males aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -2353,7 +2509,35 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'prev9',
+        id: 'prev15',
+        [F.INDICATOR]: 'Adult prevalence (50+) (Percent) Female',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          // console.log('!!!!! HIV Prevalence - females aged 50+: ', results)
+          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'prev16',
         [F.INDICATOR]: 'HIV Prevalence - females aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -2381,7 +2565,35 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'prev10',
+        id: 'prev17',
+        [F.INDICATOR]: 'Adult prevalence (50+) (Percent) Male',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          // console.log('!!!!! HIV Prevalence - males aged 50+: ', results)
+          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'prev18',
         [F.INDICATOR]: 'HIV Prevalence - males aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
