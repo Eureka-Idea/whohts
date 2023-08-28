@@ -256,19 +256,12 @@ function getColumnChartCustomHeader(totalRow, averageRow, title) {
     [FIELD_MAP.SOURCE_DATABASE]: totalSource,
     [FIELD_MAP.YEAR]: totalYear,
   } = totalRow
-  // const tooltip = `Source: ${SOURCE_DISPLAY_MAP[source]||source}\nYear: ${year}`
 
   const {
     [FIELD_MAP.SOURCE_DATABASE]: averageSource,
     [FIELD_MAP.YEAR]: averageYear,
   } = averageRow
-  // const pTooltip = `Source: ${SOURCE_DISPLAY_MAP[pSource]||pSource}\nYear: ${pYear}`
 
-  // const formattedTotal = displayNumber({ v: total.value, unrounded: true })
-  // const adjustedPTotal = adjustPercentage({ row: pTotal, toDisplay: true, decimals: 1 })
-
-  // const subtitle = `<div><span title="${tooltip}"><b>Total tests</b>: ${formattedTotal||'N/A'}</span>
-  // <span title="${pTooltip}"><b>Average positivity</b>: ${adjustedPTotal||'N/A'}</span><br /><span>Programme data</span></div>`
   return {
     columnChartHeader: true,
     title,
@@ -449,7 +442,6 @@ const extractPrioritizedRangeData = ({
   data,
   indicatorIds,
   sourceCount,
-  sourceCountMap = {},
   indicatorRangeMap,
   mappedData = false,
   rangedField = 'year',
@@ -466,20 +458,15 @@ const extractPrioritizedRangeData = ({
     const mapper = mappedData ? _.mapValues : _.map
 
     result[ind] = mapper(ranges, (range, ri) => {
-      const count = sourceCountMap[ind] || sourceCount
+      const count =
+        // if no sourceCount provided (bc count varies by indicator), determine based on data provided
+        sourceCount || Object.keys(data).filter((k) => k.startsWith(ind)).length
 
-      for (let i = 1; i <= count + 2; i++) {
-        // go to count+2 in case sourceCountMap wasn't updated
+      for (let i = 1; i <= count; i++) {
         // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
         const selector = mappedData ? range : ri
         const indicatorResult = _.get(data, [ind + i, selector], null)
         if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
-          if (i > count) {
-            console.error(
-              '!!! Update sourceCountMap to reflect added sources to prevent data from being dropped !!!'
-            )
-          }
-
           return indicatorResult
         } else if (i === count) {
           _.setWith(result.missingIndicatorMap, [ind, range], true, Object)
@@ -2231,7 +2218,6 @@ const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
     indicatorIds,
     indicatorDemographics,
     indicatorDemographicsNoShiny,
-    sourceCountMap,
   } = CHARTS.GROUPS_TABLE
 
   const indicatorRangeMap = shinyCountry
@@ -2243,7 +2229,6 @@ const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
   const allData = extractPrioritizedRangeData({
     data,
     indicatorIds,
-    sourceCountMap,
     indicatorRangeMap,
     mappedData: true,
     rangedField: 'demo',
