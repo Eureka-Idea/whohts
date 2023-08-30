@@ -418,7 +418,10 @@ const extractPrioritizedData = (
 ) => {
   const result = { missingIndicators: [] }
   _.each(indicatorIds, (ind) => {
-    for (let i = 1; i <= sourceCount; i++) {
+    for (let i = 0; i <= sourceCount; i++) {
+      // see TODO-@*&
+      // sources.map(s => {
+      // const indicatorResult = _.get(data, ind + s.id, null)
       const indicatorResult = _.get(data, ind + i, null)
       if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
         result[ind] = indicatorResult

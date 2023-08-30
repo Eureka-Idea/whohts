@@ -167,7 +167,11 @@ class DemographicsTable extends Component {
 
                 const uid = `${dem.id}-${id}`
                 const tooltipId = 'tooltip-'+uid
-                
+                // console.log(
+                //   { data, source },
+                //   SOURCE_DISPLAY_MAP[source],
+                //   data.year
+                // )
                 let tooltip = (
                   <ReactTooltip id={tooltipId} className='td-tooltip' type='dark' effect='solid'>
                     {valueLower && <div>Lower bound: {valueLower}</div>}
@@ -200,16 +204,7 @@ class DemographicsTable extends Component {
   }
 
   getHiddenRows() {
-    const hiddenGroups = this.everyone.filter(dem => this.state[dem.id])
-    if (!hiddenGroups.length) {
-      // return null
-      // return (
-      //   <div className='hidden-rows'>
-      //     <b>No rows hidden </b>
-      //     <i>(click a row to hide)</i>
-      //   </div>
-      // )
-    }
+    const hiddenGroups = this.everyone.filter((dem) => this.state[dem.id])
 
     const title = hiddenGroups.length ? 
       (

@@ -164,14 +164,15 @@ const adultsGAM21 = {
       [F.VALUE_COMMENT]: 'validated',
     },
   },
+  // TODO-@*&: remove numbering to make maintenance easier. see TODO-@*&
   indicators: {
-    total1: 'Den Age-All',
-    men1: 'Den Age-Male Gte 15',
-    women1: 'Den Age-Female Gte 15',
+    total0: 'Den Age-All',
+    men0: 'Den Age-Male Gte 15',
+    women0: 'Den Age-Female Gte 15',
 
-    pTotal1: 'Per Age-All',
-    pMen1: 'Per Age-Male Gte 15',
-    pWomen1: 'Per Age-Female Gte 15',
+    pTotal0: 'Per Age-All',
+    pMen0: 'Per Age-Male Gte 15',
+    pWomen0: 'Per Age-Female Gte 15',
   },
 }
 const adultsGAM20 = {
@@ -356,15 +357,15 @@ const communityGAM21 = {
     },
   },
   indicators: {
-    total1: 'Den Community-Community All',
-    mobile1: 'Den Community-Community Mobile',
-    VCT1: 'Den Community-Community Vct',
-    other1: 'Den Community-Community Other',
+    total0: 'Den Community-Community All',
+    mobile0: 'Den Community-Community Mobile',
+    VCT0: 'Den Community-Community Vct',
+    other0: 'Den Community-Community Other',
 
-    pTotal1: 'Per Community-Community All',
-    pMobile1: 'Per Community-Community Mobile',
-    pVCT1: 'Per Community-Community Vct',
-    pOther1: 'Per Community-Community Other',
+    pTotal0: 'Per Community-Community All',
+    pMobile0: 'Per Community-Community Mobile',
+    pVCT0: 'Per Community-Community Vct',
+    pOther0: 'Per Community-Community Other',
   },
 }
 const communityGAM20 = {
@@ -457,19 +458,19 @@ const facilityGAM21 = {
     },
   },
   indicators: {
-    total1: 'Den Facility-Facility All',
-    PITC1: 'Den Facility-Facility Provider Init',
-    ANC1: 'Den Facility-Facility Anc',
-    VCT1: 'Den Facility-Facility Vct',
-    family1: 'Den Facility-Facility Fp Clinic',
-    other1: 'Den Facility-Facility Other',
+    total0: 'Den Facility-Facility All',
+    PITC0: 'Den Facility-Facility Provider Init',
+    ANC0: 'Den Facility-Facility Anc',
+    VCT0: 'Den Facility-Facility Vct',
+    family0: 'Den Facility-Facility Fp Clinic',
+    other0: 'Den Facility-Facility Other',
 
-    pTotal1: 'Per Facility-Facility All',
-    pPITC1: 'Per Facility-Facility Provider Init',
-    pANC1: 'Per Facility-Facility Anc',
-    pVCT1: 'Per Facility-Facility Vct',
-    pFamily1: 'Per Facility-Facility Fp Clinic',
-    pOther1: 'Per Facility-Facility Other',
+    pTotal0: 'Per Facility-Facility All',
+    pPITC0: 'Per Facility-Facility Provider Init',
+    pANC0: 'Per Facility-Facility Anc',
+    pVCT0: 'Per Facility-Facility Vct',
+    pFamily0: 'Per Facility-Facility Fp Clinic',
+    pOther0: 'Per Facility-Facility Other',
   },
 }
 const facilityGAM20 = {
@@ -1064,7 +1065,7 @@ const CHARTS = {
     },
   },
   FORECAST: {
-    title: 'Integrated HIV RDT forecast',
+    title: 'WHO Integrated HIV RDT forecast',
     id: 'FORECAST',
     sources: [forecastWME],
     indicatorIds: ['demand'],
@@ -1524,6 +1525,8 @@ const getIndicatorMap = (isShiny) => {
       return _.map(s.indicators, (indVal, indId) => {
         return _.extend({}, s.filters.ALL, s.filters[indId], {
           id: indId,
+          // see TODO-@*&
+          // id: indId + s.id,
           [F.INDICATOR]: indVal,
           [F.AREA_NAME]: 'NULL',
           [F.COUNTRY_ISO_CODE]: true,
