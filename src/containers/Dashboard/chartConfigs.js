@@ -2324,6 +2324,7 @@ const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
         [FIELD_MAP.VALUE_LOWER]: valueLower,
         [FIELD_MAP.VALUE_UPPER]: valueUpper,
         [FIELD_MAP.SOURCE_DATABASE]: source,
+        [FIELD_MAP.SOURCE_YEAR]: sourceYear,
         noData,
       } = indDemoData
 
@@ -2362,6 +2363,7 @@ const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
         source,
         year,
         noData,
+        sourceYear,
         ...vMap,
       }
       if (forExport) {

@@ -115,6 +115,17 @@ const SOURCE_DISPLAY_MAP = {
   ['World Bank List of Economies']: 'World Bank',
 }
 
+// adds in the source year, if provided
+const getSourceDisplayWithYear = ({ source, sourceYear }) => {
+  if (!SOURCE_DISPLAY_MAP[source]) return source
+
+  if (!sourceYear) return SOURCE_DISPLAY_MAP[source]
+
+  // NOTE: this assumes that if the source display name has a 4 digit number, it's a year 
+  // (and will be replaced with the source year)
+  return SOURCE_DISPLAY_MAP[source].replace(/\d{4}/, sourceYear)
+}
+
 const FIELD_MAP = {
   INDICATOR: 'indicator',
   INDICATOR_DESCRIPTION: 'indicator_description',
@@ -2085,7 +2096,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'aware2',
         [F.INDICATOR]: 'aware',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-        [F.YEAR]: '2022',
+        [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.INDICATOR_DESCRIPTION]: 'positive',
         [F.COUNTRY_ISO_CODE]: true,
@@ -3201,7 +3212,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year1',
         [F.INDICATOR]: 'tests_total',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-        [F.YEAR]: '2022',
+        [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.INDICATOR_DESCRIPTION]: 'all',
         [F.COUNTRY_ISO_CODE]: true,
@@ -3530,7 +3541,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'ever1',
         [F.INDICATOR]: 'evertest',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
-        [F.YEAR]: '2022',
+        [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -3823,6 +3834,7 @@ export {
   MALE,
   SOURCE_DB_MAP,
   SOURCE_DISPLAY_MAP,
+  getSourceDisplayWithYear,
   getIndicatorMap,
   isFemale,
 }
