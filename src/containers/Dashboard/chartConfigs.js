@@ -2166,34 +2166,42 @@ const getPolicyTable = (data, shinyCountry = false, forExport = false) => {
         rowName:
           'Laws requiring parental consent for adolescents to access HIV testing',
         value: _.get(age, [FIELD_MAP.VALUE_COMMENT]),
+        year: _.get(age, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Provider-initiated testing and counselling',
         value: _.get(provider, [FIELD_MAP.VALUE_COMMENT]),
+        year: _.get(provider, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Community-based testing and counselling',
         value: _.get(community, [FIELD_MAP.VALUE_COMMENT]),
+        year: _.get(community, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Lay provider testing',
         value: _.get(lay, [FIELD_MAP.VALUE_COMMENT]),
+        year: _.get(lay, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Self-testing',
         value: _.get(hivst, [FIELD_MAP.VALUE_COMMENT]),
+        year: _.get(hivst, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Assisted partner notification',
         value: _.get(assisted, [FIELD_MAP.VALUE_COMMENT]),
+        year: _.get(assisted, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Social network-based HIV testing',
         value: _.get(social, [FIELD_MAP.VALUE_COMMENT]),
+        year: _.get(social, [FIELD_MAP.YEAR]),
       },
       {
         rowName: '3-test strategy/algorithm for an HIV-positive diagnosis used',
         value: _.get(compliance, [FIELD_MAP.VALUE_COMMENT]),
+        year: _.get(compliance, [FIELD_MAP.YEAR]),
       },
       // {
       //   rowName: 'Verification testing before ART',
@@ -2203,11 +2211,13 @@ const getPolicyTable = (data, shinyCountry = false, forExport = false) => {
         rowName:
           'Dual HIV/syphilis rapid diagnostic tests for pregnant women in antenatal care',
         value: _.get(antenatal, [FIELD_MAP.VALUE_COMMENT]),
+        year: _.get(antenatal, [FIELD_MAP.YEAR]),
       },
       {
         rowName:
           'Dual HIV/syphilis rapid diagnostic tests for any key population group',
         value: _.get(dual, [FIELD_MAP.VALUE_COMMENT]),
+        year: _.get(dual, [FIELD_MAP.YEAR]),
       },
     ],
   }
