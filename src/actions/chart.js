@@ -33,21 +33,20 @@ const debugList = {
   // [CHARTS.P95.id]: true,
   // [CHARTS.CONTEXT.id]: true,
   // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
-  // [CHARTS.PREVALENCE.id]: true,
+  [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.PREGNANCY.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
   // [CHARTS.GROUPS_TABLE.id]: true,
-  [CHARTS.POLICY_TABLE.id]: true,
+  // [CHARTS.POLICY_TABLE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
-  // [CHARTS.ADULTS.id]: true,
-  // [CHARTS.COMMUNITY.id]: true,
-  // [CHARTS.FACILITY.id]: true,
-  // [CHARTS.FORECAST.id]: true,
+  [CHARTS.ADULTS.id]: true,
+  [CHARTS.COMMUNITY.id]: true,
+  [CHARTS.FACILITY.id]: true,
   // [CHARTS.INDEX.id]: true,
   // [CHARTS.PLHIV_AGE.id]: true,
   // [CHARTS.PLHIV_SEX.id]: true,
-  // [CHARTS.SELF_TESTS.id]: true,
+  [CHARTS.SELF_TESTS.id]: true,
   // [CHARTS.FORECAST.id]: true,
 }
 // like the above, but to mark charts to omit
@@ -96,7 +95,10 @@ export const getChartData = (countryCode) => (dispatch) => {
           } else if (indicator[FIELD_MAP.INDICATOR] !== 'Income Group') {
             // unless we want a specific area name, every query should request national-level data
             // Income Group rows lists region (Sub-Saharan Africa) for area name, so skip those
-            chartValue = chartValue || 'NULL'
+            console.log({ chartValue }, chartValue === undefined)
+            if (chartValue === undefined) {
+              chartValue = 'NULL'
+            }
           }
         }
 
