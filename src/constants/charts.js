@@ -149,6 +149,7 @@ const FIELD_MAP = {
   MODALITY_CATEGORY: 'modality_category',
   VALUE_UPPER: 'value_upper',
   VALUE_LOWER: 'value_lower',
+  IMPORT_FILE: 'import_file',
 }
 const F = FIELD_MAP
 const CSV_FIELDS = [
@@ -615,7 +616,7 @@ const selfGAM20 = {
     },
   },
   indicators: {
-    distributed1: 'Self Test Distributed-Data Value',
+    distributed2: 'Self Test Distributed-Data Value',
   },
 }
 const selfGAM19 = {
@@ -626,7 +627,7 @@ const selfGAM19 = {
     },
   },
   indicators: {
-    distributed2: 'HIVSTs distributed',
+    distributed3: 'HIVSTs distributed',
   },
 }
 const selfNPD19 = {
@@ -638,7 +639,7 @@ const selfNPD19 = {
   },
   indicators: {
     // same as GAM19
-    distributed3: 'HIVSTs distributed',
+    distributed4: 'HIVSTs distributed',
   },
 }
 const selfPEPFAR = {
@@ -649,7 +650,7 @@ const selfPEPFAR = {
     },
   },
   indicators: {
-    distributed4: 'HIV self-tests distributed',
+    distributed5: 'HIV self-tests distributed',
   },
 }
 const forecastWME = {
@@ -975,7 +976,7 @@ const CHARTS = {
       // 15+
       plhiv: 'People living with HIV - adults (aged 15+)',
       onArt: 'People receiving antiretroviral therapy',
-      population: 'Population - people aged 15+',
+      population: 'Population aged 15+ Male+Female',
     },
   },
   PREGNANCY: {
@@ -1408,7 +1409,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {
@@ -1427,7 +1428,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {
@@ -1439,7 +1440,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'population',
         [F.INDICATOR]: C.PREVALENCE.indicators.population,
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {

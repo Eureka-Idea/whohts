@@ -185,7 +185,7 @@ function sourceTooltipFormatter() {
       ? ''
       : `
   Year: <b>${this.year}</b><br/>
-  Source: <b>${this.source}</b>
+  Source: <b>${this.source}</b><br/>
 `
   console.log(this.mismatched, this.year, this.source)
   return `
