@@ -2910,6 +2910,33 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'newly5',
+        [F.INDICATOR]: 'New HIV infections (15-24) Female',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'newly6',
         [F.INDICATOR]: 'New HIV Infections - females aged 15-24',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -2936,7 +2963,34 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly6',
+        id: 'newly7',
+        [F.INDICATOR]: 'New HIV infections (15-24) Male',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'newly8',
         [F.INDICATOR]: 'New HIV Infections - males aged 15-24',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -2962,76 +3016,8 @@ const getIndicatorMap = (isShiny) => {
           return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
         },
       },
-      // {
-      //   id: 'newly5',
-      //   [F.INDICATOR]: 'New HIV Infections  25-34 ; Female',
-      //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   [F.AREA_NAME]: 'NULL',
-      //   [F.COUNTRY_ISO_CODE]: true,
-      //   getter: results => {
-      //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
-      //       // debugger
-      //       console.warn(`**LOOKOUT! Taking highest year result for:
-      //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-      //       `, 'rs:', results)
-
-      //     }
-      //     return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-      //   }
-      // },
-      // {
-      //   id: 'newly6',
-      //   [F.INDICATOR]: 'New HIV Infections  25-34 ; Male',
-      //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   [F.AREA_NAME]: 'NULL',
-      //   [F.COUNTRY_ISO_CODE]: true,
-      //   getter: results => {
-      //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
-      //       // debugger
-      //       console.warn(`**LOOKOUT! Taking highest year result for:
-      //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-      //       `, 'rs:', results)
-
-      //     }
-      //     return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-      //   }
-      // },
-      // {
-      //   id: 'newly7',
-      //   [F.INDICATOR]: 'New HIV Infections  35-49 ; Female',
-      //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   [F.AREA_NAME]: 'NULL',
-      //   [F.COUNTRY_ISO_CODE]: true,
-      //   getter: results => {
-      //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
-      //       // debugger
-      //       console.warn(`**LOOKOUT! Taking highest year result for:
-      //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-      //       `, 'rs:', results)
-
-      //     }
-      //     return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-      //   }
-      // },
-      // {
-      //   id: 'newly8',
-      //   [F.INDICATOR]: 'New HIV Infections  35-49 ; Male',
-      //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   [F.AREA_NAME]: 'NULL',
-      //   [F.COUNTRY_ISO_CODE]: true,
-      //   getter: results => {
-      //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
-      //       // debugger
-      //       console.warn(`**LOOKOUT! Taking highest year result for:
-      //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-      //       `, 'rs:', results)
-
-      //     }
-      //     return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-      //   }
-      // },
       {
-        id: 'newly7',
+        id: 'newly9',
         [F.INDICATOR]: 'New infections by age 25-34 ; Female',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.AREA_NAME]: 'NULL',
@@ -3058,7 +3044,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly8',
+        id: 'newly10',
         [F.INDICATOR]: 'New HIV Infections - females aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -3086,7 +3072,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly9',
+        id: 'newly11',
         [F.INDICATOR]: 'New infections by age 25-34 ; Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.AREA_NAME]: 'NULL',
@@ -3113,7 +3099,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly10',
+        id: 'newly12',
         [F.INDICATOR]: 'New HIV Infections - males aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -3140,7 +3126,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly11',
+        id: 'newly13',
         [F.INDICATOR]: 'New infections by age 35-49 ; Female',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.AREA_NAME]: 'NULL',
@@ -3168,7 +3154,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly12',
+        id: 'newly14',
         [F.INDICATOR]: 'New HIV Infections - females aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -3196,7 +3182,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly13',
+        id: 'newly15',
         [F.INDICATOR]: 'New infections by age 35-49 ; Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.AREA_NAME]: 'NULL',
@@ -3223,7 +3209,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly14',
+        id: 'newly16',
         [F.INDICATOR]: 'New HIV Infections - males aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -3250,7 +3236,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly15',
+        id: 'newly17',
         [F.INDICATOR]: 'New HIV infections (50+) Female',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.AREA_NAME]: 'NULL',
@@ -3277,7 +3263,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly16',
+        id: 'newly18',
         [F.INDICATOR]: 'New HIV Infections - females aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
@@ -3304,7 +3290,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly17',
+        id: 'newly19',
         [F.INDICATOR]: 'New HIV infections (50+) Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.AREA_NAME]: 'NULL',
@@ -3331,7 +3317,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'newly18',
+        id: 'newly20',
         [F.INDICATOR]: 'New HIV Infections - males aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
