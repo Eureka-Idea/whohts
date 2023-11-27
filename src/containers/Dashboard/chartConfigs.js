@@ -423,7 +423,7 @@ const extractPrioritizedData = (
       // sources.map(s => {
       // const indicatorResult = _.get(data, ind + s.id, null)
       const indicatorResult = _.get(data, ind + i, null)
-      if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
+      if (indicatorResult && indicatorResult[FIELD_MAP.VALUE] !== undefined) {
         result[ind] = indicatorResult
         break
       } else if (i === sourceCount) {
@@ -441,10 +441,11 @@ const extractPrioritizedData = (
   return result
 }
 
+const parseIndRank = (s) => parseFloat(s.replace(/[^0-9]/g, ''))
+
 const extractPrioritizedRangeData = ({
   data,
   indicatorIds,
-  sourceCount,
   indicatorRangeMap,
   mappedData = false,
   rangedField = 'year',
@@ -461,30 +462,28 @@ const extractPrioritizedRangeData = ({
     const mapper = mappedData ? _.mapValues : _.map
 
     result[ind] = mapper(ranges, (range, ri) => {
-      const count =
-        // if no sourceCount provided (bc count varies by indicator), determine based on data provided
-        sourceCount || Object.keys(data).filter((k) => k.startsWith(ind)).length
+      const selector = mappedData ? range : ri
+      const indKeys = Object.keys(data)
+        .filter((k) => k.startsWith(ind))
+        .sort((k1, k2) => parseIndRank(k1) > parseIndRank(k2))
 
-      for (let i = 1; i <= count; i++) {
-        // eg _.get({ ind1: [ 3, null ], ind2: [1, 5] }, ['ind'+2, 1]) => 5
-        const selector = mappedData ? range : ri
-        const indicatorResult = _.get(data, [ind + i, selector], null)
-        if (indicatorResult && indicatorResult[FIELD_MAP.VALUE]) {
-          return indicatorResult
-        } else if (i === count) {
-          _.setWith(result.missingIndicatorMap, [ind, range], true, Object)
-          return {
-            value: null,
-            [rangedField]: range,
-            noData: true,
-            [FIELD_MAP.SOURCE_DATABASE]: 'N/A',
-            [FIELD_MAP.YEAR]: rangedField === 'year' ? range : 'N/A',
-          }
-        }
+      for (let i = 0; i < indKeys.length; i++) {
+        const indKey = indKeys[i]
+        const indResult = _.get(data, [indKey, selector])
+        if (indResult !== undefined) return indResult
+      }
+
+      // nothing found for the indicator
+      _.setWith(result.missingIndicatorMap, [ind, range], true, Object)
+      return {
+        value: null,
+        [rangedField]: range,
+        noData: true,
+        [FIELD_MAP.SOURCE_DATABASE]: 'N/A',
+        [FIELD_MAP.YEAR]: rangedField === 'year' ? range : 'N/A',
       }
     })
   })
-
   return result
 }
 
@@ -1803,12 +1802,11 @@ const getIndex = (data, shinyCountry = false, forExport = false) => {
 }
 
 const getSelfTests = (data, shinyCountry = false, forExport = false) => {
-  const { title, indicatorIds, indicatorYears, sources } = CHARTS.SELF_TESTS
+  const { title, indicatorIds, indicatorYears } = CHARTS.SELF_TESTS
 
   const { distributed, missingIndicatorMap } = extractPrioritizedRangeData({
     data,
     indicatorIds,
-    sourceCount: sources.length,
     indicatorRangeMap: indicatorYears,
   })
 
@@ -1908,12 +1906,11 @@ const getSelfTests = (data, shinyCountry = false, forExport = false) => {
 }
 
 const getForecast = (data, shinyCountry = false, forExport = false) => {
-  const { title, indicatorIds, indicatorYears, sources } = CHARTS.FORECAST
+  const { title, indicatorIds, indicatorYears } = CHARTS.FORECAST
 
   const extractedData = extractPrioritizedRangeData({
     data,
     indicatorIds,
-    sourceCount: sources.length,
     indicatorRangeMap: indicatorYears,
   })
 
@@ -2238,7 +2235,6 @@ const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
     : indicatorDemographicsNoShiny
 
   // const indicatorIds = ['year']
-
   const allData = extractPrioritizedRangeData({
     data,
     indicatorIds,
