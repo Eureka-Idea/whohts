@@ -1716,8 +1716,8 @@ const getIndicatorMap = (isShiny) => {
       // ESTIMATED NUMBER OF PLHIV
       {
         id: 'plhiv1',
-        [F.INDICATOR]: 'People living with HIV - female adults (aged 15+)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.INDICATOR]: 'HIV population (15+) Female',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -1743,8 +1743,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'plhiv2',
-        [F.INDICATOR]: 'People living with HIV - male adults (aged 15+)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.INDICATOR]: 'HIV population (15+) Male',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -1770,254 +1770,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'plhiv3',
-        [F.INDICATOR]: 'People living with HIV - females aged 15-24',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
-        },
-      },
-      {
-        id: 'plhiv4',
-        [F.INDICATOR]: 'People living with HIV - males aged 15-24',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
-        },
-      },
-      // {
-      //   id: 'plhiv5',
-      //   [F.INDICATOR]: 'People living with HIV  25-34 ; Female',
-      //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   [F.AREA_NAME]: 'NULL',
-      //   [F.COUNTRY_ISO_CODE]: true,
-      //   getter: results => {
-      //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
-      //       // debugger
-      //       console.warn(`**LOOKOUT! Taking highest year result for:
-      //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-      //       `,'rs:', results)
-
-      //     }
-      //     return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-      //   }
-      // },
-      // {
-      //   id: 'plhiv6',
-      //   [F.INDICATOR]: 'People living with HIV  25-34 ; Male',
-      //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   [F.AREA_NAME]: 'NULL',
-      //   [F.COUNTRY_ISO_CODE]: true,
-      //   getter: results => {
-      //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
-      //       // debugger
-      //       console.warn(`**LOOKOUT! Taking highest year result for:
-      //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-      //       `,'rs:', results)
-
-      //     }
-      //     return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-      //   }
-      // },
-      // {
-      //   id: 'plhiv7',
-      //   [F.INDICATOR]: 'People living with HIV  35-49 ; Female',
-      //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   [F.AREA_NAME]: 'NULL',
-      //   [F.COUNTRY_ISO_CODE]: true,
-      //   getter: results => {
-      //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
-      //       // debugger
-      //       console.warn(`**LOOKOUT! Taking highest year result for:
-      //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-      //       `,'rs:', results)
-
-      //     }
-      //     return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-      //   }
-      // },
-      // {
-      //   id: 'plhiv8',
-      //   [F.INDICATOR]: 'People living with HIV  35-49 ; Male',
-      //   [F.SOURCE_DATABASE]: SOURCE_DB_MAP.UNAIDS,
-      //   [F.AREA_NAME]: 'NULL',
-      //   [F.COUNTRY_ISO_CODE]: true,
-      //   getter: results => {
-      //     if (results.length > 1 && (_.uniqBy(results, 'year').length !== results.length)) {
-      //       // debugger
-      //       console.warn(`**LOOKOUT! Taking highest year result for:
-      //       `, results[0].indicator, 'R:', _.maxBy(results, 'year'), `
-      //       `,'rs:', results)
-
-      //     }
-      //     return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-      //   }
-      // },
-      {
-        id: 'plhiv5',
-        [F.INDICATOR]: 'People living with HIV - females aged 25-34',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          console.log(
-            '!!!!! People living with HIV - females aged 25-34: ',
-            results
-          )
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-        },
-      },
-      {
-        id: 'plhiv6',
-        [F.INDICATOR]: 'People living with HIV - males aged 25-34',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          console.log(
-            '!!!!! People living with HIV - males aged 25-34: ',
-            results
-          )
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
-        },
-      },
-      {
-        id: 'plhiv7',
-        [F.INDICATOR]: 'People living with HIV - females aged 35-49',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          console.log(
-            '!!!!! People living with HIV - females aged 35-49: ',
-            results
-          )
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-        },
-      },
-      {
-        id: 'plhiv8',
-        [F.INDICATOR]: 'People living with HIV - males aged 35-49',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          console.log(
-            '!!!!! People living with HIV - males aged 35-49: ',
-            results
-          )
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
-        },
-      },
-      {
-        id: 'plhiv9',
-        [F.INDICATOR]: 'People living with HIV - females aged 50+',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.INDICATOR]: 'HIV population (50+) Female',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2042,9 +1796,9 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'plhiv10',
-        [F.INDICATOR]: 'People living with HIV - males aged 50+',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        id: 'plhiv4',
+        [F.INDICATOR]: 'HIV population (50+) Male',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2066,6 +1820,392 @@ const getIndicatorMap = (isShiny) => {
             )
           }
           return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv5',
+        [F.INDICATOR]: 'People living with HIV - female adults (aged 15+)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv6',
+        [F.INDICATOR]: 'People living with HIV - male adults (aged 15+)',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv7',
+        [F.INDICATOR]: 'People living with HIV - females aged 15-24',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv8',
+        [F.INDICATOR]: 'People living with HIV - males aged 15-24',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv9',
+        [F.INDICATOR]: 'People living with HIV - females aged 25-34',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+
+          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv10',
+        [F.INDICATOR]: 'People living with HIV - males aged 25-34',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+
+          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv11',
+        [F.INDICATOR]: 'People living with HIV - females aged 35-49',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+
+          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv12',
+        [F.INDICATOR]: 'People living with HIV - males aged 35-49',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+
+          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv13',
+        [F.INDICATOR]: 'People living with HIV - females aged 50+',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv14',
+        [F.INDICATOR]: 'People living with HIV - males aged 50+',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv15',
+        [F.INDICATOR]: 'People living with HIV - females aged 25-34',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+
+          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv16',
+        [F.INDICATOR]: 'People living with HIV - males aged 25-34',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+
+          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv17',
+        [F.INDICATOR]: 'People living with HIV - females aged 35-49',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+
+          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'plhiv18',
+        [F.INDICATOR]: 'People living with HIV - males aged 35-49',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+
+          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
       // [ UNDIAGNOSED PLHIV = (1 - PLHIV WHO KNOW STATUS) * ESTIMATED # PLHIV]
@@ -2323,7 +2463,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - females aged 25-34: ', results)
           return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2351,7 +2490,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - females aged 25-34: ', results)
           return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2379,7 +2517,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - males aged 25-34: ', results)
           return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2407,7 +2544,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - males aged 25-34: ', results)
           return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2435,7 +2571,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - females aged 35-49: ', results)
           return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2463,7 +2598,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - females aged 35-49: ', results)
           return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2491,7 +2625,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - males aged 35-49: ', results)
           return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2519,7 +2652,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - males aged 35-49: ', results)
           return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2547,7 +2679,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - females aged 50+: ', results)
           return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2575,7 +2706,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - females aged 50+: ', results)
           return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2603,7 +2733,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - males aged 50+: ', results)
           return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2631,7 +2760,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! HIV Prevalence - males aged 50+: ', results)
           return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2919,10 +3047,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log(
-            '!!!!! new HIV infections - females aged 25-34: ',
-            results
-          )
+
           return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2950,7 +3075,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! new HIV infections - males aged 25-34: ', results)
           return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
         },
       },
@@ -2978,7 +3102,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! new HIV infections - males aged 25-34: ', results)
           return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
         },
       },
@@ -3006,10 +3129,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log(
-            '!!!!! new HIV infections - females aged 35-49: ',
-            results
-          )
+
           return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
@@ -3037,10 +3157,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          console.log(
-            '!!!!! new HIV infections - females aged 35-49: ',
-            results
-          )
+
           return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
@@ -3068,7 +3185,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! new HIV infections - males aged 35-49: ', results)
           return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
@@ -3096,7 +3212,6 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          // console.log('!!!!! new HIV infections - males aged 35-49: ', results)
           return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
         },
       },
