@@ -473,36 +473,75 @@ class Dashboard extends Component {
   }
   
   render() {
-
     const ptt = (
       <Tooltip>
         <div>
           <p>
-            For countries with estimates from the Shiny90 model, the proportion of new diagnoses out of all positive tests is calculated for countries with annual data on the number adults tested and the number testing positive. 
+            For countries with estimates from the Shiny90 model, the proportion
+            of new diagnoses out of all positive tests is calculated for
+            countries with annual data on the number adults tested and the
+            number testing positive.
           </p>
 
           <p>
-            The Shiny90 model uses household surveys and HTS program data to estimate the rates of HIV testing among adults not living with HIV and those living with HIV. HIV testing rates are assumed to vary with calendar time, sex, age, previous HIV testing status, awareness of status, and, for PLHIV, CD4 cell count category as a marker of risk of AIDS-related symptoms motivating care-seeking and HIV testing. The proportion of PLHIV who know their status estimated by Shiny90 is bound by ART coverage (minimum) and the proportion of PLHIV who have ever been tested and received the results (maximum). 
+            The Shiny90 model uses household surveys and HTS program data to
+            estimate the rates of HIV testing among adults not living with HIV
+            and those living with HIV. HIV testing rates are assumed to vary
+            with calendar time, sex, age, previous HIV testing status, awareness
+            of status, and, for PLHIV, CD4 cell count category as a marker of
+            risk of AIDS-related symptoms motivating care-seeking and HIV
+            testing. The proportion of PLHIV who know their status estimated by
+            Shiny90 is bound by ART coverage (minimum) and the proportion of
+            PLHIV who have ever been tested and received the results (maximum).
           </p>
 
           <p>
-            In addition to estimating the number of new diagnoses, the proportion of HIV positive tests that are retests is produced as a model output. This retesting proportion of all positive tests is large when the cumulative number of positive HIV tests is greater than the number of estimated PLHIV  that are undiagnosed, including those that are newly infected. The model calculates the proportion of diagnosed PLHIV who retest using a time-varying retesting rate ratio that is based on empirical evidence showing that retesting among PLHIV with known HIV status is common, ranging from 13% to 68% in many countries in SSA. Retesting among those who have already tested positive can be motivated by multiple factors, including the desire to confirm a previous test result or to avoid disclosing prior knowledge of HIV positive status when re-engaging with care after being lost to follow up due to societal stigma or denial. 
+            In addition to estimating the number of new diagnoses, the
+            proportion of HIV positive tests that are retests is produced as a
+            model output. This retesting proportion of all positive tests is
+            large when the cumulative number of positive HIV tests is greater
+            than the number of estimated PLHIV that are undiagnosed, including
+            those that are newly infected. The model calculates the proportion
+            of diagnosed PLHIV who retest using a time-varying retesting rate
+            ratio that is based on empirical evidence showing that retesting
+            among PLHIV with known HIV status is common, ranging from 13% to 68%
+            in many countries in SSA. Retesting among those who have already
+            tested positive can be motivated by multiple factors, including the
+            desire to confirm a previous test result or to avoid disclosing
+            prior knowledge of HIV positive status when re-engaging with care
+            after being lost to follow up due to societal stigma or denial.
           </p>
 
           <p>
-            For more details on the methods for calculating and interpreting retesting proportions from the Shiny90 model, see <a href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx' target='_blank'>Maheu-Giroux, M. et al. (2019) AIDS v33 p S255</a> and <a href='https://www.medrxiv.org/content/10.1101/2020.10.20.20216283v1' target='_blank'>Giguère, K. et al. (2020) preprint</a>.
+            For more details on the methods for calculating and interpreting
+            retesting proportions from the Shiny90 model, see{' '}
+            <a
+              href="https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx"
+              target="_blank"
+            >
+              Maheu-Giroux, M. et al. (2019) AIDS v33 p S255
+            </a>{' '}
+            and{' '}
+            <a
+              href="https://www.medrxiv.org/content/10.1101/2020.10.20.20216283v1"
+              target="_blank"
+            >
+              Giguère, K. et al. (2020) preprint
+            </a>
+            .
           </p>
         </div>
       </Tooltip>
     )
-    
+
     const diagnosis = this.getChart(CHARTS.PLHIV_DIAGNOSIS.id)
     const PLHIVAge = this.getChart(CHARTS.PLHIV_AGE.id)
     const PLHIVSex = this.getChart(CHARTS.PLHIV_SEX.id)
     const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
     const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
     const prevalence = this.getChart(CHARTS.PREVALENCE.id)
-    const pregnancy = this.getChart(CHARTS.PREGNANCY.id)
+    // deactivate pregnancy chart
+    // const pregnancy = this.getChart(CHARTS.PREGNANCY.id)
     const adults = this.getChart(CHARTS.ADULTS.id)
     const community = this.getChart(CHARTS.COMMUNITY.id)
     const facility = this.getChart(CHARTS.FACILITY.id)
@@ -580,7 +619,7 @@ class Dashboard extends Component {
             {negative}
             {positive}
             {prevalence}
-            {pregnancy}
+            {/* {pregnancy} */}
             <div className="col-12 mt-2">&nbsp;</div>
             {adults}
             {community}

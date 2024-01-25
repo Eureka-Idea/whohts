@@ -979,15 +979,15 @@ const CHARTS = {
       population: 'Population aged 15+ Male+Female',
     },
   },
-  PREGNANCY: {
-    title: 'Pregnant women',
-    yearRange: R_2015_2019,
-    id: 'PREGNANCY',
-    indicators: {
-      perAnc: 'PerctestedANC',
-      perPregKnown: 'HIV testing in pregnant women',
-    },
-  },
+  // PREGNANCY: {
+  //   title: 'Pregnant women',
+  //   yearRange: R_2015_2019,
+  //   id: 'PREGNANCY',
+  //   indicators: {
+  //     perAnc: 'PerctestedANC',
+  //     perPregKnown: 'HIV testing in pregnant women',
+  //   },
+  // },
 
   ADULTS: {
     title: 'HIV tests conducted and positivity, by sex',
@@ -1212,7 +1212,7 @@ const ALL_CHARTS = [
   C.HIV_NEGATIVE,
   C.HIV_POSITIVE,
   C.PREVALENCE,
-  C.PREGNANCY,
+  // C.PREGNANCY,
   C.ADULTS,
   C.COMMUNITY,
   C.FACILITY,
@@ -1350,7 +1350,7 @@ const getIndicatorMap = (isShiny) => {
       id: k,
       [F.INDICATOR]: v,
       [F.AGE]: '15+',
-      // [F.SEX]: 'NULL',
+      [F.SEX]: 'NULL',
       [F.AREA_NAME]: 'NULL',
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
       [F.COUNTRY_ISO_CODE]: true,
@@ -1449,36 +1449,36 @@ const getIndicatorMap = (isShiny) => {
         },
       },
     ],
-    [C.PREGNANCY.id]: [
-      {
-        id: 'perAnc',
-        [F.INDICATOR]: C.PREGNANCY.indicators.perAnc,
-        // [F.AGE]: '15+',
-        // [F.SEX]: 'NULL',
-        [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WGHO,
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          return C.PREGNANCY.yearRange.map((y) => {
-            return _.find(results, (r) => r.year === y)
-          })
-        },
-      },
-      {
-        id: 'perPregKnown',
-        [F.INDICATOR]: C.PREGNANCY.indicators.perPregKnown,
-        // [F.AGE]: '15+',
-        // [F.SEX]: 'NULL',
-        [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          return C.PREGNANCY.yearRange.map((y) => {
-            return _.find(results, (r) => r.year === y)
-          })
-        },
-      },
-    ],
+    // [C.PREGNANCY.id]: [
+    //   {
+    //     id: 'perAnc',
+    //     [F.INDICATOR]: C.PREGNANCY.indicators.perAnc,
+    //     // [F.AGE]: '15+',
+    //     // [F.SEX]: 'NULL',
+    //     [F.AREA_NAME]: 'NULL',
+    //     [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WGHO,
+    //     [F.COUNTRY_ISO_CODE]: true,
+    //     getter: (results) => {
+    //       return C.PREGNANCY.yearRange.map((y) => {
+    //         return _.find(results, (r) => r.year === y)
+    //       })
+    //     },
+    //   },
+    //   {
+    //     id: 'perPregKnown',
+    //     [F.INDICATOR]: C.PREGNANCY.indicators.perPregKnown,
+    //     // [F.AGE]: '15+',
+    //     // [F.SEX]: 'NULL',
+    //     [F.AREA_NAME]: 'NULL',
+    //     [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
+    //     [F.COUNTRY_ISO_CODE]: true,
+    //     getter: (results) => {
+    //       return C.PREGNANCY.yearRange.map((y) => {
+    //         return _.find(results, (r) => r.year === y)
+    //       })
+    //     },
+    //   },
+    // ],
     [C.ADULTS.id]: _.flatMap(C.ADULTS.sources, (s) => {
       return _.map(s.indicators, (indVal, indId) => {
         return _.extend({}, s.filters.ALL, s.filters[indId], {
