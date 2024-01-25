@@ -3,7 +3,7 @@ import ReactTooltip from 'react-tooltip';
 import _ from 'lodash'
 import './styles.css'
 import Tooltip from '../Tooltip'
-import { AGE_MAP, SOURCE_DISPLAY_MAP } from '../../constants/charts'
+import { AGE_MAP, getSourceDisplayWithYear } from '../../constants/charts'
 
 const indicators = [
   { 
@@ -163,16 +163,32 @@ class DemographicsTable extends Component {
               
               {indicators.map(({ id }) => {
                 const data = _.get(this.props.config, ['dataMap', dem.id, id], {})
-                const { value, valueUpper, valueLower, source, year, noData } = data
+                const {
+                  value,
+                  valueUpper,
+                  valueLower,
+                  source,
+                  year,
+                  noData,
+                  sourceYear,
+                } = data
 
                 const uid = `${dem.id}-${id}`
-                const tooltipId = 'tooltip-'+uid
-                
+                const tooltipId = 'tooltip-' + uid
+
                 let tooltip = (
-                  <ReactTooltip id={tooltipId} className='td-tooltip' type='dark' effect='solid'>
+                  <ReactTooltip
+                    id={tooltipId}
+                    className="td-tooltip"
+                    type="dark"
+                    effect="solid"
+                  >
                     {valueLower && <div>Lower bound: {valueLower}</div>}
                     {valueUpper && <div>Upper bound: {valueUpper}</div>}
-                    <div>Source: {SOURCE_DISPLAY_MAP[source]||source}</div>
+                    {/* <div>Source: {SOURCE_DISPLAY_MAP[source]||source}</div> */}
+                    <div>
+                      Source: {getSourceDisplayWithYear({ source, sourceYear })}
+                    </div>
                     <div>Year: {year}</div>
                   </ReactTooltip>
                 )
@@ -200,16 +216,7 @@ class DemographicsTable extends Component {
   }
 
   getHiddenRows() {
-    const hiddenGroups = this.everyone.filter(dem => this.state[dem.id])
-    if (!hiddenGroups.length) {
-      // return null
-      // return (
-      //   <div className='hidden-rows'>
-      //     <b>No rows hidden </b>
-      //     <i>(click a row to hide)</i>
-      //   </div>
-      // )
-    }
+    const hiddenGroups = this.everyone.filter((dem) => this.state[dem.id])
 
     const title = hiddenGroups.length ? 
       (

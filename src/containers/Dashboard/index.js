@@ -167,68 +167,72 @@ class Dashboard extends Component {
       return
     }
 
-    const [status, art, suppression] = config.map(n => 
-      Math.round((n)*100)
-    )
+    // const [status, art, suppression] = config.map(n =>
+    //   Math.round((n)*100)
+    // )
 
     const tooltipId = this.props.chartData.countryCode + 'p95-tooltip'
-    
+
     const tooltip = (
-      <ReactTooltip id={tooltipId} className='td-tooltip' type='dark' effect='solid'>
+      <ReactTooltip
+        id={tooltipId}
+        className="td-tooltip"
+        type="dark"
+        effect="solid"
+      >
         <div>Source: {config.source}</div>
         <div>Year: {config.year}</div>
       </ReactTooltip>
     )
 
     const getBoxes = (xl) => {
-
       return (
         <NestedBoxes
           // circle={true}
           classes={xl ? 'xl' : ''}
           title={title}
-          bufferRatio={xl ? .8 : .2}
+          bufferRatio={xl ? 0.8 : 0.2}
           lineHeight={xl ? 1.4 : 1.1}
-          textBufferRatio={.2}
+          textBufferRatio={0.2}
           firstSide={20}
           horizontal={xl}
           ratios={config}
           colors={[P95ColorA, P95ColorB, P95ColorC, P95ColorD]}
           content={[
             {
-              inner: status,
-              below: [
-                'of people living with',
-                'HIV know their status'
-              ]
+              // inner: status,
+              below: ['of people living with', 'HIV know their status'],
             },
             {
-              inner: art,
+              // inner: art,
               below: [
                 'of people living with',
                 'HIV who know their status',
-                'are on treatment'
-              ]
+                'are on treatment',
+              ],
             },
             {
-              inner: suppression,
-              below: [
-                'of people on treatment',
-                'are virally suppressed'
-              ]
+              // inner: suppression,
+              below: ['of people on treatment', 'are virally suppressed'],
             },
           ]}
         />
       )
     }
-    
+
     return (
-      <div className='col-xl-7 col-md-6 col-xs-12 prog-95'>
-        <div className='card-stock'>
-          <div className='content'>
-            <p className='title vertical'>{title}</p>
-            <p className='title stacked'>Progress<br/>towards<br/>95-95-95</p>
-            <p className='title xl'>{title}</p>
+      <div className="col-xl-7 col-md-6 col-xs-12 prog-95">
+        <div className="card-stock">
+          <div className="content">
+            <p className="title vertical">{title}</p>
+            <p className="title stacked">
+              Progress
+              <br />
+              towards
+              <br />
+              95-95-95
+            </p>
+            <p className="title xl">{title}</p>
             <a data-tip data-for={tooltipId}>
               {getBoxes()}
               {getBoxes(true)}
@@ -376,44 +380,78 @@ class Dashboard extends Component {
 
   getResourcesSection() {
     return (
-      <div className='row resources-section'>
-
-        <div className='col-12'>
+      <div className="row resources-section">
+        <div className="col-12">
           <h3>Links to other sources</h3>
-          <div className='sources'>
+          <div className="sources">
             {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
               Shiny 90 Modelling Methodology
             </a> */}
-            <a target='_blank' rel='noopener noreferrer' href='https://cfs.hivci.org/'>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://cfs.hivci.org/"
+            >
               WHO HIV Country Profiles
             </a>
-            <a target='_blank' rel='noopener noreferrer' href='https://aidsinfo.unaids.org/'>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://aidsinfo.unaids.org/"
+            >
               UNAIDS AIDSinfo
-            </a>
-            <a target='_blank' rel='noopener noreferrer' href='http://lawsandpolicies.unaids.org'>
-              UNAIDS - Laws and Policies
             </a>
             {/* <a target='_blank' rel='noopener noreferrer' href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx'>
             WHO Paediatric HIV Testing
           </a> */}
-            <a target='_blank' rel='noopener noreferrer' href='https://www.who.int/hiv/prep/global-prep-coalition/en/'>
-              Global PrEP Coalition
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://www.who.int/groups/global-prep-network"
+            >
+              Global PrEP Network
             </a>
-            {DEV && <a target='_blank' rel='noopener noreferrer' href='https://master.dv1i2lva39jkq.amplifyapp.com/'>
-              PROTOTYPE DASHBOARD (fake data)
-            </a>}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://data.unicef.org/topic/hivaids/covid-19/ "
+            >
+              UNICEF
+            </a>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://phia-data.icap.columbia.edu/visualization"
+            >
+              PHIA Project
+            </a>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://data.pepfar.gov/"
+            >
+              PEPFAR Panorama Spotlight
+            </a>
+            {DEV && (
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://master.dv1i2lva39jkq.amplifyapp.com/"
+              >
+                PROTOTYPE DASHBOARD (fake data)
+              </a>
+            )}
           </div>
-
         </div>
 
-        <div className='col-12 pt-5'>
+        <div className="col-12 pt-5">
           <h3>Glossary</h3>
-          <div className='terms'>
-            {TERMS.map(t => {
+          <div className="terms">
+            {TERMS.map((t) => {
               return (
-                <div key={t.term} className='term py-1'>
-                  <p className='name'>{t.term}</p>
-                  <p className='definition'>{t.definition}</p>
+                <div key={t.term} className="term py-1">
+                  <p className="name">{t.term}</p>
+                  <p className="definition">{t.definition}</p>
                 </div>
               )
             })}
@@ -435,41 +473,82 @@ class Dashboard extends Component {
   }
   
   render() {
-
     const ptt = (
       <Tooltip>
         <div>
           <p>
-            For countries with estimates from the Shiny90 model, the proportion of new diagnoses out of all positive tests is calculated for countries with annual data on the number adults tested and the number testing positive. 
+            For countries with estimates from the Shiny90 model, the proportion
+            of new diagnoses out of all positive tests is calculated for
+            countries with annual data on the number adults tested and the
+            number testing positive.
           </p>
 
           <p>
-            The Shiny90 model uses household surveys and HTS program data to estimate the rates of HIV testing among adults not living with HIV and those living with HIV. HIV testing rates are assumed to vary with calendar time, sex, age, previous HIV testing status, awareness of status, and, for PLHIV, CD4 cell count category as a marker of risk of AIDS-related symptoms motivating care-seeking and HIV testing. The proportion of PLHIV who know their status estimated by Shiny90 is bound by ART coverage (minimum) and the proportion of PLHIV who have ever been tested and received the results (maximum). 
+            The Shiny90 model uses household surveys and HTS program data to
+            estimate the rates of HIV testing among adults not living with HIV
+            and those living with HIV. HIV testing rates are assumed to vary
+            with calendar time, sex, age, previous HIV testing status, awareness
+            of status, and, for PLHIV, CD4 cell count category as a marker of
+            risk of AIDS-related symptoms motivating care-seeking and HIV
+            testing. The proportion of PLHIV who know their status estimated by
+            Shiny90 is bound by ART coverage (minimum) and the proportion of
+            PLHIV who have ever been tested and received the results (maximum).
           </p>
 
           <p>
-            In addition to estimating the number of new diagnoses, the proportion of HIV positive tests that are retests is produced as a model output. This retesting proportion of all positive tests is large when the cumulative number of positive HIV tests is greater than the number of estimated PLHIV  that are undiagnosed, including those that are newly infected. The model calculates the proportion of diagnosed PLHIV who retest using a time-varying retesting rate ratio that is based on empirical evidence showing that retesting among PLHIV with known HIV status is common, ranging from 13% to 68% in many countries in SSA. Retesting among those who have already tested positive can be motivated by multiple factors, including the desire to confirm a previous test result or to avoid disclosing prior knowledge of HIV positive status when re-engaging with care after being lost to follow up due to societal stigma or denial. 
+            In addition to estimating the number of new diagnoses, the
+            proportion of HIV positive tests that are retests is produced as a
+            model output. This retesting proportion of all positive tests is
+            large when the cumulative number of positive HIV tests is greater
+            than the number of estimated PLHIV that are undiagnosed, including
+            those that are newly infected. The model calculates the proportion
+            of diagnosed PLHIV who retest using a time-varying retesting rate
+            ratio that is based on empirical evidence showing that retesting
+            among PLHIV with known HIV status is common, ranging from 13% to 68%
+            in many countries in SSA. Retesting among those who have already
+            tested positive can be motivated by multiple factors, including the
+            desire to confirm a previous test result or to avoid disclosing
+            prior knowledge of HIV positive status when re-engaging with care
+            after being lost to follow up due to societal stigma or denial.
           </p>
 
           <p>
-            For more details on the methods for calculating and interpreting retesting proportions from the Shiny90 model, see <a href='https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx' target='_blank'>Maheu-Giroux, M. et al. (2019) AIDS v33 p S255</a> and <a href='https://www.medrxiv.org/content/10.1101/2020.10.20.20216283v1' target='_blank'>Giguère, K. et al. (2020) preprint</a>.
+            For more details on the methods for calculating and interpreting
+            retesting proportions from the Shiny90 model, see{' '}
+            <a
+              href="https://journals.lww.com/aidsonline/fulltext/2019/12153/national_hiv_testing_and_diagnosis_coverage_in.7.aspx"
+              target="_blank"
+            >
+              Maheu-Giroux, M. et al. (2019) AIDS v33 p S255
+            </a>{' '}
+            and{' '}
+            <a
+              href="https://www.medrxiv.org/content/10.1101/2020.10.20.20216283v1"
+              target="_blank"
+            >
+              Giguère, K. et al. (2020) preprint
+            </a>
+            .
           </p>
         </div>
       </Tooltip>
     )
-    
+
     const diagnosis = this.getChart(CHARTS.PLHIV_DIAGNOSIS.id)
     const PLHIVAge = this.getChart(CHARTS.PLHIV_AGE.id)
     const PLHIVSex = this.getChart(CHARTS.PLHIV_SEX.id)
     const negative = this.getChart(CHARTS.HIV_NEGATIVE.id)
     const positive = this.getChart(CHARTS.HIV_POSITIVE.id, ptt)
     const prevalence = this.getChart(CHARTS.PREVALENCE.id)
+    // deactivate pregnancy chart
+    // const pregnancy = this.getChart(CHARTS.PREGNANCY.id)
     const adults = this.getChart(CHARTS.ADULTS.id)
     const community = this.getChart(CHARTS.COMMUNITY.id)
     const facility = this.getChart(CHARTS.FACILITY.id)
     const index = this.getChart(CHARTS.INDEX.id)
+    const self = this.getChart(CHARTS.SELF_TESTS.id)
     const forecast = this.getChart(CHARTS.FORECAST.id)
-    
+
     const kp = this.getTable(CHARTS.KP_TABLE.id)
     const policy = this.getTable(CHARTS.POLICY_TABLE.id)
     const groups = this.getTable(CHARTS.GROUPS_TABLE.id)
@@ -478,65 +557,77 @@ class Dashboard extends Component {
       const countryCode = _.get(this, 'props.match.params.countryCode', null)
       const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
       return (
-        <div className='loading-mask'>
-          <p className='name'>{name}</p>
-          <div className='squares'>
+        <div className="loading-mask">
+          <p className="name">{name}</p>
+          <div className="squares">
             <span style={{ backgroundColor: P95ColorA }} />
             <span style={{ backgroundColor: P95ColorB }} />
             <span style={{ backgroundColor: P95ColorC }} />
             <span style={{ backgroundColor: P95ColorD }} />
           </div>
-          <p className='loading'>Loading...</p>
+          <p className="loading">Loading...</p>
         </div>
       )
     }
 
     return (
-      <div className='dashboard'>
-        <div className='nav'>
-          <a className='who-logo' href='https://who.int/' target='_blank'>
-            <img src='images/who_logo.png' alt='WHO logo' />
+      <div className="dashboard">
+        <div className="nav">
+          <a className="who-logo" href="https://who.int/" target="_blank">
+            <img src="images/who_logo.png" alt="WHO logo" />
           </a>
-          <span className='title text-center desktop'>HIV Testing Services Dashboard</span>
-          <span className='title text-center mobile'>HIV Testing Services</span>
-          <div className='input-group'>
-            <select defaultValue={this.props.chartData.countryCode} onChange={this.goToCountry} className='custom-select'>
-              {COUNTRIES.map(c => {
-                return <option value={c.ISO} to={'/'+c.ISO} key={c.ISO}>{c.name}</option>
+          <span className="title text-center desktop">
+            HIV Testing Services Dashboard
+          </span>
+          <span className="title text-center mobile">HIV Testing Services</span>
+          <div className="input-group">
+            <select
+              defaultValue={this.props.chartData.countryCode}
+              onChange={this.goToCountry}
+              className="custom-select"
+            >
+              {COUNTRIES.map((c) => {
+                return (
+                  <option value={c.ISO} to={'/' + c.ISO} key={c.ISO}>
+                    {c.name}
+                  </option>
+                )
               })}
             </select>
           </div>
-          <span className='export' onClick={this.exportData}>
-              Export
+          <span className="export" onClick={this.exportData}>
+            Export
           </span>
-          <Link className='link-home' to='/'>
+          <Link className="link-home" to="/">
             Home
           </Link>
         </div>
 
-        <div className='charts container-fluid mt-4 p-0'>
-          <div className='row mb-4'>
-          {/* <div className='row no-gutters mb-4'> */}
+        <div className="charts container-fluid mt-4 p-0">
+          <div className="row mb-4">
+            {/* <div className='row no-gutters mb-4'> */}
 
             {this.getCountryContext()}
             {this.getP95()}
           </div>
 
-          <div className='row'>
-          {/* <div className='row no-gutters'> */}
+          <div className="row">
+            {/* <div className='row no-gutters'> */}
             {diagnosis}
             {PLHIVSex}
             {PLHIVAge}
             {negative}
             {positive}
             {prevalence}
-            <div className='col-12 mt-2'>&nbsp;</div>
+            {/* {pregnancy} */}
+            <div className="col-12 mt-2">&nbsp;</div>
             {adults}
             {community}
             {facility}
             {index}
+            {self}
             {forecast}
-            <div className='col-12 mt-2'>&nbsp;</div>
+            <div className="col-12 mt-2">&nbsp;</div>
             {kp}
             {policy}
             {groups}
@@ -544,9 +635,8 @@ class Dashboard extends Component {
         </div>
 
         {this.getResourcesSection()}
-      
-        {this.getDevSection()}
 
+        {this.getDevSection()}
       </div>
     )
   }
@@ -608,7 +698,7 @@ class Dashboard extends Component {
     fields.forEach(f => {
       if (this.state[f]) {
         let chunk = encodeURI(`${char}${f}=${this.state[f]}`)
-        chunk = chunk.replace('+', '%2B') // TODO - figure out why not encoded properly
+        chunk = chunk.replaceAll('+', '%2B') // TODO - figure out why not encoded properly
         url += chunk
         char = '&'
       }
