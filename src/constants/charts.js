@@ -3,9 +3,9 @@ import { COUNTRY_MAP } from '../components/Homepage/countries'
 import { FEATURE_FLAGS } from './flags'
 
 // const BASE_URL = 'https://status.y-x.ch/query?'
-const BASE_URL =
-  'https://2021-app-dot-eic-database-290813.ew.r.appspot.com/query?'
-// const BASE_URL = 'https://eic-database-290813.ew.r.appspot.com/query?'
+const BASE_URL = 'https://2024-app-dot-eic-database-290813.ew.r.appspot.com/';
+// Master url:
+  // 'https://2021-app-dot-eic-database-290813.ew.r.appspot.com/query?'
 
 // indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
 const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
