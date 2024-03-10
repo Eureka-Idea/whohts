@@ -66,8 +66,8 @@ const WITH_CUSTOM_HEADER_CHART_SPACING = [15, 30, 25, 25] // keep in sync with b
 const barChartsTestsName = 'Number of tests conducted'
 const barChartsPositivityName = 'Positivity' // TODO: acceptable?
 // const barChartsPositivityNameTooltip = 'Positivity'
-const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO, 2022)'
-const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO, 2022)'
+const spectrumSource = 'Spectrum model estimates (UNAIDS/WHO)'
+const shinySource = 'Spectrum/Shiny90 model estimates (UNAIDS/WHO)'
 const calculatedDb = '(calculated)'
 
 function adjustPercentage({
@@ -221,7 +221,7 @@ function getUncertaintyTooltipFormatter(shinyCountry) {
       this.displayValue || displayNumber({ v: this.y })
     }</b><br />
     ${uncertaintyLine}
-    Source: <b>${source}</b>
+    Source: <b>${this.source}</b>
     `
   }
 }
@@ -240,13 +240,14 @@ function getPercentUncertaintyTooltipFormatter(shinyCountry) {
       this.displayValue || displayPercent({ v: this.y, decimals })
     }</b><br />
     ${uncertaintyLine}
-    Source: <b>${source}</b>
+    Source: <b>${this.source}</b>
     `
   }
 }
 
 function getLineChartSubtitle(shinyCountry) {
-  const tooltip = 'Source: ' + (shinyCountry ? shinySource : spectrumSource)
+  const source = shinyCountry ? shinySource : spectrumSource
+  const tooltip = 'Source: ' + source
   const subtitle = `<span title="${tooltip}">Modelled estimates</span>`
   return { useHTML: true, text: subtitle }
 }
@@ -1142,6 +1143,7 @@ const getPrevalence = (data, shinyCountry = false, forExport = false) => {
     }
     if (adjPrevValue) {
       const adjPrevPoint = { x: Number(y), y: adjPrevValue, decimals: 1 }
+      adjPrevPoint.source = calculatedDb
       if (APPLY_CAP && adjPrevValue < 0.1) {
         adjPrevValue = 0.1
         adjPrevPoint.y = adjPrevValue
@@ -1150,10 +1152,10 @@ const getPrevalence = (data, shinyCountry = false, forExport = false) => {
       if (forExport) {
         adjPrevPoint[FIELD_MAP.VALUE] = adjPrevValue
         adjPrevPoint[FIELD_MAP.INDICATOR] = 'Treatment adjusted Prevalence'
-        ;(adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = calculatedDb),
-          (adjPrevPoint[FIELD_MAP.YEAR] = y),
-          (adjPrevPoint[FIELD_MAP.NOTES] =
-            'based on population, estimated PLHIV, and estimated PLHIV on ART data values')
+        adjPrevPoint[FIELD_MAP.SOURCE_DATABASE] = calculatedDb
+        adjPrevPoint[FIELD_MAP.YEAR] = y
+        adjPrevPoint[FIELD_MAP.NOTES] =
+          'based on population, estimated PLHIV, and estimated PLHIV on ART data values'
       }
       adjPrevData.push(adjPrevPoint)
     }
