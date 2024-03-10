@@ -55,15 +55,11 @@ const SOURCE_DB_MAP = {
   NPD: 'National Programme Data',
 
   PCOP20: 'PEPFAR COP 2020',
-  PCOP19: 'PEPFAR COP 2019',
-  // PCOP18: 'PEPFAR COP 2018',
-  PCOP1718: 'PEPFAR COP 2017 - 2018',
-  // PCOP17: 'PEPFAR COP 2017',
   PROP20: 'PEPFAR ROP 2020',
+  PCOP19: 'PEPFAR COP 2019',
   PROP19: 'PEPFAR ROP 2019',
-  // PROP18: 'PEPFAR ROP 2018',
+  PCOP1718: 'PEPFAR COP 2017 - 2018',
   PROP17: 'PEPFAR ROP 2017',
-  // PEPFAR_SDE: 'PEPFAR System Data Extract',
   PEPFAR: 'PEPFAR',
 
   WME: 'WHO model estimates',
@@ -72,7 +68,7 @@ const SOURCE_DB_MAP = {
   WNCPI: 'WHO NCPI',
   HIVST20: 'HIVST policy 2020 data set',
   HIVST21: 'HIVST policy 2021 data set',
-  KP22: 'UNAIDS KP-Atlas 2022',
+  KP23: 'UNAIDS KP-Atlas 2023',
   KP20: 'UNAIDS KP-Atlas 2020',
   // UNGAM20: 'UNAIDS Global AIDS Monitoring 2020',
   TGF: 'The Global Fund',
@@ -668,11 +664,11 @@ const forecastWME = {
   },
 }
 
-const kpKP22 = {
-  id: 'KP22',
+const kpKP23 = {
+  id: 'KP23',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.KP22,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.KP23,
       [F.AREA_NAME]: 'NULL',
     },
   },
@@ -1093,7 +1089,7 @@ const CHARTS = {
     title: 'Key Populations',
     id: 'KP_TABLE',
     sources: [
-      kpKP22,
+      kpKP23,
       kpKP20,
       kpGAM21,
       kpPCOP20,
