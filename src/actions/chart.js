@@ -3,7 +3,6 @@ import { FEATURE_FLAGS } from '../constants/flags'
 import _ from 'lodash'
 import {
   getIndicatorMap,
-  AGGREGATE_GETTER,
   FIELD_MAP,
   CHARTS,
   BASE_URL,
@@ -162,17 +161,12 @@ export const getChartData = (countryCode) => (dispatch) => {
 
           const chosenData = getter(data)
 
-          if (id === AGGREGATE_GETTER) {
-            console.warn('AGGREGATE_GETTER', chartName, chosenData)
-            _.set(allChartData, [chartName, 'data'], chosenData)
-          } else {
-            // _.set(allChartData, [chartName, 'data', id], chosenData)
+          // _.set(allChartData, [chartName, 'data', id], chosenData)
 
-            if (!_.has(allChartData, [chartName, 'dataByHierarchy', id])) {
-              _.set(allChartData, [chartName, 'dataByHierarchy', id], [])
-            }
-            allChartData[chartName].dataByHierarchy[id].push(chosenData)
+          if (!_.has(allChartData, [chartName, 'dataByHierarchy', id])) {
+            _.set(allChartData, [chartName, 'dataByHierarchy', id], [])
           }
+          allChartData[chartName].dataByHierarchy[id].push(chosenData)
         })
       })
 

@@ -8,9 +8,6 @@ const BASE_URL =
 // Master url:
 // 'https://2021-app-dot-eic-database-290813.ew.r.appspot.com/query?'
 
-// indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
-const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
-
 const R_2015_2019 = ['2015', '2016', '2017', '2018', '2019']
 const LATEST_YEAR = '2022'
 const R_2015_ON = _.range('2015', Number(LATEST_YEAR) + 1).map(String)
@@ -678,8 +675,7 @@ const kpKP23 = {
       'HIV testing and status awareness among men who have sex with men',
 
     prevPwid: 'HIV prevalence among people who inject drugs',
-    awarePwid:
-      'HIV testing and status awareness among people who inject drugs',
+    awarePwid: 'HIV testing and status awareness among people who inject drugs',
 
     prevPris: 'HIV prevalence among prisoners',
     // awarePris: '',
@@ -731,8 +727,7 @@ const kpGAM21 = {
       'HIV testing and status awareness among men who have sex with men',
 
     prevPwid: 'HIV prevalence among people who inject drugs',
-    awarePwid:
-      'HIV testing and status awareness among people who inject drugs',
+    awarePwid: 'HIV testing and status awareness among people who inject drugs',
 
     prevPris: 'HIV prevalence among prisoners',
     // awarePris: '',
@@ -3959,7 +3954,6 @@ export {
   ALL_CHARTS,
   FIELD_MAP,
   CSV_FIELDS,
-  AGGREGATE_GETTER,
   R_2015_ON,
   R_ADULT_AGES,
   AGE_MAP,
