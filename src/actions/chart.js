@@ -163,11 +163,11 @@ export const getChartData = (countryCode) => (dispatch) => {
           const chosenData = getter(data)
 
           if (id === AGGREGATE_GETTER) {
+            console.warn('AGGREGATE_GETTER', chartName, chosenData)
             _.set(allChartData, [chartName, 'data'], chosenData)
           } else {
-            _.set(allChartData, [chartName, 'data', id], chosenData)
+            // _.set(allChartData, [chartName, 'data', id], chosenData)
 
-            // TODO: consolidate this with the above? (in each chart getter where we still use "data", get data[0])
             if (!_.has(allChartData, [chartName, 'dataByHierarchy', id])) {
               _.set(allChartData, [chartName, 'dataByHierarchy', id], [])
             }
