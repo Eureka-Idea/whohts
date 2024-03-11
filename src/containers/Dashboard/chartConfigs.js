@@ -457,7 +457,7 @@ const extractPrioritizedData = (
   return result
 }
 
-const parseIndRank = (s) => parseFloat(s.replace(/[^0-9]/g, ''))
+// const parseIndRank = (s) => parseFloat(s.replace(/[^0-9]/g, ''))
 
 const extractPrioritizedRangeData = ({
   data,
@@ -509,16 +509,21 @@ const extractPrioritizedRangeData = ({
   return result
 }
 
-const getP95 = (data, shinyCountry = false, forExport = false) => {
+const getP95 = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const indicatorNames = ['status', 'art', 'suppression']
   if (forExport) {
-    return indicatorNames.map((ind) => _.get(data, ind))
+    return indicatorNames.map((ind) => _.get(dataByHierarchy, [ind, 0]))
   }
 
   let source
   const years = []
   const config = indicatorNames.map((ind) => {
-    const indData = _.get(data, [ind], {})
+    const indData = _.get(dataByHierarchy, [ind, 0], {})
     const {
       [FIELD_MAP.SOURCE_DATABASE]: indSource,
       [FIELD_MAP.VALUE]: value,
@@ -541,7 +546,12 @@ const getP95 = (data, shinyCountry = false, forExport = false) => {
   return config
 }
 
-const getPlhivDiagnosis = (data, shinyCountry = false, forExport = false) => {
+const getPlhivDiagnosis = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title, yearRange } = CHARTS.PLHIV_DIAGNOSIS
 
   // colors: 17 11 5
@@ -667,7 +677,12 @@ const getPlhivDiagnosis = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getPlhivSex = (data, shinyCountry = false, forExport = false) => {
+const getPlhivSex = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title, yearRange } = CHARTS.PLHIV_SEX
   const options = {
     legend: { symbolWidth: 40 },
@@ -685,7 +700,7 @@ const getPlhivSex = (data, shinyCountry = false, forExport = false) => {
   const rMPoints = []
 
   yearRange.forEach((y, i) => {
-    const fRow = _.get(data, ['Females', i])
+    const fRow = _.get(dataByHierarchy, ['Females', 0, i])
     const [fPoint, rFPoint] = getPlotPoints({
       row: fRow,
       year: y,
@@ -699,7 +714,7 @@ const getPlhivSex = (data, shinyCountry = false, forExport = false) => {
       rFPoints.push(rFPoint)
     }
 
-    const mRow = _.get(data, ['Males', i])
+    const mRow = _.get(dataByHierarchy, ['Males', 0, i])
     const [mPoint, rMPoint] = getPlotPoints({
       row: mRow,
       year: y,
@@ -773,7 +788,12 @@ const getPlhivSex = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getLine({ title, series, options }))
 }
 
-const getPlhivAge = (data, shinyCountry = false, forExport = false) => {
+const getPlhivAge = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title, yearRange } = CHARTS.PLHIV_AGE
 
   const options = {
@@ -792,8 +812,7 @@ const getPlhivAge = (data, shinyCountry = false, forExport = false) => {
   }
 
   _.each(dataMap, (obj, age) => {
-    const rows = data[age]
-
+    const rows = dataByHierarchy[age][0]
     yearRange.forEach((y, i) => {
       const row = rows[i]
       const [point, rPoint] = getPlotPoints({
@@ -919,7 +938,12 @@ const getPlhivAge = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getLine({ title, series, options }))
 }
 
-const getHivNegative = (data, shinyCountry = false, forExport = false) => {
+const getHivNegative = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { yearRange } = CHARTS.HIV_NEGATIVE
   const title =
     '<span class="hivn-title">HIV-negative</span> tests - first-time testers and repeat testers'
@@ -930,7 +954,7 @@ const getHivNegative = (data, shinyCountry = false, forExport = false) => {
   }
 
   _.each(dataMap, (obj, ind) => {
-    const rows = data[ind]
+    const rows = dataByHierarchy[ind][0]
 
     yearRange.forEach((y, i) => {
       const row = rows[i]
@@ -977,7 +1001,12 @@ const getHivNegative = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getHivPositive = (data, shinyCountry = false, forExport = false) => {
+const getHivPositive = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { yearRange } = CHARTS.HIV_POSITIVE
   const title =
     '<span class="hivp-title">HIV-positive</span> tests - new diagnoses and re-diagnoses'
@@ -990,14 +1019,14 @@ const getHivPositive = (data, shinyCountry = false, forExport = false) => {
   }
 
   _.each(dataMap, (obj, ind) => {
-    const rows = data[ind] // only for 'news'
+    const rows = _.get(dataByHierarchy, [ind, 0], []) // only for 'news'
 
     yearRange.forEach((y, i) => {
       let row = _.get(rows, i)
 
       if (ind === 'retests') {
-        const artRow = _.get(data, ['arts', i])
-        const awareRow = _.get(data, ['awares', i])
+        const artRow = _.get(dataByHierarchy, ['arts', 0, i])
+        const awareRow = _.get(dataByHierarchy, ['awares', 0, i])
         const artRowVal = _.get(artRow, FIELD_MAP.VALUE, 0)
         const awareRowVal = _.get(awareRow, FIELD_MAP.VALUE, 0)
         // console.log('artRow: ', artRowVal)
@@ -1113,7 +1142,12 @@ const getHivPositive = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getArea({ title, series, options }))
 }
 
-const getPrevalence = (data, shinyCountry = false, forExport = false) => {
+const getPrevalence = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   let { title, nonShinyTitle, yearRange } = CHARTS.PREVALENCE
   title = shinyCountry ? title : nonShinyTitle
 
@@ -1137,7 +1171,7 @@ const getPrevalence = (data, shinyCountry = false, forExport = false) => {
   const rDYieldData = [] // for shiny
   const adjPrevData = []
   yearRange.forEach((y, i) => {
-    const prevalenceRow = _.get(data, ['prevalence', i])
+    const prevalenceRow = _.get(dataByHierarchy, ['prevalence', 0, i])
     const [prevalencePoint, rPrevalencePoint] = getPlotPoints({
       row: prevalenceRow,
       year: y,
@@ -1149,12 +1183,28 @@ const getPrevalence = (data, shinyCountry = false, forExport = false) => {
       rPrevalenceData.push(rPrevalencePoint)
     }
 
-    const populationValue = _.get(data, ['population', i, [FIELD_MAP.VALUE]])
-    const onArtValue = _.get(data, ['onArt', i, [FIELD_MAP.VALUE]])
-    const plhivValue = _.get(data, ['plhiv', i, [FIELD_MAP.VALUE]])
+    const populationValue = _.get(dataByHierarchy, [
+      'population',
+      0,
+      i,
+      [FIELD_MAP.VALUE],
+    ])
+    const onArtValue = _.get(dataByHierarchy, [
+      'onArt',
+      0,
+      i,
+      [FIELD_MAP.VALUE],
+    ])
+    const plhivValue = _.get(dataByHierarchy, [
+      'plhiv',
+      0,
+      i,
+      [FIELD_MAP.VALUE],
+    ])
 
     const isCameroon =
-      _.get(data, ['plhiv', i, [FIELD_MAP.COUNTRY_ISO_CODE]]) === 'CMR'
+      _.get(dataByHierarchy, ['plhiv', 0, i, [FIELD_MAP.COUNTRY_ISO_CODE]]) ===
+      'CMR'
 
     let adjPrevValue
     // NOTE ** conditional country tweak **
@@ -1182,8 +1232,8 @@ const getPrevalence = (data, shinyCountry = false, forExport = false) => {
     }
 
     if (shinyCountry) {
-      const positivityRow = _.get(data, ['positivity', i])
-      const dYieldRow = _.get(data, ['dYield', i])
+      const positivityRow = _.get(dataByHierarchy, ['positivity', 0, i])
+      const dYieldRow = _.get(dataByHierarchy, ['dYield', 0, i])
       const [positivityPoint, rPositivityPoint] = getPlotPoints({
         row: positivityRow,
         year: y,
@@ -1319,7 +1369,7 @@ const getPrevalence = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getLine({ series, options, title, spline: false }))
 }
 
-// const getPregnancy = (data, shinyCountry = false, forExport = false) => {
+// const getPregnancy = (data, shinyCountry = false, forExport = false, dataByHierarchy) => {
 //   const { title, yearRange } = CHARTS.PREGNANCY
 
 //   const options = {
@@ -2199,7 +2249,12 @@ const getKpTable = (
   return config
 }
 
-const getPolicyTable = (data, shinyCountry = false, forExport = false) => {
+const getPolicyTable = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title } = CHARTS.POLICY_TABLE
 
   const {
@@ -2214,7 +2269,7 @@ const getPolicyTable = (data, shinyCountry = false, forExport = false) => {
     verification,
     antenatal,
     dual,
-  } = data
+  } = _.mapValues(dataByHierarchy, 0)
 
   if (forExport) {
     // NOTE: ** conditional tweak **
