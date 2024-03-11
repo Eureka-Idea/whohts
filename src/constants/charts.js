@@ -1345,7 +1345,7 @@ const getIndicatorMap = (isShiny) => {
       [F.AGE]: '15+',
       [F.SEX]: 'NULL',
       [F.AREA_NAME]: 'NULL',
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
       [F.COUNTRY_ISO_CODE]: true,
       getter: (results) => {
         return C.PLHIV_DIAGNOSIS.yearRange.map((y) => {
