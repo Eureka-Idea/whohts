@@ -44,6 +44,7 @@ const R_LIMITED_DEMO_GROUPS = _.flatMap([
 
 const SOURCE_DB_MAP = {
   S90: 'Shiny90',
+  GAM23: 'Global AIDS Monitoring 2023',
   GAM21: 'Global AIDS Monitoring 2021',
   GAM20: 'Global AIDS Monitoring 2020',
   GAM19: 'Global AIDS Monitoring 2019',
@@ -163,6 +164,24 @@ const CSV_FIELDS = [
 ]
 
 // SOURCE objects for source prio charts
+const adultsGAM23 = {
+  id: 'GAM23',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    total: 'Den Age-All',
+    men: 'Den Age-Male Gte 15',
+    women: 'Den Age-Female Gte 15',
+
+    pTotal: 'Per Age-All',
+    pMen: 'Per Age-Male Gte 15',
+    pWomen: 'Per Age-Female Gte 15',
+  },
+}
 const adultsGAM21 = {
   id: 'GAM21',
   filters: {
@@ -171,7 +190,6 @@ const adultsGAM21 = {
       [F.VALUE_COMMENT]: 'validated',
     },
   },
-  // TODO-@*&: remove numbering to make maintenance easier. see TODO-@*&
   indicators: {
     total: 'Den Age-All',
     men: 'Den Age-Male Gte 15',
@@ -355,6 +373,26 @@ const adultsPEPFAR = {
   },
 }
 
+const communityGAM23 = {
+  id: 'GAM23',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    total: 'Den Community-Community All',
+    mobile: 'Den Community-Community Mobile',
+    VCT: 'Den Community-Community Vct',
+    other: 'Den Community-Community Other',
+
+    pTotal: 'Per Community-Community All',
+    pMobile: 'Per Community-Community Mobile',
+    pVCT: 'Per Community-Community Vct',
+    pOther: 'Per Community-Community Other',
+  },
+}
 const communityGAM21 = {
   id: 'GAM21',
   filters: {
@@ -456,6 +494,30 @@ const communityPEPFAR = {
   },
 }
 
+const facilityGAM23 = {
+  id: 'GAM23',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    total: 'Den Facility-Facility All',
+    PITC: 'Den Facility-Facility Provider Init',
+    ANC: 'Den Facility-Facility Anc',
+    VCT: 'Den Facility-Facility Vct',
+    family: 'Den Facility-Facility Fp Clinic',
+    other: 'Den Facility-Facility Other',
+
+    pTotal: 'Per Facility-Facility All',
+    pPITC: 'Per Facility-Facility Provider Init',
+    pANC: 'Per Facility-Facility Anc',
+    pVCT: 'Per Facility-Facility Vct',
+    pFamily: 'Per Facility-Facility Fp Clinic',
+    pOther: 'Per Facility-Facility Other',
+  },
+}
 const facilityGAM21 = {
   id: 'GAM21',
   filters: {
@@ -590,6 +652,18 @@ const indexPEPFAR = {
   },
 }
 
+const selfGAM23 = {
+  id: 'GAM23',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    distributed: 'Self Test Distributed-Data Value',
+  },
+}
 const selfGAM21 = {
   id: 'GAM21',
   filters: {
@@ -710,6 +784,33 @@ const kpKP20 = {
 
     prevTrans: 'HIV prevalence among transgender people',
     awareTrans: 'Transgender (PLHIV who know status (%))',
+  },
+}
+const kpGAM23 = {
+  id: 'GAM23',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+      [F.AREA_NAME]: 'NULL',
+    },
+  },
+  indicators: {
+    // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
+    prevMsm: 'HIV prevalence among men who have sex with men',
+    awareMsm:
+      'HIV testing and status awareness among men who have sex with men',
+
+    prevPwid: 'HIV prevalence among people who inject drugs',
+    awarePwid: 'HIV testing and status awareness among people who inject drugs',
+
+    prevPris: 'HIV prevalence among prisoners',
+    // awarePris: '',
+
+    prevSw: 'HIV prevalence among sex workers',
+    awareSw: 'HIV testing and status awareness among sex workers',
+
+    prevTrans: 'HIV prevalence among transgender people',
+    awareTrans: 'HIV testing and status awareness among transgender people',
   },
 }
 const kpGAM21 = {
@@ -986,6 +1087,7 @@ const CHARTS = {
     title: 'HIV tests conducted and positivity, by sex',
     id: 'ADULTS',
     sources: [
+      adultsGAM23,
       adultsGAM21,
       adultsGAM20,
       adultsGAM19,
@@ -1004,6 +1106,7 @@ const CHARTS = {
     title: 'HIV tests conducted and positivity at community level',
     id: 'COMMUNITY',
     sources: [
+      communityGAM23,
       communityGAM21,
       communityGAM20,
       communityGAM19,
@@ -1025,6 +1128,7 @@ const CHARTS = {
     title: 'HIV tests conducted and positivity at facility level',
     id: 'FACILITY',
     sources: [
+      facilityGAM23,
       facilityGAM21,
       facilityGAM20,
       facilityGAM19,
@@ -1063,7 +1167,14 @@ const CHARTS = {
   SELF_TESTS: {
     title: 'HIV self-tests',
     id: 'SELF_TESTS',
-    sources: [selfGAM21, selfGAM20, selfGAM19, selfNPD19, selfPEPFAR],
+    sources: [
+      selfGAM23,
+      selfGAM21,
+      selfGAM20,
+      selfGAM19,
+      selfNPD19,
+      selfPEPFAR,
+    ],
     indicatorIds: ['distributed'],
     indicatorYears: {
       distributed: R_2018_ON,
@@ -1086,6 +1197,7 @@ const CHARTS = {
     sources: [
       kpKP23,
       kpKP20,
+      kpGAM23,
       kpGAM21,
       kpPCOP20,
       kpPROP20,
@@ -3408,6 +3520,35 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
+        [F.YEAR]: LATEST_YEAR,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+        },
+      },
+      {
+        id: 'year',
+        [F.INDICATOR]: 'Den Age-Female Gte 15',
+        [F.VALUE_COMMENT]: 'validated',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
         [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
