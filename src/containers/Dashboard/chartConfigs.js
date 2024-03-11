@@ -415,7 +415,6 @@ const getConfig = (
 const extractPrioritizedData = (
   dataByHierarchy,
   indicatorIds,
-  sourceCount,
   defaultValue = undefined
 ) => {
   const result = { missingIndicators: [] }
@@ -1496,13 +1495,7 @@ const getAdults = (
   const { title, indicatorIds, sources } = CHARTS.ADULTS
 
   const { total, men, women, pTotal, pMen, pWomen, missingIndicators } =
-    extractPrioritizedData(
-      dataByHierarchy,
-      indicatorIds,
-      sources.length,
-      undefined,
-      dataByHierarchy
-    )
+    extractPrioritizedData(dataByHierarchy, indicatorIds)
 
   if (forExport) {
     return [women, pWomen, men, pMen, total, pTotal].map((row) =>
@@ -1587,7 +1580,7 @@ const getCommunity = (
     pVCT,
     pOther,
     missingIndicators,
-  } = extractPrioritizedData(dataByHierarchy, indicatorIds, sources.length)
+  } = extractPrioritizedData(dataByHierarchy, indicatorIds)
 
   // console.log('total: ', total, 'mobile: ', mobile, 'VCT: ', VCT, 'other: ', other, 'pTotal: ', pTotal, 'pMobile: ', pMobile, 'pVCT: ', pVCT, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
 
@@ -1680,7 +1673,7 @@ const getFacility = (
     pFamily,
     pOther,
     missingIndicators,
-  } = extractPrioritizedData(dataByHierarchy, indicatorIds, sources.length)
+  } = extractPrioritizedData(dataByHierarchy, indicatorIds)
 
   if (forExport) {
     return [
@@ -1795,7 +1788,7 @@ const getIndex = (dataByHierarchy, shinyCountry = false, forExport = false) => {
     pCommunity,
     pFacility,
     missingIndicators,
-  } = extractPrioritizedData(dataByHierarchy, indicatorIds, sources.length)
+  } = extractPrioritizedData(dataByHierarchy, indicatorIds)
 
   if (forExport) {
     return [community, pCommunity, facility, pFacility, total, pTotal].map(
@@ -2113,7 +2106,7 @@ const getKpTable = (
     yearSw,
     yearTrans,
     missingIndicators,
-  } = extractPrioritizedData(dataByHierarchy, indicatorIds, sources.length)
+  } = extractPrioritizedData(dataByHierarchy, indicatorIds)
 
   // console.log(
   //   'KP DATA | ',
