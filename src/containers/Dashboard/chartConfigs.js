@@ -393,6 +393,7 @@ const getConfig = (
   }
 
   const data = _.get(chartData, [chartId, 'data'])
+  const dataByHierarchy = _.get(chartData, [chartId, 'dataByHierarchy'])
   if (!data) {
     console.error(chartId + ' has no data')
     return
@@ -401,7 +402,7 @@ const getConfig = (
   console.log(chartId, ' data: ', data)
 
   try {
-    const config = getter(data, shinyCountry, forExport)
+    const config = getter(data, shinyCountry, forExport, dataByHierarchy)
     const exp = forExport ? ' export' : ''
     console.log(chartId, exp, ' config: ', config)
     return config
@@ -415,30 +416,44 @@ const extractPrioritizedData = (
   data,
   indicatorIds,
   sourceCount,
-  defaultValue = undefined
+  defaultValue = undefined,
+  dataByHierarchy = null
 ) => {
   const result = { missingIndicators: [] }
   _.each(indicatorIds, (ind) => {
-    for (let i = 0; i <= sourceCount; i++) {
-      // see TODO-@*&
-      // sources.map(s => {
-      // const indicatorResult = _.get(data, ind + s.id, null)
-      const indicatorResult = _.get(data, ind + i, null)
-      if (indicatorResult && !_.isNil(indicatorResult[FIELD_MAP.VALUE])) {
-        result[ind] = indicatorResult
-        break
-      } else if (i === sourceCount) {
-        result[ind] = {
-          value: defaultValue,
-          noData: true,
-          [FIELD_MAP.SOURCE_DATABASE]: 'N/A',
-          [FIELD_MAP.YEAR]: 'N/A',
-        }
-        result.missingIndicators.push(ind)
+    const indicatorResult = _.get(dataByHierarchy, ind, []).find(
+      (indicatorResult) => !_.isNil(indicatorResult[FIELD_MAP.VALUE])
+    )
+    if (indicatorResult) {
+      result[ind] = indicatorResult
+    } else {
+      result[ind] = {
+        value: defaultValue,
+        noData: true,
+        [FIELD_MAP.SOURCE_DATABASE]: 'N/A',
+        [FIELD_MAP.YEAR]: 'N/A',
       }
+      result.missingIndicators.push(ind)
     }
+    // for (let i = 0; i <= sourceCount; i++) {
+    //   // see TODO-@*&
+    //   // sources.map(s => {
+    //   // const indicatorResult = _.get(data, ind + s.id, null)
+    //   const indicatorResult = _.get(data, ind + i, null)
+    //   if (indicatorResult && !_.isNil(indicatorResult[FIELD_MAP.VALUE])) {
+    //     result[ind] = indicatorResult
+    //     break
+    //   } else if (i === sourceCount) {
+    //     result[ind] = {
+    //       value: defaultValue,
+    //       noData: true,
+    //       [FIELD_MAP.SOURCE_DATABASE]: 'N/A',
+    //       [FIELD_MAP.YEAR]: 'N/A',
+    //     }
+    //     result.missingIndicators.push(ind)
+    //   }
+    // }
   })
-
   return result
 }
 
@@ -451,6 +466,7 @@ const extractPrioritizedRangeData = ({
   mappedData = false,
   rangedField = 'year',
   // capMap = {},
+  dataByHierarchy,
 }) => {
   const result = { missingIndicatorMap: {} }
   _.each(indicatorIds, (ind) => {
@@ -464,15 +480,20 @@ const extractPrioritizedRangeData = ({
 
     result[ind] = mapper(ranges, (range, ri) => {
       const selector = mappedData ? range : ri
-      const indKeys = Object.keys(data)
-        .filter((k) => k.startsWith(ind))
-        .sort((k1, k2) => parseIndRank(k1) > parseIndRank(k2))
 
-      for (let i = 0; i < indKeys.length; i++) {
-        const indKey = indKeys[i]
-        const indResult = _.get(data, [indKey, selector])
-        if (!_.isNil(indResult)) return indResult
-      }
+      const indResult = _.get(dataByHierarchy, [ind], []).find(
+        (resultObj) => !_.isNil(resultObj[selector])
+      )
+      if (indResult) return indResult[selector]
+      // const indKeys = Object.keys(data)
+      //   .filter((k) => k.startsWith(ind))
+      //   .sort((k1, k2) => parseIndRank(k1) > parseIndRank(k2))
+
+      // for (let i = 0; i < indKeys.length; i++) {
+      //   const indKey = indKeys[i]
+      //   const indResult = _.get(data, [indKey, selector])
+      //   if (!_.isNil(indResult)) return indResult
+      // }
 
       // nothing found for the indicator
       _.setWith(result.missingIndicatorMap, [ind, range], true, Object)
@@ -1430,11 +1451,22 @@ function getColumnPoints(numData, posData) {
   return [numPoint, posPoint]
 }
 
-const getAdults = (data, shinyCountry = false, forExport = false) => {
+const getAdults = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title, indicatorIds, sources } = CHARTS.ADULTS
 
   const { total, men, women, pTotal, pMen, pWomen, missingIndicators } =
-    extractPrioritizedData(data, indicatorIds, sources.length)
+    extractPrioritizedData(
+      data,
+      indicatorIds,
+      sources.length,
+      undefined,
+      dataByHierarchy
+    )
 
   if (forExport) {
     return [women, pWomen, men, pMen, total, pTotal].map((row) =>
@@ -1502,7 +1534,12 @@ const getAdults = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getColumnScat({ series, options, categories }))
 }
 
-const getCommunity = (data, shinyCountry = false, forExport = false) => {
+const getCommunity = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title, indicatorIds, sources } = CHARTS.COMMUNITY
 
   const {
@@ -1515,7 +1552,13 @@ const getCommunity = (data, shinyCountry = false, forExport = false) => {
     pVCT,
     pOther,
     missingIndicators,
-  } = extractPrioritizedData(data, indicatorIds, sources.length)
+  } = extractPrioritizedData(
+    data,
+    indicatorIds,
+    sources.length,
+    undefined,
+    dataByHierarchy
+  )
 
   // console.log('total: ', total, 'mobile: ', mobile, 'VCT: ', VCT, 'other: ', other, 'pTotal: ', pTotal, 'pMobile: ', pMobile, 'pVCT: ', pVCT, 'pOther: ', pOther, 'missingIndicators: ', missingIndicators)
 
@@ -1587,7 +1630,12 @@ const getCommunity = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getColumnScat({ series, options, categories }))
 }
 
-const getFacility = (data, shinyCountry = false, forExport = false) => {
+const getFacility = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title, indicatorIds, sources } = CHARTS.FACILITY
 
   const {
@@ -1604,7 +1652,13 @@ const getFacility = (data, shinyCountry = false, forExport = false) => {
     pFamily,
     pOther,
     missingIndicators,
-  } = extractPrioritizedData(data, indicatorIds, sources.length)
+  } = extractPrioritizedData(
+    data,
+    indicatorIds,
+    sources.length,
+    undefined,
+    dataByHierarchy
+  )
 
   if (forExport) {
     return [
@@ -1708,7 +1762,12 @@ const getFacility = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getColumnScat({ options, categories, series }))
 }
 
-const getIndex = (data, shinyCountry = false, forExport = false) => {
+const getIndex = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title, indicatorIds, sources } = CHARTS.INDEX
 
   const {
@@ -1719,7 +1778,13 @@ const getIndex = (data, shinyCountry = false, forExport = false) => {
     pCommunity,
     pFacility,
     missingIndicators,
-  } = extractPrioritizedData(data, indicatorIds, sources.length)
+  } = extractPrioritizedData(
+    data,
+    indicatorIds,
+    sources.length,
+    undefined,
+    dataByHierarchy
+  )
 
   if (forExport) {
     return [community, pCommunity, facility, pFacility, total, pTotal].map(
@@ -1795,13 +1860,19 @@ const getIndex = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getColumnScat({ options, categories, series }))
 }
 
-const getSelfTests = (data, shinyCountry = false, forExport = false) => {
+const getSelfTests = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title, indicatorIds, indicatorYears } = CHARTS.SELF_TESTS
 
   const { distributed, missingIndicatorMap } = extractPrioritizedRangeData({
     data,
     indicatorIds,
     indicatorRangeMap: indicatorYears,
+    dataByHierarchy,
   })
 
   const missingIndicators = Object.keys(missingIndicatorMap)
@@ -1899,13 +1970,19 @@ const getSelfTests = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getColumn({ title, series, options }))
 }
 
-const getForecast = (data, shinyCountry = false, forExport = false) => {
+const getForecast = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title, indicatorIds, indicatorYears } = CHARTS.FORECAST
 
   const extractedData = extractPrioritizedRangeData({
     data,
     indicatorIds,
     indicatorRangeMap: indicatorYears,
+    dataByHierarchy,
   })
 
   // const { missingIndicatorMap } = extractedData
@@ -2005,7 +2082,12 @@ const getForecast = (data, shinyCountry = false, forExport = false) => {
   return _.merge({}, getColumn({ title, series, options }))
 }
 
-const getKpTable = (data, shinyCountry = false, forExport = false) => {
+const getKpTable = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const { title, indicatorIds, sources } = CHARTS.KP_TABLE
 
   const {
@@ -2025,7 +2107,13 @@ const getKpTable = (data, shinyCountry = false, forExport = false) => {
     yearSw,
     yearTrans,
     missingIndicators,
-  } = extractPrioritizedData(data, indicatorIds, sources.length)
+  } = extractPrioritizedData(
+    data,
+    indicatorIds,
+    sources.length,
+    undefined,
+    dataByHierarchy
+  )
 
   // console.log(
   //   'KP DATA | ',
@@ -2216,7 +2304,12 @@ const getPolicyTable = (data, shinyCountry = false, forExport = false) => {
   return config
 }
 
-const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
+const getGroupsTable = (
+  data,
+  shinyCountry = false,
+  forExport = false,
+  dataByHierarchy
+) => {
   const {
     title,
     indicatorIds,
@@ -2236,6 +2329,7 @@ const getGroupsTable = (data, shinyCountry = false, forExport = false) => {
     mappedData: true,
     rangedField: 'demo',
     capMap: { plhiv: 0.95 },
+    dataByHierarchy,
   })
 
   const missingIndicators = Object.keys(allData.missingIndicatorMap)

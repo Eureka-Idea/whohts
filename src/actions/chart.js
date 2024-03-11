@@ -30,23 +30,23 @@ if (!DEV) {
 // NOTE: exclusively for dev use, if any charts are marked true only those will appear on dashboard
 // (speeds load time and narrows code scope when debugging)
 const debugList = {
-  [CHARTS.P95.id]: true,
-  [CHARTS.CONTEXT.id]: true,
-  [CHARTS.PLHIV_DIAGNOSIS.id]: true,
-  [CHARTS.PREVALENCE.id]: true,
-  [CHARTS.HIV_POSITIVE.id]: true,
-  [CHARTS.HIV_NEGATIVE.id]: true,
-  [CHARTS.GROUPS_TABLE.id]: true,
-  [CHARTS.POLICY_TABLE.id]: true,
-  [CHARTS.KP_TABLE.id]: true,
-  [CHARTS.ADULTS.id]: true,
-  [CHARTS.COMMUNITY.id]: true,
-  [CHARTS.FACILITY.id]: true,
-  [CHARTS.INDEX.id]: true,
-  [CHARTS.PLHIV_AGE.id]: true,
-  [CHARTS.PLHIV_SEX.id]: true,
-  [CHARTS.SELF_TESTS.id]: true,
-  [CHARTS.FORECAST.id]: true,
+  // [CHARTS.P95.id]: true,
+  // [CHARTS.CONTEXT.id]: true,
+  // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
+  // [CHARTS.PREVALENCE.id]: true,
+  // [CHARTS.HIV_POSITIVE.id]: true,
+  // [CHARTS.HIV_NEGATIVE.id]: true,
+  // [CHARTS.GROUPS_TABLE.id]: true,
+  // [CHARTS.POLICY_TABLE.id]: true,
+  // [CHARTS.KP_TABLE.id]: true,
+  // [CHARTS.ADULTS.id]: true,
+  // [CHARTS.COMMUNITY.id]: true,
+  // [CHARTS.FACILITY.id]: true,
+  // [CHARTS.INDEX.id]: true,
+  // [CHARTS.PLHIV_AGE.id]: true,
+  // [CHARTS.PLHIV_SEX.id]: true,
+  // [CHARTS.SELF_TESTS.id]: true,
+  // [CHARTS.FORECAST.id]: true,
 }
 // like the above, but to mark charts to omit
 const debugSkipList = {
@@ -166,6 +166,12 @@ export const getChartData = (countryCode) => (dispatch) => {
             _.set(allChartData, [chartName, 'data'], chosenData)
           } else {
             _.set(allChartData, [chartName, 'data', id], chosenData)
+
+            // TODO: consolidate this with the above? (in each chart getter where we still use "data", get data[0])
+            if (!_.has(allChartData, [chartName, 'dataByHierarchy', id])) {
+              _.set(allChartData, [chartName, 'dataByHierarchy', id], [])
+            }
+            allChartData[chartName].dataByHierarchy[id].push(chosenData)
           }
         })
       })
