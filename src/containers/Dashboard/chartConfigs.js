@@ -2209,7 +2209,6 @@ const getPolicyTable = (
     social,
     compliance,
     verification,
-    antenatal,
     dual,
   } = _.mapValues(dataByHierarchy, 0)
 
@@ -2279,19 +2278,9 @@ const getPolicyTable = (
         value: _.get(compliance, [FIELD_MAP.VALUE_COMMENT]),
         year: _.get(compliance, [FIELD_MAP.YEAR]),
       },
-      // {
-      //   rowName: 'Verification testing before ART',
-      //   value: _.get(verification, [FIELD_MAP.VALUE_COMMENT]),
-      // },
       {
         rowName:
-          'Dual HIV/syphilis rapid diagnostic tests for pregnant women in antenatal care',
-        value: _.get(antenatal, [FIELD_MAP.VALUE_COMMENT]),
-        year: _.get(antenatal, [FIELD_MAP.YEAR]),
-      },
-      {
-        rowName:
-          'Dual HIV/syphilis rapid diagnostic tests for any key population group',
+          'Dual HIV/syphilis rapid diagnostic tests for pregnant women and/or key populations included in national policy',
         value: _.get(dual, [FIELD_MAP.VALUE_COMMENT]),
         year: _.get(dual, [FIELD_MAP.YEAR]),
       },

@@ -1233,43 +1233,7 @@ const CHARTS = {
     id: 'POLICY_TABLE',
     filters: {
       ALL: {
-        // query can only filter by strict match, so instead check for match in results
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP._NCPI_
         [F.AREA_NAME]: 'NULL',
-      },
-      age: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      provider: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      community: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      lay: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      hivst: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.HIVST21,
-      },
-      assisted: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      social: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      compliance: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
-      },
-      // no longer displays on table
-      verification: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
-      },
-      antenatal: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
-      },
-      dual: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
       },
     },
     indicators: {
@@ -1285,9 +1249,7 @@ const CHARTS = {
       compliance:
         '3-test strategy/algorithm for an HIV-positive diagnosis used',
       verification: 'Verification testing before ART',
-      antenatal:
-        'From national authorities Dual HIV/syphilis rapid diagnostic tests for pregnant women in antenatal care',
-      dual: 'From national authorities Dual HIV/syphilis rapid diagnostic tests for any key population group',
+      dual: 'Dual HIV/syphilis rapid diagnostic tests for pregnant women and/or key populations included in national policy',
     },
   },
   GROUPS_TABLE: {
