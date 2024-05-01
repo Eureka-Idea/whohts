@@ -51,7 +51,5 @@ const COUNTRIES = [
 
 const COUNTRY_MAP = _.keyBy(COUNTRIES, 'ISO')
 
-export {
-  COUNTRIES,
-  COUNTRY_MAP
-}
+export { COUNTRIES, COUNTRY_MAP }
+
