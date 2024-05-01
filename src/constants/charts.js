@@ -122,6 +122,15 @@ const getSourceDisplayWithYear = ({ source, sourceYear }) => {
   return SOURCE_DISPLAY_MAP[source].replace(/\d{4}/, sourceYear)
 }
 
+const getMostRecentResult = (
+  results,
+  { filterCheck = (r) => _.isNumber(r[F.VALUE]) } = {}
+) =>
+  _.maxBy(
+    results.filter((r) => filterCheck(r)),
+    'year'
+  )
+
 const FIELD_MAP = {
   INDICATOR: 'indicator',
   INDICATOR_DESCRIPTION: 'indicator_description',
@@ -3423,58 +3432,44 @@ const getIndicatorMap = (isShiny) => {
           const resultMap = {}
           R_SEXES.forEach((sex) => {
             ;[...R_ADULT_AGES, ALL_ADULTS].forEach((ageRange) => {
-              const countryCode = _.get(results, [0, F.COUNTRY_ISO_CODE])
-              const countryApplies = _.get(
-                COUNTRY_MAP,
-                [countryCode, 'sumFix'],
-                false
-              )
-              if (FEATURE_FLAGS.SHINY_SUM && countryApplies) {
-                const fResults = _.filter(
-                  results,
-                  (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
-                )
-
-                const firstRow = fResults[0]
-                const sumRow = { ...firstRow }
-                sumRow[F.AREA_NAME] = 'NULL' // let's pretend
-                sumRow[F.VALUE_UPPER] = undefined
-                sumRow[F.VALUE_LOWER] = undefined
-                sumRow[F.VALUE] = 0
-                const areaMap = {}
-                fResults.forEach((r) => {
-                  if (r[F.VALUE]) {
-                    const rowArea = r[F.AREA_NAME]
-                    // we're summing over regional values. if there's also a country-wide
-                    // value (ie AREA_NAME = NULL), it should not be included in sum.
-                    if (areaMap[rowArea] || !r[F.AREA_NAME]) {
-                      console.warn(
-                        `$$$$ duplicate (or NULL) area_name for tests_total ${sex} ${ageRange}: `,
-                        r
-                      )
-                    } else {
-                      areaMap[rowArea] = true
-                      sumRow[F.VALUE] += Number(r[F.VALUE])
-                      console.log('$$$: ', rowArea, r[F.VALUE], sumRow[F.VALUE])
-                    }
-                  }
-                })
-                resultMap[`${sex[0]}${ageRange}`] = sumRow
-                console.log(
-                  `$$$$ USING SUMMED ROW FOR tests_total ${sex} ${ageRange} `
-                )
-                console.log('$$$$: ', sumRow)
-                console.log('$$$$ SUMMED OVER: ', fResults)
-              } else {
-                const result = _.find(
-                  results,
-                  (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
-                )
-                resultMap[`${sex[0]}${ageRange}`] = result
-              }
+              resultMap[`${sex[0]}${ageRange}`] = getMostRecentResult(results, {
+                filterCheck: (r) =>
+                  _.isNumber(r[F.VALUE]) &&
+                  r[F.SEX] === sex &&
+                  r[F.AGE] === ageRange,
+              })
             })
           })
           return resultMap
+        },
+      },
+      {
+        id: 'year',
+        [F.INDICATOR]: 'Den Age-Female Gte 15',
+        [F.VALUE_COMMENT]: 'validated',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+        [F.YEAR]: LATEST_YEAR,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          if (
+            results.length > 1 &&
+            _.uniqBy(results, 'year').length !== results.length
+          ) {
+            // debugger
+            console.warn(
+              `**LOOKOUT! Taking highest year result for:
+            `,
+              results[0].indicator,
+              'R:',
+              _.maxBy(results, 'year'),
+              `
+            `,
+              'rs:',
+              results
+            )
+          }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
         },
       },
       {
@@ -3508,7 +3503,7 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'year',
-        [F.INDICATOR]: 'Den Age-Female Gte 15',
+        [F.INDICATOR]: 'Den Age-Male Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
         [F.YEAR]: LATEST_YEAR,
@@ -3532,7 +3527,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
         },
       },
       {
@@ -3815,7 +3810,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: getMostRecentResult(results) }
         },
       },
       {
@@ -3842,7 +3837,7 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          return { [`${MALE[0]}${ALL_ADULTS}`]: getMostRecentResult(results) }
         },
       },
       {
