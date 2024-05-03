@@ -3432,12 +3432,134 @@ const getIndicatorMap = (isShiny) => {
           const resultMap = {}
           R_SEXES.forEach((sex) => {
             ;[...R_ADULT_AGES, ALL_ADULTS].forEach((ageRange) => {
-              resultMap[`${sex[0]}${ageRange}`] = getMostRecentResult(results, {
-                filterCheck: (r) =>
-                  _.isNumber(r[F.VALUE]) &&
-                  r[F.SEX] === sex &&
-                  r[F.AGE] === ageRange,
-              })
+               const countryCode = _.get(results, [0, F.COUNTRY_ISO_CODE])
+               const countryApplies = _.get(
+                 COUNTRY_MAP,
+                 [countryCode, 'sumFix'],
+                 false
+               )
+               if (FEATURE_FLAGS.SHINY_SUM && countryApplies) {
+                 const fResults = _.filter(
+                   results,
+                   (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
+                 )
+
+                 const firstRow = fResults[0]
+                 const sumRow = { ...firstRow }
+                 sumRow[F.AREA_NAME] = 'NULL' // let's pretend
+                 sumRow[F.VALUE_UPPER] = undefined
+                 sumRow[F.VALUE_LOWER] = undefined
+                 sumRow[F.VALUE] = 0
+                 const areaMap = {}
+                 fResults.forEach((r) => {
+                   if (r[F.VALUE]) {
+                     const rowArea = r[F.AREA_NAME]
+                     // we're summing over regional values. if there's also a country-wide
+                     // value (ie AREA_NAME = NULL), it should not be included in sum.
+                     if (areaMap[rowArea] || !r[F.AREA_NAME]) {
+                       console.warn(
+                         `$$$$ duplicate (or NULL) area_name for tests_total ${sex} ${ageRange}: `,
+                         r
+                       )
+                     } else {
+                       areaMap[rowArea] = true
+                       sumRow[F.VALUE] += Number(r[F.VALUE])
+                       console.log(
+                         '$$$: ',
+                         rowArea,
+                         r[F.VALUE],
+                         sumRow[F.VALUE]
+                       )
+                     }
+                   }
+                 })
+                 resultMap[`${sex[0]}${ageRange}`] = sumRow
+                 console.log(
+                   `$$$$ USING SUMMED ROW FOR tests_total ${sex} ${ageRange} `
+                 )
+                 console.log('$$$$: ', sumRow)
+                 console.log('$$$$ SUMMED OVER: ', fResults)
+               } else {
+                 resultMap[`${sex[0]}${ageRange}`] = getMostRecentResult(
+                   results,
+                   {
+                     filterCheck: (r) =>
+                       _.isNumber(r[F.VALUE]) &&
+                       r[F.SEX] === sex &&
+                       r[F.AGE] === ageRange,
+                   }
+                 )
+               }
+            })
+          })
+          return resultMap
+        },
+      },
+      {
+        id: 'year',
+        [F.INDICATOR]: 'tests_total',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.YEAR]: '2020',
+        [F.AREA_NAME]: 'NULL_OR_ALL',
+        [F.INDICATOR_DESCRIPTION]: 'all',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          const resultMap = {}
+          R_SEXES.forEach((sex) => {
+            ;[...R_ADULT_AGES, ALL_ADULTS].forEach((ageRange) => {
+              const countryCode = _.get(results, [0, F.COUNTRY_ISO_CODE])
+              const countryApplies = _.get(
+                COUNTRY_MAP,
+                [countryCode, 'sumFix'],
+                false
+              )
+              if (FEATURE_FLAGS.SHINY_SUM && countryApplies) {
+                const fResults = _.filter(
+                  results,
+                  (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
+                )
+
+                const firstRow = fResults[0]
+                const sumRow = { ...firstRow }
+                sumRow[F.AREA_NAME] = 'NULL' // let's pretend
+                sumRow[F.VALUE_UPPER] = undefined
+                sumRow[F.VALUE_LOWER] = undefined
+                sumRow[F.VALUE] = 0
+                const areaMap = {}
+                fResults.forEach((r) => {
+                  if (r[F.VALUE]) {
+                    const rowArea = r[F.AREA_NAME]
+                    // we're summing over regional values. if there's also a country-wide
+                    // value (ie AREA_NAME = NULL), it should not be included in sum.
+                    if (areaMap[rowArea] || !r[F.AREA_NAME]) {
+                      console.warn(
+                        `$$$$ duplicate (or NULL) area_name for tests_total ${sex} ${ageRange}: `,
+                        r
+                      )
+                    } else {
+                      areaMap[rowArea] = true
+                      sumRow[F.VALUE] += Number(r[F.VALUE])
+                      console.log('$$$: ', rowArea, r[F.VALUE], sumRow[F.VALUE])
+                    }
+                  }
+                })
+                resultMap[`${sex[0]}${ageRange}`] = sumRow
+                console.log(
+                  `$$$$ USING SUMMED ROW FOR tests_total ${sex} ${ageRange} `
+                )
+                console.log('$$$$: ', sumRow)
+                console.log('$$$$ SUMMED OVER: ', fResults)
+              } else {
+                resultMap[`${sex[0]}${ageRange}`] = getMostRecentResult(
+                  results,
+                  {
+                    filterCheck: (r) =>
+                      _.isNumber(r[F.VALUE]) &&
+                      r[F.SEX] === sex &&
+                      r[F.AGE] === ageRange,
+                  }
+                )
+              }
             })
           })
           return resultMap

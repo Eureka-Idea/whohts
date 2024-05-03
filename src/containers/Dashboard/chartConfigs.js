@@ -166,7 +166,6 @@ function displayNumber({ v, unrounded = false }) {
     : Number(v.toPrecision(2)).toString()
   let spaced = ''
   let spacer = ''
-  let slStart
   while (str.length) {
     spaced = str.slice(-3) + spacer + spaced
     str = str.slice(0, -3)

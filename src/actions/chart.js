@@ -35,7 +35,7 @@ const debugList = {
   // [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
-  // [CHARTS.GROUPS_TABLE.id]: true,
+  [CHARTS.GROUPS_TABLE.id]: true,
   // [CHARTS.POLICY_TABLE.id]: true,
   // [CHARTS.KP_TABLE.id]: true,
   // [CHARTS.ADULTS.id]: true,
@@ -50,6 +50,7 @@ const debugList = {
 // like the above, but to mark charts to omit
 const debugSkipList = {
   // [CHARTS.FORECAST.id]: true,
+  // [CHARTS.PLHIV_DIAGNOSIS.id]: true,0
 }
 
 // gets records to cover the indicators relevant to each chart
