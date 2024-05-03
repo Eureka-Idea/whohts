@@ -31,7 +31,7 @@ const COUNTRIES = [
   { ISO: 'MOZ', name: 'Mozambique', shiny: true, sumFix: true },
   { ISO: 'MMR', name: 'Myanmar', shiny: false },
   { ISO: 'NAM', name: 'Namibia', shiny: false },
-  { ISO: 'NGA', name: 'Nigeria', shiny: false, sumFix: false },
+  { ISO: 'NGA', name: 'Nigeria', shiny: false, sumFix: true },
   { ISO: 'PAK', name: 'Pakistan', shiny: false },
   { ISO: 'PNG', name: 'Papua New Guinea', shiny: false },
   { ISO: 'PHL', name: 'Philippines', shiny: false },
