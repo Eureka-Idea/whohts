@@ -1802,24 +1802,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -1829,24 +1814,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -1856,24 +1826,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
@@ -1883,24 +1838,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       {
@@ -1910,24 +1850,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -1937,24 +1862,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -1964,24 +1874,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
         },
       },
       {
@@ -1991,24 +1886,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS15}`]: result }
         },
       },
       {
@@ -2018,25 +1898,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -2046,25 +1910,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -2074,25 +1922,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -2102,25 +1934,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -2130,24 +1946,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
@@ -2157,24 +1958,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       {
@@ -2184,25 +1970,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -2212,25 +1982,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -2240,25 +1994,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -2268,25 +2006,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       // [ UNDIAGNOSED PLHIV = (1 - PLHIV WHO KNOW STATUS) * ESTIMATED # PLHIV]
@@ -2345,24 +2067,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
         },
       },
       {
@@ -2372,24 +2079,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
         },
       },
       {
@@ -2399,24 +2091,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS15}`]: result }
         },
       },
       {
@@ -2426,24 +2103,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS15}`]: result }
         },
       },
       {
@@ -2453,24 +2115,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -2480,24 +2127,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -2507,24 +2139,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -2534,24 +2151,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -2561,24 +2163,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -2588,24 +2175,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -2615,24 +2187,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -2642,24 +2199,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -2669,24 +2211,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -2696,24 +2223,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -2723,24 +2235,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -2750,24 +2247,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -2777,24 +2259,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
@@ -2804,24 +2271,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
@@ -2831,24 +2283,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       {
@@ -2858,24 +2295,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       // NEW HIV INFECTIONS
@@ -2886,25 +2308,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -2914,25 +2320,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -2942,24 +2332,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -2969,24 +2344,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -2996,24 +2356,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
         },
       },
       {
@@ -3023,24 +2368,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
         },
       },
       {
@@ -3050,24 +2380,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS15}`]: result }
         },
       },
       {
@@ -3077,24 +2392,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS15}`]: result }
         },
       },
       {
@@ -3104,24 +2404,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -3131,25 +2416,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -3159,24 +2428,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -3186,24 +2440,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
@@ -3213,25 +2452,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -3241,25 +2464,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -3269,24 +2476,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -3296,24 +2488,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       {
@@ -3323,24 +2500,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
@@ -3350,24 +2512,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
@@ -3377,24 +2524,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       {
@@ -3404,24 +2536,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       // TESTED IN PAST YEAR
@@ -3635,24 +2752,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -3664,24 +2766,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
@@ -3693,24 +2780,9 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
