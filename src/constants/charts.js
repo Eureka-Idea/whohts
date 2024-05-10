@@ -962,6 +962,7 @@ const kpTGF = {
     yearMsm: 'Number of HIV tests taken among men who have sex with men',
     yearSw: 'Number of HIV tests taken among sex workers',
     yearPwid: 'Number of HIV tests taken among people who use drugs',
+    yearPris: 'Number of HIV tests taken among prisoners',
     yearTrans: 'Number of HIV tests taken among transgender population',
   },
 }
