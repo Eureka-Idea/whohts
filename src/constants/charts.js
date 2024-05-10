@@ -660,7 +660,7 @@ const indexPEPFAR = {
     community: 'Index - Number of tests - Community',
     facility: 'Index - Number of tests - Facility',
 
-    pTotal: 'Positivity- Index Testing Total',
+    pTotal: 'Positivity - Index Testing Total',
     pCommunity: 'Positivity - Community Index testing',
     pFacility: 'Positivity - Facility Index Testing',
   },
