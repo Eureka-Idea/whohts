@@ -2248,7 +2248,7 @@ const getPolicyTable = (
         year: _.get(provider, [FIELD_MAP.YEAR]),
       },
       {
-        rowName: 'Community-based testing and counselling',
+        rowName: 'Community-based testing',
         value: _.get(community, [FIELD_MAP.VALUE_COMMENT]),
         year: _.get(community, [FIELD_MAP.YEAR]),
       },
