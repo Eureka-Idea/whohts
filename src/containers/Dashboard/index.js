@@ -104,11 +104,19 @@ class Dashboard extends Component {
   getCountryContext() {
     const { id } = CHARTS.CONTEXT
 
-    const populationRow = _.get(this.props.chartData, id + '.data.population', {})
+    const populationRow = _.get(
+      this.props.chartData,
+      id + '.dataByHierarchy.population.0',
+      {}
+    )
     const population = populationRow[FIELD_MAP.VALUE]
     const pSource = populationRow[FIELD_MAP.SOURCE_DATABASE]
-    
-    const classificationRow = _.get(this.props.chartData, id + '.data.classification', {})
+
+    const classificationRow = _.get(
+      this.props.chartData,
+      id + '.dataByHierarchy.classification.0',
+      {}
+    )
     const classification = classificationRow[FIELD_MAP.VALUE_COMMENT]
     const cSource = classificationRow[FIELD_MAP.SOURCE_DATABASE]
     

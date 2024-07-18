@@ -4,14 +4,12 @@ import { FEATURE_FLAGS } from './flags'
 
 // const BASE_URL = 'https://status.y-x.ch/query?'
 const BASE_URL =
-  'https://2021-app-dot-eic-database-290813.ew.r.appspot.com/query?'
-// const BASE_URL = 'https://eic-database-290813.ew.r.appspot.com/query?'
-
-// indicates that the getter is for *all* chart values, rather than one (so MUST return a map of id -> value)
-const AGGREGATE_GETTER = 'AGGREGATE_GETTER'
+  'https://2024-app-dot-eic-database-290813.ew.r.appspot.com/query?'
+// Master url:
+// 'https://2021-app-dot-eic-database-290813.ew.r.appspot.com/query?'
 
 const R_2015_2019 = ['2015', '2016', '2017', '2018', '2019']
-const LATEST_YEAR = '2021'
+const LATEST_YEAR = '2022'
 const R_2015_ON = _.range('2015', Number(LATEST_YEAR) + 1).map(String)
 const R_2018_ON = _.range('2018', Number(LATEST_YEAR) + 1).map(String)
 const R_2020_2025 = ['2020', '2021', '2022', '2023', '2024', '2025']
@@ -46,6 +44,7 @@ const R_LIMITED_DEMO_GROUPS = _.flatMap([
 
 const SOURCE_DB_MAP = {
   S90: 'Shiny90',
+  GAM23: 'Global AIDS Monitoring 2023',
   GAM21: 'Global AIDS Monitoring 2021',
   GAM20: 'Global AIDS Monitoring 2020',
   GAM19: 'Global AIDS Monitoring 2019',
@@ -54,15 +53,11 @@ const SOURCE_DB_MAP = {
   NPD: 'National Programme Data',
 
   PCOP20: 'PEPFAR COP 2020',
-  PCOP19: 'PEPFAR COP 2019',
-  // PCOP18: 'PEPFAR COP 2018',
-  PCOP1718: 'PEPFAR COP 2017 - 2018',
-  // PCOP17: 'PEPFAR COP 2017',
   PROP20: 'PEPFAR ROP 2020',
+  PCOP19: 'PEPFAR COP 2019',
   PROP19: 'PEPFAR ROP 2019',
-  // PROP18: 'PEPFAR ROP 2018',
+  PCOP1718: 'PEPFAR COP 2017 - 2018',
   PROP17: 'PEPFAR ROP 2017',
-  // PEPFAR_SDE: 'PEPFAR System Data Extract',
   PEPFAR: 'PEPFAR',
 
   WME: 'WHO model estimates',
@@ -71,7 +66,7 @@ const SOURCE_DB_MAP = {
   WNCPI: 'WHO NCPI',
   HIVST20: 'HIVST policy 2020 data set',
   HIVST21: 'HIVST policy 2021 data set',
-  KP22: 'UNAIDS KP-Atlas 2022',
+  KP23: 'UNAIDS KP-Atlas 2023',
   KP20: 'UNAIDS KP-Atlas 2020',
   // UNGAM20: 'UNAIDS Global AIDS Monitoring 2020',
   TGF: 'The Global Fund',
@@ -82,6 +77,7 @@ const SOURCE_DB_MAP = {
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
   SPEC21: 'Spectrum estimates 2021 (UNAIDS/WHO)',
   SPEC22: 'Spectrum estimates 2022 (UNAIDS/WHO)',
+  SPEC23: 'Spectrum estimates 2023 (UNAIDS/WHO)',
   SPEC_REG: /Spectrum estimates .+ \(UNAIDS\/WHO\)/,
   WGHO: 'WHO Global Health Observatory',
   UNAIDS: 'UNAIDS', // also a source organization
@@ -121,10 +117,24 @@ const getSourceDisplayWithYear = ({ source, sourceYear }) => {
 
   if (!sourceYear) return SOURCE_DISPLAY_MAP[source]
 
-  // NOTE: this assumes that if the source display name has a 4 digit number, it's a year 
+  // NOTE: this assumes that if the source display name has a 4 digit number, it's a year
   // (and will be replaced with the source year)
   return SOURCE_DISPLAY_MAP[source].replace(/\d{4}/, sourceYear)
 }
+
+// TODO: replace all _.maxBy calls with this
+const getMostRecentResult = (
+  results,
+  {
+    // by default, only include results with a numeric VALUE
+    hasValueCheck = (r) => _.isNumber(r[F.VALUE]),
+    filterCheck = (r) => true,
+  } = {}
+) =>
+  _.maxBy(
+    results.filter((r) => hasValueCheck(r) && filterCheck(r)),
+    'year'
+  ) || null
 
 const FIELD_MAP = {
   INDICATOR: 'indicator',
@@ -168,6 +178,24 @@ const CSV_FIELDS = [
 ]
 
 // SOURCE objects for source prio charts
+const adultsGAM23 = {
+  id: 'GAM23',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    total: 'Den Age-All',
+    men: 'Den Age-Male Gte 15',
+    women: 'Den Age-Female Gte 15',
+
+    pTotal: 'Per Age-All',
+    pMen: 'Per Age-Male Gte 15',
+    pWomen: 'Per Age-Female Gte 15',
+  },
+}
 const adultsGAM21 = {
   id: 'GAM21',
   filters: {
@@ -176,15 +204,14 @@ const adultsGAM21 = {
       [F.VALUE_COMMENT]: 'validated',
     },
   },
-  // TODO-@*&: remove numbering to make maintenance easier. see TODO-@*&
   indicators: {
-    total0: 'Den Age-All',
-    men0: 'Den Age-Male Gte 15',
-    women0: 'Den Age-Female Gte 15',
+    total: 'Den Age-All',
+    men: 'Den Age-Male Gte 15',
+    women: 'Den Age-Female Gte 15',
 
-    pTotal0: 'Per Age-All',
-    pMen0: 'Per Age-Male Gte 15',
-    pWomen0: 'Per Age-Female Gte 15',
+    pTotal: 'Per Age-All',
+    pMen: 'Per Age-Male Gte 15',
+    pWomen: 'Per Age-Female Gte 15',
   },
 }
 const adultsGAM20 = {
@@ -196,13 +223,13 @@ const adultsGAM20 = {
     },
   },
   indicators: {
-    total1: 'Den Age-All',
-    men1: 'Den Age-Male Gte 15',
-    women1: 'Den Age-Female Gte 15',
+    total: 'Den Age-All',
+    men: 'Den Age-Male Gte 15',
+    women: 'Den Age-Female Gte 15',
 
-    pTotal1: 'Per Age-All',
-    pMen1: 'Per Age-Male Gte 15',
-    pWomen1: 'Per Age-Female Gte 15',
+    pTotal: 'Per Age-All',
+    pMen: 'Per Age-Male Gte 15',
+    pWomen: 'Per Age-Female Gte 15',
   },
 }
 const adultsGAM19 = {
@@ -213,13 +240,13 @@ const adultsGAM19 = {
     },
   },
   indicators: {
-    total2: 'Total volume of tests conducted in past year',
-    men2: 'Men (15+) - Number of tests',
-    women2: 'Women (15+) - Number of tests',
+    total: 'Total volume of tests conducted in past year',
+    men: 'Men (15+) - Number of tests',
+    women: 'Women (15+) - Number of tests',
 
-    pTotal2: 'Total aggregate positivity',
-    pMen2: 'Men (15+) -  Positivity',
-    pWomen2: 'Women (15+) -  Positivity',
+    pTotal: 'Total aggregate positivity',
+    pMen: 'Men (15+) -  Positivity',
+    pWomen: 'Women (15+) -  Positivity',
   },
 }
 const adultsNPD19 = {
@@ -231,13 +258,13 @@ const adultsNPD19 = {
   },
   indicators: {
     // NOTE: same as GAM
-    total3: 'Total volume of tests conducted in past year',
-    men3: 'Men (15+) - Number of tests',
-    women3: 'Women (15+) - Number of tests',
+    total: 'Total volume of tests conducted in past year',
+    men: 'Men (15+) - Number of tests',
+    women: 'Women (15+) - Number of tests',
 
-    pTotal3: 'Total aggregate positivity',
-    pMen3: 'Men (15+) -  Positivity',
-    pWomen3: 'Women (15+) -  Positivity',
+    pTotal: 'Total aggregate positivity',
+    pMen: 'Men (15+) -  Positivity',
+    pWomen: 'Women (15+) -  Positivity',
   },
 }
 const adultsPCOP20 = {
@@ -248,13 +275,13 @@ const adultsPCOP20 = {
     },
   },
   indicators: {
-    total4: 'Den Age-All',
-    men4: 'Den Age-Male Gte 15',
-    women4: 'Den Age-Female Gte 15',
+    total: 'Den Age-All',
+    men: 'Den Age-Male Gte 15',
+    women: 'Den Age-Female Gte 15',
 
-    pTotal4: 'Per Age-All',
-    pMen4: 'Per Age-Male Gte 15',
-    pWomen4: 'Per Age-Female Gte 15',
+    pTotal: 'Per Age-All',
+    pMen: 'Per Age-Male Gte 15',
+    pWomen: 'Per Age-Female Gte 15',
   },
 }
 const adultsPROP20 = {
@@ -265,13 +292,13 @@ const adultsPROP20 = {
     },
   },
   indicators: {
-    total5: 'Den Age-All',
-    men5: 'Den Age-Male Gte 15',
-    women5: 'Den Age-Female Gte 15',
+    total: 'Den Age-All',
+    men: 'Den Age-Male Gte 15',
+    women: 'Den Age-Female Gte 15',
 
-    pTotal5: 'Per Age-All',
-    pMen5: 'Per Age-Male Gte 15',
-    pWomen5: 'Per Age-Female Gte 15',
+    pTotal: 'Per Age-All',
+    pMen: 'Per Age-Male Gte 15',
+    pWomen: 'Per Age-Female Gte 15',
   },
 }
 const adultsPCOP19 = {
@@ -282,13 +309,13 @@ const adultsPCOP19 = {
     },
   },
   indicators: {
-    total6: 'People Tested in Past Year',
-    men6: 'Men (Tested in past year)',
-    women6: 'Women (Tested in past year)',
+    total: 'People Tested in Past Year',
+    men: 'Men (Tested in past year)',
+    women: 'Women (Tested in past year)',
 
-    pTotal6: 'Aggregate Positivity - Tests conducted and positivity, by sex',
-    pMen6: 'Men -  Positivity',
-    pWomen6: 'Women -  Positivity',
+    pTotal: 'Aggregate Positivity - Tests conducted and positivity, by sex',
+    pMen: 'Men -  Positivity',
+    pWomen: 'Women -  Positivity',
   },
 }
 const adultsPROP19 = {
@@ -299,13 +326,13 @@ const adultsPROP19 = {
     },
   },
   indicators: {
-    total7: 'People Tested in Past Year',
-    men7: 'Men (Tested in past year)',
-    women7: 'Women (Tested in past year)',
+    total: 'People Tested in Past Year',
+    men: 'Men (Tested in past year)',
+    women: 'Women (Tested in past year)',
 
-    pTotal7: 'Aggregate Positivity - Tests conducted and positivity, by sex',
-    pMen7: 'Men -  Positivity',
-    pWomen7: 'Women -  Positivity',
+    pTotal: 'Aggregate Positivity - Tests conducted and positivity, by sex',
+    pMen: 'Men -  Positivity',
+    pWomen: 'Women -  Positivity',
   },
 }
 const adultsPCOP1718 = {
@@ -316,13 +343,13 @@ const adultsPCOP1718 = {
     },
   },
   indicators: {
-    total10: 'People Tested in Past Year',
-    men10: 'Men (Tested in past year)',
-    women10: 'Women (Tested in past year)',
+    total: 'People Tested in Past Year',
+    men: 'Men (Tested in past year)',
+    women: 'Women (Tested in past year)',
 
-    pTotal10: 'Aggregate Positivity - Tests conducted and positivity, by sex',
-    pMen10: 'Men -  Positivity',
-    pWomen10: 'Women -  Positivity',
+    pTotal: 'Aggregate Positivity - Tests conducted and positivity, by sex',
+    pMen: 'Men -  Positivity',
+    pWomen: 'Women -  Positivity',
   },
 }
 const adultsPROP17 = {
@@ -333,13 +360,13 @@ const adultsPROP17 = {
     },
   },
   indicators: {
-    total11: 'People Tested in Past Year',
-    men11: 'Men (Tested in past year)',
-    women11: 'Women (Tested in past year)',
+    total: 'People Tested in Past Year',
+    men: 'Men (Tested in past year)',
+    women: 'Women (Tested in past year)',
 
-    pTotal11: 'Aggregate Positivity - Tests conducted and positivity, by sex',
-    pMen11: 'Men -  Positivity',
-    pWomen11: 'Women -  Positivity',
+    pTotal: 'Aggregate Positivity - Tests conducted and positivity, by sex',
+    pMen: 'Men -  Positivity',
+    pWomen: 'Women -  Positivity',
   },
 }
 const adultsPEPFAR = {
@@ -350,16 +377,36 @@ const adultsPEPFAR = {
     },
   },
   indicators: {
-    total4: 'People Tested in Past Year',
-    men4: 'Men (15+) Tested in Past Year',
-    women4: 'Women (15+) Tested in Past Year',
+    total: 'People Tested in Past Year',
+    men: 'Men (15+) Tested in Past Year',
+    women: 'Women (15+) Tested in Past Year',
 
-    pTotal4: 'Total positivity',
-    pMen4: 'Positivity - Men (15+)',
-    pWomen4: 'Positivity - Women (15+)',
+    pTotal: 'Total positivity',
+    pMen: 'Positivity - Men (15+)',
+    pWomen: 'Positivity - Women (15+)',
   },
 }
 
+const communityGAM23 = {
+  id: 'GAM23',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    total: 'Den Community-Community All',
+    mobile: 'Den Community-Community Mobile',
+    VCT: 'Den Community-Community Vct',
+    other: 'Den Community-Community Other',
+
+    pTotal: 'Per Community-Community All',
+    pMobile: 'Per Community-Community Mobile',
+    pVCT: 'Per Community-Community Vct',
+    pOther: 'Per Community-Community Other',
+  },
+}
 const communityGAM21 = {
   id: 'GAM21',
   filters: {
@@ -369,15 +416,15 @@ const communityGAM21 = {
     },
   },
   indicators: {
-    total0: 'Den Community-Community All',
-    mobile0: 'Den Community-Community Mobile',
-    VCT0: 'Den Community-Community Vct',
-    other0: 'Den Community-Community Other',
+    total: 'Den Community-Community All',
+    mobile: 'Den Community-Community Mobile',
+    VCT: 'Den Community-Community Vct',
+    other: 'Den Community-Community Other',
 
-    pTotal0: 'Per Community-Community All',
-    pMobile0: 'Per Community-Community Mobile',
-    pVCT0: 'Per Community-Community Vct',
-    pOther0: 'Per Community-Community Other',
+    pTotal: 'Per Community-Community All',
+    pMobile: 'Per Community-Community Mobile',
+    pVCT: 'Per Community-Community Vct',
+    pOther: 'Per Community-Community Other',
   },
 }
 const communityGAM20 = {
@@ -389,15 +436,15 @@ const communityGAM20 = {
     },
   },
   indicators: {
-    total1: 'Den Community-Community All',
-    mobile1: 'Den Community-Community Mobile',
-    VCT1: 'Den Community-Community Vct',
-    other1: 'Den Community-Community Other',
+    total: 'Den Community-Community All',
+    mobile: 'Den Community-Community Mobile',
+    VCT: 'Den Community-Community Vct',
+    other: 'Den Community-Community Other',
 
-    pTotal1: 'Per Community-Community All',
-    pMobile1: 'Per Community-Community Mobile',
-    pVCT1: 'Per Community-Community Vct',
-    pOther1: 'Per Community-Community Other',
+    pTotal: 'Per Community-Community All',
+    pMobile: 'Per Community-Community Mobile',
+    pVCT: 'Per Community-Community Vct',
+    pOther: 'Per Community-Community Other',
   },
 }
 const communityGAM19 = {
@@ -408,16 +455,16 @@ const communityGAM19 = {
     },
   },
   indicators: {
-    total2: 'Total Volume - Tests conducted and positivity at community level',
-    mobile2: 'Mobile testing - Number of tests - Community',
-    VCT2: 'VCT - Number of tests - Community',
-    other2: 'Other - Number of tests - Community',
+    total: 'Total Volume - Tests conducted and positivity at community level',
+    mobile: 'Mobile testing - Number of tests - Community',
+    VCT: 'VCT - Number of tests - Community',
+    other: 'Other - Number of tests - Community',
 
-    pTotal2:
+    pTotal:
       'Aggregate Positivity - Tests conducted and positivity at community level',
-    pMobile2: 'Mobile testing - Positivity - Community',
-    pVCT2: 'VCT - Positivity - Community',
-    pOther2: 'Other - Positivity - Community',
+    pMobile: 'Mobile testing - Positivity - Community',
+    pVCT: 'VCT - Positivity - Community',
+    pOther: 'Other - Positivity - Community',
   },
 }
 const communityNPD19 = {
@@ -429,16 +476,16 @@ const communityNPD19 = {
   },
   indicators: {
     // same as GAM19
-    total3: 'Total Volume - Tests conducted and positivity at community level',
-    mobile3: 'Mobile testing - Number of tests - Community',
-    VCT3: 'VCT - Number of tests - Community',
-    other3: 'Other - Number of tests - Community',
+    total: 'Total Volume - Tests conducted and positivity at community level',
+    mobile: 'Mobile testing - Number of tests - Community',
+    VCT: 'VCT - Number of tests - Community',
+    other: 'Other - Number of tests - Community',
 
-    pTotal3:
+    pTotal:
       'Aggregate Positivity - Tests conducted and positivity at community level',
-    pMobile3: 'Mobile testing - Positivity - Community',
-    pVCT3: 'VCT - Positivity - Community',
-    pOther3: 'Other - Positivity - Community',
+    pMobile: 'Mobile testing - Positivity - Community',
+    pVCT: 'VCT - Positivity - Community',
+    pOther: 'Other - Positivity - Community',
   },
 }
 const communityPEPFAR = {
@@ -449,18 +496,42 @@ const communityPEPFAR = {
     },
   },
   indicators: {
-    total4: 'Total Community Tests',
-    mobile4: 'Mobile testing - Number of tests - Community',
-    VCT4: 'VCT - Number of tests - Community',
-    other4: 'Other - Number of tests - Community',
+    total: 'Total Community Tests',
+    mobile: 'Mobile testing - Number of tests - Community',
+    VCT: 'VCT - Number of tests - Community',
+    other: 'Other - Number of tests - Community',
 
-    pTotal4: 'Positivity - Community Modalities Total',
-    pMobile4: 'Positivity - Community Mobile Testing',
-    pVCT4: 'Positivity - Community VCT Testing',
-    pOther4: 'Positivity - Community Other Testing',
+    pTotal: 'Positivity - Community Modalities Total',
+    pMobile: 'Positivity - Community Mobile Testing',
+    pVCT: 'Positivity - Community VCT Testing',
+    pOther: 'Positivity - Community Other Testing',
   },
 }
 
+const facilityGAM23 = {
+  id: 'GAM23',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    total: 'Den Facility-Facility All',
+    PITC: 'Den Facility-Facility Provider Init',
+    ANC: 'Den Facility-Facility Anc',
+    VCT: 'Den Facility-Facility Vct',
+    family: 'Den Facility-Facility Fp Clinic',
+    other: 'Den Facility-Facility Other',
+
+    pTotal: 'Per Facility-Facility All',
+    pPITC: 'Per Facility-Facility Provider Init',
+    pANC: 'Per Facility-Facility Anc',
+    pVCT: 'Per Facility-Facility Vct',
+    pFamily: 'Per Facility-Facility Fp Clinic',
+    pOther: 'Per Facility-Facility Other',
+  },
+}
 const facilityGAM21 = {
   id: 'GAM21',
   filters: {
@@ -470,19 +541,19 @@ const facilityGAM21 = {
     },
   },
   indicators: {
-    total0: 'Den Facility-Facility All',
-    PITC0: 'Den Facility-Facility Provider Init',
-    ANC0: 'Den Facility-Facility Anc',
-    VCT0: 'Den Facility-Facility Vct',
-    family0: 'Den Facility-Facility Fp Clinic',
-    other0: 'Den Facility-Facility Other',
+    total: 'Den Facility-Facility All',
+    PITC: 'Den Facility-Facility Provider Init',
+    ANC: 'Den Facility-Facility Anc',
+    VCT: 'Den Facility-Facility Vct',
+    family: 'Den Facility-Facility Fp Clinic',
+    other: 'Den Facility-Facility Other',
 
-    pTotal0: 'Per Facility-Facility All',
-    pPITC0: 'Per Facility-Facility Provider Init',
-    pANC0: 'Per Facility-Facility Anc',
-    pVCT0: 'Per Facility-Facility Vct',
-    pFamily0: 'Per Facility-Facility Fp Clinic',
-    pOther0: 'Per Facility-Facility Other',
+    pTotal: 'Per Facility-Facility All',
+    pPITC: 'Per Facility-Facility Provider Init',
+    pANC: 'Per Facility-Facility Anc',
+    pVCT: 'Per Facility-Facility Vct',
+    pFamily: 'Per Facility-Facility Fp Clinic',
+    pOther: 'Per Facility-Facility Other',
   },
 }
 const facilityGAM20 = {
@@ -494,19 +565,19 @@ const facilityGAM20 = {
     },
   },
   indicators: {
-    total1: 'Den Facility-Facility All',
-    PITC1: 'Den Facility-Facility Provider Init',
-    ANC1: 'Den Facility-Facility Anc',
-    VCT1: 'Den Facility-Facility Vct',
-    family1: 'Den Facility-Facility Fp Clinic',
-    other1: 'Den Facility-Facility Other',
+    total: 'Den Facility-Facility All',
+    PITC: 'Den Facility-Facility Provider Init',
+    ANC: 'Den Facility-Facility Anc',
+    VCT: 'Den Facility-Facility Vct',
+    family: 'Den Facility-Facility Fp Clinic',
+    other: 'Den Facility-Facility Other',
 
-    pTotal1: 'Per Facility-Facility All',
-    pPITC1: 'Per Facility-Facility Provider Init',
-    pANC1: 'Per Facility-Facility Anc',
-    pVCT1: 'Per Facility-Facility Vct',
-    pFamily1: 'Per Facility-Facility Fp Clinic',
-    pOther1: 'Per Facility-Facility Other',
+    pTotal: 'Per Facility-Facility All',
+    pPITC: 'Per Facility-Facility Provider Init',
+    pANC: 'Per Facility-Facility Anc',
+    pVCT: 'Per Facility-Facility Vct',
+    pFamily: 'Per Facility-Facility Fp Clinic',
+    pOther: 'Per Facility-Facility Other',
   },
 }
 const facilityGAM19 = {
@@ -517,18 +588,18 @@ const facilityGAM19 = {
     },
   },
   indicators: {
-    total2: 'Total Volume - Tests conducted and positivity at facility level',
-    PITC2: 'PITC - Number of tests - Facility',
-    ANC2: 'ANC - Number of tests - Facility',
-    VCT2: 'VCT - Number of tests - Facility',
-    other2: 'Other - Number of tests - Facility',
+    total: 'Total Volume - Tests conducted and positivity at facility level',
+    PITC: 'PITC - Number of tests - Facility',
+    ANC: 'ANC - Number of tests - Facility',
+    VCT: 'VCT - Number of tests - Facility',
+    other: 'Other - Number of tests - Facility',
 
-    pTotal2:
+    pTotal:
       'Aggregate Positivity - Tests conducted and positivity at facility level',
-    pPITC2: 'PITC - Positivity - Facility',
-    pANC2: 'ANC - Positivity - Facility',
-    pVCT2: 'VCT - Positivity - Facility',
-    pOther2: 'Other - Positivity - Facility',
+    pPITC: 'PITC - Positivity - Facility',
+    pANC: 'ANC - Positivity - Facility',
+    pVCT: 'VCT - Positivity - Facility',
+    pOther: 'Other - Positivity - Facility',
   },
 }
 const facilityNPD19 = {
@@ -540,18 +611,18 @@ const facilityNPD19 = {
   },
   indicators: {
     // same as GAM19
-    total3: 'Total Volume - Tests conducted and positivity at facility level',
-    PITC3: 'PITC - Number of tests - Facility',
-    ANC3: 'ANC - Number of tests - Facility',
-    VCT3: 'VCT - Number of tests - Facility',
-    other3: 'Other - Number of tests - Facility',
+    total: 'Total Volume - Tests conducted and positivity at facility level',
+    PITC: 'PITC - Number of tests - Facility',
+    ANC: 'ANC - Number of tests - Facility',
+    VCT: 'VCT - Number of tests - Facility',
+    other: 'Other - Number of tests - Facility',
 
-    pTotal3:
+    pTotal:
       'Aggregate Positivity - Tests conducted and positivity at facility level',
-    pPITC3: 'PITC - Positivity - Facility',
-    pANC3: 'ANC - Positivity - Facility',
-    pVCT3: 'VCT - Positivity - Facility',
-    pOther3: 'Other - Positivity - Facility',
+    pPITC: 'PITC - Positivity - Facility',
+    pANC: 'ANC - Positivity - Facility',
+    pVCT: 'VCT - Positivity - Facility',
+    pOther: 'Other - Positivity - Facility',
   },
 }
 const facilityPEPFAR = {
@@ -563,17 +634,17 @@ const facilityPEPFAR = {
   },
   indicators: {
     // TODO: fix calculated values
-    total4: 'Total Facility Tests',
-    PITC4: 'PITC - Number of tests - Facility',
-    ANC4: 'ANC - Number of tests - Facility',
-    VCT4: 'VCT - Number of tests - Facility',
-    other4: 'Other - Number of tests - Facility',
+    total: 'Total Facility Tests',
+    PITC: 'PITC - Number of tests - Facility',
+    ANC: 'ANC - Number of tests - Facility',
+    VCT: 'VCT - Number of tests - Facility',
+    other: 'Other - Number of tests - Facility',
 
-    pTotal4: 'Positivity - Facility Modalities Total',
-    pPITC4: 'Positivity - Facility PITC Testing',
-    pANC4: 'Positivity - Facility ANC Testing',
-    pVCT4: 'Positivity - Facility VCT Testing',
-    pOther4: 'Positivity - Facility Other Testing',
+    pTotal: 'Positivity - Facility Modalities Total',
+    pPITC: 'Positivity - Facility PITC Testing',
+    pANC: 'Positivity - Facility ANC Testing',
+    pVCT: 'Positivity - Facility VCT Testing',
+    pOther: 'Positivity - Facility Other Testing',
   },
 }
 
@@ -585,16 +656,28 @@ const indexPEPFAR = {
     },
   },
   indicators: {
-    total1: 'Total Index Tests',
-    community1: 'Index - Number of tests - Community',
-    facility1: 'Index - Number of tests - Facility',
+    total: 'Total Index Tests',
+    community: 'Index - Number of tests - Community',
+    facility: 'Index - Number of tests - Facility',
 
-    pTotal1: 'Positivity- Index Testing Total',
-    pCommunity1: 'Positivity - Community Index testing',
-    pFacility1: 'Positivity - Facility Index Testing',
+    pTotal: 'Positivity - Index Testing Total',
+    pCommunity: 'Positivity - Community Index testing',
+    pFacility: 'Positivity - Facility Index Testing',
   },
 }
 
+const selfGAM23 = {
+  id: 'GAM23',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    distributed: 'Self Test Distributed-Data Value',
+  },
+}
 const selfGAM21 = {
   id: 'GAM21',
   filters: {
@@ -604,7 +687,7 @@ const selfGAM21 = {
     },
   },
   indicators: {
-    distributed1: 'Self Test Distributed-Data Value',
+    distributed: 'Self Test Distributed-Data Value',
   },
 }
 const selfGAM20 = {
@@ -616,7 +699,7 @@ const selfGAM20 = {
     },
   },
   indicators: {
-    distributed2: 'Self Test Distributed-Data Value',
+    distributed: 'Self Test Distributed-Data Value',
   },
 }
 const selfGAM19 = {
@@ -627,7 +710,7 @@ const selfGAM19 = {
     },
   },
   indicators: {
-    distributed3: 'HIVSTs distributed',
+    distributed: 'HIVSTs distributed',
   },
 }
 const selfNPD19 = {
@@ -639,7 +722,7 @@ const selfNPD19 = {
   },
   indicators: {
     // same as GAM19
-    distributed4: 'HIVSTs distributed',
+    distributed: 'HIVSTs distributed',
   },
 }
 const selfPEPFAR = {
@@ -650,7 +733,7 @@ const selfPEPFAR = {
     },
   },
   indicators: {
-    distributed5: 'HIV self-tests distributed',
+    distributed: 'HIV self-tests distributed',
   },
 }
 const forecastWME = {
@@ -661,36 +744,35 @@ const forecastWME = {
     },
   },
   indicators: {
-    demand1: 'HIV RDT Demand Forecast - Total Volume',
-    // need1: 'HIVST Forecasting Need Estimate',
+    demand: 'HIV RDT Demand Forecast - Total Volume',
+    // need: 'HIVST Forecasting Need Estimate',
   },
 }
 
-const kpKP22 = {
-  id: 'KP22',
+const kpKP23 = {
+  id: 'KP23',
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.KP22,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.KP23,
       [F.AREA_NAME]: 'NULL',
     },
   },
   indicators: {
-    prevMsm1: 'HIV prevalence among men who have sex with men',
-    awareMsm1:
+    prevMsm: 'HIV prevalence among men who have sex with men',
+    awareMsm:
       'HIV testing and status awareness among men who have sex with men',
 
-    prevPwid1: 'HIV prevalence among people who inject drugs',
-    awarePwid1:
-      'HIV testing and status awareness among people who inject drugs',
+    prevPwid: 'HIV prevalence among people who inject drugs',
+    awarePwid: 'HIV testing and status awareness among people who inject drugs',
 
-    prevPris1: 'HIV prevalence among prisoners',
-    // awarePris1: '',
+    prevPris: 'HIV prevalence among prisoners',
+    // awarePris: '',
 
-    prevSw1: 'HIV prevalence among sex workers',
-    awareSw1: 'HIV testing and status awareness among sex workers',
+    prevSw: 'HIV prevalence among sex workers',
+    awareSw: 'HIV testing and status awareness among sex workers',
 
-    prevTrans1: 'HIV prevalence among transgender people',
-    awareTrans1: 'HIV testing and status awareness among transgender people',
+    prevTrans: 'HIV prevalence among transgender people',
+    awareTrans: 'HIV testing and status awareness among transgender people',
   },
 }
 const kpKP20 = {
@@ -702,20 +784,47 @@ const kpKP20 = {
     },
   },
   indicators: {
-    prevMsm2: 'HIV prevalence among men who have sex with men',
-    awareMsm2: 'MSM (PLHIV who know status (%))',
+    prevMsm: 'HIV prevalence among men who have sex with men',
+    awareMsm: 'MSM (PLHIV who know status (%))',
 
-    prevPwid2: 'HIV prevalence among people who inject drugs',
-    awarePwid2: 'PWID (PLHIV who know status (%))',
+    prevPwid: 'HIV prevalence among people who inject drugs',
+    awarePwid: 'PWID (PLHIV who know status (%))',
 
-    prevPris2: 'HIV prevalence among prisoners',
-    // awarePris2: '',
+    prevPris: 'HIV prevalence among prisoners',
+    // awarePris: '',
 
-    prevSw2: 'HIV prevalence among sex workers',
-    awareSw2: 'SW (PLHIV who know status (%))',
+    prevSw: 'HIV prevalence among sex workers',
+    awareSw: 'SW (PLHIV who know status (%))',
 
-    prevTrans2: 'HIV prevalence among transgender people',
-    awareTrans2: 'Transgender (PLHIV who know status (%))',
+    prevTrans: 'HIV prevalence among transgender people',
+    awareTrans: 'Transgender (PLHIV who know status (%))',
+  },
+}
+const kpGAM23 = {
+  id: 'GAM23',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+      [F.AREA_NAME]: 'NULL',
+    },
+  },
+  indicators: {
+    // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
+    prevMsm: 'HIV prevalence among men who have sex with men',
+    awareMsm:
+      'HIV testing and status awareness among men who have sex with men',
+
+    prevPwid: 'HIV prevalence among people who inject drugs',
+    awarePwid: 'HIV testing and status awareness among people who inject drugs',
+
+    prevPris: 'HIV prevalence among prisoners',
+    // awarePris: '',
+
+    prevSw: 'HIV prevalence among sex workers',
+    awareSw: 'HIV testing and status awareness among sex workers',
+
+    prevTrans: 'HIV prevalence among transgender people',
+    awareTrans: 'HIV testing and status awareness among transgender people',
   },
 }
 const kpGAM21 = {
@@ -728,22 +837,21 @@ const kpGAM21 = {
   },
   indicators: {
     // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
-    prevMsm3: 'HIV prevalence among men who have sex with men',
-    awareMsm3:
+    prevMsm: 'HIV prevalence among men who have sex with men',
+    awareMsm:
       'HIV testing and status awareness among men who have sex with men',
 
-    prevPwid3: 'HIV prevalence among people who inject drugs',
-    awarePwid3:
-      'HIV testing and status awareness among people who inject drugs',
+    prevPwid: 'HIV prevalence among people who inject drugs',
+    awarePwid: 'HIV testing and status awareness among people who inject drugs',
 
-    prevPris3: 'HIV prevalence among prisoners',
-    // awarePris3: '',
+    prevPris: 'HIV prevalence among prisoners',
+    // awarePris: '',
 
-    prevSw3: 'HIV prevalence among sex workers',
-    awareSw3: 'HIV testing and status awareness among sex workers',
+    prevSw: 'HIV prevalence among sex workers',
+    awareSw: 'HIV testing and status awareness among sex workers',
 
-    prevTrans3: 'HIV prevalence among transgender people',
-    awareTrans3: 'HIV testing and status awareness among transgender people',
+    prevTrans: 'HIV prevalence among transgender people',
+    awareTrans: 'HIV testing and status awareness among transgender people',
   },
 }
 const kpPCOP20 = {
@@ -755,11 +863,11 @@ const kpPCOP20 = {
     },
   },
   indicators: {
-    yearMsm1: 'MSM (Tested in past year)',
-    yearSw1: 'SW (Tested in past year)',
-    yearPwid1: 'PWID (Tested in past year)',
-    yearPris1: 'People in prisons (Tested in past year)',
-    yearTrans1: 'Transgender (Tested in past year)',
+    yearMsm: 'MSM (Tested in past year)',
+    yearSw: 'SW (Tested in past year)',
+    yearPwid: 'PWID (Tested in past year)',
+    yearPris: 'People in prisons (Tested in past year)',
+    yearTrans: 'Transgender (Tested in past year)',
   },
 }
 const kpPROP20 = {
@@ -771,11 +879,11 @@ const kpPROP20 = {
     },
   },
   indicators: {
-    yearMsm2: 'MSM (Tested in past year)',
-    yearSw2: 'SW (Tested in past year)',
-    yearPwid2: 'PWID (Tested in past year)',
-    yearPris2: 'People in prisons (Tested in past year)',
-    yearTrans2: 'Transgender (Tested in past year)',
+    yearMsm: 'MSM (Tested in past year)',
+    yearSw: 'SW (Tested in past year)',
+    yearPwid: 'PWID (Tested in past year)',
+    yearPris: 'People in prisons (Tested in past year)',
+    yearTrans: 'Transgender (Tested in past year)',
   },
 }
 const kpPCOP19 = {
@@ -787,11 +895,11 @@ const kpPCOP19 = {
     },
   },
   indicators: {
-    yearMsm3: 'MSM (Tested in past year)',
-    yearSw3: 'SW (Tested in past year)',
-    yearPwid3: 'PWID (Tested in past year)',
-    yearPris3: 'People in prisons (Tested in past year)',
-    yearTrans3: 'Transgender (Tested in past year)',
+    yearMsm: 'MSM (Tested in past year)',
+    yearSw: 'SW (Tested in past year)',
+    yearPwid: 'PWID (Tested in past year)',
+    yearPris: 'People in prisons (Tested in past year)',
+    yearTrans: 'Transgender (Tested in past year)',
   },
 }
 const kpPROP19 = {
@@ -803,11 +911,11 @@ const kpPROP19 = {
     },
   },
   indicators: {
-    yearMsm4: 'MSM (Tested in past year)',
-    yearSw4: 'SW (Tested in past year)',
-    yearPwid4: 'PWID (Tested in past year)',
-    yearPris4: 'People in prisons (Tested in past year)',
-    yearTrans4: 'Transgender (Tested in past year)',
+    yearMsm: 'MSM (Tested in past year)',
+    yearSw: 'SW (Tested in past year)',
+    yearPwid: 'PWID (Tested in past year)',
+    yearPris: 'People in prisons (Tested in past year)',
+    yearTrans: 'Transgender (Tested in past year)',
   },
 }
 const kpPCOP1718 = {
@@ -819,11 +927,11 @@ const kpPCOP1718 = {
     },
   },
   indicators: {
-    yearMsm5: 'MSM (Tested in past year)',
-    yearSw5: 'SW (Tested in past year)',
-    yearPwid5: 'PWID (Tested in past year)',
-    yearPris5: 'People in prisons (Tested in past year)',
-    yearTrans5: 'Transgender (Tested in past year)',
+    yearMsm: 'MSM (Tested in past year)',
+    yearSw: 'SW (Tested in past year)',
+    yearPwid: 'PWID (Tested in past year)',
+    yearPris: 'People in prisons (Tested in past year)',
+    yearTrans: 'Transgender (Tested in past year)',
   },
 }
 const kpPROP17 = {
@@ -835,11 +943,11 @@ const kpPROP17 = {
     },
   },
   indicators: {
-    yearMsm6: 'MSM (Tested in past year)',
-    yearSw6: 'SW (Tested in past year)',
-    yearPwid6: 'PWID (Tested in past year)',
-    yearPris6: 'People in prisons (Tested in past year)',
-    yearTrans6: 'Transgender (Tested in past year)',
+    yearMsm: 'MSM (Tested in past year)',
+    yearSw: 'SW (Tested in past year)',
+    yearPwid: 'PWID (Tested in past year)',
+    yearPris: 'People in prisons (Tested in past year)',
+    yearTrans: 'Transgender (Tested in past year)',
   },
 }
 const kpTGF = {
@@ -851,10 +959,11 @@ const kpTGF = {
     },
   },
   indicators: {
-    yearMsm7: 'Number of HIV tests taken among men who have sex with men',
-    yearSw7: 'Number of HIV tests taken among sex workers',
-    yearPwid7: 'Number of HIV tests taken among people who use drugs',
-    yearTrans7: 'Number of HIV tests taken among transgender population',
+    yearMsm: 'Number of HIV tests taken among men who have sex with men',
+    yearSw: 'Number of HIV tests taken among sex workers',
+    yearPwid: 'Number of HIV tests taken among people who use drugs',
+    yearPris: 'Number of HIV tests taken among prisoners',
+    yearTrans: 'Number of HIV tests taken among transgender population',
   },
 }
 
@@ -993,6 +1102,7 @@ const CHARTS = {
     title: 'HIV tests conducted and positivity, by sex',
     id: 'ADULTS',
     sources: [
+      adultsGAM23,
       adultsGAM21,
       adultsGAM20,
       adultsGAM19,
@@ -1011,6 +1121,7 @@ const CHARTS = {
     title: 'HIV tests conducted and positivity at community level',
     id: 'COMMUNITY',
     sources: [
+      communityGAM23,
       communityGAM21,
       communityGAM20,
       communityGAM19,
@@ -1032,6 +1143,7 @@ const CHARTS = {
     title: 'HIV tests conducted and positivity at facility level',
     id: 'FACILITY',
     sources: [
+      facilityGAM23,
       facilityGAM21,
       facilityGAM20,
       facilityGAM19,
@@ -1070,7 +1182,14 @@ const CHARTS = {
   SELF_TESTS: {
     title: 'HIV self-tests',
     id: 'SELF_TESTS',
-    sources: [selfGAM21, selfGAM20, selfGAM19, selfNPD19, selfPEPFAR],
+    sources: [
+      selfGAM23,
+      selfGAM21,
+      selfGAM20,
+      selfGAM19,
+      selfNPD19,
+      selfPEPFAR,
+    ],
     indicatorIds: ['distributed'],
     indicatorYears: {
       distributed: R_2018_ON,
@@ -1091,8 +1210,9 @@ const CHARTS = {
     title: 'Key Populations',
     id: 'KP_TABLE',
     sources: [
-      kpKP22,
+      kpKP23,
       kpKP20,
+      kpGAM23,
       kpGAM21,
       kpPCOP20,
       kpPROP20,
@@ -1128,43 +1248,7 @@ const CHARTS = {
     id: 'POLICY_TABLE',
     filters: {
       ALL: {
-        // query can only filter by strict match, so instead check for match in results
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP._NCPI_
         [F.AREA_NAME]: 'NULL',
-      },
-      age: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      provider: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      community: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      lay: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      hivst: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.HIVST21,
-      },
-      assisted: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      social: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.ULP,
-      },
-      compliance: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
-      },
-      // no longer displays on table
-      verification: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
-      },
-      antenatal: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
-      },
-      dual: {
-        // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WSR,
       },
     },
     indicators: {
@@ -1180,9 +1264,7 @@ const CHARTS = {
       compliance:
         '3-test strategy/algorithm for an HIV-positive diagnosis used',
       verification: 'Verification testing before ART',
-      antenatal:
-        'From national authorities Dual HIV/syphilis rapid diagnostic tests for pregnant women in antenatal care',
-      dual: 'From national authorities Dual HIV/syphilis rapid diagnostic tests for any key population group',
+      dual: 'Dual HIV/syphilis rapid diagnostic tests for pregnant women and/or key populations included in national policy',
     },
   },
   GROUPS_TABLE: {
@@ -1341,7 +1423,7 @@ const getIndicatorMap = (isShiny) => {
       [F.COUNTRY_ISO_CODE]: true,
       [F.AGE]: 'all ages',
       [F.AREA_NAME]: 'NULL',
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
       getter: (results) => {
         return _.maxBy(results, 'year')
       },
@@ -1352,7 +1434,7 @@ const getIndicatorMap = (isShiny) => {
       [F.AGE]: '15+',
       [F.SEX]: 'NULL',
       [F.AREA_NAME]: 'NULL',
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
       [F.COUNTRY_ISO_CODE]: true,
       getter: (results) => {
         return C.PLHIV_DIAGNOSIS.yearRange.map((y) => {
@@ -1374,7 +1456,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: sex,
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PLHIV_SEX.yearRange.map((y) => {
@@ -1390,7 +1472,7 @@ const getIndicatorMap = (isShiny) => {
         // [F.AGE]: '15-99', // TODO: 15-49 ok?
         // [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {
@@ -1409,7 +1491,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {
@@ -1428,7 +1510,7 @@ const getIndicatorMap = (isShiny) => {
         [F.AGE]: '15+',
         [F.SEX]: 'NULL',
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {
@@ -1440,7 +1522,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'population',
         [F.INDICATOR]: C.PREVALENCE.indicators.population,
         [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {
@@ -1715,526 +1797,248 @@ const getIndicatorMap = (isShiny) => {
     [C.GROUPS_TABLE.id]: [
       // ESTIMATED NUMBER OF PLHIV
       {
-        id: 'plhiv1',
+        id: 'plhiv',
         [F.INDICATOR]: 'HIV population (15+) Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'plhiv2',
+        id: 'plhiv',
         [F.INDICATOR]: 'HIV population (15+) Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'plhiv3',
+        id: 'plhiv',
         [F.INDICATOR]: 'HIV population (50+) Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
-        id: 'plhiv4',
+        id: 'plhiv',
         [F.INDICATOR]: 'HIV population (50+) Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       {
-        id: 'plhiv5',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - female adults (aged 15+)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'plhiv6',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - male adults (aged 15+)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'plhiv7',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - females aged 15-24',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
         },
       },
       {
-        id: 'plhiv8',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - males aged 15-24',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS15}`]: result }
         },
       },
       {
-        id: 'plhiv9',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - females aged 25-34',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'plhiv10',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - males aged 25-34',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'plhiv11',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - females aged 35-49',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'plhiv12',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - males aged 35-49',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'plhiv13',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - females aged 50+',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
-        id: 'plhiv14',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - males aged 50+',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       {
-        id: 'plhiv15',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - females aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'plhiv16',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - males aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'plhiv17',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - females aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'plhiv18',
+        id: 'plhiv',
         [F.INDICATOR]: 'People living with HIV - males aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       // [ UNDIAGNOSED PLHIV = (1 - PLHIV WHO KNOW STATUS) * ESTIMATED # PLHIV]
       // PLHIV WHO KNOW STATUS (%)
       {
-        id: 'aware1',
+        id: 'aware',
         [F.INDICATOR]:
           'Percent of people living with HIV who know their status',
         [F.AGE]: '15+',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           const resultMap = {}
 
           _.each(['Females', 'Males'], (sex) => {
-            const fResults = _.filter(results, (r) => r[F.SEX] === sex)
-
-            resultMap[`${sex[0].toLowerCase()}${ALL_ADULTS}`] = _.maxBy(
-              fResults,
-              'year'
-            )
+            const result = getMostRecentResult(results, {
+              filterCheck: (r) => r[F.SEX] === sex,
+            })
+            if (!!result) {
+              resultMap[`${sex[0].toLowerCase()}${ALL_ADULTS}`] = result
+            }
           })
 
           return resultMap
         },
       },
       {
-        id: 'aware2',
+        id: 'aware',
         [F.INDICATOR]: 'aware',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.YEAR]: LATEST_YEAR,
@@ -2258,1094 +2062,489 @@ const getIndicatorMap = (isShiny) => {
       },
       // HIV PREVALENCE
       {
-        id: 'prev1',
+        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (15-24) (Percent) Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
         },
       },
       {
-        id: 'prev2',
+        id: 'prev',
         [F.INDICATOR]: 'HIV Prevalence - young women (15-24)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
         },
       },
       {
-        id: 'prev3',
+        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (15-24) (Percent) Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS15}`]: result }
         },
       },
       {
-        id: 'prev4',
+        id: 'prev',
         [F.INDICATOR]: 'HIV Prevalence - young men (15-24)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS15}`]: result }
         },
       },
       {
-        id: 'prev5',
+        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (15+) (Percent) Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'prev6',
+        id: 'prev',
         [F.INDICATOR]: 'HIV Prevalence - female adults (15-49)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'prev7',
+        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (15+) (Percent) Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'prev8',
+        id: 'prev',
         [F.INDICATOR]: 'HIV Prevalence - male adults (15-49)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'prev9',
+        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (25-34) (Percent) Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'prev10',
+        id: 'prev',
         [F.INDICATOR]: 'HIV Prevalence - females aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'prev11',
+        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (25-34) (Percent) Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'prev12',
+        id: 'prev',
         [F.INDICATOR]: 'HIV Prevalence - males aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'prev13',
+        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (35-49) (Percent) Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'prev14',
+        id: 'prev',
         [F.INDICATOR]: 'HIV Prevalence - females aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'prev15',
+        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (35-49) (Percent) Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'prev16',
+        id: 'prev',
         [F.INDICATOR]: 'HIV Prevalence - males aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'prev17',
+        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (50+) (Percent) Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
-        id: 'prev18',
+        id: 'prev',
         [F.INDICATOR]: 'HIV Prevalence - females aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
-        id: 'prev19',
+        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (50+) (Percent) Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       {
-        id: 'prev20',
+        id: 'prev',
         [F.INDICATOR]: 'HIV Prevalence - males aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       // NEW HIV INFECTIONS
       {
-        id: 'newly1',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV infections (15+) Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'newly2',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV Infections - female adults (aged 15+)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'newly3',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV infections (15+) Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'newly4',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV Infections - male adults (aged 15+)',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'newly5',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV infections (15-24) Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
         },
       },
       {
-        id: 'newly6',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV Infections - females aged 15-24',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS15}`]: result }
         },
       },
       {
-        id: 'newly7',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV infections (15-24) Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS15}`]: result }
         },
       },
       {
-        id: 'newly8',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV Infections - males aged 15-24',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS15}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS15}`]: result }
         },
       },
       {
-        id: 'newly9',
+        id: 'newly',
         [F.INDICATOR]: 'New infections by age 25-34 ; Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'newly10',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV Infections - females aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'newly11',
+        id: 'newly',
         [F.INDICATOR]: 'New infections by age 25-34 ; Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'newly12',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV Infections - males aged 25-34',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS25}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS25}`]: result }
         },
       },
       {
-        id: 'newly13',
+        id: 'newly',
         [F.INDICATOR]: 'New infections by age 35-49 ; Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'newly14',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV Infections - females aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-
-          return { [`${FEMALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'newly15',
+        id: 'newly',
         [F.INDICATOR]: 'New infections by age 35-49 ; Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'newly16',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV Infections - males aged 35-49',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS35}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS35}`]: result }
         },
       },
       {
-        id: 'newly17',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV infections (50+) Female',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
-        id: 'newly18',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV Infections - females aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ADULTS50}`]: result }
         },
       },
       {
-        id: 'newly19',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV infections (50+) Male',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC22,
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC23,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       {
-        id: 'newly20',
+        id: 'newly',
         [F.INDICATOR]: 'New HIV Infections - males aged 50+',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ADULTS50}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
       // TESTED IN PAST YEAR
       {
-        id: 'year1',
+        id: 'year',
         [F.INDICATOR]: 'tests_total',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.YEAR]: LATEST_YEAR,
@@ -3399,11 +2598,12 @@ const getIndicatorMap = (isShiny) => {
                 console.log('$$$$: ', sumRow)
                 console.log('$$$$ SUMMED OVER: ', fResults)
               } else {
-                const result = _.find(
-                  results,
-                  (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
-                )
-                resultMap[`${sex[0]}${ageRange}`] = result
+                const result = getMostRecentResult(results, {
+                  filterCheck: (r) => r[F.SEX] === sex && r[F.AGE] === ageRange,
+                })
+                if (!!result) {
+                  resultMap[`${sex[0]}${ageRange}`] = result
+                }
               }
             })
           })
@@ -3411,7 +2611,155 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year2',
+        id: 'year',
+        [F.INDICATOR]: 'tests_total',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.YEAR]: '2021',
+        [F.AREA_NAME]: 'NULL_OR_ALL',
+        [F.INDICATOR_DESCRIPTION]: 'all',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          const resultMap = {}
+          R_SEXES.forEach((sex) => {
+            ;[...R_ADULT_AGES, ALL_ADULTS].forEach((ageRange) => {
+              const countryCode = _.get(results, [0, F.COUNTRY_ISO_CODE])
+              const countryApplies = _.get(
+                COUNTRY_MAP,
+                [countryCode, 'sumFix'],
+                false
+              )
+              if (FEATURE_FLAGS.SHINY_SUM && countryApplies) {
+                const fResults = _.filter(
+                  results,
+                  (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
+                )
+
+                const firstRow = fResults[0]
+                const sumRow = { ...firstRow }
+                sumRow[F.AREA_NAME] = 'NULL' // let's pretend
+                sumRow[F.VALUE_UPPER] = undefined
+                sumRow[F.VALUE_LOWER] = undefined
+                sumRow[F.VALUE] = 0
+                const areaMap = {}
+                fResults.forEach((r) => {
+                  if (r[F.VALUE]) {
+                    const rowArea = r[F.AREA_NAME]
+                    // we're summing over regional values. if there's also a country-wide
+                    // value (ie AREA_NAME = NULL), it should not be included in sum.
+                    if (areaMap[rowArea] || !r[F.AREA_NAME]) {
+                      console.warn(
+                        `$$$$ duplicate (or NULL) area_name for tests_total ${sex} ${ageRange}: `,
+                        r
+                      )
+                    } else {
+                      areaMap[rowArea] = true
+                      sumRow[F.VALUE] += Number(r[F.VALUE])
+                      console.log('$$$: ', rowArea, r[F.VALUE], sumRow[F.VALUE])
+                    }
+                  }
+                })
+                resultMap[`${sex[0]}${ageRange}`] = sumRow
+                console.log(
+                  `$$$$ USING SUMMED ROW FOR tests_total ${sex} ${ageRange} `
+                )
+                console.log('$$$$: ', sumRow)
+                console.log('$$$$ SUMMED OVER: ', fResults)
+              } else {
+                const result = getMostRecentResult(results, {
+                  filterCheck: (r) => r[F.SEX] === sex && r[F.AGE] === ageRange,
+                })
+                if (!!result) {
+                  resultMap[`${sex[0]}${ageRange}`] = result
+                }
+              }
+            })
+          })
+          return resultMap
+        },
+      },
+      {
+        id: 'year',
+        [F.INDICATOR]: 'tests_total',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.YEAR]: '2020',
+        [F.AREA_NAME]: 'NULL_OR_ALL',
+        [F.INDICATOR_DESCRIPTION]: 'all',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          const resultMap = {}
+          R_SEXES.forEach((sex) => {
+            ;[...R_ADULT_AGES, ALL_ADULTS].forEach((ageRange) => {
+              const countryCode = _.get(results, [0, F.COUNTRY_ISO_CODE])
+              const countryApplies = _.get(
+                COUNTRY_MAP,
+                [countryCode, 'sumFix'],
+                false
+              )
+              if (FEATURE_FLAGS.SHINY_SUM && countryApplies) {
+                const fResults = _.filter(
+                  results,
+                  (r) => r[F.SEX] === sex && r[F.AGE] === ageRange
+                )
+
+                const firstRow = fResults[0]
+                const sumRow = { ...firstRow }
+                sumRow[F.AREA_NAME] = 'NULL' // let's pretend
+                sumRow[F.VALUE_UPPER] = undefined
+                sumRow[F.VALUE_LOWER] = undefined
+                sumRow[F.VALUE] = 0
+                const areaMap = {}
+                fResults.forEach((r) => {
+                  if (r[F.VALUE]) {
+                    const rowArea = r[F.AREA_NAME]
+                    // we're summing over regional values. if there's also a country-wide
+                    // value (ie AREA_NAME = NULL), it should not be included in sum.
+                    if (areaMap[rowArea] || !r[F.AREA_NAME]) {
+                      console.warn(
+                        `$$$$ duplicate (or NULL) area_name for tests_total ${sex} ${ageRange}: `,
+                        r
+                      )
+                    } else {
+                      areaMap[rowArea] = true
+                      sumRow[F.VALUE] += Number(r[F.VALUE])
+                      console.log('$$$: ', rowArea, r[F.VALUE], sumRow[F.VALUE])
+                    }
+                  }
+                })
+                resultMap[`${sex[0]}${ageRange}`] = sumRow
+                console.log(
+                  `$$$$ USING SUMMED ROW FOR tests_total ${sex} ${ageRange} `
+                )
+                console.log('$$$$: ', sumRow)
+                console.log('$$$$ SUMMED OVER: ', fResults)
+              } else {
+                const result = getMostRecentResult(results, {
+                  filterCheck: (r) => r[F.SEX] === sex && r[F.AGE] === ageRange,
+                })
+                if (!!result) {
+                  resultMap[`${sex[0]}${ageRange}`] = result
+                }
+              }
+            })
+          })
+          return resultMap
+        },
+      },
+      {
+        id: 'year',
+        [F.INDICATOR]: 'Den Age-Female Gte 15',
+        [F.VALUE_COMMENT]: 'validated',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+        [F.YEAR]: LATEST_YEAR,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+        },
+      },
+      {
+        id: 'year',
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
@@ -3419,28 +2767,27 @@ const getIndicatorMap = (isShiny) => {
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result for:
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
-        id: 'year3',
+        id: 'year',
+        [F.INDICATOR]: 'Den Age-Male Gte 15',
+        [F.VALUE_COMMENT]: 'validated',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
+        [F.YEAR]: LATEST_YEAR,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
+        },
+      },
+      {
+        id: 'year',
         [F.INDICATOR]: 'Den Age-Male Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
@@ -3469,7 +2816,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year4',
+        id: 'year',
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
         // [F.YEAR]: LATEST_YEAR,
@@ -3483,7 +2830,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year5',
+        id: 'year',
         [F.INDICATOR]: 'Den Age-Male Gte 15',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
         // [F.YEAR]: LATEST_YEAR,
@@ -3497,7 +2844,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year6',
+        id: 'year',
         [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
         // [F.YEAR]: LATEST_YEAR,
@@ -3511,7 +2858,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year7',
+        id: 'year',
         [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
         // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
         // [F.YEAR]: LATEST_YEAR,
@@ -3525,7 +2872,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year8',
+        id: 'year',
         [F.INDICATOR]: 'Women (15+) - Number of tests',
         // [F.SOURCE_DATABASE]
         // [F.YEAR]: '2018',
@@ -3539,7 +2886,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year9',
+        id: 'year',
         [F.INDICATOR]: 'Men (15+) - Number of tests',
         // [F.SOURCE_DATABASE]
         // [F.YEAR]: '2018',
@@ -3553,7 +2900,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year10',
+        id: 'year',
         [F.INDICATOR]: 'Women (Tested in past year)',
         // [F.SOURCE_DATABASE]
         // [F.YEAR]: '2018',
@@ -3569,7 +2916,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year11',
+        id: 'year',
         [F.INDICATOR]: 'Men (Tested in past year)',
         // [F.SOURCE_DATABASE]
         // [F.YEAR]: '2018',
@@ -3585,7 +2932,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year12',
+        id: 'year',
         [F.INDICATOR]: 'Women 15-24 (Tested in past year)',
         // [F.SOURCE_DATABASE]
         // [F.YEAR]: '2018',
@@ -3601,7 +2948,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year13',
+        id: 'year',
         [F.INDICATOR]: 'Men 15-24 (Tested in past year)',
         // [F.SOURCE_DATABASE]
         // [F.YEAR]: '2018',
@@ -3617,7 +2964,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year14',
+        id: 'year',
         [F.INDICATOR]: 'Women (15+) Tested in Past Year',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
         // [F.YEAR]: '2018',
@@ -3645,7 +2992,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'year15',
+        id: 'year',
         [F.INDICATOR]: 'Men (15+) Tested in Past Year',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PEPFAR,
         // [F.YEAR]: '2018',
@@ -3674,7 +3021,7 @@ const getIndicatorMap = (isShiny) => {
       },
       // EVER TESTED (%)
       {
-        id: 'ever1',
+        id: 'ever',
         [F.INDICATOR]: 'evertest',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
         [F.YEAR]: LATEST_YEAR,
@@ -3696,7 +3043,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'ever2',
+        id: 'ever',
         [F.INDICATOR]: 'Women ever receiving an HIV test',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.DHS,
         [F.AREA_NAME]: 'NULL',
@@ -3719,11 +3066,11 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: getMostRecentResult(results) }
         },
       },
       {
-        id: 'ever3',
+        id: 'ever',
         [F.INDICATOR]: 'Men ever receiving an HIV test',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.DHS,
         [F.AREA_NAME]: 'NULL',
@@ -3746,11 +3093,11 @@ const getIndicatorMap = (isShiny) => {
               results
             )
           }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
+          return { [`${MALE[0]}${ALL_ADULTS}`]: getMostRecentResult(results) }
         },
       },
       {
-        id: 'ever4',
+        id: 'ever',
         [F.INDICATOR]: 'ever_tested',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.MICS,
         // [F.AREA_NAME]: 'NULL',
@@ -3772,7 +3119,7 @@ const getIndicatorMap = (isShiny) => {
         },
       },
       {
-        id: 'ever5',
+        id: 'ever',
         [F.INDICATOR]: 'ever_tested_results',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.MICS,
         // [F.AREA_NAME]: 'NULL',
@@ -3961,7 +3308,6 @@ export {
   ALL_CHARTS,
   FIELD_MAP,
   CSV_FIELDS,
-  AGGREGATE_GETTER,
   R_2015_ON,
   R_ADULT_AGES,
   AGE_MAP,
