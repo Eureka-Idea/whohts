@@ -45,6 +45,7 @@ const R_LIMITED_DEMO_GROUPS = _.flatMap([
 
 const SOURCE_DB_MAP = {
   S90: 'Shiny90',
+  GAM24: 'Global AIDS Monitoring 2024',
   GAM23: 'Global AIDS Monitoring 2023',
   GAM21: 'Global AIDS Monitoring 2021',
   GAM20: 'Global AIDS Monitoring 2020',
@@ -179,6 +180,24 @@ const CSV_FIELDS = [
 ]
 
 // SOURCE objects for source prio charts
+const adultsGAM24 = {
+  id: 'GAM24',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    total: 'Den Age-All',
+    men: 'Den Age-Male Gte 15',
+    women: 'Den Age-Female Gte 15',
+
+    pTotal: 'Per Age-All',
+    pMen: 'Per Age-Male Gte 15',
+    pWomen: 'Per Age-Female Gte 15',
+  },
+}
 const adultsGAM23 = {
   id: 'GAM23',
   filters: {
@@ -388,6 +407,26 @@ const adultsPEPFAR = {
   },
 }
 
+const communityGAM24 = {
+  id: 'GAM24',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    total: 'Den Community-Community All',
+    mobile: 'Den Community-Community Mobile',
+    VCT: 'Den Community-Community Vct',
+    other: 'Den Community-Community Other',
+
+    pTotal: 'Per Community-Community All',
+    pMobile: 'Per Community-Community Mobile',
+    pVCT: 'Per Community-Community Vct',
+    pOther: 'Per Community-Community Other',
+  },
+}
 const communityGAM23 = {
   id: 'GAM23',
   filters: {
@@ -509,6 +548,30 @@ const communityPEPFAR = {
   },
 }
 
+const facilityGAM24 = {
+  id: 'GAM24',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    total: 'Den Facility-Facility All',
+    PITC: 'Den Facility-Facility Provider Init',
+    ANC: 'Den Facility-Facility Anc',
+    VCT: 'Den Facility-Facility Vct',
+    family: 'Den Facility-Facility Fp Clinic',
+    other: 'Den Facility-Facility Other',
+
+    pTotal: 'Per Facility-Facility All',
+    pPITC: 'Per Facility-Facility Provider Init',
+    pANC: 'Per Facility-Facility Anc',
+    pVCT: 'Per Facility-Facility Vct',
+    pFamily: 'Per Facility-Facility Fp Clinic',
+    pOther: 'Per Facility-Facility Other',
+  },
+}
 const facilityGAM23 = {
   id: 'GAM23',
   filters: {
@@ -667,6 +730,18 @@ const indexPEPFAR = {
   },
 }
 
+const selfGAM24 = {
+  id: 'GAM24',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
+      [F.VALUE_COMMENT]: 'validated',
+    },
+  },
+  indicators: {
+    distributed: 'Self Test Distributed-Data Value',
+  },
+}
 const selfGAM23 = {
   id: 'GAM23',
   filters: {
@@ -799,6 +874,33 @@ const kpKP20 = {
 
     prevTrans: 'HIV prevalence among transgender people',
     awareTrans: 'Transgender (PLHIV who know status (%))',
+  },
+}
+const kpGAM24 = {
+  id: 'GAM24',
+  filters: {
+    ALL: {
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
+      [F.AREA_NAME]: 'NULL',
+    },
+  },
+  indicators: {
+    // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
+    prevMsm: 'HIV prevalence among men who have sex with men',
+    awareMsm:
+      'HIV testing and status awareness among men who have sex with men',
+
+    prevPwid: 'HIV prevalence among people who inject drugs',
+    awarePwid: 'HIV testing and status awareness among people who inject drugs',
+
+    prevPris: 'HIV prevalence among prisoners',
+    // awarePris: '',
+
+    prevSw: 'HIV prevalence among sex workers',
+    awareSw: 'HIV testing and status awareness among sex workers',
+
+    prevTrans: 'HIV prevalence among transgender people',
+    awareTrans: 'HIV testing and status awareness among transgender people',
   },
 }
 const kpGAM23 = {
@@ -1103,6 +1205,7 @@ const CHARTS = {
     title: 'HIV tests conducted and positivity, by sex',
     id: 'ADULTS',
     sources: [
+      adultsGAM24,
       adultsGAM23,
       adultsGAM21,
       adultsGAM20,
@@ -1122,6 +1225,7 @@ const CHARTS = {
     title: 'HIV tests conducted and positivity at community level',
     id: 'COMMUNITY',
     sources: [
+      communityGAM24,
       communityGAM23,
       communityGAM21,
       communityGAM20,
@@ -1144,6 +1248,7 @@ const CHARTS = {
     title: 'HIV tests conducted and positivity at facility level',
     id: 'FACILITY',
     sources: [
+      facilityGAM24,
       facilityGAM23,
       facilityGAM21,
       facilityGAM20,
@@ -1184,6 +1289,7 @@ const CHARTS = {
     title: 'HIV self-tests',
     id: 'SELF_TESTS',
     sources: [
+      selfGAM24,
       selfGAM23,
       selfGAM21,
       selfGAM20,
@@ -1213,6 +1319,7 @@ const CHARTS = {
     sources: [
       kpKP24,
       kpKP20,
+      kpGAM24,
       kpGAM23,
       kpGAM21,
       kpPCOP20,
@@ -2749,6 +2856,20 @@ const getIndicatorMap = (isShiny) => {
         id: 'year',
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         [F.VALUE_COMMENT]: 'validated',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
+        [F.YEAR]: LATEST_YEAR,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+        },
+      },
+      {
+        id: 'year',
+        [F.INDICATOR]: 'Den Age-Female Gte 15',
+        [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
         [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
@@ -2771,6 +2892,20 @@ const getIndicatorMap = (isShiny) => {
           const result = getMostRecentResult(results)
           if (!result) return {}
           return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
+        },
+      },
+      {
+        id: 'year',
+        [F.INDICATOR]: 'Den Age-Male Gte 15',
+        [F.VALUE_COMMENT]: 'validated',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
+        [F.YEAR]: LATEST_YEAR,
+        [F.AREA_NAME]: 'NULL',
+        [F.COUNTRY_ISO_CODE]: true,
+        getter: (results) => {
+          const result = getMostRecentResult(results)
+          if (!result) return {}
+          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
         },
       },
       {
