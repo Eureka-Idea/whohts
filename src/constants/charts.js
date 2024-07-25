@@ -2857,7 +2857,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
-        [F.YEAR]: LATEST_YEAR,
+        [F.YEAR]: '2023',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2871,7 +2871,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
-        [F.YEAR]: LATEST_YEAR,
+        [F.YEAR]: '2022',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2885,7 +2885,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: 'Den Age-Female Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
-        [F.YEAR]: LATEST_YEAR,
+        [F.YEAR]: '2020',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2899,7 +2899,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: 'Den Age-Male Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
-        [F.YEAR]: LATEST_YEAR,
+        [F.YEAR]: '2023',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2913,7 +2913,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: 'Den Age-Male Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
-        [F.YEAR]: LATEST_YEAR,
+        [F.YEAR]: '2022',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2927,7 +2927,7 @@ const getIndicatorMap = (isShiny) => {
         [F.INDICATOR]: 'Den Age-Male Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
-        [F.YEAR]: LATEST_YEAR,
+        [F.YEAR]: '2020',
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
