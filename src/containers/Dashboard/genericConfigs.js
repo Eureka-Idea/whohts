@@ -151,13 +151,16 @@ const line = {
   chart: { type: 'line' },
   yAxis: { title: { text: null }, labels: { format: '{value}%' } },
   tooltip: { valueSuffix: '%' },
+  xAxis: {
+    labels: { rotation: -45 },
+  },
   plotOptions: {
-      series: {
-          label: {
-              connectorAllowed: false
-          },
-          marker: { radius: 0 }
-      }
+    series: {
+      label: {
+        connectorAllowed: false,
+      },
+      marker: { radius: 0 },
+    },
   },
 }
 
@@ -167,18 +170,21 @@ const area = {
     area: {
       stacking: 'normal',
       marker: {
-        enabled: false
-      }
-    }
+        enabled: false,
+      },
+    },
   },
   legend: {
     symbolRadius: 0,
   },
   yAxis: {
     title: { text: null },
-    stackLabels: { enabled: false }
+    stackLabels: { enabled: false },
   },
-  marker : {symbol : 'square', radius : 12 }
+  xAxis: {
+    labels: { rotation: -45 },
+  },
+  marker: { symbol: 'square', radius: 12 },
 }
 
 const getColumnScat = ({title, series, categories, options}) => {
