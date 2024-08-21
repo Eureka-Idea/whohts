@@ -54,6 +54,10 @@ const SOURCE_DB_MAP = {
   NPD19: 'National Programme Data 2019',
   NPD: 'National Programme Data',
 
+  PCOP22: 'PEPFAR COP 2022',
+  PROP22: 'PEPFAR ROP 2022',
+  PCOP21: 'PEPFAR COP 2021',
+  PROP21: 'PEPFAR ROP 2021',
   PCOP20: 'PEPFAR COP 2020',
   PROP20: 'PEPFAR ROP 2020',
   PCOP19: 'PEPFAR COP 2019',
@@ -954,11 +958,12 @@ const kpGAM21 = {
     awareTrans: 'HIV testing and status awareness among transgender people',
   },
 }
-const kpPCOP20 = {
-  id: 'PCOP20',
+
+const getKpCROP = ({ id, sourceDb }) => ({
+  id,
   filters: {
     ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP20,
+      [F.SOURCE_DATABASE]: sourceDb,
       [F.AREA_NAME]: 'NULL',
     },
   },
@@ -969,87 +974,31 @@ const kpPCOP20 = {
     yearPris: 'People in prisons (Tested in past year)',
     yearTrans: 'Transgender (Tested in past year)',
   },
-}
-const kpPROP20 = {
-  id: 'PROP20',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP20,
-      [F.AREA_NAME]: 'NULL',
-    },
-  },
-  indicators: {
-    yearMsm: 'MSM (Tested in past year)',
-    yearSw: 'SW (Tested in past year)',
-    yearPwid: 'PWID (Tested in past year)',
-    yearPris: 'People in prisons (Tested in past year)',
-    yearTrans: 'Transgender (Tested in past year)',
-  },
-}
-const kpPCOP19 = {
-  id: 'PCOP19',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP19,
-      [F.AREA_NAME]: 'NULL',
-    },
-  },
-  indicators: {
-    yearMsm: 'MSM (Tested in past year)',
-    yearSw: 'SW (Tested in past year)',
-    yearPwid: 'PWID (Tested in past year)',
-    yearPris: 'People in prisons (Tested in past year)',
-    yearTrans: 'Transgender (Tested in past year)',
-  },
-}
-const kpPROP19 = {
-  id: 'PROP19',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP19,
-      [F.AREA_NAME]: 'NULL',
-    },
-  },
-  indicators: {
-    yearMsm: 'MSM (Tested in past year)',
-    yearSw: 'SW (Tested in past year)',
-    yearPwid: 'PWID (Tested in past year)',
-    yearPris: 'People in prisons (Tested in past year)',
-    yearTrans: 'Transgender (Tested in past year)',
-  },
-}
-const kpPCOP1718 = {
-  id: 'PCOP1718',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PCOP1718,
-      [F.AREA_NAME]: 'NULL',
-    },
-  },
-  indicators: {
-    yearMsm: 'MSM (Tested in past year)',
-    yearSw: 'SW (Tested in past year)',
-    yearPwid: 'PWID (Tested in past year)',
-    yearPris: 'People in prisons (Tested in past year)',
-    yearTrans: 'Transgender (Tested in past year)',
-  },
-}
-const kpPROP17 = {
-  id: 'PROP17',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.PROP17,
-      [F.AREA_NAME]: 'NULL',
-    },
-  },
-  indicators: {
-    yearMsm: 'MSM (Tested in past year)',
-    yearSw: 'SW (Tested in past year)',
-    yearPwid: 'PWID (Tested in past year)',
-    yearPris: 'People in prisons (Tested in past year)',
-    yearTrans: 'Transgender (Tested in past year)',
-  },
-}
+})
+const [
+  kpPROP22,
+  kpPCOP22,
+  kpPROP21,
+  kpPCOP21,
+  kpPCOP20,
+  kpPROP20,
+  kpPCOP19,
+  kpPROP19,
+  kpPCOP1718,
+  kpPROP17,
+] = [
+  { id: 'PCOP22', sourceDb: SOURCE_DB_MAP.PCOP22 },
+  { id: 'PROP22', sourceDb: SOURCE_DB_MAP.PROP22 },
+  { id: 'PCOP21', sourceDb: SOURCE_DB_MAP.PCOP21 },
+  { id: 'PROP21', sourceDb: SOURCE_DB_MAP.PROP21 },
+  { id: 'PCOP20', sourceDb: SOURCE_DB_MAP.PCOP20 },
+  { id: 'PROP20', sourceDb: SOURCE_DB_MAP.PROP20 },
+  { id: 'PCOP19', sourceDb: SOURCE_DB_MAP.PCOP19 },
+  { id: 'PROP19', sourceDb: SOURCE_DB_MAP.PROP19 },
+  { id: 'PCOP1718', sourceDb: SOURCE_DB_MAP.PCOP1718 },
+  { id: 'PROP17', sourceDb: SOURCE_DB_MAP.PROP17 },
+].map(getKpCROP)
+
 const kpTGF = {
   id: 'TGF',
   filters: {
@@ -1319,6 +1268,11 @@ const CHARTS = {
       kpGAM24,
       kpGAM23,
       kpGAM21,
+
+      kpPROP22,
+      kpPCOP22,
+      kpPROP21,
+      kpPCOP21,
       kpPCOP20,
       kpPROP20,
       kpPCOP19,
