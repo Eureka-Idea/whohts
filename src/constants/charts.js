@@ -9,7 +9,7 @@ const BASE_URL =
 // Master url:
 // 'https://2024-app-dot-eic-database-290813.ew.r.appspot.com/query?'
 
-const R_2015_2019 = ['2015', '2016', '2017', '2018', '2019']
+// const R_2015_2019 = ['2015', '2016', '2017', '2018', '2019']
 const LATEST_YEAR = '2023'
 const R_2015_ON = _.range('2015', Number(LATEST_YEAR) + 1).map(String)
 const R_2018_ON = _.range('2018', Number(LATEST_YEAR) + 1).map(String)
@@ -885,7 +885,6 @@ const kpGAM24 = {
     },
   },
   indicators: {
-    // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
     prevMsm: 'HIV prevalence among men who have sex with men',
     awareMsm:
       'HIV testing and status awareness among men who have sex with men',
@@ -912,7 +911,6 @@ const kpGAM23 = {
     },
   },
   indicators: {
-    // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
     prevMsm: 'HIV prevalence among men who have sex with men',
     awareMsm:
       'HIV testing and status awareness among men who have sex with men',
@@ -939,7 +937,6 @@ const kpGAM21 = {
     },
   },
   indicators: {
-    // TODO: update indicators, of form HIV testing and status awareness among men who have sex with men
     prevMsm: 'HIV prevalence among men who have sex with men',
     awareMsm:
       'HIV testing and status awareness among men who have sex with men',
@@ -1368,11 +1365,19 @@ const CHARTS = {
       lay: 'From national authorities Lay provider testing',
       hivst: 'From national authorities Self-testing',
       assisted: 'From national authorities Assisted partner notification',
-      social: 'From national authorities Social network-based HIV testing',
-      compliance:
-        '3-test strategy/algorithm for an HIV-positive diagnosis used',
+      // social: 'From national authorities Social network-based HIV testing',
+      // compliance: '3-test strategy/algorithm for an HIV-positive diagnosis used',
       verification: 'Verification testing before ART',
-      dual: 'Dual HIV/syphilis rapid diagnostic tests for pregnant women and/or key populations included in national policy',
+      // dual: 'Dual HIV/syphilis rapid diagnostic tests for pregnant women and/or key populations included in national policy',
+      client: 'Client-initiated testing and counselling',
+      condition: 'Indicator condition testing',
+      routine: 'Routine antenatal testing',
+      antenatal:
+        'Dual HIV/syphilis rapid diagnostic tests for pregnant women in antenatal care',
+      rapid:
+        'Dual HIV/syphilis rapid diagnostic tests for any key population group',
+      social_key: 'Social network-based HIV testing for key populations',
+      social_gen: 'Social network-based HIV testing for general population',
     },
   },
   GROUPS_TABLE: {
