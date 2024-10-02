@@ -6,7 +6,6 @@ Usage
 -
 // clone repo\
 `git checkout master`\
-`nvm use 14.16.1`\ // currently optimized for use with node version 14.16.1
 `npm install`\ 
 `npm start` // ---> localhost:3000/
 
