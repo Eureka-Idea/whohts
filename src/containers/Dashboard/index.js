@@ -282,6 +282,7 @@ class Dashboard extends Component {
 
     const { title, columnChartHeader } = _.get(config, 'customHeader', {})
     let header = null
+    // bar charts have custom headers
     if (columnChartHeader) {
       const {
         totalTests,

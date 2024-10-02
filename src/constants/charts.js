@@ -119,13 +119,12 @@ const SOURCE_DISPLAY_MAP = {
 
 // adds in the source year, if provided
 const getSourceDisplayWithYear = ({ source, sourceYear }) => {
-  if (!SOURCE_DISPLAY_MAP[source]) return source
-
-  if (!sourceYear) return SOURCE_DISPLAY_MAP[source]
+  const sourceDisplay = SOURCE_DISPLAY_MAP[source] || source
+  if (!sourceYear) return sourceDisplay
 
   // NOTE: this assumes that if the source display name has a 4 digit number, it's a year
   // (and will be replaced with the source year)
-  return SOURCE_DISPLAY_MAP[source].replace(/\d{4}/, sourceYear)
+  return sourceDisplay.replace(/\d{4}/, sourceYear)
 }
 
 // TODO: replace all _.maxBy calls with this
@@ -1506,11 +1505,7 @@ const getIndicatorMap = (isShiny) => {
       getter: (results) => {
         return C.PLHIV_DIAGNOSIS.yearRange.map((y) => {
           const fResults = _.filter(results, (r) => r.year === y)
-
-          if (fResults.length > 1) {
-            console.warn('## should not be multi results##')
-          }
-          return fResults[0]
+          return _.maxBy(fResults, F.SOURCE_YEAR)
         })
       },
     })),
@@ -1546,9 +1541,11 @@ const getIndicatorMap = (isShiny) => {
             const fResults = _.filter(results, (r) => r.year === y)
 
             if (fResults.length > 1) {
-              console.warn('## should not be multi results##')
+              console.warn(
+                '## should not be multi results PREVALENCE.prevalence ##'
+              )
             }
-            return fResults[0]
+            return _.maxBy(fResults, F.SOURCE_YEAR)
           })
         },
       },
@@ -1563,11 +1560,7 @@ const getIndicatorMap = (isShiny) => {
         getter: (results) => {
           return C.PREVALENCE.yearRange.map((y) => {
             const fResults = _.filter(results, (r) => r.year === y)
-
-            if (fResults.length > 1) {
-              console.warn('## should not be multi results##')
-            }
-            return fResults[0]
+            return _.maxBy(fResults, F.SOURCE_YEAR)
           })
         },
       },
@@ -3253,9 +3246,13 @@ const getIndicatorMap = (isShiny) => {
           const fResults = _.filter(results, (r) => r.year === y)
 
           if (fResults.length > 1) {
-            console.warn('## should not be multi results##')
+            console.warn(
+              '## should not be multi results PLHIV_AGE.aware ##',
+              fResults
+            )
           }
-          return fResults[0]
+          console.log('## PLHIV_AGE ##', fResults[0])
+          return _.maxBy(fResults, F.SOURCE_YEAR)
         })
       },
     }))
@@ -3305,11 +3302,7 @@ const getIndicatorMap = (isShiny) => {
               console.log('$$$$ SUMMED OVER: ', fResults)
               fResults.unshift(sumRow)
             }
-
-            if (fResults.length > 1 && !fixing) {
-              console.warn('## should not be multi results##')
-            }
-            return fResults[0]
+            return _.maxBy(fResults, F.SOURCE_YEAR)
           })
         },
       })
@@ -3360,11 +3353,7 @@ const getIndicatorMap = (isShiny) => {
               console.log('$$$$ SUMMED OVER: ', fResults)
               fResults.unshift(sumRow)
             }
-
-            if (fResults.length > 1 && !fixing) {
-              console.warn('$$$$ ## should not be multi results##')
-            }
-            return fResults[0]
+            return _.maxBy(fResults, F.SOURCE_YEAR)
           })
         },
       })
@@ -3382,11 +3371,7 @@ const getIndicatorMap = (isShiny) => {
       getter: (results) => {
         return C.PREVALENCE.yearRange.map((y) => {
           const fResults = _.filter(results, (r) => r.year === y)
-
-          if (fResults.length > 1) {
-            console.warn('## should not be multi results##')
-          }
-          return fResults[0]
+          return _.maxBy(fResults, F.SOURCE_YEAR)
         })
       },
     }))

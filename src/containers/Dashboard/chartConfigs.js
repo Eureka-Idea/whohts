@@ -34,6 +34,7 @@ import {
   ALL_CHARTS,
   CSV_FIELDS,
   isFemale,
+  getSourceDisplayWithYear,
 } from '../../constants/charts'
 import { TERM_MAP } from '../../constants/glossary'
 import { FEATURE_FLAGS } from '../../constants/flags'
@@ -184,7 +185,7 @@ function sourceTooltipFormatter() {
       ? ''
       : `
   Year: <b>${this.year}</b><br/>
-  Source: <b>${this.source}</b><br/>
+  Source: <b>${getSourceDisplayWithYear(this)}</b><br/>
 `
   console.log(this.mismatched, this.year, this.source)
   return `
@@ -203,7 +204,7 @@ function percentSourceTooltipFormatter() {
     <span style="color:${this.color}">●</span>
     ${this.series.name}: <b>${displayPercent({ v: this.y, decimals })}</b><br/>
     Year: <b>${this.year}</b><br/>
-    ${!this.source ? '' : `Source: <b>${this.source}</b>`}
+    ${!this.source ? '' : `Source: <b>${getSourceDisplayWithYear(this)}</b>`}
   `
 }
 function getUncertaintyTooltipFormatter(shinyCountry) {
@@ -220,7 +221,7 @@ function getUncertaintyTooltipFormatter(shinyCountry) {
       this.displayValue || displayNumber({ v: this.y })
     }</b><br />
     ${uncertaintyLine}
-    Source: <b>${this.source}</b>
+    Source: <b>${getSourceDisplayWithYear(this)}</b>
     `
   }
 }
@@ -239,7 +240,7 @@ function getPercentUncertaintyTooltipFormatter(shinyCountry) {
       this.displayValue || displayPercent({ v: this.y, decimals })
     }</b><br />
     ${uncertaintyLine}
-    Source: <b>${this.source}</b>
+    Source: <b>${getSourceDisplayWithYear(this)}</b>
     `
   }
 }
@@ -299,6 +300,7 @@ function getPlotPoints({
     [FIELD_MAP.VALUE_LOWER]: l,
     [FIELD_MAP.VALUE_UPPER]: u,
     [FIELD_MAP.SOURCE_DATABASE]: source,
+    [FIELD_MAP.SOURCE_YEAR]: sourceYear,
   } = row
 
   source = SOURCE_DISPLAY_MAP[source] || source
@@ -326,7 +328,7 @@ function getPlotPoints({
     if (u > cap) uDisplayValue = capDisplayValue
   }
 
-  const point = { x, year: x, y, l, u, source, decimals }
+  const point = { x, year: x, y, l, u, source, sourceYear, decimals }
   if (displayValue) point.displayValue = displayValue
   if (lDisplayValue) point.lDisplayValue = lDisplayValue
   if (uDisplayValue) point.uDisplayValue = uDisplayValue
@@ -1892,6 +1894,7 @@ const getSelfTests = (
         [FIELD_MAP.VALUE]: y,
         [FIELD_MAP.SOURCE_DATABASE]: source,
         [FIELD_MAP.YEAR]: year,
+        [FIELD_MAP.SOURCE_YEAR]: sourceYear,
       } = r
 
       const point = {
@@ -1899,6 +1902,7 @@ const getSelfTests = (
         x: Number(year),
         source,
         year,
+        sourceYear,
         mismatched: true,
       }
 
@@ -2014,6 +2018,7 @@ const getForecast = (
           [FIELD_MAP.VALUE]: y,
           [FIELD_MAP.SOURCE_DATABASE]: source,
           [FIELD_MAP.YEAR]: year,
+          [FIELD_MAP.SOURCE_YEAR]: sourceYear,
         } = r
 
         const point = {
@@ -2021,6 +2026,7 @@ const getForecast = (
           x: Number(year),
           source,
           year,
+          sourceYear,
           forceShowDetails: k !== 'demand', // demand is in a shared tooltip with need
         }
 
