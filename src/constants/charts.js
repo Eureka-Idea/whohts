@@ -11,6 +11,8 @@ const BASE_URL =
 
 // const R_2015_2019 = ['2015', '2016', '2017', '2018', '2019']
 const LATEST_YEAR = '2023'
+// we typically only want to search one year of shiny90 data
+const SHINY_SOURCE_YEAR = '2024'
 const R_2015_ON = _.range('2015', Number(LATEST_YEAR) + 1).map(String)
 const R_2018_ON = _.range('2018', Number(LATEST_YEAR) + 1).map(String)
 const R_2020_2025 = ['2020', '2021', '2022', '2023', '2024', '2025']
@@ -2101,6 +2103,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'aware',
         [F.INDICATOR]: 'aware',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.SOURCE_YEAR]: SHINY_SOURCE_YEAR,
         [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.INDICATOR_DESCRIPTION]: 'positive',
@@ -2607,6 +2610,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year',
         [F.INDICATOR]: 'tests_total',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.SOURCE_YEAR]: SHINY_SOURCE_YEAR,
         [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.INDICATOR_DESCRIPTION]: 'all',
@@ -2674,6 +2678,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year',
         [F.INDICATOR]: 'tests_total',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.SOURCE_YEAR]: SHINY_SOURCE_YEAR,
         [F.YEAR]: '2021',
         [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.INDICATOR_DESCRIPTION]: 'all',
@@ -2741,6 +2746,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'year',
         [F.INDICATOR]: 'tests_total',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.SOURCE_YEAR]: SHINY_SOURCE_YEAR,
         [F.YEAR]: '2020',
         [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.INDICATOR_DESCRIPTION]: 'all',
@@ -3112,6 +3118,7 @@ const getIndicatorMap = (isShiny) => {
         id: 'ever',
         [F.INDICATOR]: 'evertest',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.SOURCE_YEAR]: SHINY_SOURCE_YEAR,
         [F.YEAR]: LATEST_YEAR,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
@@ -3240,6 +3247,7 @@ const getIndicatorMap = (isShiny) => {
       [F.SEX]: 'both',
       [F.AREA_NAME]: 'NULL',
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+      [F.SOURCE_YEAR]: SHINY_SOURCE_YEAR,
       [F.COUNTRY_ISO_CODE]: true,
       getter: (results) => {
         return C.PLHIV_AGE.yearRange.map((y) => {
@@ -3266,6 +3274,7 @@ const getIndicatorMap = (isShiny) => {
         [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.SOURCE_YEAR]: SHINY_SOURCE_YEAR,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.HIV_NEGATIVE.yearRange.map((y) => {
@@ -3317,6 +3326,7 @@ const getIndicatorMap = (isShiny) => {
         [F.SEX]: 'both',
         [F.AREA_NAME]: 'NULL_OR_ALL',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+        [F.SOURCE_YEAR]: SHINY_SOURCE_YEAR,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
           return C.HIV_POSITIVE.yearRange.map((y) => {
@@ -3341,7 +3351,10 @@ const getIndicatorMap = (isShiny) => {
                 if (r[F.VALUE]) {
                   // we're summing over regional values. if there's also a country-wide
                   // value (ie AREA_NAME = NULL), it should not be included in sum.
-                  if (r[F.AREA_NAME]) {
+                  if (
+                    r[F.AREA_NAME] &&
+                    r[F.AREA_NAME].toUpperCase() !== 'NULL'
+                  ) {
                     sumRow[F.VALUE] += Number(r[F.VALUE])
                   } else {
                     console.log('$$$$ skipping NULL AREA_NAME: ', r)
@@ -3367,6 +3380,7 @@ const getIndicatorMap = (isShiny) => {
       [F.SEX]: 'both',
       [F.AREA_NAME]: 'NULL',
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.S90,
+      [F.SOURCE_YEAR]: SHINY_SOURCE_YEAR,
       [F.COUNTRY_ISO_CODE]: true,
       getter: (results) => {
         return C.PREVALENCE.yearRange.map((y) => {
