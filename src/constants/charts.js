@@ -2444,34 +2444,6 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'year',
-        [F.INDICATOR]: 'Den Age-Female Gte 15',
-        [F.VALUE_COMMENT]: 'validated',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
-        [F.YEAR]: '2022',
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
-        },
-      },
-      {
-        id: 'year',
-        [F.INDICATOR]: 'Den Age-Female Gte 15',
-        [F.VALUE_COMMENT]: 'validated',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
-        [F.YEAR]: '2020',
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
-        },
-      },
-      {
-        id: 'year',
         [F.INDICATOR]: 'Den Age-Male Gte 15',
         [F.VALUE_COMMENT]: 'validated',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
@@ -2482,49 +2454,6 @@ const getIndicatorMap = (isShiny) => {
           const result = getMostRecentResult(results)
           if (!result) return {}
           return { [`${MALE[0]}${ALL_ADULTS}`]: result }
-        },
-      },
-      {
-        id: 'year',
-        [F.INDICATOR]: 'Den Age-Male Gte 15',
-        [F.VALUE_COMMENT]: 'validated',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
-        [F.YEAR]: '2022',
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
-        },
-      },
-      {
-        id: 'year',
-        [F.INDICATOR]: 'Den Age-Male Gte 15',
-        [F.VALUE_COMMENT]: 'validated',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
-        [F.YEAR]: '2020',
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          if (
-            results.length > 1 &&
-            _.uniqBy(results, 'year').length !== results.length
-          ) {
-            // debugger
-            console.warn(
-              `**LOOKOUT! Taking highest year result.**
-            `,
-              results[0].indicator,
-              'R:',
-              _.maxBy(results, 'year'),
-              `
-            `,
-              'rs:',
-              results
-            )
-          }
-          return { [`${MALE[0]}${ALL_ADULTS}`]: _.maxBy(results, 'year') }
         },
       },
       {
