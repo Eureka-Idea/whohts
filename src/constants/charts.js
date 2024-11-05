@@ -75,7 +75,7 @@ const SOURCE_DB_MAP = {
   HIVST20: 'HIVST policy 2020 data set',
   HIVST21: 'HIVST policy 2021 data set',
   KP24: 'UNAIDS KP-Atlas 2024',
-  KP20: 'UNAIDS KP-Atlas 2020',
+  // KP20: 'UNAIDS KP-Atlas 2020',
   // UNGAM20: 'UNAIDS Global AIDS Monitoring 2020',
   TGF: 'The Global Fund',
 
@@ -83,7 +83,7 @@ const SOURCE_DB_MAP = {
   DHS: 'The DHS Program',
   MICS: 'MICS UNICEF',
   SPEC20: 'Spectrum estimates 2020 (UNAIDS/WHO)',
-  SPEC21: 'Spectrum estimates 2021 (UNAIDS/WHO)',
+  // SPEC21: 'Spectrum estimates 2021 (UNAIDS/WHO)',
   SPEC22: 'Spectrum estimates 2022 (UNAIDS/WHO)',
   SPEC24: 'Spectrum estimates 2024 (UNAIDS/WHO)',
   SPEC_REG: /Spectrum estimates .+ \(UNAIDS\/WHO\)/,
@@ -856,88 +856,11 @@ const kpKP24 = {
     awareTrans: 'HIV testing and status awareness among transgender people',
   },
 }
-const kpKP20 = {
-  id: 'KP20',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.KP20,
-      [F.AREA_NAME]: 'NULL',
-    },
-  },
-  indicators: {
-    prevMsm: 'HIV prevalence among men who have sex with men',
-    awareMsm: 'MSM (PLHIV who know status (%))',
-
-    prevPwid: 'HIV prevalence among people who inject drugs',
-    awarePwid: 'PWID (PLHIV who know status (%))',
-
-    prevPris: 'HIV prevalence among prisoners',
-    // awarePris: '',
-
-    prevSw: 'HIV prevalence among sex workers',
-    awareSw: 'SW (PLHIV who know status (%))',
-
-    prevTrans: 'HIV prevalence among transgender people',
-    awareTrans: 'Transgender (PLHIV who know status (%))',
-  },
-}
 const kpGAM24 = {
   id: 'GAM24',
   filters: {
     ALL: {
       [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM24,
-      [F.AREA_NAME]: 'NULL',
-    },
-  },
-  indicators: {
-    prevMsm: 'HIV prevalence among men who have sex with men',
-    awareMsm:
-      'HIV testing and status awareness among men who have sex with men',
-
-    prevPwid: 'HIV prevalence among people who inject drugs',
-    awarePwid: 'HIV testing and status awareness among people who inject drugs',
-
-    prevPris: 'HIV prevalence among prisoners',
-    // awarePris: '',
-
-    prevSw: 'HIV prevalence among sex workers',
-    awareSw: 'HIV testing and status awareness among sex workers',
-
-    prevTrans: 'HIV prevalence among transgender people',
-    awareTrans: 'HIV testing and status awareness among transgender people',
-  },
-}
-const kpGAM23 = {
-  id: 'GAM23',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM23,
-      [F.AREA_NAME]: 'NULL',
-    },
-  },
-  indicators: {
-    prevMsm: 'HIV prevalence among men who have sex with men',
-    awareMsm:
-      'HIV testing and status awareness among men who have sex with men',
-
-    prevPwid: 'HIV prevalence among people who inject drugs',
-    awarePwid: 'HIV testing and status awareness among people who inject drugs',
-
-    prevPris: 'HIV prevalence among prisoners',
-    // awarePris: '',
-
-    prevSw: 'HIV prevalence among sex workers',
-    awareSw: 'HIV testing and status awareness among sex workers',
-
-    prevTrans: 'HIV prevalence among transgender people',
-    awareTrans: 'HIV testing and status awareness among transgender people',
-  },
-}
-const kpGAM21 = {
-  id: 'GAM21',
-  filters: {
-    ALL: {
-      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.GAM21,
       [F.AREA_NAME]: 'NULL',
     },
   },
@@ -1265,10 +1188,7 @@ const CHARTS = {
     id: 'KP_TABLE',
     sources: [
       kpKP24,
-      kpKP20,
       kpGAM24,
-      kpGAM23,
-      kpGAM21,
 
       kpPROP22,
       kpPCOP22,
@@ -1601,20 +1521,6 @@ const getIndicatorMap = (isShiny) => {
     //     // [F.SEX]: 'NULL',
     //     [F.AREA_NAME]: 'NULL',
     //     [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WGHO,
-    //     [F.COUNTRY_ISO_CODE]: true,
-    //     getter: (results) => {
-    //       return C.PREGNANCY.yearRange.map((y) => {
-    //         return _.find(results, (r) => r.year === y)
-    //       })
-    //     },
-    //   },
-    //   {
-    //     id: 'perPregKnown',
-    //     [F.INDICATOR]: C.PREGNANCY.indicators.perPregKnown,
-    //     // [F.AGE]: '15+',
-    //     // [F.SEX]: 'NULL',
-    //     [F.AREA_NAME]: 'NULL',
-    //     [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
     //     [F.COUNTRY_ISO_CODE]: true,
     //     getter: (results) => {
     //       return C.PREGNANCY.yearRange.map((y) => {
@@ -2026,54 +1932,6 @@ const getIndicatorMap = (isShiny) => {
           return { [`${MALE[0]}${ADULTS50}`]: result }
         },
       },
-      {
-        id: 'plhiv',
-        [F.INDICATOR]: 'People living with HIV - females aged 25-34',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ADULTS25}`]: result }
-        },
-      },
-      {
-        id: 'plhiv',
-        [F.INDICATOR]: 'People living with HIV - males aged 25-34',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ADULTS25}`]: result }
-        },
-      },
-      {
-        id: 'plhiv',
-        [F.INDICATOR]: 'People living with HIV - females aged 35-49',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ADULTS35}`]: result }
-        },
-      },
-      {
-        id: 'plhiv',
-        [F.INDICATOR]: 'People living with HIV - males aged 35-49',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ADULTS35}`]: result }
-        },
-      },
       // [ UNDIAGNOSED PLHIV = (1 - PLHIV WHO KNOW STATUS) * ESTIMATED # PLHIV]
       // PLHIV WHO KNOW STATUS (%)
       {
@@ -2138,32 +1996,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'prev',
-        [F.INDICATOR]: 'HIV Prevalence - young women (15-24)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ADULTS15}`]: result }
-        },
-      },
-      {
-        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (15-24) (Percent) Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC24,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ADULTS15}`]: result }
-        },
-      },
-      {
-        id: 'prev',
-        [F.INDICATOR]: 'HIV Prevalence - young men (15-24)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2186,32 +2020,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'prev',
-        [F.INDICATOR]: 'HIV Prevalence - female adults (15-49)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
-        },
-      },
-      {
-        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (15+) (Percent) Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC24,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
-        },
-      },
-      {
-        id: 'prev',
-        [F.INDICATOR]: 'HIV Prevalence - male adults (15-49)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2234,32 +2044,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'prev',
-        [F.INDICATOR]: 'HIV Prevalence - females aged 25-34',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ADULTS25}`]: result }
-        },
-      },
-      {
-        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (25-34) (Percent) Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC24,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ADULTS25}`]: result }
-        },
-      },
-      {
-        id: 'prev',
-        [F.INDICATOR]: 'HIV Prevalence - males aged 25-34',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2282,32 +2068,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'prev',
-        [F.INDICATOR]: 'HIV Prevalence - females aged 35-49',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ADULTS35}`]: result }
-        },
-      },
-      {
-        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (35-49) (Percent) Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC24,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ADULTS35}`]: result }
-        },
-      },
-      {
-        id: 'prev',
-        [F.INDICATOR]: 'HIV Prevalence - males aged 35-49',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2330,32 +2092,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'prev',
-        [F.INDICATOR]: 'HIV Prevalence - females aged 50+',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ADULTS50}`]: result }
-        },
-      },
-      {
-        id: 'prev',
         [F.INDICATOR]: 'Adult prevalence (50+) (Percent) Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC24,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ADULTS50}`]: result }
-        },
-      },
-      {
-        id: 'prev',
-        [F.INDICATOR]: 'HIV Prevalence - males aged 50+',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2379,32 +2117,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'newly',
-        [F.INDICATOR]: 'New HIV Infections - female adults (aged 15+)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ALL_ADULTS}`]: result }
-        },
-      },
-      {
-        id: 'newly',
         [F.INDICATOR]: 'New HIV infections (15+) Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC24,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ALL_ADULTS}`]: result }
-        },
-      },
-      {
-        id: 'newly',
-        [F.INDICATOR]: 'New HIV Infections - male adults (aged 15+)',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2427,32 +2141,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'newly',
-        [F.INDICATOR]: 'New HIV Infections - females aged 15-24',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ADULTS15}`]: result }
-        },
-      },
-      {
-        id: 'newly',
         [F.INDICATOR]: 'New HIV infections (15-24) Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC24,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ADULTS15}`]: result }
-        },
-      },
-      {
-        id: 'newly',
-        [F.INDICATOR]: 'New HIV Infections - males aged 15-24',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2475,32 +2165,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'newly',
-        [F.INDICATOR]: 'New HIV Infections - females aged 25-34',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ADULTS25}`]: result }
-        },
-      },
-      {
-        id: 'newly',
         [F.INDICATOR]: 'New infections by age 25-34 ; Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC24,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ADULTS25}`]: result }
-        },
-      },
-      {
-        id: 'newly',
-        [F.INDICATOR]: 'New HIV Infections - males aged 25-34',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2523,32 +2189,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'newly',
-        [F.INDICATOR]: 'New HIV Infections - females aged 35-49',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ADULTS35}`]: result }
-        },
-      },
-      {
-        id: 'newly',
         [F.INDICATOR]: 'New infections by age 35-49 ; Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC24,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ADULTS35}`]: result }
-        },
-      },
-      {
-        id: 'newly',
-        [F.INDICATOR]: 'New HIV Infections - males aged 35-49',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
@@ -2571,32 +2213,8 @@ const getIndicatorMap = (isShiny) => {
       },
       {
         id: 'newly',
-        [F.INDICATOR]: 'New HIV Infections - females aged 50+',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${FEMALE[0]}${ADULTS50}`]: result }
-        },
-      },
-      {
-        id: 'newly',
         [F.INDICATOR]: 'New HIV infections (50+) Male',
         [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC24,
-        [F.AREA_NAME]: 'NULL',
-        [F.COUNTRY_ISO_CODE]: true,
-        getter: (results) => {
-          const result = getMostRecentResult(results)
-          if (!result) return {}
-          return { [`${MALE[0]}${ADULTS50}`]: result }
-        },
-      },
-      {
-        id: 'newly',
-        [F.INDICATOR]: 'New HIV Infections - males aged 50+',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.SPEC21,
         [F.AREA_NAME]: 'NULL',
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
