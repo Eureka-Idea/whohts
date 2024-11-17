@@ -2,12 +2,9 @@ import _ from 'lodash'
 import { COUNTRY_MAP } from '../components/Homepage/countries'
 import { FEATURE_FLAGS } from './flags'
 
-// const BASE_URL = 'https://status.y-x.ch/query?'
-const BASE_URL =
-  'https://2024-2-app-dot-eic-database-290813.ew.r.appspot.com/query?'
-
-// Master url:
-// 'https://2024-app-dot-eic-database-290813.ew.r.appspot.com/query?'
+// const dbName = '2024-2-app-dot-eic-database-290813'
+const dbName = 'eic-database-290813'
+const BASE_URL = `https://${dbName}.ew.r.appspot.com/query?`
 
 // const R_2015_2019 = ['2015', '2016', '2017', '2018', '2019']
 const LATEST_YEAR = '2023'
@@ -40,10 +37,7 @@ const R_ALL_DEMO_GROUPS = _.flatMap([
   [ALL_ADULTS, ...R_ADULT_AGES].map((y) => FEMALE[0] + y),
   [ALL_ADULTS, ...R_ADULT_AGES].map((y) => MALE[0] + y),
 ])
-const R_LIMITED_DEMO_GROUPS = _.flatMap([
-  [ALL_ADULTS, ADULTS15].map((y) => FEMALE[0] + y),
-  [ALL_ADULTS, ADULTS15].map((y) => MALE[0] + y),
-])
+const R_LIMITED_DEMO_GROUPS = [FEMALE[0] + ALL_ADULTS, MALE[0] + ALL_ADULTS]
 
 const SOURCE_DB_MAP = {
   S90: 'Shiny90',
