@@ -16,7 +16,7 @@ const PolicyTable = ({ config }) => {
           {config.data.map((r, i) => {
             const tooltipId = 'tooltip-' + i
             const showTooltip = r.value && r.year
-            console.log({ r, showTooltip })
+            // console.log({ r, showTooltip })
             const tooltip = !showTooltip ? null : (
               <ReactTooltip
                 id={tooltipId}

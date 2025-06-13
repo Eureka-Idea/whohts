@@ -1,11 +1,16 @@
 import * as types from '../constants/types'
-import { FEATURE_FLAGS } from '../constants/flags'
+import {
+  FEATURE_FLAGS,
+  SAMPLE_PAYLOAD,
+  SAMPLE_PAYLOAD_2,
+} from '../constants/flags'
 import _ from 'lodash'
 import {
   getIndicatorMap,
   FIELD_MAP,
   CHARTS,
   BASE_URL,
+  NEW_ENDPOINT,
 } from '../constants/charts'
 import { COUNTRY_MAP } from '../components/Homepage/countries'
 
@@ -19,6 +24,27 @@ const myInit = {
   // headers: myHeaders,
 }
 
+function convertNumericKeyedObjectsToArrays(obj, key) {
+  if (Array.isArray(obj)) {
+    return obj.map(convertNumericKeyedObjectsToArrays)
+  } else if (obj && typeof obj === 'object') {
+    const keys = Object.keys(obj)
+    if (keys.every((k) => /^\d+$/.test(k))) {
+      const sorted = keys.map(Number).sort((a, b) => a - b)
+      if (sorted.every((k, i) => k === i)) {
+        return sorted.map((k) => convertNumericKeyedObjectsToArrays(obj[k]))
+      }
+    }
+    return Object.fromEntries(
+      keys.map((k) => [k, convertNumericKeyedObjectsToArrays(obj[k], k)])
+    )
+  }
+  // console.log({ obj, key })
+  // convert all numeric "value" values to numbers
+  if (key === 'value' && !Number.isNaN(parseFloat(obj))) return parseFloat(obj)
+  return obj
+}
+
 const DEV = window.location.hostname === 'localhost'
 if (!DEV) {
   console.log = _.noop
@@ -29,9 +55,9 @@ if (!DEV) {
 // NOTE: exclusively for dev use, if any charts are marked true only those will appear on dashboard
 // (speeds load time and narrows code scope when debugging)
 const debugList = {
-  // [CHARTS.P95.id]: true,
-  // [CHARTS.CONTEXT.id]: true,
-  // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
+  [CHARTS.P95.id]: true,
+  [CHARTS.CONTEXT.id]: true,
+  [CHARTS.PLHIV_DIAGNOSIS.id]: true,
   // [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
@@ -43,7 +69,7 @@ const debugList = {
   // [CHARTS.FACILITY.id]: true,
   // [CHARTS.INDEX.id]: true,
   // [CHARTS.PLHIV_AGE.id]: true,
-  // [CHARTS.PLHIV_SEX.id]: true,
+  [CHARTS.PLHIV_SEX.id]: true,
   // [CHARTS.SELF_TESTS.id]: true,
   // [CHARTS.FORECAST.id]: true,
 }
@@ -171,10 +197,25 @@ export const getChartData = (countryCode) => (dispatch) => {
         })
       })
 
-      dispatch({
-        type: types.FETCH_CHART_DATA,
-        payload: allChartData,
-      })
+      const newEndpoint = NEW_ENDPOINT + countryCode
+      fetch(newEndpoint, myInit)
+        .then((r) => {
+          // console.log('!!!! ', r)
+          return r.json()
+        })
+        .then((d) => {
+          const data = convertNumericKeyedObjectsToArrays(d)
+          console.log({ newEndpoint, data })
+          dispatch({
+            type: types.FETCH_CHART_DATA,
+            payload: [allChartData, data],
+          })
+        })
+        .catch((e) => {
+          if (DEV) {
+            console.error('DATA FETCH FAILED FOR ', newEndpoint, ' : ', e)
+          }
+        })
     })
     .catch((e) => {
       if (DEV) {

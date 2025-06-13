@@ -5,6 +5,7 @@ import { FEATURE_FLAGS } from './flags'
 // const dbName = '2024-2-app-dot-eic-database-290813'
 const dbName = 'eic-database-290813'
 const BASE_URL = `https://${dbName}.ew.r.appspot.com/query?`
+const NEW_ENDPOINT = `https://2024-3-app-dot-${dbName}.ew.r.appspot.com/charts/`
 
 // const R_2015_2019 = ['2015', '2016', '2017', '2018', '2019']
 const LATEST_YEAR = '2023'
@@ -2939,6 +2940,7 @@ const getIndicatorMap = (isShiny) => {
 
 export {
   BASE_URL,
+  NEW_ENDPOINT,
   CHARTS, // TODO: rename 'CHART_MAP'
   ALL_CHARTS,
   FIELD_MAP,

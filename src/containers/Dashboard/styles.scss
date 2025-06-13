@@ -126,10 +126,17 @@ $nav-height: 64px;
       position: fixed;
       inset: 18px;
       z-index: 11111;
-      background: white;
+      background: #f8f6ec;
       word-wrap: break-word;
       overflow: auto;
-      bottom: 120px;
+      padding: 32px 32px 96px;
+      
+        // bottom: 120px;
+        button {
+          position: absolute;
+          top: 16px;
+          right: 16px;
+        }
     }
     .dataSourceControls {
       position: fixed;
@@ -140,7 +147,7 @@ $nav-height: 64px;
       display: flex;
       flex-wrap: wrap;
       background-color: rgba(255, 225, 174, 0.9);
-      z-index: 1111;
+      z-index: 111111;
     }
   
     .APIC {

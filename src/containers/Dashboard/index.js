@@ -30,9 +30,33 @@ import {
 import { getConfig, displayNumber, getExportData } from './chartConfigs'
 import { COUNTRIES, COUNTRY_MAP } from '../../components/Homepage/countries'
 import ReactTooltip from 'react-tooltip'
-import * as htmlFormatter from 'jsondiffpatch/lib/formatters/html'
-import 'jsondiffpatch/lib/formatters/styles/html.css'
-import { create, diff } from 'jsondiffpatch'
+import * as jsondiffpatch from 'jsondiffpatch/dist/jsondiffpatch.umd.js'
+import 'jsondiffpatch/dist/formatters-styles/html.css'
+// import * as htmlFormatter from 'jsondiffpatch/dist/jsondiffpatch-formatters.min.js'
+// import 'jsondiffpatch/dist/formatters-styles/html.css'
+// import * as htmlFormatter from 'jsondiffpatch/lib/formatters/html'
+// import 'jsondiffpatch/lib/formatters/styles/html.css'
+// import { create, diff } from 'jsondiffpatch'
+
+const allCharts = [
+  CHARTS.CONTEXT.id,
+  CHARTS.P95.id,
+  CHARTS.PLHIV_DIAGNOSIS.id,
+  CHARTS.PLHIV_SEX.id,
+  CHARTS.PLHIV_AGE.id,
+  CHARTS.HIV_NEGATIVE.id,
+  CHARTS.HIV_POSITIVE.id,
+  CHARTS.PREVALENCE.id,
+  CHARTS.ADULTS.id,
+  CHARTS.COMMUNITY.id,
+  CHARTS.FACILITY.id,
+  CHARTS.INDEX.id,
+  CHARTS.SELF_TESTS.id,
+  CHARTS.FORECAST.id,
+  CHARTS.KP_TABLE.id,
+  CHARTS.POLICY_TABLE.id,
+  CHARTS.GROUPS_TABLE.id,
+]
 
 const HighchartsMore = require('highcharts/highcharts-more')
 const Highcharts = require('highcharts')
@@ -45,16 +69,17 @@ ReactHighcharts.Highcharts.setOptions(ReactHighcharts.Highcharts.theme)
 const DEV = window.location.hostname === 'localhost'
 
 const JsonDiff = ({ FEdata, APIdata, chart, closeExaminer }) => {
-  const left = chart === true ? FEdata : FEdata[chart]
-  const right = chart === true ? APIdata : APIdata[chart]
-  console.log('left: ', left)
-  console.log('right: ', right)
-  console.log('chart: ', chart)
+  const left = chart === true ? FEdata : FEdata[chart] || {}
+  const right = chart === true ? APIdata : APIdata[chart] || {}
 
-  const delta = diff(left, right)
-  const diffHtml = htmlFormatter.format(delta, left)
-  window.hf = htmlFormatter
+  const delta = jsondiffpatch.diff(left, right)
+  const diffHtml = jsondiffpatch.formatters.html.format(delta, left)
+  // const delta = diff(left, right)
+  // const diffHtml = htmlFormatter.format(delta, left)
 
+  // console.log('API DATA: ', right)
+  // console.log('FE DATA: ', left)
+  // window.jsdp = jsondiffpatch
   let showUnchanged = true
   return (
     <div className="sourceExaminer">
@@ -66,7 +91,10 @@ const JsonDiff = ({ FEdata, APIdata, chart, closeExaminer }) => {
         defaultChecked={showUnchanged}
         onClick={() => {
           showUnchanged = !showUnchanged
-          htmlFormatter[showUnchanged ? 'showUnchanged' : 'hideUnchanged']()
+          jsondiffpatch.formatters.html[
+            showUnchanged ? 'showUnchanged' : 'hideUnchanged'
+          ]()
+          // htmlFormatter[showUnchanged ? 'showUnchanged' : 'hideUnchanged']()
         }}
       ></input>{' '}
       Show unchanged lines
@@ -112,6 +140,8 @@ class Dashboard extends Component {
     this.goToCountry = this.goToCountry.bind(this)
     this.exportData = this.exportData.bind(this)
     this.toggleDataSource = this.toggleDataSource.bind(this)
+    this.getAPIC = this.getAPIC.bind(this)
+    this.toggleAllDataSources = this.toggleAllDataSources.bind(this)
   }
   componentWillMount() {
     const countryCode = _.get(
@@ -716,6 +746,8 @@ class Dashboard extends Component {
       )
     }
 
+    const allChecked = allCharts.every((id) => !!this.state.useAPI[id])
+    // console.log({ allChecked }, this.state.useAPI)
     return (
       <div className="dashboard">
         <div className="nav">
@@ -748,37 +780,29 @@ class Dashboard extends Component {
             Home
           </Link>
         </div>
-        {DEV && (
-          <div className="dataSourceControls">
-            Check box to use new API data for a chart. Click the chart name to
-            see a diff of the current and new API data.
-            <br />
-            {this.getAPIC(CHARTS.CONTEXT.id)}
-            {this.getAPIC(CHARTS.P95.id)}
-            {this.getAPIC(CHARTS.PLHIV_DIAGNOSIS.id)}
-            {this.getAPIC(CHARTS.PLHIV_SEX.id)}
-            {this.getAPIC(CHARTS.PLHIV_AGE.id)}
-            {this.getAPIC(CHARTS.HIV_NEGATIVE.id)}
-            {this.getAPIC(CHARTS.HIV_POSITIVE.id)}
-            {this.getAPIC(CHARTS.PREVALENCE.id)}
-            {this.getAPIC(CHARTS.ADULTS.id)}
-            {this.getAPIC(CHARTS.COMMUNITY.id)}
-            {this.getAPIC(CHARTS.FACILITY.id)}
-            {this.getAPIC(CHARTS.INDEX.id)}
-            {this.getAPIC(CHARTS.SELF_TESTS.id)}
-            {this.getAPIC(CHARTS.FORECAST.id)}
-            {this.getAPIC(CHARTS.KP_TABLE.id)}
-            {this.getAPIC(CHARTS.POLICY_TABLE.id)}
-            {this.getAPIC(CHARTS.GROUPS_TABLE.id)}
-            <button
-              onClick={() =>
-                this.setState({ examineSources: !this.state.examineSources })
-              }
-            >
-              {this.state.examineSources ? 'HIDE DIFF' : 'SHOW OVERALL DIFF'}
-            </button>
+        {/* {DEV && ( */}
+        <div className="dataSourceControls">
+          Check box to use new API data for a chart. Click the chart name to see
+          a diff of the current and new API data.
+          <br />
+          <div className="APIC">
+            <input
+              type="checkbox"
+              checked={allChecked}
+              onChange={() => this.toggleAllDataSources(!allChecked)}
+            ></input>
           </div>
-        )}
+          {allChecked ? 'Uncheck' : 'Check'} All
+          {allCharts.map(this.getAPIC)}
+          <button
+            style={{ marginLeft: '8px' }}
+            onClick={() =>
+              this.setState({ examineSources: !this.state.examineSources })
+            }
+          >
+            {this.state.examineSources ? 'HIDE DIFF' : 'SHOW OVERALL DIFF'}
+          </button>
+        </div>
         {!!this.state.examineSources && (
           <JsonDiff
             FEdata={this.props.chartData}
@@ -894,6 +918,15 @@ class Dashboard extends Component {
       state.useAPI[id] = !state.useAPI[id]
       return state
     })
+  }
+
+  toggleAllDataSources(useApiData) {
+    const idMap = allCharts.reduce((acc, id) => {
+      acc[id] = useApiData
+      return acc
+    }, {})
+    // console.log({ idMap })
+    this.setState({ useAPI: idMap })
   }
 
   submitDQ(e, dbug) {
