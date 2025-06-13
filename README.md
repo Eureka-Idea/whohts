@@ -25,3 +25,6 @@ To preview changes:\
 License
 -
 The MIT License (MIT). Please see License File for more information.
+
+
+kq2 flight: 2h

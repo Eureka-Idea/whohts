@@ -1,24 +1,39 @@
-import React, {Component} from 'react'
-import {bindActionCreators} from 'redux'
+import React, { Component } from 'react'
+import { bindActionCreators } from 'redux'
 import * as chartActions from '../../actions/chart'
 import baseStyle from './baseStyle'
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 import _ from 'lodash'
 import './styles.css'
-import { getArea, getColumn, getLine, getColumnScat, getColumnLine } from './genericConfigs'
+import {
+  getArea,
+  getColumn,
+  getLine,
+  getColumnScat,
+  getColumnLine,
+} from './genericConfigs'
 import colors, { P95ColorA, P95ColorB, P95ColorC, P95ColorD } from './colors'
 import Tooltip from '../../components/Tooltip'
 import NestedBoxes from '../../components/NestedBoxes'
 import KPTable from '../../components/KPTable'
 import PolicyTable from '../../components/PolicyTable'
 import DemographicsTable from '../../components/DemographicsTable'
-import { TERM_MAP, TERMS } from '../../constants/glossary'
+import { TERM_MAP, TERMS } from '../../constants/glossary'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { CHARTS, FIELD_MAP, BASE_URL, SOURCE_DISPLAY_MAP } from '../../constants/charts'
+import {
+  CHARTS,
+  FIELD_MAP,
+  BASE_URL,
+  SOURCE_DISPLAY_MAP,
+} from '../../constants/charts'
 import { getConfig, displayNumber, getExportData } from './chartConfigs'
 import { COUNTRIES, COUNTRY_MAP } from '../../components/Homepage/countries'
 import ReactTooltip from 'react-tooltip'
+import * as htmlFormatter from 'jsondiffpatch/lib/formatters/html'
+import 'jsondiffpatch/lib/formatters/styles/html.css'
+import { create, diff } from 'jsondiffpatch'
+
 const HighchartsMore = require('highcharts/highcharts-more')
 const Highcharts = require('highcharts')
 const ReactHighcharts = require('react-highcharts').withHighcharts(Highcharts)
@@ -29,12 +44,45 @@ ReactHighcharts.Highcharts.setOptions(ReactHighcharts.Highcharts.theme)
 
 const DEV = window.location.hostname === 'localhost'
 
-// fix legend markers
-// ReactHighcharts.Highcharts.seriesTypes.area.prototype.drawLegendSymbol = 
-  // ReactHighcharts.Highcharts.seriesTypes.line.prototype.drawLegendSymbol
-// ReactHighcharts.Highcharts.seriesTypes.scatter.prototype.drawDatalabels = 
-  // ReactHighcharts.Highcharts.seriesTypes.line.prototype.drawDatalabels
+const JsonDiff = ({ FEdata, APIdata, chart, closeExaminer }) => {
+  const left = chart === true ? FEdata : FEdata[chart]
+  const right = chart === true ? APIdata : APIdata[chart]
+  console.log('left: ', left)
+  console.log('right: ', right)
+  console.log('chart: ', chart)
 
+  const delta = diff(left, right)
+  const diffHtml = htmlFormatter.format(delta, left)
+  window.hf = htmlFormatter
+
+  let showUnchanged = true
+  return (
+    <div className="sourceExaminer">
+      <button onClick={closeExaminer}>X</button>
+      DATA FOR {chart === true ? 'ALL CHARTS' : chart}
+      <br />
+      <input
+        type="checkbox"
+        defaultChecked={showUnchanged}
+        onClick={() => {
+          showUnchanged = !showUnchanged
+          htmlFormatter[showUnchanged ? 'showUnchanged' : 'hideUnchanged']()
+        }}
+      ></input>{' '}
+      Show unchanged lines
+      <div
+        className="jsondiffpatch-container"
+        dangerouslySetInnerHTML={{ __html: diffHtml }}
+      />
+    </div>
+  )
+}
+
+// fix legend markers
+// ReactHighcharts.Highcharts.seriesTypes.area.prototype.drawLegendSymbol =
+// ReactHighcharts.Highcharts.seriesTypes.line.prototype.drawLegendSymbol
+// ReactHighcharts.Highcharts.seriesTypes.scatter.prototype.drawDatalabels =
+// ReactHighcharts.Highcharts.seriesTypes.line.prototype.drawDatalabels
 
 // percentage marks on axis instead of yaxis label
 // women men gap?
@@ -49,7 +97,12 @@ const fields = _.flatMap(FIELD_MAP)
 class Dashboard extends Component {
   constructor() {
     super()
-    this.state = { alertOn: false, loading: true }
+    this.state = {
+      alertOn: false,
+      loading: true,
+      useAPI: {},
+      examineSources: false,
+    }
     // fields.forEach(f => this.state[f] = false)
 
     this.updateField = this.updateField.bind(this)
@@ -58,9 +111,14 @@ class Dashboard extends Component {
     this.submitDQ = this.submitDQ.bind(this)
     this.goToCountry = this.goToCountry.bind(this)
     this.exportData = this.exportData.bind(this)
+    this.toggleDataSource = this.toggleDataSource.bind(this)
   }
   componentWillMount() {
-    const countryCode = _.get(this, 'props.match.params.countryCode', '').toUpperCase()
+    const countryCode = _.get(
+      this,
+      'props.match.params.countryCode',
+      ''
+    ).toUpperCase()
     if (!COUNTRY_MAP[countryCode]) {
       this.props.history.push('/')
       // console.error('no country!')
@@ -68,21 +126,32 @@ class Dashboard extends Component {
     }
     this.props.actions.getChartData(countryCode)
   }
-  
+
   // componentDidMount() {
-    // console.log('MOUNTED. ', this.props)
+  // console.log('MOUNTED. ', this.props)
   // }
-  
+
   componentWillReceiveProps(newProps) {
     const dataCountry = newProps.chartData.countryCode
-    const paramCountry = _.get(newProps, 'match.params.countryCode').toUpperCase()
+    const paramCountry = _.get(
+      newProps,
+      'match.params.countryCode'
+    ).toUpperCase()
     const loading = paramCountry !== dataCountry
+    // console.log(
+    //   'loading: ',
+    //   loading,
+    //   ' param: ',
+    //   paramCountry,
+    //   ' data: ',
+    //   dataCountry
+    // )
     this.setState({ loading })
-    
+
     if (loading) {
       this.props.actions.getChartData(paramCountry)
     } else {
-      this.registerGAEvent("event", "view_item", {
+      this.registerGAEvent('event', 'view_item', {
         value: paramCountry,
       })
     }
@@ -101,11 +170,29 @@ class Dashboard extends Component {
     }
   }
 
+  getAPIC(id) {
+    return (
+      <div className="APIC">
+        <input
+          type="checkbox"
+          checked={this.state.useAPI[id]}
+          onChange={() => this.toggleDataSource(id)}
+        ></input>
+        <a onClick={() => this.setState({ examineSources: id })} href={'#'}>
+          {id}
+        </a>
+      </div>
+    )
+  }
   getCountryContext() {
     const { id } = CHARTS.CONTEXT
 
+    const chartData = this.state.useAPI[id]
+      ? this.props.chartDataAPI
+      : this.props.chartData
+
     const populationRow = _.get(
-      this.props.chartData,
+      chartData,
       id + '.dataByHierarchy.population.0',
       {}
     )
@@ -113,52 +200,66 @@ class Dashboard extends Component {
     const pSource = populationRow[FIELD_MAP.SOURCE_DATABASE]
 
     const classificationRow = _.get(
-      this.props.chartData,
+      chartData,
       id + '.dataByHierarchy.classification.0',
       {}
     )
     const classification = classificationRow[FIELD_MAP.VALUE_COMMENT]
     const cSource = classificationRow[FIELD_MAP.SOURCE_DATABASE]
-    
+
     const countryCode = _.get(this, 'props.match.params.countryCode', null)
     const name = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'name'])
-    
-    const tooltipIdPop = this.props.chartData.countryCode + 'population-tooltip'
-    
+
+    const tooltipIdPop = chartData.countryCode + 'population-tooltip'
+
     const tooltipPop = (
-      <ReactTooltip id={tooltipIdPop} className='td-tooltip' type='dark' effect='solid'>
+      <ReactTooltip
+        id={tooltipIdPop}
+        className="td-tooltip"
+        type="dark"
+        effect="solid"
+      >
         <div>Source: {SOURCE_DISPLAY_MAP[pSource] || pSource}</div>
         <div>Year: {populationRow.year}</div>
       </ReactTooltip>
     )
-    
-    const tooltipIdClass = this.props.chartData.countryCode + 'classification-tooltip'
+
+    const tooltipIdClass = chartData.countryCode + 'classification-tooltip'
     const tooltipClass = (
-      <ReactTooltip id={tooltipIdClass} className='td-tooltip' type='dark' effect='solid'>
+      <ReactTooltip
+        id={tooltipIdClass}
+        className="td-tooltip"
+        type="dark"
+        effect="solid"
+      >
         <div>Source: {SOURCE_DISPLAY_MAP[cSource] || cSource}</div>
         <div>Year: {classificationRow.year}</div>
       </ReactTooltip>
     )
     return (
-      <div className='col-xl-5 col-md-6 col-xs-12 country-context'>
-        <div className='card-stock'>
-          <div className='content'>
-            <p className='name'>{name}</p>
-            <div className='details'>
-              {population && <span className='detail'>
-                <p className='title'>Population </p>
-                <a data-tip data-for={tooltipIdPop}>
-                  <p className='value'>{displayNumber({ v: population })}</p>
-                  {tooltipPop}
-                </a>
-              </span>}
-              {classification && <span className='detail'>
-                <p className='title'>World Bank classification </p>
-                <a data-tip data-for={tooltipIdClass}>
-                  <p className='value'>{classification}</p>
-                  {tooltipClass}
-                </a>
-              </span>}
+      <div className="col-xl-5 col-md-6 col-xs-12 country-context">
+        <div className="card-stock">
+          <div className="content">
+            <p className="name">{name}</p>
+            <div className="details">
+              {population && (
+                <span className="detail">
+                  <p className="title">Population </p>
+                  <a data-tip data-for={tooltipIdPop}>
+                    <p className="value">{displayNumber({ v: population })}</p>
+                    {tooltipPop}
+                  </a>
+                </span>
+              )}
+              {classification && (
+                <span className="detail">
+                  <p className="title">World Bank classification </p>
+                  <a data-tip data-for={tooltipIdClass}>
+                    <p className="value">{classification}</p>
+                    {tooltipClass}
+                  </a>
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -168,8 +269,11 @@ class Dashboard extends Component {
 
   getP95() {
     const { id, title } = CHARTS.P95
+    const chartData = this.state.useAPI[id]
+      ? this.props.chartDataAPI
+      : this.props.chartData
 
-    const config = getConfig(id, this.props.chartData)
+    const config = getConfig(id, chartData)
 
     if (!config) {
       return
@@ -179,7 +283,7 @@ class Dashboard extends Component {
     //   Math.round((n)*100)
     // )
 
-    const tooltipId = this.props.chartData.countryCode + 'p95-tooltip'
+    const tooltipId = chartData.countryCode + 'p95-tooltip'
 
     const tooltip = (
       <ReactTooltip
@@ -253,14 +357,20 @@ class Dashboard extends Component {
   }
 
   getChart(id, tt) {
-    if (_.isEmpty(this.props.chartData)) {
+    const chartData = this.state.useAPI[id]
+      ? this.props.chartDataAPI
+      : this.props.chartData
+    if (_.isEmpty(chartData)) {
       // console.log('No chart data (perhaps awaiting API response)')
       return
     }
 
     const countryCode = _.get(this, 'props.match.params.countryCode')
     // TODO: pass as prop?
-    const shinyCountry = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'])
+    const shinyCountry = _.get(COUNTRY_MAP, [
+      countryCode.toUpperCase(),
+      'shiny',
+    ])
     const shinyChart = _.get(CHARTS, [id, 'shinyOnly'])
 
     if (shinyChart && !shinyCountry) {
@@ -268,7 +378,7 @@ class Dashboard extends Component {
       return
     }
 
-    let config = getConfig(id, this.props.chartData, shinyCountry)
+    let config = getConfig(id, chartData, shinyCountry)
     if (!config) {
       // console.error(`${id} failed to produce a config.`)
 
@@ -293,47 +403,65 @@ class Dashboard extends Component {
         averageYear,
       } = _.get(config, 'customHeader.subtitle')
 
-      const tooltipId = this.props.chartData.countryCode + title.split(' ').join('-') + '-tooltip-'
+      const tooltipId =
+        chartData.countryCode + title.split(' ').join('-') + '-tooltip-'
       const tooltipIdTotal = tooltipId + '-total'
       const tooltipIdAverage = tooltipId + '-average'
 
       const tooltipTotal = (
-        <ReactTooltip id={tooltipIdTotal} className='td-tooltip' type='dark' effect='solid'>
+        <ReactTooltip
+          id={tooltipIdTotal}
+          className="td-tooltip"
+          type="dark"
+          effect="solid"
+        >
           <div>Source: {totalSource}</div>
           <div>Year: {totalYear}</div>
         </ReactTooltip>
       )
-      
+
       const tooltipAverage = (
-        <ReactTooltip id={tooltipIdAverage} className='td-tooltip' type='dark' effect='solid'>
+        <ReactTooltip
+          id={tooltipIdAverage}
+          className="td-tooltip"
+          type="dark"
+          effect="solid"
+        >
           <div>Source: {averageSource}</div>
           <div>Year: {averageYear}</div>
         </ReactTooltip>
       )
 
       header = (
-        <div className='custom-header'>
-          <p className='chart-title'>{title}</p>
-          <div className='chart-subtitle'>
+        <div className="custom-header">
+          <p className="chart-title">{title}</p>
+          <div className="chart-subtitle">
             <a data-tip data-for={tooltipIdTotal}>
-              <p className='total'><b>Total tests</b>: {totalTests||'N/A'}</p>
+              <p className="total">
+                <b>Total tests</b>: {totalTests || 'N/A'}
+              </p>
               {totalTests && tooltipTotal}
             </a>
             <a data-tip data-for={tooltipIdAverage}>
-              <p className='average'><b>Average positivity</b>: {averagePositivity||'N/A'}</p>
+              <p className="average">
+                <b>Average positivity</b>: {averagePositivity || 'N/A'}
+              </p>
               {averagePositivity && tooltipAverage}
-            </a><br />
+            </a>
+            <br />
             <p>Programme data</p>
           </div>
         </div>
       )
     }
 
-    const containerClasses = `chart-container ${id} ${(header ? 'with-custom-header' : '')}`
-    
+    const containerClasses = `chart-container ${id} ${
+      header ? 'with-custom-header' : ''
+    }`
+
     return (
-      <div className='col-xl-4 col-lg-6 col-sm-12'>
-        <div className='card-stock'>
+      <div className="col-xl-4 col-lg-6 col-sm-12">
+        <div className="card-stock">
           {header}
           <div className={containerClasses}>
             {chart}
@@ -345,15 +473,21 @@ class Dashboard extends Component {
   }
 
   getTable(id) {
-    if (_.isEmpty(this.props.chartData)) {
+    const chartData = this.state.useAPI[id]
+      ? this.props.chartDataAPI
+      : this.props.chartData
+    if (_.isEmpty(chartData)) {
       // console.log('No chart data (perhaps awaiting API response)')
       return
     }
 
     const countryCode = _.get(this, 'props.match.params.countryCode')
-    const shinyCountry = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'])
+    const shinyCountry = _.get(COUNTRY_MAP, [
+      countryCode.toUpperCase(),
+      'shiny',
+    ])
 
-    let config = getConfig(id, this.props.chartData, shinyCountry)
+    let config = getConfig(id, chartData, shinyCountry)
     if (!config) {
       // console.error(`${id} failed to produce a config.`)
       return // TODO do we want to produce blank table?
@@ -378,9 +512,9 @@ class Dashboard extends Component {
 
     return (
       <div className={classes}>
-        <div className='card-stock'>
+        <div className="card-stock">
           {/* <div className='chart-container'> */}
-            {<Table config={config} iso={countryCode} />}
+          {<Table config={config} iso={countryCode} />}
           {/* </div> */}
         </div>
       </div>
@@ -476,11 +610,14 @@ class Dashboard extends Component {
 
   exportData() {
     const countryCode = _.get(this, 'props.match.params.countryCode')
-    const shinyCountry = _.get(COUNTRY_MAP, [countryCode.toUpperCase(), 'shiny'])  
-    
+    const shinyCountry = _.get(COUNTRY_MAP, [
+      countryCode.toUpperCase(),
+      'shiny',
+    ])
+
     getExportData(this.props.chartData, countryCode, shinyCountry)
   }
-  
+
   render() {
     const ptt = (
       <Tooltip>
@@ -611,6 +748,45 @@ class Dashboard extends Component {
             Home
           </Link>
         </div>
+        {DEV && (
+          <div className="dataSourceControls">
+            Check box to use new API data for a chart. Click the chart name to
+            see a diff of the current and new API data.
+            <br />
+            {this.getAPIC(CHARTS.CONTEXT.id)}
+            {this.getAPIC(CHARTS.P95.id)}
+            {this.getAPIC(CHARTS.PLHIV_DIAGNOSIS.id)}
+            {this.getAPIC(CHARTS.PLHIV_SEX.id)}
+            {this.getAPIC(CHARTS.PLHIV_AGE.id)}
+            {this.getAPIC(CHARTS.HIV_NEGATIVE.id)}
+            {this.getAPIC(CHARTS.HIV_POSITIVE.id)}
+            {this.getAPIC(CHARTS.PREVALENCE.id)}
+            {this.getAPIC(CHARTS.ADULTS.id)}
+            {this.getAPIC(CHARTS.COMMUNITY.id)}
+            {this.getAPIC(CHARTS.FACILITY.id)}
+            {this.getAPIC(CHARTS.INDEX.id)}
+            {this.getAPIC(CHARTS.SELF_TESTS.id)}
+            {this.getAPIC(CHARTS.FORECAST.id)}
+            {this.getAPIC(CHARTS.KP_TABLE.id)}
+            {this.getAPIC(CHARTS.POLICY_TABLE.id)}
+            {this.getAPIC(CHARTS.GROUPS_TABLE.id)}
+            <button
+              onClick={() =>
+                this.setState({ examineSources: !this.state.examineSources })
+              }
+            >
+              {this.state.examineSources ? 'HIDE DIFF' : 'SHOW OVERALL DIFF'}
+            </button>
+          </div>
+        )}
+        {!!this.state.examineSources && (
+          <JsonDiff
+            FEdata={this.props.chartData}
+            APIdata={this.props.chartDataAPI}
+            chart={this.state.examineSources}
+            closeExaminer={() => this.setState({ examineSources: false })}
+          />
+        )}
 
         <div className="charts container-fluid mt-4 p-0">
           <div className="row mb-4">
@@ -653,8 +829,13 @@ class Dashboard extends Component {
   // dev form
   getDevSection() {
     if (!DEV) return
-    const inputs = fields.map(f => {
-      return <label key={f}>{f}<input data-field={f} onChange={this.updateField}></input></label>
+    const inputs = fields.map((f) => {
+      return (
+        <label key={f}>
+          {f}
+          <input data-field={f} onChange={this.updateField}></input>
+        </label>
+      )
     })
 
     return (
@@ -662,19 +843,41 @@ class Dashboard extends Component {
         <br />
         <br />
         <br />
-        <h5 className='text-center'>~ FOR DEVELOPMENT ~</h5>
+        <h5 className="text-center">~ FOR DEVELOPMENT ~</h5>
         <h5>Color Palette</h5>
         {colors.map((c, i) => {
-          return <span key={c} style={{background: c, width: '100px', height: '80px', color: 'white', display: 'inline-block'}}>{i}</span>
+          return (
+            <span
+              key={c}
+              style={{
+                background: c,
+                width: '100px',
+                height: '80px',
+                color: 'white',
+                display: 'inline-block',
+              }}
+            >
+              {i}
+            </span>
+          )
         })}
         <h5>Query API, results in devTools console</h5>
         {inputs}
-        <button onClick={this.submit} action='#'>go fetch</button>
-        <button onClick={this.submit.bind(this, true)} action='#'>dbug</button>
+        <button onClick={this.submit} action="#">
+          go fetch
+        </button>
+        <button onClick={this.submit.bind(this, true)} action="#">
+          dbug
+        </button>
         <br />
-        <span>{BASE_URL}indicator=</span><input id='direct-query'></input>
-        <button onClick={this.submitDQ} action='#'>direct query</button>
-        <button onClick={this.submitDQ.bind(this, true)} action='#'>dbug</button>
+        <span>{BASE_URL}indicator=</span>
+        <input id="direct-query"></input>
+        <button onClick={this.submitDQ} action="#">
+          direct query
+        </button>
+        <button onClick={this.submitDQ.bind(this, true)} action="#">
+          dbug
+        </button>
       </div>
     )
   }
@@ -686,25 +889,32 @@ class Dashboard extends Component {
     this.setState({ alertOn: e.target.value === 'on' })
   }
 
+  toggleDataSource(id) {
+    this.setState((state) => {
+      state.useAPI[id] = !state.useAPI[id]
+      return state
+    })
+  }
+
   submitDQ(e, dbug) {
     const v = document.querySelector('#direct-query')
     debugger
     const url = BASE_URL + 'indicator=' + v.value || ''
     console.log('url: ', url)
     fetch(url)
-    .then(response => response.json())
-    .then(r => {
-      console.log(r)
-      if (dbug) {
-        debugger
-      }
-    })
+      .then((response) => response.json())
+      .then((r) => {
+        console.log(r)
+        if (dbug) {
+          debugger
+        }
+      })
   }
 
   submit(e, dbug) {
     let url = BASE_URL
     let char = ''
-    fields.forEach(f => {
+    fields.forEach((f) => {
       if (this.state[f]) {
         let chunk = encodeURI(`${char}${f}=${this.state[f]}`)
         chunk = chunk.replaceAll('+', '%2B') // TODO - figure out why not encoded properly
@@ -714,8 +924,8 @@ class Dashboard extends Component {
     })
     console.log('URL: ', url)
     fetch(url)
-      .then(response => response.json())
-      .then(r => {
+      .then((response) => response.json())
+      .then((r) => {
         console.log(r)
         if (dbug) {
           debugger
@@ -725,10 +935,11 @@ class Dashboard extends Component {
 }
 
 export default connect(
-  state => ({
-    chartData: state.chart.chartData
+  (state) => ({
+    chartData: state.chart.chartData,
+    chartDataAPI: state.chart.chartDataAPI,
   }),
-  dispatch => ({
-    actions: bindActionCreators(chartActions, dispatch)
+  (dispatch) => ({
+    actions: bindActionCreators(chartActions, dispatch),
   })
 )(Dashboard)

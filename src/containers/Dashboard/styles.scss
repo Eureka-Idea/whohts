@@ -122,6 +122,35 @@ $nav-height: 64px;
     padding-top: $nav-height;
   }
 
+    .sourceExaminer {
+      position: fixed;
+      inset: 18px;
+      z-index: 11111;
+      background: white;
+      word-wrap: break-word;
+      overflow: auto;
+      bottom: 120px;
+    }
+    .dataSourceControls {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      padding: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      background-color: rgba(255, 225, 174, 0.9);
+      z-index: 1111;
+    }
+  
+    .APIC {
+      margin-left: 4px;
+  
+      input {
+        margin-left: 4px;
+        margin-right: 4px;
+      }
+    }
   .nav {
     position: fixed;
     justify-content: space-between;
