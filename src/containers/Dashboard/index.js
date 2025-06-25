@@ -81,10 +81,38 @@ const JsonDiff = ({ FEdata, APIdata, chart, closeExaminer }) => {
   // console.log('FE DATA: ', left)
   // window.jsdp = jsondiffpatch
   let showUnchanged = true
+
+  const name = chart === true ? 'ALL' : chart
+  // Function to download the left JSON
+  const downloadJson = (forApi) => {
+    console.log({ forApi })
+    const dataStr =
+      'data:text/json;charset=utf-8,' +
+      encodeURIComponent(JSON.stringify(forApi ? left : right, null, 2))
+    const downloadAnchorNode = document.createElement('a')
+    downloadAnchorNode.setAttribute('href', dataStr)
+    downloadAnchorNode.setAttribute(
+      'download',
+      `${name}_${forApi ? 'API' : 'OLD'}.json`
+    )
+    document.body.appendChild(downloadAnchorNode)
+    downloadAnchorNode.click()
+    downloadAnchorNode.remove()
+  }
+
   return (
     <div className="sourceExaminer">
-      <button onClick={closeExaminer}>X</button>
-      DATA FOR {chart === true ? 'ALL CHARTS' : chart}
+      <button className="close" onClick={closeExaminer}>
+        X
+      </button>
+      CONFIG FOR {name}
+      <br />
+      <button onClick={() => downloadJson(false)} style={{ margin: '8px 0' }}>
+        Download Old JSON
+      </button>
+      <button onClick={() => downloadJson(true)} style={{ margin: '8px 0' }}>
+        Download API JSON
+      </button>
       <br />
       <input
         type="checkbox"
@@ -792,7 +820,9 @@ class Dashboard extends Component {
               onChange={() => this.toggleAllDataSources(!allChecked)}
             ></input>
           </div>
-          {allChecked ? 'Uncheck' : 'Check'} All
+          <span style={{ width: 70 }}>
+            {allChecked ? 'Uncheck' : 'Check'} All
+          </span>
           {allCharts.map(this.getAPIC)}
           <button
             style={{ marginLeft: '8px' }}
