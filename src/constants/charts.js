@@ -13,7 +13,7 @@ const LATEST_YEAR = '2024'
 const SHINY_SOURCE_YEAR = '2025'
 const R_2015_ON = _.range('2015', Number(LATEST_YEAR) + 1).map(String)
 const R_2018_ON = _.range('2018', Number(LATEST_YEAR) + 1).map(String)
-const R_2020_2025 = ['2020', '2021', '2022', '2023', '2024', '2025']
+const R_2024_2030 = ['2024', '2025', '2026', '2027', '2028', '2029', '2030']
 
 const ADULTS15 = '15-24'
 const ADULTS25 = '25-34'
@@ -65,9 +65,11 @@ const SOURCE_DB_MAP = {
   PEPFAR: 'PEPFAR',
 
   WME: 'WHO model estimates',
+  RDT: 'EIC and WHO HIV RDT Landscape Report 2024',
   WSR: 'WHO special review',
   // WHTS: 'WHO HIV testing strategy',
   WNCPI: 'WHO NCPI',
+  WNCPI25: 'WHO_NCPI_2025',
   HIVST20: 'HIVST policy 2020 data set',
   HIVST21: 'HIVST policy 2021 data set',
   KP25: 'UNAIDS KP-Atlas 2025',
@@ -891,7 +893,7 @@ const forecastWME = {
   id: 'WME',
   filters: {
     ALL: {
-      // [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WME, // now "WHO HIVST Forecast 2021"
+      [F.SOURCE_DATABASE]: SOURCE_DB_MAP.RDT,
     },
   },
   indicators: {
@@ -1252,8 +1254,8 @@ const CHARTS = {
     sources: [forecastWME],
     indicatorIds: ['demand'],
     indicatorYears: {
-      demand: R_2020_2025,
-      // need: R_2020_2025,
+      demand: R_2024_2030,
+      // need: R_2024_2030,
     },
   },
 
@@ -1303,10 +1305,11 @@ const CHARTS = {
     filters: {
       ALL: {
         [F.AREA_NAME]: 'NULL',
+        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI25,
       },
     },
     indicators: {
-      age: 'Laws requiring parental consent for adolescents to access HIV testing',
+      age: 'From national authorities Laws requiring parental consent for adolescents to access HIV testing',
       provider:
         'From national authorities Provider-initiated testing and counselling',
       community:
@@ -1316,17 +1319,20 @@ const CHARTS = {
       assisted: 'From national authorities Assisted partner notification',
       // social: 'From national authorities Social network-based HIV testing',
       // compliance: '3-test strategy/algorithm for an HIV-positive diagnosis used',
-      verification: 'Verification testing before ART',
+      verification: 'From national authorities Verification testing before ART',
       // dual: 'Dual HIV/syphilis rapid diagnostic tests for pregnant women and/or key populations included in national policy',
-      client: 'Client-initiated testing and counselling',
-      condition: 'Indicator condition testing',
-      routine: 'Routine antenatal testing',
+      client:
+        'From national authorities Client-initiated testing and counselling',
+      condition: 'From national authorities Indicator condition testing',
+      routine: 'From national authorities Routine antenatal testing',
       antenatal:
-        'Dual HIV/syphilis rapid diagnostic tests for pregnant women in antenatal care',
+        'From national authorities Dual HIV/syphilis rapid diagnostic tests for pregnant women in antenatal care',
       rapid:
-        'Dual HIV/syphilis rapid diagnostic tests for any key population group',
-      social_key: 'Social network-based HIV testing for key populations',
-      social_gen: 'Social network-based HIV testing for general population',
+        'From national authorities Dual HIV/syphilis rapid diagnostic tests for any key population group',
+      social_key:
+        'From national authorities Social network-based HIV testing for key populations',
+      social_gen:
+        'From national authorities Social network-based HIV testing for general population',
     },
   },
   GROUPS_TABLE: {
@@ -1466,7 +1472,11 @@ const getIndicatorMap = (isShiny) => {
         [F.SOURCE_ORGANIZATION]: SOURCE_DB_MAP.UNAIDS,
         [F.COUNTRY_ISO_CODE]: true,
         getter: (results) => {
-          return _.maxBy(results, 'year')
+          // find the latest result by source_year with the highest year
+          return _.maxBy(results, (r) => [
+            +r.source_year || -Infinity,
+            +r.year || -Infinity,
+          ])
         },
       },
       {
@@ -1818,7 +1828,14 @@ const getIndicatorMap = (isShiny) => {
             `,
               results[0].indicator,
               'R:',
-              _.maxBy(results, 'year'),
+              _.maxBy(
+                results.filter((r) => !!r.value_comment),
+                (r) => [
+                  +r.source_year || -Infinity,
+                  +r.year || -Infinity,
+                  // +r.value_comment || -Infinity,
+                ]
+              ),
               `
             `,
               'rs:',
@@ -1826,12 +1843,12 @@ const getIndicatorMap = (isShiny) => {
             )
           }
           return _.maxBy(
-            results,
-            // in case we want to filter by source db
-            // results.filter((r) =>
-            //   r[FIELD_MAP.SOURCE_DATABASE].includes(SOURCE_DB_MAP._NCPI_)
-            // ),
-            'year'
+            results.filter((r) => !!r.value_comment),
+            (r) => [
+              +r.source_year || -Infinity,
+              +r.year || -Infinity,
+              // +r.value_comment || -Infinity,
+            ]
           )
         },
       })
