@@ -13,7 +13,7 @@ const COUNTRIES = [
   { ISO: 'COD', name: 'Democratic Republic of the Congo', shiny: true },
   // { ISO: 'DOM', name: 'Dominican Republic', shiny: false },
   { ISO: 'SWZ', name: 'Eswatini', shiny: true },
-  { ISO: 'ETH', name: 'Ethiopia', shiny: true, sumFix: true },
+  { ISO: 'ETH', name: 'Ethiopia', shiny: false, sumFix: true },
   { ISO: 'GHA', name: 'Ghana', shiny: true },
   { ISO: 'GTM', name: 'Guatemala', shiny: false },
   { ISO: 'HTI', name: 'Haiti', shiny: true },
@@ -31,7 +31,7 @@ const COUNTRIES = [
   { ISO: 'MOZ', name: 'Mozambique', shiny: true },
   { ISO: 'MMR', name: 'Myanmar', shiny: false },
   { ISO: 'NAM', name: 'Namibia', shiny: true },
-  { ISO: 'NGA', name: 'Nigeria', shiny: true, sumFix: true },
+  { ISO: 'NGA', name: 'Nigeria', shiny: false, sumFix: true },
   { ISO: 'PAK', name: 'Pakistan', shiny: false },
   { ISO: 'PNG', name: 'Papua New Guinea', shiny: false },
   { ISO: 'PHL', name: 'Philippines', shiny: false },
@@ -43,10 +43,10 @@ const COUNTRIES = [
   { ISO: 'THA', name: 'Thailand', shiny: false },
   { ISO: 'UGA', name: 'Uganda', shiny: true },
   // { ISO: 'UKR', name: 'Ukraine', shiny: false },
-  { ISO: 'TZA', name: 'United Republic of Tanzania', shiny: true },
+  { ISO: 'TZA', name: 'United Republic of Tanzania', shiny: false },
   { ISO: 'VNM', name: 'Viet Nam', shiny: false },
   { ISO: 'ZMB', name: 'Zambia', shiny: true },
-  { ISO: 'ZWE', name: 'Zimbabwe', shiny: true, sumFix: true },
+  { ISO: 'ZWE', name: 'Zimbabwe', shiny: false, sumFix: true },
 ]
 
 const COUNTRY_MAP = _.keyBy(COUNTRIES, 'ISO')
