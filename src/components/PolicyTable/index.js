@@ -25,6 +25,7 @@ const PolicyTable = ({ config }) => {
                 effect="solid"
               >
                 <div>Year: {r.year}</div>
+                <div>Source: {r.source}</div>
               </ReactTooltip>
             )
 

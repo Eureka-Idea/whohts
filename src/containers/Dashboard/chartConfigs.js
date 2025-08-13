@@ -2260,84 +2260,100 @@ const getPolicyTable = (
         rowName:
           'Laws requiring parental consent for adolescents to access HIV testing',
         value: _.get(age, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(age, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(age, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Client-initiated testing and counselling',
         value: _.get(client, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(client, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(client, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Provider-initiated testing and counselling',
         value: _.get(provider, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(provider, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(provider, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Indicator condition testing',
         value: _.get(condition, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(condition, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(condition, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Routine antenatal testing',
         value: _.get(routine, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(routine, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(routine, [FIELD_MAP.YEAR]),
       },
       {
         rowName:
           'Dual HIV/syphilis rapid diagnostic tests for pregnant women in antenatal care',
         value: _.get(antenatal, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(antenatal, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(antenatal, [FIELD_MAP.YEAR]),
       },
       {
         rowName:
           'Dual HIV/syphilis rapid diagnostic tests for any key population group',
         value: _.get(rapid, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(rapid, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(rapid, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Community-based testing',
         value: _.get(community, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(community, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(community, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Lay provider testing',
         value: _.get(lay, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(lay, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(lay, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Self-testing',
         value: _.get(hivst, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(hivst, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(hivst, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Assisted partner notification',
         value: _.get(assisted, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(assisted, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(assisted, [FIELD_MAP.YEAR]),
       },
       // {
       //   rowName: 'Social network-based HIV testing',
       //   value: _.get(social, [FIELD_MAP.VALUE_COMMENT]),
+      // source   value: _.get(social, [FIELD_MAP.SOURCE_DATABASE]),
       //   year: _.get(social, [FIELD_MAP.YEAR]),
       // },
       // {
       //   rowName: '3-test strategy/algorithm for an HIV-positive diagnosis used',
       //   value: _.get(compliance, [FIELD_MAP.VALUE_COMMENT]),
+      // source   value: _.get(compliance, [FIELD_MAP.SOURCE_DATABASE]),
       //   year: _.get(compliance, [FIELD_MAP.YEAR]),
       // },
       // {
       //   rowName:
       //     'Dual HIV/syphilis rapid diagnostic tests for pregnant women and/or key populations included in national policy',
       //   value: _.get(dual, [FIELD_MAP.VALUE_COMMENT]),
+      // source   value: _.get(dual, [FIELD_MAP.SOURCE_DATABASE]),
       //   year: _.get(dual, [FIELD_MAP.YEAR]),
       // },
       {
         rowName: 'Social network-based HIV testing for key populations',
         value: _.get(social_key, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(social_key, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(social_key, [FIELD_MAP.YEAR]),
       },
       {
         rowName: 'Social network-based HIV testing for general population',
         value: _.get(social_gen, [FIELD_MAP.VALUE_COMMENT]),
+        source: _.get(social_gen, [FIELD_MAP.SOURCE_DATABASE]),
         year: _.get(social_gen, [FIELD_MAP.YEAR]),
       },
     ],
