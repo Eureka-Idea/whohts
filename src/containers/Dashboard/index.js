@@ -88,7 +88,7 @@ const JsonDiff = ({ FEdata, APIdata, chart, closeExaminer }) => {
     console.log({ forApi })
     const dataStr =
       'data:text/json;charset=utf-8,' +
-      encodeURIComponent(JSON.stringify(forApi ? left : right, null, 2))
+      encodeURIComponent(JSON.stringify(forApi ? right : left, null, 2))
     const downloadAnchorNode = document.createElement('a')
     downloadAnchorNode.setAttribute('href', dataStr)
     downloadAnchorNode.setAttribute(
@@ -808,31 +808,32 @@ class Dashboard extends Component {
             Home
           </Link>
         </div>
-        {/* {DEV && ( */}
-        <div className="dataSourceControls">
-          Check box to use new API data for a chart. Click the chart name to see
-          a diff of the current and new API data.
-          <br />
-          <div className="APIC">
-            <input
-              type="checkbox"
-              checked={allChecked}
-              onChange={() => this.toggleAllDataSources(!allChecked)}
-            ></input>
+        {DEV && (
+          <div className="dataSourceControls">
+            Check box to use new API data for a chart. Click the chart name to
+            see a diff of the current and new API data.
+            <br />
+            <div className="APIC">
+              <input
+                type="checkbox"
+                checked={allChecked}
+                onChange={() => this.toggleAllDataSources(!allChecked)}
+              ></input>
+            </div>
+            <span style={{ width: 70 }}>
+              {allChecked ? 'Uncheck' : 'Check'} All
+            </span>
+            {allCharts.map(this.getAPIC)}
+            <button
+              style={{ marginLeft: '8px' }}
+              onClick={() =>
+                this.setState({ examineSources: !this.state.examineSources })
+              }
+            >
+              {this.state.examineSources ? 'HIDE DIFF' : 'SHOW OVERALL DIFF'}
+            </button>
           </div>
-          <span style={{ width: 70 }}>
-            {allChecked ? 'Uncheck' : 'Check'} All
-          </span>
-          {allCharts.map(this.getAPIC)}
-          <button
-            style={{ marginLeft: '8px' }}
-            onClick={() =>
-              this.setState({ examineSources: !this.state.examineSources })
-            }
-          >
-            {this.state.examineSources ? 'HIDE DIFF' : 'SHOW OVERALL DIFF'}
-          </button>
-        </div>
+        )}
         {!!this.state.examineSources && (
           <JsonDiff
             FEdata={this.props.chartData}

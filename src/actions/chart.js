@@ -55,9 +55,9 @@ if (!DEV) {
 // NOTE: exclusively for dev use, if any charts are marked true only those will appear on dashboard
 // (speeds load time and narrows code scope when debugging)
 const debugList = {
-  [CHARTS.P95.id]: true,
-  [CHARTS.CONTEXT.id]: true,
-  [CHARTS.PLHIV_DIAGNOSIS.id]: true,
+  // [CHARTS.P95.id]: true,
+  // [CHARTS.CONTEXT.id]: true,
+  // [CHARTS.PLHIV_DIAGNOSIS.id]: true,
   // [CHARTS.PREVALENCE.id]: true,
   // [CHARTS.HIV_POSITIVE.id]: true,
   // [CHARTS.HIV_NEGATIVE.id]: true,
@@ -67,9 +67,9 @@ const debugList = {
   // [CHARTS.ADULTS.id]: true,
   // [CHARTS.COMMUNITY.id]: true,
   // [CHARTS.FACILITY.id]: true,
-  // [CHARTS.INDEX.id]: true,
+  [CHARTS.INDEX.id]: true,
   // [CHARTS.PLHIV_AGE.id]: true,
-  [CHARTS.PLHIV_SEX.id]: true,
+  // [CHARTS.PLHIV_SEX.id]: true,
   // [CHARTS.SELF_TESTS.id]: true,
   // [CHARTS.FORECAST.id]: true,
 }
@@ -197,25 +197,33 @@ export const getChartData = (countryCode) => (dispatch) => {
         })
       })
 
-      const newEndpoint = NEW_ENDPOINT + countryCode
-      fetch(newEndpoint, myInit)
-        .then((r) => {
-          // console.log('!!!! ', r)
-          return r.json()
+      if (!DEV) {
+        // on MASTER, don't fetch API data if not DEV
+        dispatch({
+          type: types.FETCH_CHART_DATA,
+          payload: [allChartData, []],
         })
-        .then((d) => {
-          const data = convertNumericKeyedObjectsToArrays(d)
-          console.log({ newEndpoint, data })
-          dispatch({
-            type: types.FETCH_CHART_DATA,
-            payload: [allChartData, data],
+      } else {
+        const newEndpoint = NEW_ENDPOINT + countryCode
+        fetch(newEndpoint, myInit)
+          .then((r) => {
+            // console.log('!!!! ', r)
+            return r.json()
           })
-        })
-        .catch((e) => {
-          if (DEV) {
-            console.error('DATA FETCH FAILED FOR ', newEndpoint, ' : ', e)
-          }
-        })
+          .then((d) => {
+            const data = convertNumericKeyedObjectsToArrays(d)
+            // console.log({ newEndpoint, data })
+            dispatch({
+              type: types.FETCH_CHART_DATA,
+              payload: [allChartData, data],
+            })
+          })
+          .catch((e) => {
+            if (DEV) {
+              console.error('DATA FETCH FAILED FOR ', newEndpoint, ' : ', e)
+            }
+          })
+      }
     })
     .catch((e) => {
       if (DEV) {
