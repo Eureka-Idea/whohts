@@ -2,10 +2,9 @@ import _ from 'lodash'
 import { COUNTRY_MAP } from '../components/Homepage/countries'
 import { FEATURE_FLAGS } from './flags'
 
-// const dbName = '2024-2-app-dot-eic-database-290813'
-const dbName = 'eic-database-290813'
-const BASE_URL = `https://${dbName}.ew.r.appspot.com/query?`
-const NEW_ENDPOINT = `https://2024-3-app-dot-${dbName}.ew.r.appspot.com/charts/`
+const basePath = 'https://2025-app-dot-eic-database-290813.ew.r.appspot.com/'
+const BASE_URL = `${basePath}query?`
+const NEW_ENDPOINT = `${basePath}charts/`
 
 // const R_2015_2019 = ['2015', '2016', '2017', '2018', '2019']
 const LATEST_YEAR = '2024'

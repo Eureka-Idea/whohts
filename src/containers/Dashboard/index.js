@@ -66,7 +66,7 @@ HighchartsMore(ReactHighcharts.Highcharts)
 ReactHighcharts.Highcharts.theme = baseStyle
 ReactHighcharts.Highcharts.setOptions(ReactHighcharts.Highcharts.theme)
 
-const DEV = window.location.hostname === 'localhost'
+const isProd = window.location.hostname === 'whohts.web.app'
 
 const JsonDiff = ({ FEdata, APIdata, chart, closeExaminer }) => {
   const left = chart === true ? FEdata : FEdata[chart] || {}
@@ -633,7 +633,7 @@ class Dashboard extends Component {
             >
               PEPFAR Panorama Spotlight
             </a>
-            {DEV && (
+            {!isProd && (
               <a
                 target="_blank"
                 rel="noopener noreferrer"
@@ -808,7 +808,8 @@ class Dashboard extends Component {
             Home
           </Link>
         </div>
-        {DEV && (
+        {/* Show controls on deploy. TODOxxx remove for production.  */}
+        {!isProd && (
           <div className="dataSourceControls">
             Check box to use new API data for a chart. Click the chart name to
             see a diff of the current and new API data.
@@ -883,7 +884,7 @@ class Dashboard extends Component {
 
   // dev form
   getDevSection() {
-    if (!DEV) return
+    if (isProd) return
     const inputs = fields.map((f) => {
       return (
         <label key={f}>

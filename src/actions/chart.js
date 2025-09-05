@@ -67,7 +67,7 @@ const debugList = {
   // [CHARTS.ADULTS.id]: true,
   // [CHARTS.COMMUNITY.id]: true,
   // [CHARTS.FACILITY.id]: true,
-  [CHARTS.INDEX.id]: true,
+  // [CHARTS.INDEX.id]: true,
   // [CHARTS.PLHIV_AGE.id]: true,
   // [CHARTS.PLHIV_SEX.id]: true,
   // [CHARTS.SELF_TESTS.id]: true,
@@ -197,8 +197,9 @@ export const getChartData = (countryCode) => (dispatch) => {
         })
       })
 
-      if (!DEV) {
-        // on MASTER, don't fetch API data if not DEV
+      const isProd = window.location.hostname === 'whohts.web.app'
+      // Enable API use on deploy. TODOxxx remove for production
+      if (isProd) {
         dispatch({
           type: types.FETCH_CHART_DATA,
           payload: [allChartData, []],
