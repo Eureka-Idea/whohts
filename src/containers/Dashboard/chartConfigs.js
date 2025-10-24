@@ -18,13 +18,7 @@ import colors, {
   froly,
 } from './colors'
 import _ from 'lodash'
-import {
-  getArea,
-  getColumn,
-  getLine,
-  getColumnScat,
-  getColumnLine,
-} from './genericConfigs'
+import { getArea, getColumn, getLine, getColumnScat } from './genericConfigs'
 import {
   CHARTS,
   FIELD_MAP,
@@ -33,7 +27,6 @@ import {
   SOURCE_DISPLAY_MAP,
   ALL_CHARTS,
   CSV_FIELDS,
-  isFemale,
   getSourceDisplayWithYear,
 } from '../../constants/charts'
 import { TERM_MAP } from '../../constants/glossary'
@@ -1493,7 +1486,7 @@ const getAdults = (
   shinyCountry = false,
   forExport = false
 ) => {
-  const { title, indicatorIds, sources } = CHARTS.ADULTS
+  const { title, indicatorIds } = CHARTS.ADULTS
 
   const { total, men, women, pTotal, pMen, pWomen, missingIndicators } =
     extractPrioritizedData(dataByHierarchy, indicatorIds)
@@ -1569,7 +1562,7 @@ const getCommunity = (
   shinyCountry = false,
   forExport = false
 ) => {
-  const { title, indicatorIds, sources } = CHARTS.COMMUNITY
+  const { title, indicatorIds } = CHARTS.COMMUNITY
 
   const {
     total,
@@ -1658,8 +1651,7 @@ const getFacility = (
   shinyCountry = false,
   forExport = false
 ) => {
-  const { title, indicatorIds, sources } = CHARTS.FACILITY
-
+  const { title, indicatorIds } = CHARTS.FACILITY
   const {
     total,
     PITC,
@@ -1779,7 +1771,7 @@ const getFacility = (
 }
 
 const getIndex = (dataByHierarchy, shinyCountry = false, forExport = false) => {
-  const { title, indicatorIds, sources } = CHARTS.INDEX
+  const { title, indicatorIds } = CHARTS.INDEX
 
   const {
     total,
@@ -1872,11 +1864,15 @@ const getSelfTests = (
 ) => {
   const { title, indicatorIds, indicatorYears } = CHARTS.SELF_TESTS
 
-  const { distributed, missingIndicatorMap } = extractPrioritizedRangeData({
-    dataByHierarchy,
-    indicatorIds,
-    indicatorRangeMap: indicatorYears,
-  })
+  const { distributed: distributedOld, missingIndicatorMap } =
+    extractPrioritizedRangeData({
+      dataByHierarchy,
+      indicatorIds,
+      indicatorRangeMap: indicatorYears,
+    })
+
+  // TODOxxx restructure once new API in place
+  const distributed = _.sortBy(_.flatMap(dataByHierarchy.distributed), 'year')
 
   const missingIndicators = Object.keys(missingIndicatorMap)
 
@@ -2092,7 +2088,7 @@ const getKpTable = (
   shinyCountry = false,
   forExport = false
 ) => {
-  const { title, indicatorIds, sources } = CHARTS.KP_TABLE
+  const { title, indicatorIds } = CHARTS.KP_TABLE
 
   const {
     prevMsm,

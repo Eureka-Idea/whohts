@@ -11,8 +11,8 @@ export default function (state = INITIAL_STATE, action) {
       console.log('XXX FETCH CHART PAYLOAD: XXX ', action.payload)
       return {
         ...state,
-        chartData: action.payload[0],
-        chartDataAPI: action.payload[1],
+        // chartData: action.payload[0],
+        chartData: action.payload[1],
       }
     default:
       return state

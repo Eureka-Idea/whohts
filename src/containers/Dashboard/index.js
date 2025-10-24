@@ -5,13 +5,6 @@ import baseStyle from './baseStyle'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import './styles.css'
-import {
-  getArea,
-  getColumn,
-  getLine,
-  getColumnScat,
-  getColumnLine,
-} from './genericConfigs'
 import colors, { P95ColorA, P95ColorB, P95ColorC, P95ColorD } from './colors'
 import Tooltip from '../../components/Tooltip'
 import NestedBoxes from '../../components/NestedBoxes'
@@ -19,7 +12,6 @@ import KPTable from '../../components/KPTable'
 import PolicyTable from '../../components/PolicyTable'
 import DemographicsTable from '../../components/DemographicsTable'
 import { TERM_MAP, TERMS } from '../../constants/glossary'
-import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import {
   CHARTS,
@@ -30,33 +22,6 @@ import {
 import { getConfig, displayNumber, getExportData } from './chartConfigs'
 import { COUNTRIES, COUNTRY_MAP } from '../../components/Homepage/countries'
 import ReactTooltip from 'react-tooltip'
-import * as jsondiffpatch from 'jsondiffpatch/dist/jsondiffpatch.umd.js'
-import 'jsondiffpatch/dist/formatters-styles/html.css'
-// import * as htmlFormatter from 'jsondiffpatch/dist/jsondiffpatch-formatters.min.js'
-// import 'jsondiffpatch/dist/formatters-styles/html.css'
-// import * as htmlFormatter from 'jsondiffpatch/lib/formatters/html'
-// import 'jsondiffpatch/lib/formatters/styles/html.css'
-// import { create, diff } from 'jsondiffpatch'
-
-const allCharts = [
-  CHARTS.CONTEXT.id,
-  CHARTS.P95.id,
-  CHARTS.PLHIV_DIAGNOSIS.id,
-  CHARTS.PLHIV_SEX.id,
-  CHARTS.PLHIV_AGE.id,
-  CHARTS.HIV_NEGATIVE.id,
-  CHARTS.HIV_POSITIVE.id,
-  CHARTS.PREVALENCE.id,
-  CHARTS.ADULTS.id,
-  CHARTS.COMMUNITY.id,
-  CHARTS.FACILITY.id,
-  CHARTS.INDEX.id,
-  CHARTS.SELF_TESTS.id,
-  CHARTS.FORECAST.id,
-  CHARTS.KP_TABLE.id,
-  CHARTS.POLICY_TABLE.id,
-  CHARTS.GROUPS_TABLE.id,
-]
 
 const HighchartsMore = require('highcharts/highcharts-more')
 const Highcharts = require('highcharts')
@@ -67,72 +32,6 @@ ReactHighcharts.Highcharts.theme = baseStyle
 ReactHighcharts.Highcharts.setOptions(ReactHighcharts.Highcharts.theme)
 
 const isProd = window.location.hostname === 'whohts.web.app'
-
-const JsonDiff = ({ FEdata, APIdata, chart, closeExaminer }) => {
-  const left = chart === true ? FEdata : FEdata[chart] || {}
-  const right = chart === true ? APIdata : APIdata[chart] || {}
-
-  const delta = jsondiffpatch.diff(left, right)
-  const diffHtml = jsondiffpatch.formatters.html.format(delta, left)
-  // const delta = diff(left, right)
-  // const diffHtml = htmlFormatter.format(delta, left)
-
-  // console.log('API DATA: ', right)
-  // console.log('FE DATA: ', left)
-  // window.jsdp = jsondiffpatch
-  let showUnchanged = true
-
-  const name = chart === true ? 'ALL' : chart
-  // Function to download the left JSON
-  const downloadJson = (forApi) => {
-    console.log({ forApi })
-    const dataStr =
-      'data:text/json;charset=utf-8,' +
-      encodeURIComponent(JSON.stringify(forApi ? right : left, null, 2))
-    const downloadAnchorNode = document.createElement('a')
-    downloadAnchorNode.setAttribute('href', dataStr)
-    downloadAnchorNode.setAttribute(
-      'download',
-      `${name}_${forApi ? 'API' : 'OLD'}.json`
-    )
-    document.body.appendChild(downloadAnchorNode)
-    downloadAnchorNode.click()
-    downloadAnchorNode.remove()
-  }
-
-  return (
-    <div className="sourceExaminer">
-      <button className="close" onClick={closeExaminer}>
-        X
-      </button>
-      CONFIG FOR {name}
-      <br />
-      <button onClick={() => downloadJson(false)} style={{ margin: '8px 0' }}>
-        Download Old JSON
-      </button>
-      <button onClick={() => downloadJson(true)} style={{ margin: '8px 0' }}>
-        Download API JSON
-      </button>
-      <br />
-      <input
-        type="checkbox"
-        defaultChecked={showUnchanged}
-        onClick={() => {
-          showUnchanged = !showUnchanged
-          jsondiffpatch.formatters.html[
-            showUnchanged ? 'showUnchanged' : 'hideUnchanged'
-          ]()
-          // htmlFormatter[showUnchanged ? 'showUnchanged' : 'hideUnchanged']()
-        }}
-      ></input>{' '}
-      Show unchanged lines
-      <div
-        className="jsondiffpatch-container"
-        dangerouslySetInnerHTML={{ __html: diffHtml }}
-      />
-    </div>
-  )
-}
 
 // fix legend markers
 // ReactHighcharts.Highcharts.seriesTypes.area.prototype.drawLegendSymbol =
@@ -156,20 +55,14 @@ class Dashboard extends Component {
     this.state = {
       alertOn: false,
       loading: true,
-      useAPI: {},
-      examineSources: false,
     }
     // fields.forEach(f => this.state[f] = false)
 
     this.updateField = this.updateField.bind(this)
-    this.updateAlert = this.updateAlert.bind(this)
     this.submit = this.submit.bind(this)
     this.submitDQ = this.submitDQ.bind(this)
     this.goToCountry = this.goToCountry.bind(this)
     this.exportData = this.exportData.bind(this)
-    this.toggleDataSource = this.toggleDataSource.bind(this)
-    this.getAPIC = this.getAPIC.bind(this)
-    this.toggleAllDataSources = this.toggleAllDataSources.bind(this)
   }
   componentWillMount() {
     const countryCode = _.get(
@@ -190,7 +83,9 @@ class Dashboard extends Component {
   // }
 
   componentWillReceiveProps(newProps) {
-    const dataCountry = newProps.chartData.countryCode
+    // TODO use chartData.countryCode once provided
+    const dataCountry = _.get(newProps, 'chartData.countryCode')
+    
     const paramCountry = _.get(
       newProps,
       'match.params.countryCode'
@@ -228,26 +123,10 @@ class Dashboard extends Component {
     }
   }
 
-  getAPIC(id) {
-    return (
-      <div className="APIC">
-        <input
-          type="checkbox"
-          checked={this.state.useAPI[id]}
-          onChange={() => this.toggleDataSource(id)}
-        ></input>
-        <a onClick={() => this.setState({ examineSources: id })} href={'#'}>
-          {id}
-        </a>
-      </div>
-    )
-  }
   getCountryContext() {
     const { id } = CHARTS.CONTEXT
 
-    const chartData = this.state.useAPI[id]
-      ? this.props.chartDataAPI
-      : this.props.chartData
+    const chartData = this.props.chartData
 
     const populationRow = _.get(
       chartData,
@@ -327,9 +206,7 @@ class Dashboard extends Component {
 
   getP95() {
     const { id, title } = CHARTS.P95
-    const chartData = this.state.useAPI[id]
-      ? this.props.chartDataAPI
-      : this.props.chartData
+    const chartData = this.props.chartData
 
     const config = getConfig(id, chartData)
 
@@ -415,9 +292,7 @@ class Dashboard extends Component {
   }
 
   getChart(id, tt) {
-    const chartData = this.state.useAPI[id]
-      ? this.props.chartDataAPI
-      : this.props.chartData
+    const chartData = this.props.chartData
     if (_.isEmpty(chartData)) {
       // console.log('No chart data (perhaps awaiting API response)')
       return
@@ -531,9 +406,7 @@ class Dashboard extends Component {
   }
 
   getTable(id) {
-    const chartData = this.state.useAPI[id]
-      ? this.props.chartDataAPI
-      : this.props.chartData
+    const chartData = this.props.chartData
     if (_.isEmpty(chartData)) {
       // console.log('No chart data (perhaps awaiting API response)')
       return
@@ -774,8 +647,6 @@ class Dashboard extends Component {
       )
     }
 
-    const allChecked = allCharts.every((id) => !!this.state.useAPI[id])
-    // console.log({ allChecked }, this.state.useAPI)
     return (
       <div className="dashboard">
         <div className="nav">
@@ -808,42 +679,6 @@ class Dashboard extends Component {
             Home
           </Link>
         </div>
-        {/* Show controls on deploy. TODOxxx remove for production.  */}
-        {!isProd && (
-          <div className="dataSourceControls">
-            Check box to use new API data for a chart. Click the chart name to
-            see a diff of the current and new API data.
-            <br />
-            <div className="APIC">
-              <input
-                type="checkbox"
-                checked={allChecked}
-                onChange={() => this.toggleAllDataSources(!allChecked)}
-              ></input>
-            </div>
-            <span style={{ width: 70 }}>
-              {allChecked ? 'Uncheck' : 'Check'} All
-            </span>
-            {allCharts.map(this.getAPIC)}
-            <button
-              style={{ marginLeft: '8px' }}
-              onClick={() =>
-                this.setState({ examineSources: !this.state.examineSources })
-              }
-            >
-              {this.state.examineSources ? 'HIDE DIFF' : 'SHOW OVERALL DIFF'}
-            </button>
-          </div>
-        )}
-        {!!this.state.examineSources && (
-          <JsonDiff
-            FEdata={this.props.chartData}
-            APIdata={this.props.chartDataAPI}
-            chart={this.state.examineSources}
-            closeExaminer={() => this.setState({ examineSources: false })}
-          />
-        )}
-
         <div className="charts container-fluid mt-4 p-0">
           <div className="row mb-4">
             {/* <div className='row no-gutters mb-4'> */}
@@ -941,26 +776,6 @@ class Dashboard extends Component {
     this.setState({ [e.target.dataset.field]: e.target.value })
   }
 
-  updateAlert(e) {
-    this.setState({ alertOn: e.target.value === 'on' })
-  }
-
-  toggleDataSource(id) {
-    this.setState((state) => {
-      state.useAPI[id] = !state.useAPI[id]
-      return state
-    })
-  }
-
-  toggleAllDataSources(useApiData) {
-    const idMap = allCharts.reduce((acc, id) => {
-      acc[id] = useApiData
-      return acc
-    }, {})
-    // console.log({ idMap })
-    this.setState({ useAPI: idMap })
-  }
-
   submitDQ(e, dbug) {
     const v = document.querySelector('#direct-query')
     debugger
@@ -1002,7 +817,7 @@ class Dashboard extends Component {
 export default connect(
   (state) => ({
     chartData: state.chart.chartData,
-    chartDataAPI: state.chart.chartDataAPI,
+    // chartDataAPI: state.chart.chartDataAPI,
   }),
   (dispatch) => ({
     actions: bindActionCreators(chartActions, dispatch),
