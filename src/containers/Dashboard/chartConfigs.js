@@ -446,6 +446,7 @@ const extractPrioritizedData = (
     //   }
     // }
   })
+  console.log('extractPrioritizedData result: \n', result, dataByHierarchy)
   return result
 }
 
@@ -497,6 +498,13 @@ const extractPrioritizedRangeData = ({
       }
     })
   })
+
+  console.log(
+    'extractPrioritizedRangeData result: \n',
+    result,
+    dataByHierarchy,
+    { mappedData, rangedField }
+  )
   return result
 }
 
@@ -1864,24 +1872,24 @@ const getSelfTests = (
 ) => {
   const { title, indicatorIds, indicatorYears } = CHARTS.SELF_TESTS
 
-  const { distributed: distributedOld, missingIndicatorMap } =
-    extractPrioritizedRangeData({
-      dataByHierarchy,
-      indicatorIds,
-      indicatorRangeMap: indicatorYears,
-    })
+  // const { distributed: distributedOld, missingIndicatorMap } =
+  //   extractPrioritizedRangeData({
+  //     dataByHierarchy,
+  //     indicatorIds,
+  //     indicatorRangeMap: indicatorYears,
+  //   })
 
   // TODOxxx restructure once new API in place
   const distributed = _.sortBy(_.flatMap(dataByHierarchy.distributed), 'year')
 
-  const missingIndicators = Object.keys(missingIndicatorMap)
+  // const missingIndicators = Object.keys(missingIndicatorMap)
 
-  if (missingIndicators.length) {
-    console.warn(
-      '**INCOMPLETE RESULTS. missing: ',
-      missingIndicators.join(', ')
-    )
-  }
+  // if (missingIndicators.length) {
+  //   console.warn(
+  //     '**INCOMPLETE RESULTS. missing: ',
+  //     missingIndicators.join(', ')
+  //   )
+  // }
 
   const distributedNumData = distributed
     .filter((r) => !r.noData)
@@ -2108,25 +2116,6 @@ const getKpTable = (
     yearTrans,
     missingIndicators,
   } = extractPrioritizedData(dataByHierarchy, indicatorIds)
-
-  // console.log(
-  //   'KP DATA | ',
-  //   'prevMsm: ', prevMsm,
-  //   'prevPwid: ', prevPwid,
-  //   'prevPris: ', prevPris,
-  //   'prevSw: ', prevSw,
-  //   'prevTrans: ', prevTrans,
-  //   'awareMsm: ', awareMsm,
-  //   'awarePwid: ', awarePwid,
-  //   'awarePris: ', awarePris,
-  //   'awareSw: ', awareSw,
-  //   'awareTrans: ', awareTrans,
-  //   'yearMsm: ', yearMsm,
-  //   'yearPwid: ', yearPwid,
-  //   'yearPris: ', yearPris,
-  //   'yearSw: ', yearSw,
-  //   'yearTrans: ', yearTrans,
-  // )
 
   if (forExport) {
     return [

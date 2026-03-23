@@ -126,19 +126,6 @@ const getSourceDisplayWithYear = ({ source, sourceYear }) => {
   return sourceDisplay.replace(/\d{4}/, sourceYear)
 }
 
-// TODO: replace all _.maxBy calls with this
-const getMostRecentResult = (
-  results,
-  {
-    // by default, only include results with a numeric VALUE
-    hasValueCheck = (r) => _.isNumber(r[F.VALUE]),
-    filterCheck = (r) => true,
-  } = {}
-) =>
-  _.maxBy(
-    results.filter((r) => hasValueCheck(r) && filterCheck(r)),
-    'year'
-  ) || null
 
 const FIELD_MAP = {
   INDICATOR: 'indicator',
@@ -305,9 +292,6 @@ const CHARTS = {
   KP_TABLE: {
     title: 'Key Populations',
     id: 'KP_TABLE',
-    filters: {
-      prev: {},
-    },
     indicatorIds: [
       'prevMsm',
       'prevPwid',
@@ -329,12 +313,6 @@ const CHARTS = {
   POLICY_TABLE: {
     title: 'WHO HIV Testing Policy Compliance',
     id: 'POLICY_TABLE',
-    filters: {
-      ALL: {
-        [F.AREA_NAME]: 'NULL',
-        [F.SOURCE_DATABASE]: SOURCE_DB_MAP.WNCPI25,
-      },
-    },
   },
   GROUPS_TABLE: {
     title: 'Population Groups',

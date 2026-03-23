@@ -56,11 +56,7 @@ class Dashboard extends Component {
       alertOn: false,
       loading: true,
     }
-    // fields.forEach(f => this.state[f] = false)
 
-    this.updateField = this.updateField.bind(this)
-    this.submit = this.submit.bind(this)
-    this.submitDQ = this.submitDQ.bind(this)
     this.goToCountry = this.goToCountry.bind(this)
     this.exportData = this.exportData.bind(this)
   }
@@ -78,27 +74,14 @@ class Dashboard extends Component {
     this.props.actions.getChartData(countryCode)
   }
 
-  // componentDidMount() {
-  // console.log('MOUNTED. ', this.props)
-  // }
-
   componentWillReceiveProps(newProps) {
-    // TODO use chartData.countryCode once provided
     const dataCountry = _.get(newProps, 'chartData.countryCode')
-    
+
     const paramCountry = _.get(
       newProps,
       'match.params.countryCode'
     ).toUpperCase()
     const loading = paramCountry !== dataCountry
-    // console.log(
-    //   'loading: ',
-    //   loading,
-    //   ' param: ',
-    //   paramCountry,
-    //   ' data: ',
-    //   dataCountry
-    // )
     this.setState({ loading })
 
     if (loading) {
@@ -108,11 +91,6 @@ class Dashboard extends Component {
         value: paramCountry,
       })
     }
-
-    // if (_.isEqual(newProps.chartData.countryCode, this.props.chartData.countryCode)) {
-    //   console.error('what changed?')
-    //   return
-    // }
   }
 
   registerGAEvent() {
@@ -213,10 +191,6 @@ class Dashboard extends Component {
     if (!config) {
       return
     }
-
-    // const [status, art, suppression] = config.map(n =>
-    //   Math.round((n)*100)
-    // )
 
     const tooltipId = chartData.countryCode + 'p95-tooltip'
 
@@ -711,113 +685,14 @@ class Dashboard extends Component {
         </div>
 
         {this.getResourcesSection()}
-
-        {this.getDevSection()}
       </div>
     )
-  }
-
-  // dev form
-  getDevSection() {
-    if (isProd) return
-    const inputs = fields.map((f) => {
-      return (
-        <label key={f}>
-          {f}
-          <input data-field={f} onChange={this.updateField}></input>
-        </label>
-      )
-    })
-
-    return (
-      <div>
-        <br />
-        <br />
-        <br />
-        <h5 className="text-center">~ FOR DEVELOPMENT ~</h5>
-        <h5>Color Palette</h5>
-        {colors.map((c, i) => {
-          return (
-            <span
-              key={c}
-              style={{
-                background: c,
-                width: '100px',
-                height: '80px',
-                color: 'white',
-                display: 'inline-block',
-              }}
-            >
-              {i}
-            </span>
-          )
-        })}
-        <h5>Query API, results in devTools console</h5>
-        {inputs}
-        <button onClick={this.submit} action="#">
-          go fetch
-        </button>
-        <button onClick={this.submit.bind(this, true)} action="#">
-          dbug
-        </button>
-        <br />
-        <span>{BASE_URL}indicator=</span>
-        <input id="direct-query"></input>
-        <button onClick={this.submitDQ} action="#">
-          direct query
-        </button>
-        <button onClick={this.submitDQ.bind(this, true)} action="#">
-          dbug
-        </button>
-      </div>
-    )
-  }
-  updateField(e) {
-    this.setState({ [e.target.dataset.field]: e.target.value })
-  }
-
-  submitDQ(e, dbug) {
-    const v = document.querySelector('#direct-query')
-    debugger
-    const url = BASE_URL + 'indicator=' + v.value || ''
-    console.log('url: ', url)
-    fetch(url)
-      .then((response) => response.json())
-      .then((r) => {
-        console.log(r)
-        if (dbug) {
-          debugger
-        }
-      })
-  }
-
-  submit(e, dbug) {
-    let url = BASE_URL
-    let char = ''
-    fields.forEach((f) => {
-      if (this.state[f]) {
-        let chunk = encodeURI(`${char}${f}=${this.state[f]}`)
-        chunk = chunk.replaceAll('+', '%2B') // TODO - figure out why not encoded properly
-        url += chunk
-        char = '&'
-      }
-    })
-    console.log('URL: ', url)
-    fetch(url)
-      .then((response) => response.json())
-      .then((r) => {
-        console.log(r)
-        if (dbug) {
-          debugger
-        }
-      })
   }
 }
 
 export default connect(
   (state) => ({
     chartData: state.chart.chartData,
-    // chartDataAPI: state.chart.chartDataAPI,
   }),
   (dispatch) => ({
     actions: bindActionCreators(chartActions, dispatch),
